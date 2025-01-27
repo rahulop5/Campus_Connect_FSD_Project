@@ -3,6 +3,8 @@
     padding: 0;
 }
 
+/* navbar */
+
 nav>ul{
     display: flex;
 }
@@ -10,8 +12,7 @@ nav>ul{
 nav{
     height: 75px;
     /* background: rgba(165, 165, 165, 0.13); */
-    background: black;
-    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+    background: #1c1c1c;
     backdrop-filter: blur(20px);
 }
 
@@ -52,3 +53,158 @@ nav>ul li:nth-child(3) {
     padding: 10px;
     padding-right: 20px;
 }
+
+/* sidebar */
+
+.maincon{
+    display: flex;  
+}
+
+.sidebar{
+    background-color: #1c1c1c;
+    width: 70px;
+    height: 200vh;
+}
+
+.sidebar>ul>li>a>img{
+    height: 40px;
+    width: 40px;
+    padding: 10px 15px;
+}
+
+body{
+    background-color: #090909;
+}
+
+/* searchquestion */
+
+.outfit{
+    font-family: "Outfit", serif;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-style: normal;
+  }
+
+.mainpage{
+    color: white;
+    flex-grow: 1;
+}
+
+.searchques{
+    padding: 20px 30px;
+}
+
+.searchques>h1{
+    color: #FFF;
+    font-size: 49px;
+    line-height: normal;
+}
+
+.searchques>h1>span{
+    color: rgba(72, 255, 0, 0.68);
+}
+
+.searchques>p{
+    font-size: 21px;
+    font-style: normal;
+    line-height: normal;
+    padding-left: 8px;
+    padding-top: 10px;
+}
+
+.top{
+    display: flex;
+}
+.askaques{
+    margin-left: auto;
+    margin-top: 60px;
+    margin-right: 25px;
+}
+
+.askaques>button{
+    padding: 18px 18px;
+    font-size: 16px;
+    color: white;
+    background-color: #090909;
+    border: 3px solid rgba(72, 255, 0, 0.68);
+    border-radius: 40px;
+}
+
+.searchquesinput{
+    color: white;
+    display: flex;
+    margin-top: 15px;
+    align-items: center;
+}
+
+.input{
+    margin-left: auto;
+    margin-right: 20px;
+}
+
+.advsearch {
+    position: relative;
+    width: 100%;
+    /* max-width: 400px; */
+    margin-right: 25px;
+}
+
+.advsearch input {
+    height: 55px;
+    width: 100%;
+    padding: 10px 50px 10px 20px;
+    border: 1px solid #ccc;
+    border-radius: 25px;
+    font-size: 16px;
+    outline: none;
+    box-sizing: border-box;
+    background-color: rgba(217, 217, 217, 0.26);;
+    color: white;
+}
+
+.advsearch button {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    border: none;
+    background: white;
+    cursor: pointer;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+}
+
+.advsearch button img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: 2px solid white;
+}
+
+.advsearch input:focus {
+    border-color: #014791;
+}
+
+.advsearch input::placeholder {
+    color: white;
+}
+
+.filter{
+    margin-right: 35px;
+    margin-left: 5px;
+}
+
+.filter>button{
+    background-color: #090909;
+    border: none;
+}
+
+.filter>button>img{
+    width: 29px;
+}
+
+.toptop{
+    margin-bottom: 30px;
+}
+
