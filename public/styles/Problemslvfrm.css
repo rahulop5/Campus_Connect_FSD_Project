@@ -11,9 +11,11 @@ nav>ul{
 
 nav{
     height: 75px;
-    /* background: rgba(165, 165, 165, 0.13); */
-    background: #1c1c1c;
     backdrop-filter: blur(20px);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(165, 165, 165, 0.13);
 }
 
 .menuicon{
@@ -64,6 +66,8 @@ nav>ul li:nth-child(3) {
     background-color: #1c1c1c;
     width: 70px;
     height: 200vh;
+    position: fixed;
+    z-index: 99;
 }
 
 .sidebar>ul>li>a>img{
@@ -88,6 +92,7 @@ body{
 .mainpage{
     color: white;
     flex-grow: 1;
+    margin-left: 75px;
 }
 
 .searchques{
