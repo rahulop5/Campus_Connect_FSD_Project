@@ -241,6 +241,10 @@ body{
     margin-bottom: 30px;
 }
 
+.input{
+    transition: transform 1s ease;
+}
+
 /* end of toptop */
 
 .problem{
