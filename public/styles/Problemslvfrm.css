@@ -88,16 +88,15 @@ nav>ul li:nth-child(3) {
 }
 
 .sidebar .text {
-  opacity: 0; 
   transition: opacity 1s ease 0.1s; 
+}
+
+.text>span{
+    margin-left: 5px;
 }
 
 .sidebar:hover {
   width: 250px; 
-}
-
-.sidebar:hover .text {
-  opacity: 1; 
 }
 
 .sidebar li:hover{
