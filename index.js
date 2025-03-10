@@ -81,7 +81,7 @@ app.get("/auth/github/callback", passport.authenticate("github", {
 
 
 app.get("/", (req, res)=>{
-    res.render("index.ejs");
+    res.render("home.ejs");
 });
 
 app.get("/problemslvfrm", (req, res)=>{
@@ -92,5 +92,9 @@ app.get("/problemslvfrm", (req, res)=>{
         res.redirect("/");
     }
 });
+
+app.get("/temp", (req, res)=>{
+    res.render("header.ejs");
+})
 
 app.listen(process.env.PORT);

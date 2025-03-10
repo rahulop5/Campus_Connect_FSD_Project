@@ -1,0 +1,59 @@
+*{
+    margin: 0;
+    padding: 0;
+}
+
+header>ul{
+    display: flex;
+}
+
+header{
+    height: 75px;
+    backdrop-filter: blur(20px);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(165, 165, 165, 0.13);
+}
+
+.menuicon{
+   padding: 30px;
+}
+
+.menuicon>img{
+    height: 17px;
+    width: 30px;
+}
+
+.logo{
+    color: #FFF;
+    font-family: Kameron;
+    font-size: 30px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+    height: 35px;
+    padding: 20px 20px;
+    margin-left: 10px;
+}
+
+.logo>span{
+    color: rgba(72, 255, 0, 0.68);
+}
+
+.notification>img{
+    width: 35px;
+    height: 35px;
+    padding: 20px 10px;
+}
+
+header>ul li:nth-child(2) {
+    margin-left: auto;
+}
+
+.profile>img{
+    width: 55px;
+    height: 55px;
+    padding: 10px;
+    padding-right: 20px;
+}
