@@ -5,7 +5,7 @@
 
 body{
     background-color: #090909;
-    height: 500vh;
+    height: 400vh;
 }
 
 .outfit{
@@ -19,6 +19,7 @@ body{
     color: white;
     flex-grow: 1;
     margin-left: 75px;
+    /* margin-bottom: 10vh; */
 }
 
 .searchques{
@@ -302,12 +303,12 @@ body{
 .po_user{
     margin-left: auto;
     width: 18%;
+    margin-right: 50px;
 }
 
 .po_useruser{
     display: flex;
     align-items: center;
-    
 }
 
 .po_useruser>img{
@@ -319,3 +320,249 @@ body{
 .po_useruser>p{
     font-size: 15px;
 }
+
+.po_comments{
+    margin-left: 100px;
+    margin-top: 40px;
+}
+
+.po_commheading{
+    font-size: 22px;
+}
+
+.po_addcomm{
+    display: flex;
+    margin-top: 20px;
+    margin-bottom: 25px;
+}
+
+.po_addcomm>img{
+    height: 55px;
+    width: 55px;
+}
+
+.po_addcomm>div{
+    margin-left: 20px;
+    display: flex;
+    border-bottom: 1px solid white;
+    align-items: center;
+    width: 100%;
+}
+
+.po_addcomm>div>input{
+    background: #090909;
+    border: none;
+    color: white;
+    padding: 15px;
+    padding-left: 0;
+    font-size: 20px;
+    width: 100%;
+}
+
+.po_addcomm>div>input::placeholder{
+    font-size: 20px;
+    color: rgba(255, 255, 255, 0.58);
+}
+
+.po_addcomm>div>input:focus{
+    outline: none;
+}
+
+.po_addcomm>div>img{
+    height: 30px;
+    width: 30px;
+    margin-left: auto;
+    margin-right: 20px;
+}
+
+.po_comment{
+    margin-top: 10px;
+    border-radius: 5px;
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    background: rgba(217, 217, 217, 0.09);
+    display: flex;
+    align-items: center;
+    padding: 25px 15px;
+}
+
+.po_commentuser{
+    margin-right: 10px;
+}
+
+.po_commentuser>img{
+    height: 40px;
+    width: 40px;
+}
+
+.po_commentcomment> :nth-child(1){
+    font-weight: bold;
+    font-size: 15px;
+}
+
+.po_commentreply{
+    margin-left: auto;
+}
+
+.po_commentreply>img{
+    height: 25px;
+    width: 25px;
+}
+
+.po_ansheading{
+    margin-left: 40px;
+    margin-top: 40px;
+}
+
+.po_ansheading>p{
+    font-size: 25px;
+}
+
+.po_anselab{
+    display: flex;
+    margin-top: 50px;
+}
+
+.ansupdownvote{
+    margin-left: 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-right: 35px;
+}
+
+.po_ansdesc>p{
+    font-size: 19px;
+}
+
+.po_userans{
+    margin-left: 40px;
+    margin-top: 50px;
+}
+
+.po_useransheading{
+    font-size: 25px;
+}
+
+.po_useranscontainer{
+    border-radius: 10px;
+    border: 1px solid #949494;
+    background: #000;
+    padding: 20px;
+}
+
+.po_useranstools{
+    display: flex;
+    /* padding: 15px; */
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.po_useranstools>img{
+    height: 25px;
+    width: 25px;
+}
+
+.po_useranstools>img:nth-child(3){
+    margin-left: auto;
+}
+
+.po_useranstools>img:nth-child(4){
+    margin-right: auto;
+}
+
+.po_useranstools>div{
+    padding: 10px 15px;
+    border-radius: 22px;
+    border: 1px solid #FFF;
+    background: #000;
+    box-shadow: 0px -1px 26.9px 7px rgba(148, 148, 148, 0.19) inset, 0px 0px 14.3px -1px #949494;
+}
+
+.po_useranstools>div>p{
+    font-size: 17px;
+}
+
+.po_useransbox{
+    border-radius: 8px;
+    background: rgba(217, 217, 217, 0.14);
+    box-shadow: 0px 4px 5.5px 0px rgba(0, 0, 0, 0.43) inset;
+    height: 300px;
+    border: none;
+    width: 100%;
+    color: white;
+    font-size: 19px;
+    padding: 10px;
+}
+
+.po_useransbox:focus{
+    outline: none;
+}
+
+.po_notice{
+    margin-top: 30px;
+}
+
+.po_noticeboard{
+    border-radius: 9px;
+    border: 1px solid #48FF00;
+    background: rgba(217, 217, 217, 0.07);
+    box-shadow: 0px 0px 0px 0px rgba(72, 255, 0, 0.68);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-right: 10px;
+    margin-left: 10px;
+    padding-top: 20px;
+}
+
+.po_noticeboard>p{
+    font-size: 25px;
+    margin-bottom: 25px;
+}
+
+.po_noticenews{
+    width: 90%;
+    margin-bottom: 21px;
+    margin-top: 21px;
+}
+
+.po_noticenews>div{
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+    margin-top: 15px;
+}
+
+.po_noticenews>div>img{
+    height: 22px;
+    width: 22px;
+}
+
+.po_noticenews>div>p{
+    font-size: 12px;
+}
+
+.noticeline{
+    background-color: #48FF00;
+    height: 1px;
+    border: none;
+    width: 75%;
+}
+
+.po_ads{
+    border-radius: 9px;
+    border: 1px solid #FFF;
+    background: rgba(217, 217, 217, 0.07);
+    box-shadow: 0px 0px 0px 0px rgba(72, 255, 0, 0.68);
+    height: 200vh;
+    margin-right: 15px;
+    margin-left: 15px;
+    margin-top: 25px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
