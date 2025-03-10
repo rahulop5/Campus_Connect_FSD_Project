@@ -93,4 +93,8 @@ app.get("/problemslvfrm", (req, res)=>{
     }
 });
 
+app.get("/temp", (req, res)=>{
+    res.render("Problemopen.ejs");
+})
+
 app.listen(process.env.PORT);

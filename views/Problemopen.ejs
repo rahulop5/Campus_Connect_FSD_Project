@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="./styles/Problemopen.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&family=Rubik:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <%- include("header.ejs") %>
+    <%- include("sidebar.ejs") %>
+        <div class="mainpage">
+            <div class="toptop">
+                <div class="top">
+                    <div class="searchques">
+                        <h1 class="outfit">How to ignore certain patterns when using git diff? </h1>
+                    </div>
+                </div>
+                <div class="po_qdetails outfit">
+                    <p>Modified 5 min ago</p>
+                    <p>Asked 5 min ago</p>
+                    <p>Viewed 307 times</p>
+                </div>
+                <div class="searchquesinput">
+                    <div class="outfit po_reward">
+                        <p>A Reward of +50 wealth  is offered for this question   <span>✨</span></p>
+                    </div>
+                    <div class="input-container">
+                        <div class="input">
+                          <form action="">
+                            <div class="advsearch">
+                              <input type="text" placeholder="Search a Question">
+                              <button type="submit"><img src="./assets/search.png" alt=""></button>
+                            </div>
+                          </form>
+                        </div>  
+                        <div class="hidden-div">
+                            <p>Filters will go here</p>
+                        </div>
+                    </div>                    
+                    <div class="filter">
+                        <button><img src="./assets/filter (1).png" alt=""></button>
+                    </div>
+                </div>
+            </div>
+            <hr>
+            <div class="po_main">
+                <div class="po_question">
+                    <div class="po_qelab">
+                        <div class="updownvote">
+                            <div class="upvote-triangle"></div> 
+                            <div class="po_qnoofvotes outfit"><p>10</p></div>
+                            <div class="downvote-triangle"></div>
+                            <div><img src="./assets/save.png" alt="" class="po_save"></div>                           
+                        </div>
+                        <div class="po_qdesc outfit">
+                            <div>
+                                <p>
+                                    I would like to ignore certain changes when using git diff (such as version changes). I tried using the -G flag, but it  doesn’t seem to work as expected. I also saw a reference to a regex in this question, but that doesn't seem to help. I am hoping to do something like this:
+                                </p>
+                            </div>
+                            <div class="po_qdesccode">
+                                <p>
+                                    git diff --unified=O -G --version
+                                </p>
+                            </div>
+                            <div>
+                                <p>
+                                    I would expect this to include anything with <version> in it, but that doesn't happen.  It seems to not seem to make any difference.  I'd like to invert the -G if possible, but as a first step to get a basic regex working.
+                                </p>
+                            </div>
+                            <div class="po_qtags">
+                                    <div><p>git</p></div>
+                                    <div><p>git-diff</p></div>
+                            </div>
+                            <div class="po_user">
+                                <div class="po_useruser">
+                                    <img src="./assets/duck_with_A_gun 1.png" alt="">
+                                    <p>terrorist_duck_911467</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        hello
+                    </div>
+                </div>
+                <div class="po_notice">
+
+                </div>
+            </div>
+        </div>
+        <script src="./scripts/problemopen.js"></script>
+</body>
+</html>
