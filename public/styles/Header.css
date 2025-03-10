@@ -16,15 +16,6 @@ header{
     background: rgba(165, 165, 165, 0.13);
 }
 
-.menuicon{
-   padding: 30px;
-}
-
-.menuicon>img{
-    height: 17px;
-    width: 30px;
-}
-
 .logo{
     color: #FFF;
     font-family: Kameron;
