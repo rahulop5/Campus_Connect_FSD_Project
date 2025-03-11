@@ -127,8 +127,12 @@ header> :nth-child(3) {
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-bottom: 150px;
+    /* margin-bottom: 150px; */
+    height: 810px;
     margin-top: 20px;
+    background: radial-gradient(50% 50% at -10% 50%, rgba(72, 255, 0, 0.50) 0%, rgba(115, 115, 115, 0.00) 100%),
+                radial-gradient(circle 160px at 67% 80%, #696969 0%, rgba(8, 8, 8, 0.00) 100%),
+                radial-gradient(50% 50% at 110% 30%, rgba(72, 255, 0, 0.50) 0%, rgba(115, 115, 115, 0.00) 70%);
 }
 
 .features>p{
@@ -197,7 +201,9 @@ header> :nth-child(3) {
 }
 
 .demos{
-    margin-top: 110px;
+    /* margin-top: 110px; */
+    background: radial-gradient(50% 50% at 50% 50%, rgba(72, 255, 0, 0.50) 0%, rgba(115, 115, 115, 0.00) 110%);
+    height: 900px;
 }
 
 .d_attendance{
@@ -231,13 +237,17 @@ header> :nth-child(3) {
 }
 
 .finalsignup{
-    margin-top: 130px;
-    margin-bottom: 130px;
+    /* margin-top: 130px; */
+    /* margin-bottom: 130px; */
+    height: 650px;
     display: flex;
     justify-content: center;
+    background: radial-gradient(25% 50% at 50% 50%, rgba(72, 255, 0, 0.50) 0%, rgba(115, 115, 115, 0.00) 120%); 
 }
 
 .finalsignup>div{
+    margin-top: 130px;
+    margin-bottom: 130px;
     border-radius: 68px;
     background: rgba(55, 55, 55, 0.50);
     box-shadow: -10px 10px 20px 0px rgba(0, 0, 0, 0.25);
