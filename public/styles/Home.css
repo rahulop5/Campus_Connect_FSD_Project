@@ -156,6 +156,11 @@ header> :nth-child(3) {
     flex-direction: column;
     align-items: center;
     padding: 50px 38px 15px 38px;
+    box-shadow: -10px 10px 20px 5px rgba(0, 0, 0, 0.25);
+}
+
+.featurescontent> :nth-child(3){
+    box-shadow: 15px 10px 20px 5px rgba(0, 0, 0, 0.25);   
 }
 
 .featurescontent>div>img{
@@ -201,7 +206,6 @@ header> :nth-child(3) {
 }
 
 .demos{
-    /* margin-top: 110px; */
     background: radial-gradient(50% 50% at 50% 50%, rgba(72, 255, 0, 0.50) 0%, rgba(115, 115, 115, 0.00) 110%);
     height: 900px;
 }
@@ -242,7 +246,10 @@ header> :nth-child(3) {
     height: 650px;
     display: flex;
     justify-content: center;
-    background: radial-gradient(25% 50% at 50% 50%, rgba(72, 255, 0, 0.50) 0%, rgba(115, 115, 115, 0.00) 120%); 
+    /* background: radial-gradient(25% 50% at 50% 50%, rgba(72, 255, 0, 0.50) 0%, rgba(115, 115, 115, 0.00) 120%);  */
+    background-image: url("../assets/signupbg.jpg");
+    background-position: center; 
+    background-size: cover;
 }
 
 .finalsignup>div{
