@@ -207,13 +207,21 @@ header> :nth-child(3) {
 
 .demos{
     background: radial-gradient(50% 50% at 50% 50%, rgba(72, 255, 0, 0.50) 0%, rgba(115, 115, 115, 0.00) 110%);
-    height: 900px;
+    /* height: 9000px; */
+    position: relative;
 }
 
 .d_attendance{
-    display: flex;
+    opacity: 0;
+    display: none;
     flex-direction: column;
     align-items: center;
+    transition: opacity 1s ease-in-out;
+}
+
+.d_attendance.active{
+    opacity: 1;
+    display: flex;
 }
 
 .d_attendance>div{
