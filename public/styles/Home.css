@@ -248,6 +248,36 @@ header> :nth-child(3) {
     width: 900px;
 }
 
+.scroller{
+    position: absolute;
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    padding: 20px;
+    background-color: #232323;
+    border-radius: 50px;
+    top: 50%;
+    transform: translateX(-50%);
+    transform: translateY(-50%);
+    left: 94%;
+    box-shadow: -10px 10px 20px 5px rgba(0, 0, 0, 0.25);
+}
+
+.scroller .btn{
+    height: 25px;
+    width: 25px;
+    border-radius: 50px;
+    background: aqua;
+    border: none;
+    transition: all 0.3s ease-in-out;
+}
+
+#btnselect{
+    background: red;
+    height: 80px;
+}
+
 .finalsignup{
     /* margin-top: 130px; */
     /* margin-bottom: 130px; */
