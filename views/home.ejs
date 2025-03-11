@@ -3,18 +3,83 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./styles/Home.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&family=Rubik:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dream+Orphans&display=swap" rel="stylesheet">
+      
     <title>Campus Connect</title>
 </head>
-<body>
-    Starting of the greatest project
-    <form action="/auth/google" method="get">
-        <button type="submit">login with google</button>
-    </form>
-    <form action="/auth/github" method="get">
-        <button type="submit">login with github</button>
-    </form>
-    <form action="/logout" method="get">
-        <button type="submit">Logout</button>
-    </form>
+<body class="outfit">
+    <header>
+            <p class="logo">Campus<span>C</span>onnect</p>
+            <div>|</div>
+            <p>Log in</p>
+            <div id="signup"><p>Sign up</p></div>
+    </header>
+    <div class="hero">
+        <div>
+            <p class="herologo">Campus <br> Connect</p>
+            <p class="herodesc">All your academics, insights, & campus <br> updates—connected in one place.</p>
+            <button>
+                <p>Sign Up</p>
+            </button>
+        </div>
+    </div>
+    <hr class="herohr">
+    <div class="features">
+        <p>Features</p>
+        <div class="featurescontent">
+            <div>
+                <img src="./assets/qandaforum.png" alt="">
+                <p>Question & <br>Answer Forum</p>
+                <p>More info...</p>
+            </div>
+            <div>
+                <img src="./assets/attendance icon.png" alt="">
+                <p>Attendance <br>Tracking Portal</p>
+                <p>More info...</p>
+            </div>
+            <div>
+                <img src="./assets/bell graph icon.png" alt="">
+                <p>Bell Graph <br>Prediction <br>System</p>
+                <p>More info...</p>
+            </div>
+            <div>
+                <img src="./assets/blogging.png" alt="">
+                <p>Blogging <br>Platform</p>
+                <p>More info...</p>
+            </div>
+        </div>
+    </div>
+    <hr class="herohr">
+    <div class="demos">
+        <div class="d_attendance">
+            <div>
+                <p>Attendance</p>
+                <p>Tracking <br> Portal</p>
+            </div>
+            <div>
+                <img src="./assets/attendancedemo.png" alt="">
+            </div>
+        </div>
+    </div>
+    <hr class="herohr">
+    <div class="finalsignup">
+        <div>
+            <p>Ready to get started?</p>
+            <p>Create your free account now</p>
+            <div>
+                <p>Sign Up</p>
+            </div>
+        </div>
+    </div>
+    <footer>
+        <p class="logo">Campus<span>C</span>onnect</p>
+        <p>©  All rights reserved</p>
+    </footer>
 </body>
 </html>

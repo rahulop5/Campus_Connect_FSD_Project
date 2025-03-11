@@ -3,7 +3,7 @@
     padding: 0;
 }
 
-header>ul{
+header{
     display: flex;
 }
 
@@ -38,7 +38,7 @@ header{
     padding: 20px 10px;
 }
 
-header>ul li:nth-child(2) {
+header> :nth-child(2) {
     margin-left: auto;
 }
 
