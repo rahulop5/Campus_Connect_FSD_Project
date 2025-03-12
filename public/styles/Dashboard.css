@@ -1,0 +1,467 @@
+*{
+    margin: 0;
+    padding: 0;
+}
+
+.outfit{
+    font-family: "Outfit", serif;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-style: normal;
+}
+
+body{
+    background-color: #090909;
+    height: 400vh;
+}
+
+.db_mainpage{
+    display: flex;
+    height: 100vh;
+    flex-grow: 1;
+    margin-left: 75px;
+    margin-top: 30px;
+}
+
+.db_mainmain{
+    width: 75%;
+    /* background-color: aqua; */
+    margin-right: 20px;
+    margin-left: 35px;
+}
+
+.db_mainmain > p {
+    background: linear-gradient(90deg, #2B9900 0%, #949494 73.9%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-size: 24px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: normal;
+    display: inline; 
+}
+
+.db_clubs{
+    display: flex;
+    align-items: center;
+    margin-top: 40px;
+}
+
+.db_banners{
+    width: 656px;
+    height: 159px;
+    fill: linear-gradient(255deg, rgba(43, 153, 0, 0.30) 0.94%, rgba(0, 0, 0, 0.15) 15.39%), url(<path-to-image>) lightgray 50% / cover no-repeat, rgba(55, 55, 55, 0.50);
+    stroke-width: 1px;
+    stroke: #272727;
+    border-radius: 30px;
+    margin-right: 20px;
+}
+
+.db_date{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(225deg, rgba(0, 0, 0, 0.60) 0%, rgba(0, 0, 0, 0.00) 72.4%), rgba(43, 153, 0, 0.60);
+    border-radius: 30px;
+    padding: 20px 40px;
+}
+
+.db_dateblack{
+    color: #000;
+    font-size: 20px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+    letter-spacing: -1.6px;
+}
+
+.db_date> :nth-child(2){
+    color: #FFF;
+    text-align: center;
+    font-size: 90px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 90px;
+    letter-spacing: 4.5px;
+}
+
+.db_attengrade{
+    margin-top: 20px;
+    border-radius: 30px;
+    background: linear-gradient(245deg, rgba(43, 153, 0, 0.30) -1.8%, rgba(0, 0, 0, 0.15) 17.11%);
+    /* width: 835px;
+    height: 188px;
+    flex-shrink: 0; */
+    display: flex;
+    gap: 12px;
+    padding: 20px 0px;
+}
+
+.db_subject{
+    border-radius: 15px;
+    background: linear-gradient(209deg, rgba(43, 153, 0, 0.30) -0.03%, rgba(0, 0, 0, 0.15) 37.8%), rgba(55, 55, 55, 0.50);
+    display: flex;
+    align-items: center;
+    padding: 20px 20px;
+}
+
+.db_grade{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-right: 25px;
+}
+
+.db_grade> :nth-child(1){
+    color: #FFF;
+    font-size: 30px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: normal;
+    margin-bottom: 20px;
+}
+
+.db_grade> :nth-child(2){
+    color: #FFF;
+    font-size: 15px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: normal;
+}
+
+.db_grade> :nth-child(3){
+    color: #FFF;
+    font-size: 15px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: normal;
+    letter-spacing: 3px;
+}
+
+.db_grade> :nth-child(3)>span{
+    color: #2B9900;
+    font-size: 25px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: normal;
+    letter-spacing: 6px;
+}
+
+.db_attendance{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.db_attendance>p{
+    color: #FFF;
+    font-size: 15px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: normal;
+}
+
+.progress-container {
+    position: relative;
+    width: 100px;
+    height: 100px;
+}
+
+.progress-circle {
+    transform: rotate(-90deg);
+    transform-origin: center;
+}
+
+.background-circle {
+    fill: none;
+    stroke-width: 8;
+}
+
+.progress-ring {
+    fill: none;
+    stroke: #ffffff;
+    stroke-width: 8;
+    stroke-linecap: round;
+    transition: stroke-dasharray 0.5s;
+}
+
+.progress-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 20px;
+    font-weight: bold;
+    color: white;
+}
+
+.db_topq{
+    margin-top: 40px;
+    border-radius: 30px;
+    border: 1px solid rgba(39, 39, 39, 0.40);
+    background: linear-gradient(240deg, rgba(43, 153, 0, 0.30) -1.95%, rgba(0, 0, 0, 0.15) 20.92%), rgba(55, 55, 55, 0.10);
+    padding: 20px;
+}
+
+.db_topq>p{
+    color: #FFF;
+    font-size: 30px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+    letter-spacing: -1.5px;
+}
+
+.problem{
+    display: flex;
+    margin-left: 5%;
+    margin-top: 40px;
+    margin-bottom: 40px;
+}
+.votes{
+    width: 70px;
+}
+
+.votes>p{
+    font-size: 15px;
+}
+
+.main{
+    margin-left: 4%;
+    width: 65%;
+}
+
+.main>h4{
+    margin-bottom: 10px;
+}
+
+.tags{
+    display: flex; 
+    margin-top: 15px;
+}
+
+.tags>div{
+    /* height: px; */
+    border-radius: 40px;
+    border: 3px solid rgba(72, 255, 0, 0.68);
+    backdrop-filter: blur(15.5px);
+    padding: 8px 20px;
+    margin: 7px;
+}
+
+.tags>div>p{
+    font-size: 15px;
+}
+
+.user{
+    margin-top: auto;
+    margin-left: 1%;
+    width: 18%;
+}
+
+.useruser{
+    display: flex;
+    align-items: center;
+    
+}
+
+.useruser>img{
+    height: 36px;
+    width: 36px;
+    margin-right: 10px;
+}
+
+.useruser>p{
+    font-size: 15px;
+}
+
+.updownvote{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 12%;
+}
+
+.upvote-triangle {
+    width: 0;
+    height: 0;
+    border-left: 15px solid transparent;
+    border-right: 15px solid transparent;
+    border-bottom: 20px solid #ccc;
+    cursor: pointer;
+    transition: border-color 0.3s ease;
+    margin-bottom: 15px;
+    border-radius: 2%;
+}
+
+.upvote-triangle:hover {
+    border-bottom-color: green;
+}
+
+.downvote-triangle {
+    width: 0;
+    height: 0;
+    border-left: 15px solid transparent;
+    border-right: 15px solid transparent;
+    border-top: 20px solid #ccc;
+    cursor: pointer;
+    transition: border-color 0.3s ease;
+}
+
+.downvote-triangle:hover {
+    border-top-color: red;
+}
+
+.problemline{
+    opacity: 40%;
+}
+
+.problem>*{
+    color: #FFF;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.db_notice{
+    width: 25%;
+    margin-right: 35px;
+    /* background-color: red; */
+}
+
+.db_noticeactivities{
+    border-radius: 30px;
+    border: 1px solid #272727;
+    background: linear-gradient(209deg, rgba(43, 153, 0, 0.30) -0.03%, rgba(0, 0, 0, 0.15) 37.8%), rgba(55, 55, 55, 0.25);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px 0;
+}
+
+.db_votes{
+    display: flex;
+    align-items: center;
+    width: 60%;
+    justify-content: space-between;
+}
+
+.db_votesupordown{
+    color: #FFF;
+    font-size: 15px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+}
+
+.db_votes>:nth-child(1)>:nth-child(2){
+    color: #2E9904;
+    font-size: 50px;
+    font-style: normal;
+    font-weight: 900;
+    line-height: normal;
+    letter-spacing: -2px;
+}
+
+.db_votes>:nth-child(2)>:nth-child(2){
+    color: #FFF;
+    font-size: 50px;
+    font-style: normal;
+    font-weight: 900;
+    line-height: normal;
+    letter-spacing: -2px;
+}
+
+.noticehr{
+    height: 1px;
+    background-color: #FFF;
+    width: 70%;
+    margin-bottom: 25px;
+    margin-top: 25px;
+}
+
+.activities>p{
+    color: #FFF;
+    font-size: 25px;
+    font-style: normal;
+    font-weight: 900;
+    line-height: normal;
+    margin-bottom: 20px;
+}
+
+.users{
+    display: flex;
+    flex-direction: column; 
+    align-items: flex-start;
+    gap: 15px;
+}
+
+.user{
+    display: flex;
+    width: 100%;
+    gap: 20px;
+}
+
+.user>img{
+    width: 40px;
+    height: 40px;
+}
+
+.user>div>:nth-child(1){
+    color: #FFF;
+    font-size: 20px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+}
+
+.user>div>:nth-child(2){
+    color: #FFF;
+    font-size: 13px;
+    font-style: normal;
+    font-weight: 300;
+    line-height: 14px; 
+}
+
+.ads{
+    margin-top: 25px;
+    height: 100vh;
+    border-radius: 9px;
+    border: 1px solid #FFF;
+    background: rgba(217, 217, 217, 0.07);
+    box-shadow: 0px 0px 0px 0px rgba(72, 255, 0, 0.68);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.ads>p{
+    color: rgba(255, 255, 255, 0.42);
+    text-align: center;
+    font-size: 38px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+}

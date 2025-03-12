@@ -104,7 +104,10 @@ app.get("/signup", (req, res)=>{
 
 app.get("/login", (req, res)=>{
     res.render("login.ejs");
-})
+});
 
+app.get("/dashboard", (req, res)=>{
+    res.render("dashboard.ejs");
+});
 
 app.listen(process.env.PORT);
