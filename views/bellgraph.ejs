@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./styles/Bellgraph.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&family=Rubik:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <title>Document</title>
+</head>
+<body class="outfit">
+    <%- include("header.ejs") %>
+    <%- include("sidebar.ejs") %>
+    <div class="bg_mainpage">
+        <div class="bg_subjects">
+            <div id="selected_subject">
+                <p>FFSD</p>
+            </div>
+            <div>
+                <p>FFSD</p>
+            </div>
+            <div>
+                <p>FFSD</p>
+            </div>
+            <div>
+                <p>FFSD</p>
+            </div>
+            <div>
+                <p>FFSD</p>
+            </div>
+        </div>
+        <div class="bg_main">
+            <div class="bg_graph">
+                <p>Bell Graph Curve</p>
+                <div>
+                    <div id="chart"></div>
+                    <div class="tooltip" id="tooltip"></div>
+                </div>
+            </div>
+            <div class="bg_graphright">
+                <div>
+                    <p>Predicted <br>Grade</p>
+                    <p>A</p>
+                </div>
+                <div class="bg_details">
+                    <div>
+                        <p>Alloted Credits</p>
+                        <p><span>4</span></p>
+                    </div>
+                    <div>
+                        <p>Total Hours Assigned</p>
+                        <p><span>46</span>hrs</p>
+                    </div>
+                    <div>
+                        <p>Total Enrolments</p>
+                        <p><span>146</span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="bg_ads">
+            
+        </div>
+    </div>
+    <script src="./scripts/bellgraph.js"></script>
+</body>
+</html>

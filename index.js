@@ -110,4 +110,8 @@ app.get("/dashboard", (req, res)=>{
     res.render("dashboard.ejs");
 });
 
+app.get("/bellgraph", (req, res)=>{
+    res.render("bellgraph.ejs");
+});
+
 app.listen(process.env.PORT);
