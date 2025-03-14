@@ -41,7 +41,7 @@ const width = 1100, height = 500;
 
 
         function updateGraph() {
-            let inputData = "10,20,30,40,40,30,20,10,5,0,10,30,24,15,10";
+            let inputData = "10,20,30,40,40,30,20,10";
             // let inputData = document.getElementById("dataInput").value;
             let data = inputData.split(",").map(d => parseFloat(d.trim()));
 

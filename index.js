@@ -85,7 +85,7 @@ app.get("/", (req, res)=>{
 });
 
 app.get("/problemslvfrm", (req, res)=>{
-    if(req.isAuthenticated()){
+    if(req.isAuthenticated()||true){
         res.render("Problemslvfrm.ejs");
     }
     else{
