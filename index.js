@@ -60,7 +60,23 @@ passport.use(
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
       callbackURL: "http://localhost:3000/auth/google/callback",
     },
-    (accessToken, refreshToken, profile, cb) => cb(null, profile)
+    (accessToken, refreshToken, profile, done) => {
+        // console.log(profile)
+        let user = users.find((u) => u.email === profile.emails[0].value);
+      if (user) {
+        return done(null, user);
+      } else {
+        // If user doesn't exist, treat it as a signup
+        const newUser = {
+          id: users.length + 1,
+          name: profile.displayName,
+          email: profile.emails[0].value,
+          password: null, 
+        };
+        // console.log(users);
+        return done(null, newUser);
+      }
+    }
   )
 );
 
@@ -72,7 +88,34 @@ passport.use(
       clientSecret: process.env.GITHUB_CLIENT_SECRET,
       callbackURL: "http://localhost:3000/auth/github/callback",
     },
-    (accessToken, refreshToken, profile, done) => done(null, profile)
+    async (accessToken, refreshToken, profile, done) => {
+        let email = null;
+        if (profile.emails && profile.emails.length > 0) {
+          email = profile.emails[0].value; // Get the first email
+        } else {
+          const response = await fetch("https://api.github.com/user/emails", {
+            headers: {
+              Authorization: `token ${accessToken}`,
+              "User-Agent": "CampusConnect",
+            },
+          });
+          const emails = await response.json();
+          email = emails.find((email) => email.primary).email;
+        }
+
+        let user = users.find((u) => u.email === email);
+        if (user) {
+          return done(null, user);
+        } else {
+          const newUser = {
+            id: users.length + 1,
+            name: profile.displayName || profile.username,
+            email: email || null,
+            password: null,
+          };
+          return done(null, newUser);
+        }
+    }
   )
 );
 
@@ -104,9 +147,7 @@ app.post("/auth/signup", async (req, res) => {
 });
 
 app.post("/auth/register", (req, res) => {
-    const { roll, section, phone } = req.body;
-    
-    // Extract year and branch from roll number
+    const { roll, section, phone } = req.body;    
     const year = parseInt(roll.substring(1, 5)); // Extract year part from the roll number
     const currentYear = new Date().getFullYear();
     const ugYear = currentYear - year; // Derive UG year (assuming a 4-year course)
@@ -182,15 +223,21 @@ app.get(
 );
 
 // Google and GitHub Auth routes
-app.get("/auth/google", passport.authenticate("google", { scope: ["profile"] }));
+app.get("/auth/google", passport.authenticate("google", { scope: ["profile", "email"] }));
 
 app.get(
-  "/auth/google/callback",
-  passport.authenticate("google", { failureRedirect: "/" }),
-  (req, res) => {
-    res.redirect("/problemslvfrm");
-  }
-);
+    "/auth/google/callback",
+    passport.authenticate("google", { failureRedirect: "/" }),
+    (req, res) => {
+      const user = req.session.passport.user; 
+      req.session.user=user;
+      if (user && user.details && user.details.roll) {
+        res.redirect("/dashboard");
+      } else {
+        res.redirect("/register");
+      }
+    }
+  );
 
 app.get("/auth/github", passport.authenticate("github", { scope: ["user:email"] }));
 
@@ -198,7 +245,13 @@ app.get(
   "/auth/github/callback",
   passport.authenticate("github", { failureRedirect: "/" }),
   (req, res) => {
-    res.redirect("/problemslvfrm");
+    const user=req.session.passport.user;
+    req.session.user = user;
+    if (user && user.details && user.details.roll) {
+        res.redirect("/dashboard");
+    } else {
+        res.redirect("/register");
+    }
   }
 );
 
@@ -236,7 +289,7 @@ app.get("/dashboard", (req, res)=>{
 });
 
 app.get("/problemslvfrm", (req, res) => {
-  if (req.isAuthenticated() || true) {
+  if (req.isAuthenticated()) {
     res.render("Problemslvfrm.ejs");
   } else {
     res.redirect("/");
