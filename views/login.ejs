@@ -12,26 +12,30 @@
 <body class="outfit">
     <div>
         <p class="logo">Campus<span>C</span>onnect</p>
-        <form action="">
-            <input type="text" placeholder="Email">
-            <input type="text" placeholder="Password">
-            <button><p>Login</p></button>
+        <form action="/auth/login" method="post">
+            <input type="email" placeholder="Email" name="email" required>
+            <input type="password" placeholder="Password" name="password" required>
+            <button type="submit"><p>Login</p></button>
         </form>
         <div class="other">
-            <p>Not registered? <a href="">Sign up</a></p>
+            <p>Not registered? <a href="http://localhost:3000/signup">Sign up</a></p>
             <div class="orline">
                 <div></div>
                 <p>OR</p>
                 <div></div>
             </div>
-            <div class="google oauth">
-                <img src="./assets/googlelogo.png" alt="">
-                <p>Continue with Google</p>
-            </div>
-            <div class="github oauth">
-                <img src="./assets/githublogo.png" alt="">
-                <p>Continue with Github</p>
-            </div>
+            <a href="http://localhost:3000/auth/google" style="text-decoration: none;">
+                <div class="google oauth">
+                    <img src="./assets/googlelogo.png" alt="">
+                    <p>Continue with Google</p>
+                </div>
+            </a>
+            <a href="http://localhost:3000/auth/github" style="text-decoration: none;">
+                <div class="github oauth" >
+                    <img src="./assets/githublogo.png" alt="">
+                    <p>Continue with Github</p>
+                </div>
+            </a>
         </div>
     </div>
 </body>

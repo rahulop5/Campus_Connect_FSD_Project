@@ -10,6 +10,7 @@ env.config();
 const app=express();
 app.set("view engine", "ejs");
 app.use(express.static("public"));
+app.use(express.urlencoded({extended: true}));
 
 app.use(session({
     secret: process.env.EXPRESS_SESSION_SECRET,
@@ -112,6 +113,25 @@ app.get("/dashboard", (req, res)=>{
 
 app.get("/bellgraph", (req, res)=>{
     res.render("bellgraph.ejs");
+});
+
+app.post("/auth/login", (req, res)=>{
+    console.log(req.body);
+    res.send("ok");
+});
+
+app.post("/auth/signup", (req, res)=>{
+    console.log(req.body);
+    res.send("ok");
+});
+
+app.get("/register", (req, res)=>{
+    res.render("register.ejs");
+});
+
+app.post("/auth/register", (req, res)=>{
+    console.log(req.body);
+    res.send("ok");
 });
 
 app.listen(process.env.PORT);

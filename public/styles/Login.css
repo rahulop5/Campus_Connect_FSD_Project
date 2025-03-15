@@ -50,6 +50,9 @@ form{
 }
 
 form>input{
+    line-height: 30px;
+    font-size: 20px;
+    color: #FFF;
     width: 333px;
     border-radius: 5px;
     border: 1px solid #7A7A7A;
