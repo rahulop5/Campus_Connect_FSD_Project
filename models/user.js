@@ -1,4 +1,4 @@
-const user=
+const users=
 [
     {
         id: 1,
@@ -71,7 +71,16 @@ const user=
         },
         notifications : ["Abhiram replied to ur question", "saitej is black"]
     },
-
+    {
+        id: 2,
+        name: 'venkatrahul',
+        email: 'venkatrahulxyz@gmail.com',
+        password: '$2b$10$4QUqLHbLZ.7JPjlz6UCnS.XfoxN43D1/GPo9sFsmrNXr1seAyCSBa',
+        phone: '9052987477',
+        details: { roll: 'S20230010257', section: '2', branch: 'CSE', ug: '2' },
+        courses: {},
+        notifications: []
+      }
 ]
 
-export default user;
+export default users;

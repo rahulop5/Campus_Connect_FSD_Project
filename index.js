@@ -7,10 +7,8 @@ import { Strategy as GitHubStrategy } from "passport-github2";
 import { Strategy as JwtStrategy, ExtractJwt } from "passport-jwt";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import { name } from "ejs";
+import users from "./models/user.js";
 
-// Dummy in-memory user store (You can replace this with a real database)
-let users = [];
 
 env.config();
 const app = express();
@@ -99,13 +97,9 @@ app.post("/auth/signup", async (req, res) => {
     password: hashedPassword,
   };
   req.session.user=newUser;
-//   users.push(newUser);
-//   console.log(users);
-  // Create JWT token
   const payload = { id: newUser.id, email: newUser.email };
   const token = jwt.sign(payload, secretOrKey, { expiresIn: "1h" });
 
-//   return res.status(201).json({ token, message: "User registered successfully" });
   res.redirect("/register");
 });
 
@@ -153,18 +147,15 @@ app.post("/auth/register", (req, res) => {
 
     users.push(req.session.user);
     console.log(users);
-    // In a real app, save newUser to your database here
-    
-    // Redirect to dashboard or next page
     res.redirect("/dashboard");
 });
-
 
 // Login route with JWT token generation
 app.post("/auth/login", async (req, res) => {
   const { email, password } = req.body;
 
   const user = users.find((u) => u.email === email);
+  req.session.user=user;
   if (!user) {
     return res.status(400).json({ message: "Invalid email or password" });
   }
@@ -178,7 +169,7 @@ app.post("/auth/login", async (req, res) => {
   const payload = { id: user.id, email: user.email };
   const token = jwt.sign(payload, secretOrKey, { expiresIn: "1h" });
 
-  return res.status(200).json({ token, message: "Login successful" });
+    res.redirect("/dashboard");
 });
 
 // Protected route with JWT verification
