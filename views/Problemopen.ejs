@@ -49,9 +49,9 @@
                 <div class="po_question">
                     <div class="po_qelab">
                         <div class="updownvote">
-                            <div class="upvote-triangle"></div> 
+                            <div class="upvote-triangle" data-id="<%= question.id %>"></div>
                             <div class="po_qnoofvotes outfit"><p><%= question.votes %></p></div>
-                            <div class="downvote-triangle"></div>
+                            <div class="downvote-triangle" data-id="<%= question.id %>"></div>
                             <div><img src="/assets/save.png" alt="" class="po_save"></div>                           
                         </div>
                         <div class="po_qdesc outfit">
@@ -80,9 +80,9 @@
                         <% question.answers.forEach(answer => { %>
                             <div class="po_anselab">
                               <div class="ansupdownvote">
-                                <div class="upvote-triangle"></div> 
+                                <div class="upvote-triangle" data-question-id="<%= question.id %>" data-answer-id="<%= answer.answerer %>"></div>                                
                                 <div class="po_qnoofvotes outfit"><p><%= answer.votes %></p></div>
-                                <div class="downvote-triangle"></div>
+                                <div class="downvote-triangle" data-question-id="<%= question.id %>" data-answer-id="<%= answer.answerer %>"></div>
                               </div>
                               <div class="po_ansdesc outfit">
                                 <p><%= answer.desc %></p>

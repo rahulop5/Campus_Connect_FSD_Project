@@ -10,13 +10,15 @@ import jwt from "jsonwebtoken";
 import users from "./models/user.js";
 import bellgraph from "./models/bellgraph.js";
 import questions from "./models/question.js";
-
+import cors from "cors";
 
 env.config();
 const app = express();
+app.use(cors());
 app.set("view engine", "ejs");
 app.use(express.static("public"));
 app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 
 app.use(
   session({
@@ -319,6 +321,60 @@ app.get("/problemopen/:id", (req, res)=>{
     res.redirect("/");
   }
 });
+
+app.post('/upvote-question', (req, res) => {
+  console.log(req.body);
+  const questionId = req.body.id;
+
+  const question = questions.find(q => q.id === questionId);
+  console.log(question);
+  if (question) {
+    question.votes += 1;
+    res.json({ votes: question.votes });
+  } else {
+    res.status(404).send('Question not found');
+  }
+});
+
+app.post('/downvote-question', (req, res) => {
+  const questionId = req.body.id;
+
+  const question = questions.find((q) => q.id === questionId);
+  if (question) {
+    question.votes -= 1;
+    res.json({ votes: question.votes });
+  } else {
+    res.status(404).send('Question not found');
+  }
+});
+
+app.post('/upvote-answer', (req, res) => {
+  const { questionId, answerId } = req.body;
+
+  const question = questions.find(q => q.id === questionId);
+  const answer = question.answers.find(a => a.answerer === answerId);
+  if (answer) {
+    answer.votes += 1;
+    res.json({ votes: answer.votes });
+  } else {
+    res.status(404).send('Answer not found');
+  }
+});
+
+
+app.post('/downvote-answer', (req, res) => {
+  const { questionId, answerId } = req.body;
+
+  const question = questions.find(q => q.id === questionId);
+  const answer = question.answers.find(a => a.answerer === answerId);
+  if (answer) {
+    answer.votes -= 1;
+    res.json({ votes: answer.votes });
+  } else {
+    res.status(404).send('Answer not found');
+  }
+});
+
 
 
 app.get("/attendance", (req, res) => {
