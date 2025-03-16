@@ -21,7 +21,8 @@ const users=
                 },
                 grade: {
                     allotedcredits: 4,
-                    marks: 88
+                    marks: 88,
+                    predgrade: "O"
                 }
             },
             CCN: {
@@ -32,7 +33,8 @@ const users=
                 },
                 grade: {
                     allotedcredits: 4,
-                    marks: 88
+                    marks: 88,
+                    predgrade: "B"
                 }
             },
             FFSD: {
@@ -43,7 +45,8 @@ const users=
                 },
                 grade: {
                     allotedcredits: 4,
-                    marks: 88
+                    marks: 88,
+                    predgrade: "D"
                 }
             },
             TOC: {
@@ -54,7 +57,8 @@ const users=
                 },
                 grade: {
                     allotedcredits: 4,
-                    marks: 88
+                    marks: 88,
+                    predgrade: "A"
                 }
             },
             ACS: {
@@ -65,7 +69,8 @@ const users=
                 },
                 grade: {
                     allotedcredits: 4,
-                    marks: 88
+                    marks: 88,
+                    predgrade: "O"
                 }
             }
         },
@@ -78,7 +83,68 @@ const users=
         password: '$2b$10$4QUqLHbLZ.7JPjlz6UCnS.XfoxN43D1/GPo9sFsmrNXr1seAyCSBa',
         phone: '9052987477',
         details: { roll: 'S20230010257', section: '2', branch: 'CSE', ug: '2' },
-        courses: {},
+        courses: {
+            AI: {
+                attendance: {
+                    totalclasses: 40,
+                    classesheld: 36,
+                    classesattended: 32
+                },
+                grade: {
+                    allotedcredits: 4,
+                    marks: 88,
+                    predgrade: "O"
+                }
+            },
+            CCN: {
+                attendance: {
+                    totalclasses: 40,
+                    classesheld: 36,
+                    classesattended: 32
+                },
+                grade: {
+                    allotedcredits: 4,
+                    marks: 88,
+                    predgrade: "B"
+                }
+            },
+            FFSD: {
+                attendance: {
+                    totalclasses: 40,
+                    classesheld: 36,
+                    classesattended: 32
+                },
+                grade: {
+                    allotedcredits: 4,
+                    marks: 88,
+                    predgrade: "D"
+                }
+            },
+            TOC: {
+                attendance: {
+                    totalclasses: 40,
+                    classesheld: 36,
+                    classesattended: 32
+                },
+                grade: {
+                    allotedcredits: 4,
+                    marks: 88,
+                    predgrade: "A"
+                }
+            },
+            ACS: {
+                attendance: {
+                    totalclasses: 40,
+                    classesheld: 36,
+                    classesattended: 32
+                },
+                grade: {
+                    allotedcredits: 4,
+                    marks: 88,
+                    predgrade: "O"
+                }
+            }
+        },
         notifications: []
       }
 ]

@@ -8,6 +8,7 @@ import { Strategy as JwtStrategy, ExtractJwt } from "passport-jwt";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import users from "./models/user.js";
+import bellgraph from "./models/bellgraph.js";
 
 
 env.config();
@@ -61,8 +62,8 @@ passport.use(
       callbackURL: "http://localhost:3000/auth/google/callback",
     },
     (accessToken, refreshToken, profile, done) => {
-        // console.log(profile)
-        let user = users.find((u) => u.email === profile.emails[0].value);
+      // console.log(profile)
+      let user = users.find((u) => u.email === profile.emails[0].value);
       if (user) {
         return done(null, user);
       } else {
@@ -71,7 +72,7 @@ passport.use(
           id: users.length + 1,
           name: profile.displayName,
           email: profile.emails[0].value,
-          password: null, 
+          password: null,
         };
         // console.log(users);
         return done(null, newUser);
@@ -89,32 +90,32 @@ passport.use(
       callbackURL: "http://localhost:3000/auth/github/callback",
     },
     async (accessToken, refreshToken, profile, done) => {
-        let email = null;
-        if (profile.emails && profile.emails.length > 0) {
-          email = profile.emails[0].value; // Get the first email
-        } else {
-          const response = await fetch("https://api.github.com/user/emails", {
-            headers: {
-              Authorization: `token ${accessToken}`,
-              "User-Agent": "CampusConnect",
-            },
-          });
-          const emails = await response.json();
-          email = emails.find((email) => email.primary).email;
-        }
+      let email = null;
+      if (profile.emails && profile.emails.length > 0) {
+        email = profile.emails[0].value; // Get the first email
+      } else {
+        const response = await fetch("https://api.github.com/user/emails", {
+          headers: {
+            Authorization: `token ${accessToken}`,
+            "User-Agent": "CampusConnect",
+          },
+        });
+        const emails = await response.json();
+        email = emails.find((email) => email.primary).email;
+      }
 
-        let user = users.find((u) => u.email === email);
-        if (user) {
-          return done(null, user);
-        } else {
-          const newUser = {
-            id: users.length + 1,
-            name: profile.displayName || profile.username,
-            email: email || null,
-            password: null,
-          };
-          return done(null, newUser);
-        }
+      let user = users.find((u) => u.email === email);
+      if (user) {
+        return done(null, user);
+      } else {
+        const newUser = {
+          id: users.length + 1,
+          name: profile.displayName || profile.username,
+          email: email || null,
+          password: null,
+        };
+        return done(null, newUser);
+      }
     }
   )
 );
@@ -139,7 +140,7 @@ app.post("/auth/signup", async (req, res) => {
     email,
     password: hashedPassword,
   };
-  req.session.user=newUser;
+  req.session.user = newUser;
   const payload = { id: newUser.id, email: newUser.email };
   const token = jwt.sign(payload, secretOrKey, { expiresIn: "1h" });
 
@@ -147,56 +148,55 @@ app.post("/auth/signup", async (req, res) => {
 });
 
 app.post("/auth/register", (req, res) => {
-    const { roll, section, phone } = req.body;    
-    const year = parseInt(roll.substring(1, 5)); // Extract year part from the roll number
-    const currentYear = new Date().getFullYear();
-    const ugYear = currentYear - year; // Derive UG year (assuming a 4-year course)
+  const { roll, section, phone } = req.body;
+  const year = parseInt(roll.substring(1, 5)); // Extract year part from the roll number
+  const currentYear = new Date().getFullYear();
+  const ugYear = currentYear - year; // Derive UG year (assuming a 4-year course)
 
-    // Extract branch code from roll number
-    const branchCode = roll.charAt(7);
-    let branch;
-    switch (branchCode) {
-        case '1':
-            branch = "CSE";
-            break;
-        case '2':
-            branch = "ECE";
-            break;
-        case '3':
-            branch = "AIDS";
-            break;
-        default:
-            branch = "Unknown";
-    }
+  // Extract branch code from roll number
+  const branchCode = roll.charAt(7);
+  let branch;
+  switch (branchCode) {
+    case '1':
+      branch = "CSE";
+      break;
+    case '2':
+      branch = "ECE";
+      break;
+    case '3':
+      branch = "AIDS";
+      break;
+    default:
+      branch = "Unknown";
+  }
 
-    // Create user object
-    const newUser = {
-        phone,
-        details: {
-            roll,
-            section,
-            branch,
-            ug: ugYear.toString()
-        },
-        courses: {},
-        notifications: []
-    };
-    req.session.user={
-        ...req.session.user,
-        ...newUser
-    }
+  // Create user object
+  const newUser = {
+    phone,
+    details: {
+      roll,
+      section,
+      branch,
+      ug: ugYear.toString()
+    },
+    courses: {},
+    notifications: []
+  };
+  req.session.user = {
+    ...req.session.user,
+    ...newUser
+  }
 
-    users.push(req.session.user);
-    console.log(users);
-    res.redirect("/dashboard");
+  users.push(req.session.user);
+  console.log(users);
+  res.redirect("/dashboard");
 });
 
 // Login route with JWT token generation
 app.post("/auth/login", async (req, res) => {
   const { email, password } = req.body;
-
   const user = users.find((u) => u.email === email);
-  req.session.user=user;
+  req.session.user = user;
   if (!user) {
     return res.status(400).json({ message: "Invalid email or password" });
   }
@@ -205,12 +205,11 @@ app.post("/auth/login", async (req, res) => {
   if (!isMatch) {
     return res.status(400).json({ message: "Invalid email or password" });
   }
-
   // Create JWT token
   const payload = { id: user.id, email: user.email };
   const token = jwt.sign(payload, secretOrKey, { expiresIn: "1h" });
 
-    res.redirect("/dashboard");
+  res.redirect("/dashboard");
 });
 
 // Protected route with JWT verification
@@ -226,18 +225,18 @@ app.get(
 app.get("/auth/google", passport.authenticate("google", { scope: ["profile", "email"] }));
 
 app.get(
-    "/auth/google/callback",
-    passport.authenticate("google", { failureRedirect: "/" }),
-    (req, res) => {
-      const user = req.session.passport.user; 
-      req.session.user=user;
-      if (user && user.details && user.details.roll) {
-        res.redirect("/dashboard");
-      } else {
-        res.redirect("/register");
-      }
+  "/auth/google/callback",
+  passport.authenticate("google", { failureRedirect: "/" }),
+  (req, res) => {
+    const user = req.session.passport.user;
+    req.session.user = user;
+    if (user && user.details && user.details.roll) {
+      res.redirect("/dashboard");
+    } else {
+      res.redirect("/register");
     }
-  );
+  }
+);
 
 app.get("/auth/github", passport.authenticate("github", { scope: ["user:email"] }));
 
@@ -245,12 +244,12 @@ app.get(
   "/auth/github/callback",
   passport.authenticate("github", { failureRedirect: "/" }),
   (req, res) => {
-    const user=req.session.passport.user;
+    const user = req.session.passport.user;
     req.session.user = user;
     if (user && user.details && user.details.roll) {
-        res.redirect("/dashboard");
+      res.redirect("/dashboard");
     } else {
-        res.redirect("/register");
+      res.redirect("/register");
     }
   }
 );
@@ -270,30 +269,55 @@ app.get("/", (req, res) => {
   res.render("home.ejs");
 });
 
-app.get("/signup", (req, res)=>{
-    res.render("signup.ejs");
+app.get("/signup", (req, res) => {
+  res.render("signup.ejs");
 });
 
-app.get("/login", (req, res)=>{
-    res.render("login.ejs");
+app.get("/login", (req, res) => {
+  res.render("login.ejs");
 });
 
-app.get("/register", (req, res)=>{
-    res.render("register.ejs");
+app.get("/register", (req, res) => {
+  res.render("register.ejs");
 });
 
-app.get("/dashboard", (req, res)=>{
+app.get("/dashboard", (req, res) => {
+  if (req.session.user) {
     res.render("dashboard.ejs", {
-        name: req.session.user.name,
+      name: req.session.user.name,
     });
+  }
+  else {
+    res.redirect("/");
+  }
 });
 
 app.get("/problemslvfrm", (req, res) => {
-  if (req.isAuthenticated()) {
+  if (req.session.user) {
     res.render("Problemslvfrm.ejs");
   } else {
     res.redirect("/");
   }
 });
+
+app.get("/attendance", (req, res) => {
+  res.send("this is the attendance page")
+});
+
+app.get("/bellgraph", (req, res) => {
+  if (req.session.user) {
+    const defaultSubject = "AI";
+    res.render("bellgraph.ejs", {
+      subject: defaultSubject,
+      bellgraphData: JSON.stringify(bellgraph),
+      bellgraphSubjects: Object.keys(bellgraph),
+      userinfo: req.session.user.courses.CCN.grade.predgrade
+    });
+  } else {
+    res.redirect("/");
+  }
+});
+
+
 
 app.listen(process.env.PORT);

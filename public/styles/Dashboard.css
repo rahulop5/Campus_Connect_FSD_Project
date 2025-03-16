@@ -222,7 +222,7 @@ body{
     margin-bottom: 40px;
 }
 .votes{
-    width: 70px;
+    width: 200px;
 }
 
 .votes>p{
@@ -231,7 +231,7 @@ body{
 
 .main{
     margin-left: 4%;
-    width: 65%;
+    /* width: 65%; */
 }
 
 .main>h4{
