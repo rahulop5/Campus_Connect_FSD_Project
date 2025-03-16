@@ -403,9 +403,38 @@ app.post('/submit-answer', (req, res) => {
 });
 
 
-
 app.get("/attendance", (req, res) => {
-  res.send("this is the attendance page")
+  if(req.session.user){
+    const courses = req.session.user.courses.map(course => {
+      const percentage = ((course.attendance.classesattended / course.attendance.classesheld) * 100).toFixed(2);
+      let status = '';
+      let color = '';
+  
+      if (percentage >= 90) {
+        status = 'Good';
+        color = 'green';
+      } else if (percentage >= 80) {
+        status = 'Average';
+        color = 'yellow';
+      } else {
+        status = 'Poor';
+        color = 'red';
+      }
+      return {
+        ...course,
+        attendancePercentage: percentage,
+        attendanceStatus: status,
+        attendanceColor: color
+      };
+    });
+    res.render("attendance.ejs", {
+      name: req.session.user.name,
+      courses: courses,
+    });
+  }
+  else{
+    res.redirect("/");
+  }
 });
 
 app.get("/bellgraph", (req, res) => {
@@ -415,7 +444,7 @@ app.get("/bellgraph", (req, res) => {
       subject: defaultSubject,
       bellgraphData: JSON.stringify(bellgraph),
       bellgraphSubjects: Object.keys(bellgraph),
-      userinfo: req.session.user.courses.CCN.grade.predgrade
+      userinfo: req.session.user.courses[0].grade.predgrade
     });
   } else {
     res.redirect("/");

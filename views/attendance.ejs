@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./styles/Attendance.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&family=Rubik:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
+    <title>Document</title>
+</head>
+<body class="outfit">
+    <%- include("header.ejs") %>
+    <%- include("sidebar.ejs") %>
+
+    <div class="at_mainpage">
+        <p>
+            <%= name %>'s attendance
+        </p>
+        <div class="at_courses">
+            <% courses.forEach((course) => { %>
+              <div class="at_course">
+                <div class="subject">
+                  <p><%= course.subject %></p>
+                </div>
+                <div class="line"></div>
+                <div class="details">
+                  <p>Total Classes: <%= course.attendance.totalclasses %></p>
+                  <p>Classes Held: <%= course.attendance.classesheld %></p>
+                  <p>Classes Attended: <%= course.attendance.classesattended %></p>
+                </div>
+                <div class="line"></div>
+                <div class="status">
+                  <p>Attendance Status</p>
+                  <p id="<%= course.attendanceColor %>"><%= course.attendanceStatus %></p>
+                </div>
+                <div class="line"></div>
+                <div class="percentage">
+                  <p>Attendance Percentage</p>
+                  <p id="<%= course.attendanceColor %>"><%= course.attendancePercentage %>%</p>
+                </div>
+              </div>
+            <% }) %>
+          </div>
+          
+        <div class="at_ads">
+
+        </div>
+    </div>
+</body>
+</html>

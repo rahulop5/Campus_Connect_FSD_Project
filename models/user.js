@@ -12,8 +12,9 @@ const users=
             branch: "CSE",
             ug: "2"
         },
-        courses: {
-            AI: {
+        courses: [
+            {
+                subject: "AI",
                 attendance: {
                     totalclasses: 40,
                     classesheld: 36,
@@ -25,47 +26,51 @@ const users=
                     predgrade: "O"
                 }
             },
-            CCN: {
+            {
+                subject: "CCN",
                 attendance: {
                     totalclasses: 40,
                     classesheld: 36,
-                    classesattended: 32
+                    classesattended: 34
                 },
                 grade: {
                     allotedcredits: 4,
                     marks: 88,
-                    predgrade: "D"
+                    predgrade: "O"
                 }
             },
-            FFSD: {
+            {
+                subject: "FFSD",
                 attendance: {
                     totalclasses: 40,
                     classesheld: 36,
-                    classesattended: 32
+                    classesattended: 30
                 },
                 grade: {
                     allotedcredits: 4,
                     marks: 88,
-                    predgrade: "D"
+                    predgrade: "O"
                 }
             },
-            TOC: {
+            {
+                subject: "TOC",
                 attendance: {
                     totalclasses: 40,
                     classesheld: 36,
-                    classesattended: 32
+                    classesattended: 35
                 },
                 grade: {
                     allotedcredits: 4,
                     marks: 88,
-                    predgrade: "A"
+                    predgrade: "O"
                 }
             },
-            ACS: {
+            {  
+                subject: "ACS",
                 attendance: {
                     totalclasses: 40,
                     classesheld: 36,
-                    classesattended: 32
+                    classesattended: 31
                 },
                 grade: {
                     allotedcredits: 4,
@@ -73,7 +78,7 @@ const users=
                     predgrade: "O"
                 }
             }
-        },
+            ],
         notifications : ["Abhiram replied to ur question", "saitej is black"]
     },
     {
@@ -83,12 +88,13 @@ const users=
         password: '$2b$10$4QUqLHbLZ.7JPjlz6UCnS.XfoxN43D1/GPo9sFsmrNXr1seAyCSBa',
         phone: '9052987477',
         details: { roll: 'S20230010257', section: '2', branch: 'CSE', ug: '2' },
-        courses: {
-            AI: {
+        courses: [
+            {
+                subject: "AI",
                 attendance: {
                     totalclasses: 40,
                     classesheld: 36,
-                    classesattended: 32
+                    classesattended: 33
                 },
                 grade: {
                     allotedcredits: 4,
@@ -96,47 +102,51 @@ const users=
                     predgrade: "O"
                 }
             },
-            CCN: {
+            {
+                subject: "CCN",
                 attendance: {
                     totalclasses: 40,
                     classesheld: 36,
-                    classesattended: 32
+                    classesattended: 26
                 },
                 grade: {
                     allotedcredits: 4,
                     marks: 88,
-                    predgrade: "B"
+                    predgrade: "O"
                 }
             },
-            FFSD: {
+            {
+                subject: "FFSD",
                 attendance: {
                     totalclasses: 40,
                     classesheld: 36,
-                    classesattended: 32
+                    classesattended: 30
                 },
                 grade: {
                     allotedcredits: 4,
                     marks: 88,
-                    predgrade: "D"
+                    predgrade: "O"
                 }
             },
-            TOC: {
+            {
+                subject: "TOC",
                 attendance: {
                     totalclasses: 40,
                     classesheld: 36,
-                    classesattended: 32
+                    classesattended: 35
                 },
                 grade: {
                     allotedcredits: 4,
                     marks: 88,
-                    predgrade: "A"
+                    predgrade: "O"
                 }
             },
-            ACS: {
+            {  
+                subject: "ACS",
                 attendance: {
                     totalclasses: 40,
                     classesheld: 36,
-                    classesattended: 32
+                    classesattended: 31
                 },
                 grade: {
                     allotedcredits: 4,
@@ -144,7 +154,7 @@ const users=
                     predgrade: "O"
                 }
             }
-        },
+            ],
         notifications: []
       }
 ]
