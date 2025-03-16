@@ -45,249 +45,36 @@
             </div>
             <hr>
             <div class="problems">
-                <div class="problem outfit">
-                    <div class="votes">
-                        <p>1 votes</p>
-                        <p>1 answer</p>
-                        <p>21 views</p>
-                    </div>
-                    <div class="main">
-                        <h4>find time half hour before "06:00 AM" in sql</h4>
-                        <p>I have a column of times in my table. I believe they are now in strings format. The format of each time is just represented in hours, for example "06:00 AM". How can I get a time half hour ...</p>
-                        <div class="tags">
-                            <div><p>sql</p></div>
-                            <div><p>string</p></div>
-                            <div><p>time</p></div>
+                
+                <% questions.forEach((question) => { %>
+                    <div class="problem outfit">
+                        <div class="votes">
+                            <p><%= question.votes %> votes</p>
+                            <p><%= question.answers.length %> answers</p>
+                            <p><%= question.views %> views</p>
+                        </div>
+                        <div class="main">
+                            <h4><%= question.heading %></h4>
+                            <p><%= question.desc.slice(0, 100) %>...</p> 
+                            <div class="tags">
+                                <% question.tags.forEach(tag => { %>
+                                    <div><p><%= tag %></p></div>
+                                <% }) %>
+                            </div>
+                        </div>
+                        <div class="user">
+                            <div class="useruser">
+                                <img src="./assets/duck_with_A_gun 1.png" alt="">
+                                <p><%= question.asker %></p>
+                            </div>
+                        </div>
+                        <div class="updownvote">
+                            <div class="upvote-triangle"></div>
+                            <div class="downvote-triangle"></div>
                         </div>
                     </div>
-                    <div class="user">
-                        <div class="useruser">
-                            <img src="./assets/duck_with_A_gun 1.png" alt="">
-                            <p>terrorist_duck_911467</p>
-                        </div>
-                    </div>
-                    <div class="updownvote">
-                        <div class="upvote-triangle"></div> 
-                        <div class="downvote-triangle"></div>                           
-                    </div>
-                </div>
-                <hr class="problemline">
-                <div class="problem outfit">
-                    <div class="votes">
-                        <p>1 votes</p>
-                        <p>1 answer</p>
-                        <p>21 views</p>
-                    </div>
-                    <div class="main">
-                        <h4>find time half hour before "06:00 AM" in sql</h4>
-                        <p>I have a column of times in my table. I believe they are now in strings format. The format of each time is just represented in hours, for example "06:00 AM". How can I get a time half hour ...</p>
-                        <div class="tags">
-                            <div><p>sql</p></div>
-                            <div><p>string</p></div>
-                            <div><p>time</p></div>
-                        </div>
-                    </div>
-                    <div class="user">
-                        <div class="useruser">
-                            <img src="./assets/duck_with_A_gun 1.png" alt="">
-                            <p>terrorist_duck_911467</p>
-                        </div>
-                    </div>
-                    <div class="updownvote">
-                        <div class="upvote-triangle"></div> 
-                        <div class="downvote-triangle"></div>                           
-                    </div>
-                </div>
-                <hr class="problemline">
-                <div class="problem outfit">
-                    <div class="votes">
-                        <p>1 votes</p>
-                        <p>1 answer</p>
-                        <p>21 views</p>
-                    </div>
-                    <div class="main">
-                        <h4>find time half hour before "06:00 AM" in sql</h4>
-                        <p>I have a column of times in my table. I believe they are now in strings format. The format of each time is just represented in hours, for example "06:00 AM". How can I get a time half hour ...</p>
-                        <div class="tags">
-                            <div><p>sql</p></div>
-                            <div><p>string</p></div>
-                            <div><p>time</p></div>
-                        </div>
-                    </div>
-                    <div class="user">
-                        <div class="useruser">
-                            <img src="./assets/duck_with_A_gun 1.png" alt="">
-                            <p>terrorist_duck_911467</p>
-                        </div>
-                    </div>
-                    <div class="updownvote">
-                        <div class="upvote-triangle"></div> 
-                        <div class="downvote-triangle"></div>                           
-                    </div>
-                </div>
-                <hr class="problemline">
-                <div class="problem outfit">
-                    <div class="votes">
-                        <p>1 votes</p>
-                        <p>1 answer</p>
-                        <p>21 views</p>
-                    </div>
-                    <div class="main">
-                        <h4>find time half hour before "06:00 AM" in sql</h4>
-                        <p>I have a column of times in my table. I believe they are now in strings format. The format of each time is just represented in hours, for example "06:00 AM". How can I get a time half hour ...</p>
-                        <div class="tags">
-                            <div><p>sql</p></div>
-                            <div><p>string</p></div>
-                            <div><p>time</p></div>
-                        </div>
-                    </div>
-                    <div class="user">
-                        <div class="useruser">
-                            <img src="./assets/duck_with_A_gun 1.png" alt="">
-                            <p>terrorist_duck_911467</p>
-                        </div>
-                    </div>
-                    <div class="updownvote">
-                        <div class="upvote-triangle"></div> 
-                        <div class="downvote-triangle"></div>                           
-                    </div>
-                </div>
-                <hr class="problemline">
-                <div class="problem outfit">
-                    <div class="votes">
-                        <p>1 votes</p>
-                        <p>1 answer</p>
-                        <p>21 views</p>
-                    </div>
-                    <div class="main">
-                        <h4>find time half hour before "06:00 AM" in sql</h4>
-                        <p>I have a column of times in my table. I believe they are now in strings format. The format of each time is just represented in hours, for example "06:00 AM". How can I get a time half hour ...</p>
-                        <div class="tags">
-                            <div><p>sql</p></div>
-                            <div><p>string</p></div>
-                            <div><p>time</p></div>
-                        </div>
-                    </div>
-                    <div class="user">
-                        <div class="useruser">
-                            <img src="./assets/duck_with_A_gun 1.png" alt="">
-                            <p>terrorist_duck_911467</p>
-                        </div>
-                    </div>
-                    <div class="updownvote">
-                        <div class="upvote-triangle"></div> 
-                        <div class="downvote-triangle"></div>                           
-                    </div>
-                </div>
-                <hr class="problemline">
-                <div class="problem outfit">
-                    <div class="votes">
-                        <p>1 votes</p>
-                        <p>1 answer</p>
-                        <p>21 views</p>
-                    </div>
-                    <div class="main">
-                        <h4>find time half hour before "06:00 AM" in sql</h4>
-                        <p>I have a column of times in my table. I believe they are now in strings format. The format of each time is just represented in hours, for example "06:00 AM". How can I get a time half hour ...</p>
-                        <div class="tags">
-                            <div><p>sql</p></div>
-                            <div><p>string</p></div>
-                            <div><p>time</p></div>
-                        </div>
-                    </div>
-                    <div class="user">
-                        <div class="useruser">
-                            <img src="./assets/duck_with_A_gun 1.png" alt="">
-                            <p>terrorist_duck_911467</p>
-                        </div>
-                    </div>
-                    <div class="updownvote">
-                        <div class="upvote-triangle"></div> 
-                        <div class="downvote-triangle"></div>                           
-                    </div>
-                </div>
-                <hr class="problemline">
-                <div class="problem outfit">
-                    <div class="votes">
-                        <p>1 votes</p>
-                        <p>1 answer</p>
-                        <p>21 views</p>
-                    </div>
-                    <div class="main">
-                        <h4>find time half hour before "06:00 AM" in sql</h4>
-                        <p>I have a column of times in my table. I believe they are now in strings format. The format of each time is just represented in hours, for example "06:00 AM". How can I get a time half hour ...</p>
-                        <div class="tags">
-                            <div><p>sql</p></div>
-                            <div><p>string</p></div>
-                            <div><p>time</p></div>
-                        </div>
-                    </div>
-                    <div class="user">
-                        <div class="useruser">
-                            <img src="./assets/duck_with_A_gun 1.png" alt="">
-                            <p>terrorist_duck_911467</p>
-                        </div>
-                    </div>
-                    <div class="updownvote">
-                        <div class="upvote-triangle"></div> 
-                        <div class="downvote-triangle"></div>                           
-                    </div>
-                </div>
-                <hr class="problemline">
-                <div class="problem outfit">
-                    <div class="votes">
-                        <p>1 votes</p>
-                        <p>1 answer</p>
-                        <p>21 views</p>
-                    </div>
-                    <div class="main">
-                        <h4>find time half hour before "06:00 AM" in sql</h4>
-                        <p>I have a column of times in my table. I believe they are now in strings format. The format of each time is just represented in hours, for example "06:00 AM". How can I get a time half hour ...</p>
-                        <div class="tags">
-                            <div><p>sql</p></div>
-                            <div><p>string</p></div>
-                            <div><p>time</p></div>
-                        </div>
-                    </div>
-                    <div class="user">
-                        <div class="useruser">
-                            <img src="./assets/duck_with_A_gun 1.png" alt="">
-                            <p>terrorist_duck_911467</p>
-                        </div>
-                    </div>
-                    <div class="updownvote">
-                        <div class="upvote-triangle"></div> 
-                        <div class="downvote-triangle"></div>                           
-                    </div>
-                </div>
-                <hr class="problemline">
-                <div class="problem outfit">
-                    <div class="votes">
-                        <p>1 votes</p>
-                        <p>1 answer</p>
-                        <p>21 views</p>
-                    </div>
-                    <div class="main">
-                        <h4>find time half hour before "06:00 AM" in sql</h4>
-                        <p>I have a column of times in my table. I believe they are now in strings format. The format of each time is just represented in hours, for example "06:00 AM". How can I get a time half hour ...</p>
-                        <div class="tags">
-                            <div><p>sql</p></div>
-                            <div><p>string</p></div>
-                            <div><p>time</p></div>
-                        </div>
-                    </div>
-                    <div class="user">
-                        <div class="useruser">
-                            <img src="./assets/duck_with_A_gun 1.png" alt="">
-                            <p>terrorist_duck_911467</p>
-                        </div>
-                    </div>
-                    <div class="updownvote">
-                        <div class="upvote-triangle"></div> 
-                        <div class="downvote-triangle"></div>                           
-                    </div>
-                </div>
-                <hr class="problemline">
+                    <hr class="problemline">
+                <% }); %>
             </div>
         </div>
 

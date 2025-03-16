@@ -9,12 +9,13 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import users from "./models/user.js";
 import bellgraph from "./models/bellgraph.js";
+import questions from "./models/question.js";
 
 
 env.config();
 const app = express();
 app.set("view engine", "ejs");
-app.use(express.static("public"));
+app.use(express.static("public  "));
 app.use(express.urlencoded({ extended: true }));
 
 app.use(
@@ -294,8 +295,19 @@ app.get("/dashboard", (req, res) => {
 
 app.get("/problemslvfrm", (req, res) => {
   if (req.session.user) {
-    res.render("Problemslvfrm.ejs");
+    res.render("Problemslvfrm.ejs", {
+      questions: questions
+    });
   } else {
+    res.redirect("/");
+  }
+});
+
+app.get("/problemopen", (req, res)=>{
+  if(req.session.user){
+    res.render("Problemopen.ejs");
+  }
+  else{
     res.redirect("/");
   }
 });
@@ -317,7 +329,6 @@ app.get("/bellgraph", (req, res) => {
     res.redirect("/");
   }
 });
-
 
 
 app.listen(process.env.PORT);
