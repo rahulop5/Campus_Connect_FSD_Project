@@ -34,7 +34,7 @@ const users=
                 grade: {
                     allotedcredits: 4,
                     marks: 88,
-                    predgrade: "B"
+                    predgrade: "D"
                 }
             },
             FFSD: {
