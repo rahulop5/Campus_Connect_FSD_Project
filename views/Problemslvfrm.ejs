@@ -54,7 +54,7 @@
                             <p><%= question.views %> views</p>
                         </div>
                         <div class="main">
-                            <h4><%= question.heading %></h4>
+                            <a href="/problemopen/<%= question.id %>" style="text-decoration: none;"><h4><%= question.heading %></h4></a>
                             <p><%= question.desc.slice(0, 100) %>...</p> 
                             <div class="tags">
                                 <% question.tags.forEach(tag => { %>
@@ -67,10 +67,6 @@
                                 <img src="./assets/duck_with_A_gun 1.png" alt="">
                                 <p><%= question.asker %></p>
                             </div>
-                        </div>
-                        <div class="updownvote">
-                            <div class="upvote-triangle"></div>
-                            <div class="downvote-triangle"></div>
                         </div>
                     </div>
                     <hr class="problemline">

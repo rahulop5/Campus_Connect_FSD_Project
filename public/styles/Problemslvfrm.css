@@ -175,7 +175,7 @@ body{
     margin-bottom: 40px;
 }
 .votes{
-    width: 5%;
+    width: 8%;
 }
 
 .votes>p{
@@ -187,7 +187,8 @@ body{
     width: 65%;
 }
 
-.main>h4{
+.main h4{
+    color: #FFF;
     margin-bottom: 10px;
 }
 
@@ -229,44 +230,6 @@ body{
 
 .useruser>p{
     font-size: 15px;
-}
-
-.updownvote{
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    width: 12%;
-}
-
-.upvote-triangle {
-    width: 0;
-    height: 0;
-    border-left: 15px solid transparent;
-    border-right: 15px solid transparent;
-    border-bottom: 20px solid #ccc;
-    cursor: pointer;
-    transition: border-color 0.3s ease;
-    margin-bottom: 15px;
-    border-radius: 2%;
-}
-
-.upvote-triangle:hover {
-    border-bottom-color: green;
-}
-
-.downvote-triangle {
-    width: 0;
-    height: 0;
-    border-left: 15px solid transparent;
-    border-right: 15px solid transparent;
-    border-top: 20px solid #ccc;
-    cursor: pointer;
-    transition: border-color 0.3s ease;
-}
-
-.downvote-triangle:hover {
-    border-top-color: red;
 }
 
 .problemline{

@@ -303,14 +303,23 @@ app.get("/problemslvfrm", (req, res) => {
   }
 });
 
-app.get("/problemopen", (req, res)=>{
+app.get("/problemopen/:id", (req, res)=>{
   if(req.session.user){
-    res.render("Problemopen.ejs");
+    const questionId = req.params.id;
+    const question = questions.find(q => q.id == questionId);
+    if (question) {
+      res.render("Problemopen.ejs", {
+        question: question
+      });
+    } else {
+      res.status(404).send("Question not found");
+    }
   }
   else{
     res.redirect("/");
   }
 });
+
 
 app.get("/attendance", (req, res) => {
   res.send("this is the attendance page")

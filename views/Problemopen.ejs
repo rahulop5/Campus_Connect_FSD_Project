@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <link rel="stylesheet" href="./styles/Problemopen.css">
+    <link rel="stylesheet" href="/styles/Problemopen.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&family=Rubik:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
@@ -16,24 +16,22 @@
             <div class="toptop">
                 <div class="top">
                     <div class="searchques">
-                        <h1 class="outfit">How to ignore certain patterns when using git diff? </h1>
+                        <h1 class="outfit"><%= question.heading %></h1>
                     </div>
                 </div>
                 <div class="po_qdetails outfit">
-                    <p>Modified 5 min ago</p>
-                    <p>Asked 5 min ago</p>
-                    <p>Viewed 307 times</p>
+                    <p>Viewed <%= question.views %> times</p>
                 </div>
                 <div class="searchquesinput">
                     <div class="outfit po_reward">
-                        <p>A Reward of +50 wealth  is offered for this question   <span>✨</span></p>
+                        <p>A Reward of +<%= question.wealth %> wealth  is offered for this question   <span>✨</span></p>
                     </div>
                     <div class="input-container">
                         <div class="input">
                           <form action="">
                             <div class="advsearch">
                               <input type="text" placeholder="Search a Question">
-                              <button type="submit"><img src="./assets/search.png" alt=""></button>
+                              <button type="submit"><img src="/assets/search.png" alt=""></button>
                             </div>
                           </form>
                         </div>  
@@ -42,7 +40,7 @@
                         </div>
                     </div>                    
                     <div class="filter">
-                        <button><img src="./assets/filter (1).png" alt=""></button>
+                        <button><img src="/assets/filter (1).png" alt=""></button>
                     </div>
                 </div>
             </div>
@@ -52,71 +50,26 @@
                     <div class="po_qelab">
                         <div class="updownvote">
                             <div class="upvote-triangle"></div> 
-                            <div class="po_qnoofvotes outfit"><p>10</p></div>
+                            <div class="po_qnoofvotes outfit"><p><%= question.votes %></p></div>
                             <div class="downvote-triangle"></div>
-                            <div><img src="./assets/save.png" alt="" class="po_save"></div>                           
+                            <div><img src="/assets/save.png" alt="" class="po_save"></div>                           
                         </div>
                         <div class="po_qdesc outfit">
                             <div>
                                 <p>
-                                    I would like to ignore certain changes when using git diff (such as version changes). I tried using the -G flag, but it  doesn’t seem to work as expected. I also saw a reference to a regex in this question, but that doesn't seem to help. I am hoping to do something like this:
-                                </p>
-                            </div>
-                            <div class="po_qdesccode">
-                                <p>
-                                    git diff --unified=O -G --version
-                                </p>
-                            </div>
-                            <div>
-                                <p>
-                                    I would expect this to include anything with <version> in it, but that doesn't happen.  It seems to not seem to make any difference.  I'd like to invert the -G if possible, but as a first step to get a basic regex working.
+                                    <%= question.desc %>
                                 </p>
                             </div>
                             <div class="po_qtags">
-                                    <div><p>git</p></div>
-                                    <div><p>git-diff</p></div>
+                                <% question.tags.forEach((tag) => { %>
+                                    <div><p><%= tag %></p></div>
+                                <% }) %>
                             </div>
                             <div class="po_user">
                                 <div class="po_useruser">
-                                    <img src="./assets/duck_with_A_gun 1.png" alt="">
-                                    <p>terrorist_duck_911467</p>
+                                    <img src="/assets/duck_with_A_gun 1.png" alt="">
+                                    <p><%= question.asker %></p>
                                 </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="po_comments outfit">
-                        <div class="po_commheading"><p>Comments :</p></div>
-                        <div class="po_addcomm">
-                            <img src="./assets/user(2) 1.png" alt="">
-                            <div>
-                                <input type="text" placeholder="Add a Comment">
-                                <img src="./assets/send_comment.png" alt="">
-                            </div>
-                        </div>
-                        <div class="po_comment">
-                            <div class="po_commentuser">
-                                <img src="./assets/duck_with_A_gun 1.png" alt="">
-                            </div>
-                            <div class="po_commentcomment">
-                                <p>terrorist_duck_911</p>
-                                <p>Use a textconv to strip text matching your version number pattern before diffing.</p>
-                            </div>
-                            <div class="po_commentreply">
-                                <img src="./assets/reply_comment.png" alt="">
-                                <p>Reply</p>
-                            </div>
-                        </div>
-                        <div class="po_comment">
-                            <div class="po_commentuser">
-                                <img src="./assets/duck_with_A_gun 1.png" alt="">
-                            </div>
-                            <div class="po_commentcomment">
-                                <p>terrorist_duck_911</p>
-                                <p>Use a textconv to askd;als  hfnksd jfoi fiklsdjfljlstrip text matching your version number pattern before diffing.</p>
-                            </div>
-                            <div class="po_commentreply">
-                                <img src="./assets/reply_comment.png" alt="">
-                                <p>Reply</p>
                             </div>
                         </div>
                     </div>
@@ -124,95 +77,28 @@
                         <div class="po_ansheading">
                             <p>Answers :</p>
                         </div>
-                        <div class="po_anselab">
-                            <div class="ansupdownvote">
+                        <% question.answers.forEach(answer => { %>
+                            <div class="po_anselab">
+                              <div class="ansupdownvote">
                                 <div class="upvote-triangle"></div> 
-                                <div class="po_qnoofvotes outfit"><p>2</p></div>
+                                <div class="po_qnoofvotes outfit"><p><%= answer.votes %></p></div>
                                 <div class="downvote-triangle"></div>
-                                <div><img src="./assets/save.png" alt="" class="po_save"></div>                           
+                              </div>
+                              <div class="po_ansdesc outfit">
+                                <p><%= answer.desc %></p>
+                              </div>
                             </div>
-                            <div class="po_ansdesc outfit">
-                                <p>When you want to temporarily ignore changes, when you want to do a diff  or a blame without seeing those changes, you can use a "textconv" filter that normalizes the text you diff.  I use those to do things like strip embedded timestamps out of generated html when diffing, quickest to  hand atm is so my what-changed diffs don't show me things I don't care about. If you want to see the results of a diff ignoring case, try you're done, take it out.</p>
-                                <p>Code :</p>
-                                <div class="po_qdesccode">
-                                    <p>
-                                        [diff "doc-html"] textconv = "sed  's,<span class=\"version\">Factorio [0-9.]*</span>,,;s,<[^/>][^>]*>,\\n&,g'" wordRegex = "<[^>]*\\>|[^< \\t\\n]*"
-                                        <br>
-                                        <br>
-                                        doc-html/*.html diff=doc-html *.cfg -diff
-                                        <br>
-                                        <br>
-                                        [diff "nocase"]
-                                        textconv="tr A-Z a-z"
-                                    </p>
-                                </div>
-                                <div class="po_user">
-                                    <div class="po_useruser">
-                                        <img src="./assets/duck_with_A_gun 1.png" alt="">
-                                        <p>terrorist_duck_911467</p>
-                                    </div>
-                                </div>
-
-                            </div>
-                        </div>
-                    </div>
-                    <div class="po_comments outfit">
-                        <div class="po_commheading"><p>Comments :</p></div>
-                        <div class="po_addcomm">
-                            <img src="./assets/user(2) 1.png" alt="">
-                            <div>
-                                <input type="text" placeholder="Add a Comment">
-                                <img src="./assets/send_comment.png" alt="">
-                            </div>
-                        </div>
-                        <div class="po_comment">
-                            <div class="po_commentuser">
-                                <img src="./assets/duck_with_A_gun 1.png" alt="">
-                            </div>
-                            <div class="po_commentcomment">
-                                <p>terrorist_duck_911</p>
-                                <p>Use a textconv to strip text matching your version number pattern before diffing.</p>
-                            </div>
-                            <div class="po_commentreply">
-                                <img src="./assets/reply_comment.png" alt="">
-                                <p>Reply</p>
-                            </div>
-                        </div>
-                        <div class="po_comment">
-                            <div class="po_commentuser">
-                                <img src="./assets/duck_with_A_gun 1.png" alt="">
-                            </div>
-                            <div class="po_commentcomment">
-                                <p>terrorist_duck_911</p>
-                                <p>Use a textconv to askd;als  hfnksd jfoi fiklsdjfljlstrip text matching your version number pattern before diffing.</p>
-                            </div>
-                            <div class="po_commentreply">
-                                <img src="./assets/reply_comment.png" alt="">
-                                <p>Reply</p>
-                            </div>
-                        </div>
-                        <div class="po_comment">
-                            <div class="po_commentuser">
-                                <img src="./assets/duck_with_A_gun 1.png" alt="">
-                            </div>
-                            <div class="po_commentcomment">
-                                <p>terrorist_duck_911</p>
-                                <p>Use a textconv to askd;als  hfnksd jfoi fiklsdjfljlstrip text matching your version number pattern before diffing.</p>
-                            </div>
-                            <div class="po_commentreply">
-                                <img src="./assets/reply_comment.png" alt="">
-                                <p>Reply</p>
-                            </div>
-                        </div>
+                            <hr class="hr_answer">
+                          <% }) %>
                     </div>
                     <div class="outfit po_userans">
                         <div class="po_useransheading"><p>Answer to the Question :</p></div>
                         <div class="po_useranscontainer">
                             <div class="po_useranstools">
-                                <img src="./assets/bold.png" alt="">
-                                <img src="./assets/italic.png" alt="">
-                                <img src="./assets/heading.png" alt="">
-                                <img src="./assets/codeansbox.png" alt="">
+                                <img src="/assets/bold.png" alt="">
+                                <img src="/assets/italic.png" alt="">
+                                <img src="/assets/heading.png" alt="">
+                                <img src="/assets/codeansbox.png" alt="">
                                 <div><p>Submit</p></div>
                             </div>
                             <textarea type="textarea" class="po_useransbox"></textarea>
@@ -225,30 +111,30 @@
                         <hr class="noticeline">
                         <div class="po_noticenews">
                             <div>
-                                <img src="./assets/pin.png" alt="">
+                                <img src="/assets/pin.png" alt="">
                                 <p>Abhisarga night concert ticket sale is now live! </p>
                             </div>
                             <div>
-                                <img src="./assets/pin.png" alt="">
+                                <img src="/assets/pin.png" alt="">
                                 <p>Recharge Point now has Burgers because of a certain someone!</p>
                             </div>
                             <div>
-                                <img src="./assets/pin.png" alt="">
+                                <img src="/assets/pin.png" alt="">
                                 <p>Enigma , E-Cell , TedX are new Trend Setters!</p>
                             </div>
                         </div>
                         <hr class="noticeline">
                         <div class="po_noticenews">
                             <div>
-                                <img src="./assets/premium.png" alt="">
+                                <img src="/assets/premium.png" alt="">
                                 <p>Campus Connect now brings you Premium at Rupees 1000 ONLY!</p>
                             </div>
                             <div>
-                                <img src="./assets/premium.png" alt="">
+                                <img src="/assets/premium.png" alt="">
                                 <p>Get 30% OFF using student id verification!</p>
                             </div>
                             <div>
-                                <img src="./assets/premium.png" alt="">
+                                <img src="/assets/premium.png" alt="">
                                 <p>Campus Connect now can track your attendance for you!</p>
                             </div>
                         </div>
@@ -259,6 +145,6 @@
                 </div>
             </div>
         </div>
-        <script src="./scripts/problemopen.js"></script>
+        <script src="/scripts/problemopen.js"></script>
 </body>
 </html>

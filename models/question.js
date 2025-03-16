@@ -1,6 +1,7 @@
 const questions=
 [
     {
+        id: 1,
         heading: "How to ignore certain patterns when using git diff?",
         desc: "I would like to ignore certain changes when using git diff (such as version changes). I tried using the -G flag, but it doesn’t seem to work as expected. I also saw a reference to a regex in this question, but that doesn't seem to help. I am hoping to do something like this:",
         votes: 10,
@@ -11,7 +12,7 @@ const questions=
         views: 306,
         answers: [
             {
-                desc: "maybe use chatgpt??",
+                desc: "maybe use chatgpt?? jus kiddin bro use deepseek",
                 votes: 2,
                 answerer: 2
             },
@@ -23,6 +24,7 @@ const questions=
         ]
     },
     {
+        id: 2,
         heading: "How to rebase a branch in Git without losing commits?",
         desc: "I am trying to rebase a feature branch onto the main branch, but I'm worried about losing some commits during the process. Can anyone explain the correct approach to rebase safely?",
         votes: 12,
@@ -40,6 +42,7 @@ const questions=
         ]
     },
     {
+        id: 3,
         heading: "How to resolve merge conflicts in Git?",
         desc: "I keep running into merge conflicts when trying to merge branches in Git. What are some best practices for resolving these conflicts, especially in large teams?",
         votes: 25,
@@ -62,6 +65,7 @@ const questions=
         ]
     },
     {
+        id: 4,
         heading: "How to cherry-pick a commit in Git?",
         desc: "I have a commit from another branch that I want to apply to my current branch. I’ve heard about cherry-picking, but I'm not sure how to use it. Can anyone help?",
         votes: 8,

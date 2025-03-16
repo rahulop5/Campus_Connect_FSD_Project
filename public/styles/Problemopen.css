@@ -3,9 +3,15 @@
     padding: 0;
 }
 
+.hr_answer{
+    width: 80%;
+    /* margin-left: auto;
+    margin-right: auto; */
+    margin: 20px auto;
+}
+
 body{
     background-color: #090909;
-    height: 400vh;
 }
 
 .outfit{
@@ -321,93 +327,6 @@ body{
     font-size: 15px;
 }
 
-.po_comments{
-    margin-left: 100px;
-    margin-top: 40px;
-}
-
-.po_commheading{
-    font-size: 22px;
-}
-
-.po_addcomm{
-    display: flex;
-    margin-top: 20px;
-    margin-bottom: 25px;
-}
-
-.po_addcomm>img{
-    height: 55px;
-    width: 55px;
-}
-
-.po_addcomm>div{
-    margin-left: 20px;
-    display: flex;
-    border-bottom: 1px solid white;
-    align-items: center;
-    width: 100%;
-}
-
-.po_addcomm>div>input{
-    background: #090909;
-    border: none;
-    color: white;
-    padding: 15px;
-    padding-left: 0;
-    font-size: 20px;
-    width: 100%;
-}
-
-.po_addcomm>div>input::placeholder{
-    font-size: 20px;
-    color: rgba(255, 255, 255, 0.58);
-}
-
-.po_addcomm>div>input:focus{
-    outline: none;
-}
-
-.po_addcomm>div>img{
-    height: 30px;
-    width: 30px;
-    margin-left: auto;
-    margin-right: 20px;
-}
-
-.po_comment{
-    margin-top: 10px;
-    border-radius: 5px;
-    border: 1px solid rgba(255, 255, 255, 0.22);
-    background: rgba(217, 217, 217, 0.09);
-    display: flex;
-    align-items: center;
-    padding: 25px 15px;
-}
-
-.po_commentuser{
-    margin-right: 10px;
-}
-
-.po_commentuser>img{
-    height: 40px;
-    width: 40px;
-}
-
-.po_commentcomment> :nth-child(1){
-    font-weight: bold;
-    font-size: 15px;
-}
-
-.po_commentreply{
-    margin-left: auto;
-}
-
-.po_commentreply>img{
-    height: 25px;
-    width: 25px;
-}
-
 .po_ansheading{
     margin-left: 40px;
     margin-top: 40px;
@@ -453,7 +372,6 @@ body{
 
 .po_useranstools{
     display: flex;
-    /* padding: 15px; */
     gap: 10px;
     align-items: center;
     margin-bottom: 15px;
@@ -556,7 +474,7 @@ body{
     border: 1px solid #FFF;
     background: rgba(217, 217, 217, 0.07);
     box-shadow: 0px 0px 0px 0px rgba(72, 255, 0, 0.68);
-    height: 200vh;
+    height: 100vh;
     margin-right: 15px;
     margin-left: 15px;
     margin-top: 25px;
