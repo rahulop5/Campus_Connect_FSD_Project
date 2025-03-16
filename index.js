@@ -323,11 +323,9 @@ app.get("/problemopen/:id", (req, res)=>{
 });
 
 app.post('/upvote-question', (req, res) => {
-  console.log(req.body);
   const questionId = req.body.id;
 
   const question = questions.find(q => q.id === questionId);
-  console.log(question);
   if (question) {
     question.votes += 1;
     res.json({ votes: question.votes });
@@ -373,6 +371,35 @@ app.post('/downvote-answer', (req, res) => {
   } else {
     res.status(404).send('Answer not found');
   }
+});
+
+app.post('/submit-answer', (req, res) => {
+  const { answerText } = req.body;
+  const questionId=req.body.questionId.toString();
+
+  // Find the question by id
+  const question = questions.find(q => q.id === questionId);
+  if (!question) {
+      return res.status(404).json({ success: false, message: 'Question not found' });
+  }
+
+  // Create a new answer object
+  const newAnswer = {
+      desc: answerText,
+      votes: 0,
+      answerer: Date.now().toString()  // Temporary unique ID for the answerer (you could use the logged-in user's ID)
+  };
+
+  // Add the new answer to the question
+  question.answers.push(newAnswer);
+
+  // Respond with success and return the new answer details
+  res.json({
+      success: true,
+      questionId: question.id,
+      answerId: newAnswer.answerer,  // Assuming answerer is unique
+      answerText: newAnswer.desc
+  });
 });
 
 
