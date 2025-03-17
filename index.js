@@ -477,5 +477,9 @@ app.get("/bellgraph", (req, res) => {
   }
 });
 
+app.get("/ask", (req, res)=>{
+  res.render("askquestion.ejs");
+})
+
 
 app.listen(process.env.PORT);

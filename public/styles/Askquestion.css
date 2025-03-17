@@ -1,0 +1,250 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: #090909;
+    /* height: 400vh; */
+    color: white;
+}
+
+.outfit {
+    font-family: "Outfit", serif;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-style: normal;
+}
+
+.ask_mainpage {
+    margin-left: 75px;
+    padding-top: 20px;
+    margin-bottom: 100px;
+}
+
+.welcome {
+    background: linear-gradient(90deg, #2B9900 0%, #949494 73.9%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-size: 24px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: normal;
+    display: inline; 
+    margin: 20px;
+}
+
+.addq{
+    color: #FFF;
+    font-size: 80px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+    margin-left: 45px;
+}
+
+.hrhr{
+    width: 95%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.mainpg{
+    display: flex;
+    gap: 50px;
+    margin-top: 50px;
+    margin-bottom: 50px;
+}
+
+
+
+.po_noticeboard{
+    border-radius: 9px;
+    border: 1px solid #48FF00;
+    background: rgba(217, 217, 217, 0.07);
+    box-shadow: 0px 0px 0px 0px rgba(72, 255, 0, 0.68);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-right: 10px;
+    margin-left: 10px;
+    padding-top: 20px;
+}
+
+.po_noticeboard>p{
+    font-size: 25px;
+    margin-bottom: 25px;
+}
+
+.po_noticenews{
+    width: 90%;
+    margin-bottom: 21px;
+    margin-top: 21px;
+}
+
+.po_noticenews>div{
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+    margin-top: 15px;
+}
+
+.po_noticenews>div>img{
+    height: 22px;
+    width: 22px;
+}
+
+.po_noticenews>div>p{
+    font-size: 12px;
+}
+
+.noticeline{
+    background-color: #48FF00;
+    height: 1px;
+    border: none;
+    width: 75%;
+}
+
+.po_ads{
+    border-radius: 9px;
+    border: 1px solid #FFF;
+    background: rgba(217, 217, 217, 0.07);
+    box-shadow: 0px 0px 0px 0px rgba(72, 255, 0, 0.68);
+    height: 60vh;
+    margin-right: 15px;
+    margin-left: 15px;
+    margin-top: 25px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.po_userans{
+    margin: 50px;
+    margin-left: 100px;
+    width: 100%;
+}
+
+.po_useransheading{
+    font-size: 40px;
+}
+
+.po_useranscontainer{
+    border-radius: 10px;
+    border: 1px solid #949494;
+    background: #000;
+    padding: 20px;
+}
+
+.po_useranstools{
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.po_useranstools>img{
+    height: 25px;
+    width: 25px;
+}
+
+.po_useranstools>img:nth-child(3){
+    margin-left: auto;
+}
+
+.po_useranstools>img:nth-child(4){
+    margin-right: auto;
+}
+
+.po_useranstools>div{
+    padding: 10px 15px;
+    border-radius: 22px;
+    border: 1px solid #FFF;
+    background: #000;
+    box-shadow: 0px -1px 26.9px 7px rgba(148, 148, 148, 0.19) inset, 0px 0px 14.3px -1px #949494;
+}
+
+.po_useranstools>div>p{
+    font-size: 17px;
+}
+
+.po_useransbox{
+    border-radius: 8px;
+    background: rgba(217, 217, 217, 0.14);
+    box-shadow: 0px 4px 5.5px 0px rgba(0, 0, 0, 0.43) inset;
+    height: 300px;
+    border: none;
+    width: 100%;
+    color: white;
+    font-size: 19px;
+    padding: 10px;
+}
+
+.po_useransbox:focus{
+    outline: none;
+}
+
+.mainmain{
+    width: 70%;
+}
+
+form{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+form input{
+    border-radius: 20px;
+    border: 1px solid #949494;
+    background: rgba(217, 217, 217, 0.14);
+    padding: 20px;
+    color: #FFF;
+    font-size: 20px;
+    width: 85%;
+    /* margin-top: 20px; */
+}
+
+
+
+form input::placeholder{
+    color: #FFF;
+    font-size: 20px;
+    opacity: 0.4;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+}
+
+form>div>p{
+    color: #FFF;
+    font-size: 40px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+}
+
+form>button{
+    border-radius: 37.5px;
+    border: 1px solid #2B9900;
+    background: linear-gradient(94deg, rgba(43, 153, 0, 0.50) -18.4%, rgba(55, 55, 55, 0.50) 51.2%, rgba(43, 153, 0, 0.50) 122.21%);
+    padding: 20px 40px;
+    margin-top: 50px;
+}
+
+form>button>p{
+    color: #FFF;
+    font-size: 35px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 40px; /* 114.286% */
+    letter-spacing: -1.75px;
+}
+
+
+.hoho{
+    width: 100%;
+    margin-left: 50px;
+}

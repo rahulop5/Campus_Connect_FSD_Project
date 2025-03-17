@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./styles/Askquestion.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&family=Rubik:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
+    <title>Document</title>
+</head>
+<body class="outfit">
+    <%- include("header.ejs") %>
+    <%- include("sidebar.ejs") %>
+    <div class="ask_mainpage">
+        <p class="welcome">Welcome Rahul</p>
+        <p class="addq">Add Question</p>
+        <hr class="hrhr">
+        <div class="mainpg">
+            <div class="mainmain">
+                <form action="">
+                    <div class="hoho">
+                        <p>Title</p>
+                        <input type="text" placeholder="Title" name="title">
+                    </div>
+                    <div class="outfit po_userans">
+                        <div class="po_useransheading"><p>Answer to the Question :</p></div>
+                        <div class="po_useranscontainer">
+                            <div class="po_useranstools">
+                                <img src="/assets/bold.png" alt="">
+                                <img src="/assets/italic.png" alt="">
+                                <img src="/assets/heading.png" alt="">
+                                <img src="/assets/codeansbox.png" alt="">
+                            </div>
+                            <textarea type="textarea" id="answer-textarea" class="po_useransbox"></textarea>  <!-- Add an id to the textarea -->
+                        </div>
+                    </div>
+                    <div class="hoho">
+                        <p>Tags</p>
+                        <input type="text" placeholder="Tags (coma separated)">
+                    </div>
+                    <button type="submit">
+                        <p>Submit</p>
+                    </button>
+                </form>
+            </div>
+            <div class="db_notice">
+                <div class="po_noticeboard">
+                    <p>Notice!</p>
+                    <hr class="noticeline">
+                    <div class="po_noticenews">
+                        <div>
+                            <img src="/assets/pin.png" alt="">
+                            <p>Abhisarga night concert ticket sale is now live! </p>
+                        </div>
+                        <div>
+                            <img src="/assets/pin.png" alt="">
+                            <p>Recharge Point now has Burgers because of a certain someone!</p>
+                        </div>
+                        <div>
+                            <img src="/assets/pin.png" alt="">
+                            <p>Enigma , E-Cell , TedX are new Trend Setters!</p>
+                        </div>
+                    </div>
+                    <hr class="noticeline">
+                    <div class="po_noticenews">
+                        <div>
+                            <img src="/assets/premium.png" alt="">
+                            <p>Campus Connect now brings you Premium at Rupees 1000 ONLY!</p>
+                        </div>
+                        <div>
+                            <img src="/assets/premium.png" alt="">
+                            <p>Get 30% OFF using student id verification!</p>
+                        </div>
+                        <div>
+                            <img src="/assets/premium.png" alt="">
+                            <p>Campus Connect now can track your attendance for you!</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="po_ads">
+                    <p>Ads Come Here</p>   
+                </div>
+            </div>
+        </div>
+        <hr class="hrhr">
+    </div>
+</body>
+</html>
