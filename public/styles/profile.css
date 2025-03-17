@@ -1,0 +1,284 @@
+svg
+{
+    fill: rgba(31, 31, 31, 0.60);
+    stroke-width: 1px;
+    stroke: #373737;
+    backdrop-filter: blur(2px);
+}
+img
+{
+    border-radius: 40px;
+    border-bottom-right-radius: 24px; 
+    position: absolute;
+    z-index: 1;
+
+}
+body
+{
+    font-family: Outfit;
+    background-color: black;
+    display: flex;
+    height: 100vh;
+    align-items: center;
+    justify-content: center;
+    background: url("/assets/profil.png");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+#bodbod
+{
+    display: flex;
+}
+
+.my_profile
+{
+    width: 45px;
+    color: rgba(255, 255, 255, 0.65);
+    font-size: 50px;
+    margin-right: 25px;
+    z-index: 2;
+    font-family: 'Times New Roman', Times, serif;
+}
+
+#my_profile1
+{
+    margin-bottom: 20px;  
+}
+
+.auth_qa
+{
+    color: white;
+    position: absolute;
+    z-index: 2;
+    margin-left: 500px;
+    margin-top: 36px;
+    display: flex;
+    flex-direction: column;
+    width: 330px;
+}
+
+.auth_q
+{
+    color: rgba(43, 153, 31, 0.50);
+    font-size: 16px;
+}
+
+.auth_a
+{
+    display: flex;
+    justify-content: space-between;
+}
+
+.auth_a > div
+{
+    font-size: 20px;
+}
+
+.edit_mark
+{
+    height: 21px;
+    width: 21px;
+}
+
+.image_div
+{
+    width: 21px;
+}
+
+#second_auth
+{
+    margin-top: 90px;
+}
+
+#third_auth
+{
+    margin-top: 145px;
+}
+
+#fourth_auth
+{
+    margin-top: 195px;
+}
+
+#fifth_auth
+{
+    margin-top: 255px;
+}
+
+#rb_row1
+{
+    position: absolute;
+    z-index: 2;
+    color: white;
+    margin-top: 310px;
+    margin-left: 510px;
+    display: flex;
+    justify-content: space-between;
+    width: 310px;
+}
+
+.rb_r1_col
+{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.rb_r1_q
+{
+    color: rgba(43, 153, 31, 0.50);
+    font-size: 16px;
+}
+
+.rb_r1_a
+{
+    margin-top: 10px;
+    font-size: 22px;
+}
+
+#rb_row2
+{
+    position: absolute;
+    z-index: 2;
+    margin-top: 375px;
+    margin-left: 510px;
+    color: white;
+    display: flex;
+    flex-direction: column;
+}
+
+.rb_r2_q
+{
+    color: rgba(43, 153, 31, 0.50);
+}
+
+#rb_r2_course_r1
+{
+    display: flex;
+    margin-top: 10px;
+    font-size: 22px;
+    width: 310px;
+    justify-content: space-between;
+}
+
+#rb_r2_course_r2
+{
+    display: flex;
+    margin-top: 10px;
+    font-size: 22px;
+    width: 310px;
+    justify-content: space-between;
+}
+
+#seperator_line
+{
+    position: absolute;
+    z-index: 2;
+    margin-top: 290px;
+    margin-left: 450px;
+    width: 1px;
+    height: 202px;
+    background: #373737;
+}
+
+#l_row1
+{
+    position: absolute;
+    z-index: 2;
+    color: white;
+    margin-top: 320px;
+}
+
+.l_r1_col
+{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.l_r1_col_q
+{
+    font-size: 16px;
+    color: rgba(255, 255, 255, 0.80);
+}
+
+#l_r1_c1
+{
+    margin-left: 58px;
+}
+
+.l_r1_col_aimg
+{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100px;
+}
+
+.l_r1_col_a
+{
+    color: #2E9904;
+    font-size: 40px;
+    font-weight: 900;
+}
+
+.l_r1_col_img > img
+{
+    height: 37px;
+    width: 40px;
+}
+
+
+.l_r1_col_img
+{
+    height: 40px;
+    width: 40px;
+}
+
+#l_row1
+{
+    display: flex;
+    justify-content: space-between;
+}
+
+#l_r1_c2
+{
+    margin-left: 120px;
+}
+
+#echelons_a
+{
+    color: #FFD93B;
+}
+
+#l_row2
+{
+    position: absolute;
+    z-index: 2;
+    color: white;
+    margin-top: 410px;
+    display: flex;
+    justify-content: space-between;
+    width: 420px;
+}
+
+#l_r2_c1
+{
+    margin-left: 30px; 
+}
+
+.l_r2_col_a
+{
+    font-size: 40px;
+    font-weight: 900;
+}
+
+.l_r2_col
+{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}

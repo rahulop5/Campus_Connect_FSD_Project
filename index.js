@@ -11,7 +11,6 @@ import users from "./models/user.js";
 import bellgraph from "./models/bellgraph.js";
 import questions from "./models/question.js";
 import cors from "cors";
-import { name } from "ejs";
 
 env.config();
 const app = express();
@@ -127,7 +126,6 @@ passport.use(
 // Signup route with password hashing and JWT creation
 app.post("/auth/signup", async (req, res) => {
   const { name, email, password, confirm_password } = req.body;
-
   if (password !== confirm_password) {
     return res.status(400).json({ message: "Passwords do not match" });
   }
@@ -200,10 +198,10 @@ app.post("/auth/register", (req, res) => {
 app.post("/auth/login", async (req, res) => {
   const { email, password } = req.body;
   const user = users.find((u) => u.email === email);
-  req.session.user = user;
   if (!user) {
     return res.status(400).json({ message: "Invalid email or password" });
   }
+  req.session.user = user;
 
   const isMatch = await bcrypt.compare(password, user.password);
   if (!isMatch) {
@@ -212,7 +210,6 @@ app.post("/auth/login", async (req, res) => {
   // Create JWT token
   const payload = { id: user.id, email: user.email };
   const token = jwt.sign(payload, secretOrKey, { expiresIn: "1h" });
-
   res.redirect("/dashboard");
 });
 
@@ -259,14 +256,6 @@ app.get(
 );
 
 // Logout
-app.get("/logout", (req, res) => {
-  req.logout((err) => {
-    if (err) {
-      return next(err);
-    }
-    res.redirect("/");
-  });
-});
 
 // Other routes
 app.get("/", (req, res) => {
@@ -492,7 +481,6 @@ app.get("/ask", (req, res)=>{
 app.post("/ask", (req, res) => {
   if (req.session.user) {
     const { title, desc, tags } = req.body;
-    console.log(req.body);
     const newId = (questions.length + 1).toString();
     const date = new Date();
     const formattedDate = `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}`;
@@ -517,6 +505,17 @@ app.post("/ask", (req, res) => {
   }
 });
 
+app.get("/profile", (req, res)=>{
+  res.render("profile.ejs");
+});
 
+app.get("/admindash", (req, res)=>{
+  if(req.session.user){
+    res.render("admindashboard.ejs");
+  }
+  else{
+    res.redirect("/");
+  }
+});
 
 app.listen(process.env.PORT);
