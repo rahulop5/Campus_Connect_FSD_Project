@@ -22,193 +22,97 @@
                          <img src="./assets/abhisarga_banner.png" alt="">
                     </div>
                     <div class="db_date">
-                        <p class="db_dateblack">Friday</p>
-                        <p>14</p>
-                        <p class="db_dateblack">March, 2025 </p>
-                    </div>
+                        <p class="db_dateblack"><%= dayOfWeek %></p>
+                        <p><%= day %></p>
+                        <p class="db_dateblack"><%= month %>, <%= year %></p>
+                    </div>                      
                 </div>
                 <div class="db_attengrade">
-                    <div class="db_subject">
+                    <% courses.forEach((course, index) => {  %>                       
+                       <% if(index<3) { %> 
+                      <div class="db_subject">
                         <div class="db_grade">
-                            <p>AI</p>
-                            <p>Predicted Grade</p>
-                            <p>O <span>A</span> B C D P F</p>
+                          <p><%= course.subject %> </p>
+                          <p>Predicted Grade</p>
+                          <p><%= course.grade.predgrade %> <span>A</span> B C D P F</p>
                         </div>
                         <div class="db_attendance">
-                             <p>Attendance</p>
-                             <div class="progress-container">
-                                 <svg width="100" height="100">
-                                     <circle cx="50" cy="50" r="40" class="background-circle"></circle>
-                                     <circle cx="50" cy="50" r="40" class="progress-ring progress-circle"></circle>
-                                    </svg>
-                                    <div class="progress-text" id="progress-text">0%</div>
-                            </div>
+                          <p>Attendance</p>
+                          <div class="progress-container">
+                            <svg width="100" height="100">
+                              <circle cx="50" cy="50" r="40" class="background-circle"></circle>
+                              <circle cx="50" cy="50" r="40" class="progress-ring progress-circle" id="progress-ring-<%= index %>"></circle>
+                            </svg>
+                            <div class="progress-text" id="progress-text-<%= index %>"><%= course.attendancePercentage %>%</div>
+                          </div>
                         </div>
-                    </div>
-                    <div class="db_subject">
-                        <div class="db_grade">
-                            <p>AI</p>
-                            <p>Predicted Grade</p>
-                            <p>O <span>A</span> B C D P F</p>
-                        </div>
-                        <div class="db_attendance">
-                             <p>Attendance</p>
-                             <div class="progress-container">
-                                 <svg width="100" height="100">
-                                     <circle cx="50" cy="50" r="40" class="background-circle"></circle>
-                                     <circle cx="50" cy="50" r="40" class="progress-ring progress-circle"></circle>
-                                    </svg>
-                                    <div class="progress-text" id="progress-text">0%</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="db_subject">
-                        <div class="db_grade">
-                            <p>AI</p>
-                            <p>Predicted Grade</p>
-                            <p>O <span>A</span> B C D P F</p>
-                        </div>
-                        <div class="db_attendance">
-                             <p>Attendance</p>
-                             <div class="progress-container">
-                                 <svg width="100" height="100">
-                                     <circle cx="50" cy="50" r="40" class="background-circle"></circle>
-                                     <circle cx="50" cy="50" r="40" class="progress-ring progress-circle"></circle>
-                                    </svg>
-                                    <div class="progress-text" id="progress-text">0%</div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                </div>
+                      </div>
+                      <% } %>
+                    <% }) %>
+                  </div>
+                  
                 <div class="db_topq">
                     <p>Top Questions of the Week</p>
                     <div>
-                        <div class="problem">
-                            <div class="votes">
-                                <p>1 votes</p>
-                                <p>1 answer</p>
-                                <p>21 views</p>
-                            </div>
-                            <div class="main">
-                                <h4>find time half hour before "06:00 AM" in sql</h4>
-                                <p>I have a column of times in my table. I believe they are now in strings format. The format of each time is just represented in hours, for example "06:00 AM". How can I get a time half hour ...</p>
-                                <div class="tags">
-                                    <div><p>sql</p></div>
-                                    <div><p>string</p></div>
-                                    <div><p>time</p></div>
+                        <% for(var i=0;i<3;i++){ %>
+                            <div class="problem">
+                                <div class="votes">
+                                    <p><%= questions[i].votes %> votes</p>
+                                    <p><%= questions[i].answers.length %> answers</p>
+                                    <p><%= questions[i].views %> views</p>
+                                </div>
+                                <div class="main">
+                                    <h4><%= questions[i].heading %></h4>
+                                    <p><%= questions[i].desc.slice(0, 100) %>...</p>
+                                    <div class="tags">
+                                        <% questions[i].tags.forEach(tag => { %>
+                                            <div><p><%= tag %></p></div>
+                                        <% }) %>
+                                    </div>
+                                </div>
+                                <div class="user">
+                                    <div class="useruser">
+                                        <img src="./assets/duck_with_A_gun 1.png" alt="">
+                                        <p><%= questions[i].asker %></p>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="user">
-                                <div class="useruser">
-                                    <img src="./assets/duck_with_A_gun 1.png" alt="">
-                                    <p>terrorist_duck_911467</p>
-                                </div>
-                            </div>
-                            <div class="updownvote">
-                                <div class="upvote-triangle"></div> 
-                                <div class="downvote-triangle"></div>                           
-                            </div>
-                        </div>
-                        <div class="problem">
-                            <div class="votes">
-                                <p>1 votes</p>
-                                <p>1 answer</p>
-                                <p>21 views</p>
-                            </div>
-                            <div class="main">
-                                <h4>find time half hour before "06:00 AM" in sql</h4>
-                                <p>I have a column of times in my table. I believe they are now in strings format. The format of each time is just represented in hours, for example "06:00 AM". How can I get a time half hour ...</p>
-                                <div class="tags">
-                                    <div><p>sql</p></div>
-                                    <div><p>string</p></div>
-                                    <div><p>time</p></div>
-                                </div>
-                            </div>
-                            <div class="user">
-                                <div class="useruser">
-                                    <img src="./assets/duck_with_A_gun 1.png" alt="">
-                                    <p>terrorist_duck_911467</p>
-                                </div>
-                            </div>
-                            <div class="updownvote">
-                                <div class="upvote-triangle"></div> 
-                                <div class="downvote-triangle"></div>                           
-                            </div>
-                        </div>
-                        <div class="problem">
-                            <div class="votes">
-                                <p>1 votes</p>
-                                <p>1 answer</p>
-                                <p>21 views</p>
-                            </div>
-                            <div class="main">
-                                <h4>find time half hour before "06:00 AM" in sql</h4>
-                                <p>I have a column of times in my table. I believe they are now in strings format. The format of each time is just represented in hours, for example "06:00 AM". How can I get a time half hour ...</p>
-                                <div class="tags">
-                                    <div><p>sql</p></div>
-                                    <div><p>string</p></div>
-                                    <div><p>time</p></div>
-                                </div>
-                            </div>
-                            <div class="user">
-                                <div class="useruser">
-                                    <img src="./assets/duck_with_A_gun 1.png" alt="">
-                                    <p>terrorist_duck_911467</p>
-                                </div>
-                            </div>
-                            <div class="updownvote">
-                                <div class="upvote-triangle"></div> 
-                                <div class="downvote-triangle"></div>                           
-                            </div>
-                        </div>
+                        <% } %>
+
                     </div>
                 </div>
             </div>
             <div class="db_notice">
-                <div class="db_noticeactivities">
-                    <div class="db_votes">
+                <div class="po_noticeboard">
+                    <p>Notice!</p>
+                    <hr class="noticeline">
+                    <div class="po_noticenews">
                         <div>
-                            <p class="db_votesupordown">Upvotes</p>
-                            <p>103</p>
+                            <img src="/assets/pin.png" alt="">
+                            <p>Abhisarga night concert ticket sale is now live! </p>
                         </div>
                         <div>
-                            <p class="db_votesupordown">Downvotes</p>
-                            <p>74</p>
+                            <img src="/assets/pin.png" alt="">
+                            <p>Recharge Point now has Burgers because of a certain someone!</p>
+                        </div>
+                        <div>
+                            <img src="/assets/pin.png" alt="">
+                            <p>Enigma , E-Cell , TedX are new Trend Setters!</p>
                         </div>
                     </div>
-                    <div class="noticehr"></div>
-                    <div class="activities">
-                        <p>Recent Activities</p>
-                        <div class="users">
-                            <div class="user">
-                                <img src="./assets/duck_with_A_gun 1.png" alt="">
-                                <div>
-                                    <p>Abhiram Reddi</p>
-                                    <p>Replied to your question. <br>15 mins ago</p>
-                                </div>
-                            </div>
-                            <div class="user">
-                                <img src="./assets/duck_with_A_gun 1.png" alt="">
-                                <div>
-                                    <p>Abhiram Reddi</p>
-                                    <p>Replied to your question. <br>15 mins ago</p>
-                                </div>
-                            </div>
-                            <div class="user">
-                                <img src="./assets/duck_with_A_gun 1.png" alt="">
-                                <div>
-                                    <p>Abhiram Reddi</p>
-                                    <p>Replied to your question. <br>15 mins ago</p>
-                                </div>
-                            </div>
-                            <div class="user">
-                                <img src="./assets/duck_with_A_gun 1.png" alt="">
-                                <div>
-                                    <p>Abhiram Reddi</p>
-                                    <p>Replied to your question. <br>15 mins ago</p>
-                                </div>
-                            </div>
+                    <hr class="noticeline">
+                    <div class="po_noticenews">
+                        <div>
+                            <img src="/assets/premium.png" alt="">
+                            <p>Campus Connect now brings you Premium at Rupees 1000 ONLY!</p>
+                        </div>
+                        <div>
+                            <img src="/assets/premium.png" alt="">
+                            <p>Get 30% OFF using student id verification!</p>
+                        </div>
+                        <div>
+                            <img src="/assets/premium.png" alt="">
+                            <p>Campus Connect now can track your attendance for you!</p>
                         </div>
                     </div>
                 </div>
@@ -217,6 +121,23 @@
                 </div>
             </div>
         </div>
-        <script src="./scripts/dashboard.js"></script>
+        <script>
+            function setProgress(percent, index) {
+              const circle = document.getElementById(`progress-ring-${index}`);
+              const text = document.getElementById(`progress-text-${index}`);
+              const radius = 40;
+              const circumference = 2 * Math.PI * radius;
+              const offset = circumference * (1 - percent / 100);
+          
+              circle.style.strokeDasharray = `${circumference}`;
+              circle.style.strokeDashoffset = offset;
+              text.innerText = `${percent}%`;
+            }
+          
+            <% courses.forEach((course, index) => { %>
+              setProgress(<%= course.attendancePercentage %>, <%= index %>);
+            <% }) %>
+          </script>
+        <!-- <script src="./scripts/dashboard.js"></script> -->
 </body>
 </html>
