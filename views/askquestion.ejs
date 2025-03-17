@@ -13,37 +13,38 @@
     <%- include("header.ejs") %>
     <%- include("sidebar.ejs") %>
     <div class="ask_mainpage">
-        <p class="welcome">Welcome Rahul</p>
+        <p class="welcome">Welcome <%= name %></p>
         <p class="addq">Add Question</p>
         <hr class="hrhr">
         <div class="mainpg">
             <div class="mainmain">
-                <form action="">
-                    <div class="hoho">
-                        <p>Title</p>
-                        <input type="text" placeholder="Title" name="title">
+                <form action="/ask" method="POST">
+                  <div class="hoho">
+                    <p>Title</p>
+                    <input type="text" placeholder="Title" name="title" required>
+                  </div>
+                  <div class="outfit po_userans">
+                    <div class="po_useransheading"><p>Answer to the Question :</p></div>
+                    <div class="po_useranscontainer">
+                      <div class="po_useranstools">
+                        <img src="/assets/bold.png" alt="">
+                        <img src="/assets/italic.png" alt="">
+                        <img src="/assets/heading.png" alt="">
+                        <img src="/assets/codeansbox.png" alt="">
+                      </div>
+                      <textarea type="textarea" id="answer-textarea" class="po_useransbox" name="desc" required></textarea>  
                     </div>
-                    <div class="outfit po_userans">
-                        <div class="po_useransheading"><p>Answer to the Question :</p></div>
-                        <div class="po_useranscontainer">
-                            <div class="po_useranstools">
-                                <img src="/assets/bold.png" alt="">
-                                <img src="/assets/italic.png" alt="">
-                                <img src="/assets/heading.png" alt="">
-                                <img src="/assets/codeansbox.png" alt="">
-                            </div>
-                            <textarea type="textarea" id="answer-textarea" class="po_useransbox"></textarea>  <!-- Add an id to the textarea -->
-                        </div>
-                    </div>
-                    <div class="hoho">
-                        <p>Tags</p>
-                        <input type="text" placeholder="Tags (coma separated)">
-                    </div>
-                    <button type="submit">
-                        <p>Submit</p>
-                    </button>
+                  </div>
+                  <div class="hoho">
+                    <p>Tags</p>
+                    <input type="text" placeholder="Tags (comma separated)" name="tags" required>
+                  </div>
+                  <button type="submit">
+                    <p>Submit</p>
+                  </button>
                 </form>
-            </div>
+              </div>
+              
             <div class="db_notice">
                 <div class="po_noticeboard">
                     <p>Notice!</p>

@@ -11,6 +11,7 @@ import users from "./models/user.js";
 import bellgraph from "./models/bellgraph.js";
 import questions from "./models/question.js";
 import cors from "cors";
+import { name } from "ejs";
 
 env.config();
 const app = express();
@@ -478,8 +479,44 @@ app.get("/bellgraph", (req, res) => {
 });
 
 app.get("/ask", (req, res)=>{
-  res.render("askquestion.ejs");
+  if(req.session.user){
+    res.render("askquestion.ejs", {
+      name: req.session.user.name, 
+    });
+  }
+  else{
+    res.redirect("/");
+  }
 })
+
+app.post("/ask", (req, res) => {
+  if (req.session.user) {
+    const { title, desc, tags } = req.body;
+    console.log(req.body);
+    const newId = (questions.length + 1).toString();
+    const date = new Date();
+    const formattedDate = `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}`;
+
+    const tagsArray = tags.split(",").map(tag => tag.trim());
+    const newQuestion = {
+      id: newId,
+      heading: title,
+      desc: desc,
+      votes: 0,
+      tags: tagsArray,
+      asker: req.session.user.id, 
+      time: formattedDate,
+      wealth: 0,
+      views: 0,
+      answers: []
+    };
+    questions.push(newQuestion);
+    res.redirect("/problemslvfrm"); 
+  } else {
+    res.redirect("/");
+  }
+});
+
 
 
 app.listen(process.env.PORT);
