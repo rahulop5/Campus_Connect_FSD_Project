@@ -10,11 +10,39 @@ import jwt from "jsonwebtoken";
 import users from "./models/user.js";
 import bellgraph from "./models/bellgraph.js";
 import questions from "./models/question.js";
-import cors from "cors";
+import sqlite3 from 'sqlite3';
+sqlite3.verbose();
+
+const db = new sqlite3.Database('./bellgraph.db');
+
+// // Create the bellgraph table (if it doesn't exist) and insert sample data
+// db.serialize(() => {
+//   db.run(`
+//     CREATE TABLE IF NOT EXISTS bellgraph (
+//       subject TEXT PRIMARY KEY,
+//       range1 INTEGER,
+//       range2 INTEGER,
+//       range3 INTEGER,
+//       range4 INTEGER,
+//       range5 INTEGER,
+//       range6 INTEGER,
+//       range7 INTEGER,
+//       range8 INTEGER
+//     )
+//   `);
+
+//   db.run(`
+//     INSERT OR IGNORE INTO bellgraph (subject, range1, range2, range3, range4, range5, range6, range7, range8) VALUES
+//     ('AI', 5, 10, 15, 25, 35, 50, 60, 65),
+//     ('CCN', 40, 35, 30, 25, 20, 15, 10, 5),
+//     ('FFSD', 20, 30, 50, 70, 65, 40, 25, 15),
+//     ('TOC', 10, 20, 40, 55, 50, 45, 30, 20),
+//     ('ACS', 60, 55, 45, 35, 25, 15, 10, 5)
+//   `);
+// });
 
 env.config();
 const app = express();
-app.use(cors());
 app.set("view engine", "ejs");
 app.use(express.static("public"));
 app.use(express.urlencoded({ extended: true }));
@@ -456,16 +484,38 @@ app.get("/attendance", (req, res) => {
 app.get("/bellgraph", (req, res) => {
   if (req.session.user) {
     const defaultSubject = "AI";
-    res.render("bellgraph.ejs", {
-      subject: defaultSubject,
-      bellgraphData: JSON.stringify(bellgraph),
-      bellgraphSubjects: Object.keys(bellgraph),
-      userinfo: req.session.user.courses[0].grade.predgrade
+
+    // Query to fetch all bellgraph data
+    db.all("SELECT * FROM bellgraph", (err, rows) => {
+      if (err) {
+        console.error(err);
+        return res.status(500).send("Database error");
+      }
+
+      // Construct the bellgraph object dynamically from the database rows
+      const bellgraph = {};
+      rows.forEach(row => {
+        bellgraph[row.subject] = [
+          row.range1, row.range2, row.range3, row.range4,
+          row.range5, row.range6, row.range7, row.range8
+        ];
+      });
+
+      // Prepare the bellgraph data for the default subject
+      const bellgraphData = bellgraph[defaultSubject];
+
+      res.render("bellgraph.ejs", {
+        subject: defaultSubject,
+        bellgraphData: JSON.stringify(bellgraph), // Stringify bellgraph for frontend
+        bellgraphSubjects: Object.keys(bellgraph), // All subjects
+        userinfo: req.session.user.courses[0].grade.predgrade
+      });
     });
   } else {
     res.redirect("/");
   }
 });
+
 
 app.get("/ask", (req, res)=>{
   if(req.session.user){
