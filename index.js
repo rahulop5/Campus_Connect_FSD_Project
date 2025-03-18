@@ -209,8 +209,74 @@ app.post("/auth/register", (req, res) => {
       branch,
       ug: ugYear.toString()
     },
-    courses: {},
-    notifications: []
+    courses: [
+      {
+          subject: "AI",
+          attendance: {
+              totalclasses: 40,
+              classesheld: 36,
+              classesattended: 32
+          },
+          grade: {
+              allotedcredits: 4,
+              marks: 88,
+              predgrade: "O"
+          }
+      },
+      {
+          subject: "CCN",
+          attendance: {
+              totalclasses: 40,
+              classesheld: 36,
+              classesattended: 34
+          },
+          grade: {
+              allotedcredits: 4,
+              marks: 88,
+              predgrade: "O"
+          }
+      },
+      {
+          subject: "FFSD",
+          attendance: {
+              totalclasses: 40,
+              classesheld: 36,
+              classesattended: 30
+          },
+          grade: {
+              allotedcredits: 4,
+              marks: 88,
+              predgrade: "O"
+          }
+      },
+      {
+          subject: "TOC",
+          attendance: {
+              totalclasses: 40,
+              classesheld: 36,
+              classesattended: 35
+          },
+          grade: {
+              allotedcredits: 4,
+              marks: 88,
+              predgrade: "O"
+          }
+      },
+      {  
+          subject: "ACS",
+          attendance: {
+              totalclasses: 40,
+              classesheld: 36,
+              classesattended: 31
+          },
+          grade: {
+              allotedcredits: 4,
+              marks: 88,
+              predgrade: "O"
+          }
+      }
+      ],
+    notifications : ["Abhiram replied to ur question", "saitej is black"],
   };
   req.session.user = {
     ...req.session.user,
@@ -218,7 +284,6 @@ app.post("/auth/register", (req, res) => {
   }
 
   users.push(req.session.user);
-  console.log(users);
   res.redirect("/dashboard");
 });
 
