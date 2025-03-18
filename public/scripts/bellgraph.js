@@ -92,49 +92,4 @@ function updateGraph(inputData) {
         .attr("stroke", "lime")
         .attr("stroke-width", 3)
         .attr("d", line);
-
-    // Tooltip element
-    const tooltip = d3.select("#tooltip");
-
-    // Draw data points and handle hover interaction
-    svg.selectAll("circle")
-        .data(inputData)
-        .enter()
-        .append("circle")
-        .attr("cx", (d, i) => xScale(i))
-        .attr("cy", d => yScale(d))
-        .attr("r", 5)
-        .attr("fill", "lime")
-        .attr("opacity", 0)
-        .on("mouseover", function (event, d) {
-            d3.select(this).transition().duration(100).attr("opacity", 1);
-            tooltip.style("display", "block")
-                .style("left", event.pageX + "px")
-                .style("top", event.pageY - 30 + "px")
-                .html(`Value: ${d}`);
-        })
-        .on("mouseout", function () {
-            d3.select(this).transition().duration(200).attr("opacity", 0);
-            tooltip.style("display", "none");
-        });
-
-    // Draw X-axis
-    const xAxis = d3.axisBottom(xScale).ticks(inputData.length);
-    svg.append("g")
-        .attr("transform", `translate(0,${height - margin.bottom})`)
-        .call(xAxis)
-        .selectAll("text")
-        .attr("fill", "white");
-
-    // Draw Y-axis
-    const yAxis = d3.axisLeft(yScale);
-    svg.append("g")
-        .attr("transform", `translate(${margin.left},0)`)
-        .call(yAxis)
-        .selectAll("text")
-        .attr("fill", "white");
-
-    // Style axis lines and ticks
-    svg.selectAll(".domain, .tick line")
-        .attr("stroke", "white");
 }
