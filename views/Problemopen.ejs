@@ -68,7 +68,7 @@
                             <div class="po_user">
                                 <div class="po_useruser">
                                     <img src="/assets/duck_with_A_gun 1.png" alt="">
-                                    <p><%= question.asker %></p>
+                                    <p><%= question.asker.name %></p>
                                 </div>
                             </div>
                         </div>
@@ -80,9 +80,9 @@
                         <% question.answers.forEach(answer => { %>
                             <div class="po_anselab">
                               <div class="ansupdownvote">
-                                <div class="upvote-triangle" data-question-id="<%= question.id %>" data-answer-id="<%= answer.answerer %>"></div>                                
+                                <div class="upvote-triangle" data-question-id="<%= question.id %>" data-answer-id="<%= answer.id %>"></div>                                
                                 <div class="po_qnoofvotes outfit"><p><%= answer.votes %></p></div>
-                                <div class="downvote-triangle" data-question-id="<%= question.id %>" data-answer-id="<%= answer.answerer %>"></div>
+                                <div class="downvote-triangle" data-question-id="<%= question.id %>" data-answer-id="<%= answer.id %>"></div>
                               </div>
                               <div class="po_ansdesc outfit">
                                 <p><%= answer.desc %></p>
@@ -99,7 +99,7 @@
                                 <img src="/assets/italic.png" alt="">
                                 <img src="/assets/heading.png" alt="">
                                 <img src="/assets/codeansbox.png" alt="">
-                                <div id="submit-answer-btn"><p>Submit</p></div>  <!-- Add an id to the submit button -->
+                                <div id="submit-answer-btn" type="button"><p>Submit</p></div>  <!-- Add an id to the submit button -->
                             </div>
                             <textarea type="textarea" id="answer-textarea" class="po_useransbox"></textarea>  <!-- Add an id to the textarea -->
                         </div>
@@ -146,53 +146,50 @@
             </div>
         </div>
         <script>
-            document.getElementById('submit-answer-btn').addEventListener('click', () => {
-            const answerText = document.getElementById('answer-textarea').value;
-            const questionId = <%= question.id %>;  // Get the question ID dynamically from the page
-
-            if (answerText.trim() === "") {
-                alert("Please type an answer!");
-                return;
-            }
-
-            // Send the answer to the server
-            fetch('/submit-answer', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ questionId, answerText })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    // Clear the textarea
-                    document.getElementById('answer-textarea').value = '';
-
-                    // Append the new answer to the answers section dynamically
-                    const answersContainer = document.querySelector('.po_ansheading');
-                    const newAnswer = document.createElement('div');
-                    newAnswer.classList.add('po_anselab');
-                    newAnswer.innerHTML = `
-                        <div class="ansupdownvote">
-                            <div class="upvote-triangle" data-question-id="${data.questionId}" data-answer-id="${data.answerId}"></div>                                
-                            <div class="po_qnoofvotes outfit"><p>0</p></div>
-                            <div class="downvote-triangle" data-question-id="${data.questionId}" data-answer-id="${data.answerId}"></div>
-                        </div>
-                        <div class="po_ansdesc outfit">
-                            <p>${data.answerText}</p>
-                        </div>
-                    `;
-                    answersContainer.appendChild(newAnswer);
-                } else {
-                    alert("Failed to submit answer!");
-                }
-            })
-            .catch(error => {
-                console.error("Error submitting answer:", error);
+            document.addEventListener('DOMContentLoaded', () => {
+                document.getElementById('submit-answer-btn').addEventListener('click', () => {
+                    const answerText = document.getElementById('answer-textarea').value.trim();
+                    const questionId = "<%= question._id %>"; // Use _id if using MongoDB ObjectId
+        
+                    if (answerText === "") {
+                        alert("Please type an answer!");
+                        return;
+                    }
+        
+                    fetch('/submit-answer', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ questionId, answerText })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            document.getElementById('answer-textarea').value = '';
+                            const answersContainer = document.querySelector('.po_ansheading'); // Ensure this is correct
+                            const newAnswer = document.createElement('div');
+                            newAnswer.classList.add('po_anselab');
+                            newAnswer.innerHTML = `
+                                <div class="ansupdownvote">
+                                    <div class="upvote-triangle" data-question-id="${data.questionId}" data-answer-id="${data.answerId}"></div>                                
+                                    <div class="po_qnoofvotes outfit"><p>0</p></div>
+                                    <div class="downvote-triangle" data-question-id="${data.questionId}" data-answer-id="${data.answerId}"></div>
+                                </div>
+                                <div class="po_ansdesc outfit">
+                                    <p>${data.answerText}</p>
+                                </div>
+                            `;
+                            answersContainer.appendChild(newAnswer);
+                        } else {
+                            alert("Failed to submit the answer!");
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Error submitting answer:", error);
+                    });
+                });
             });
-        });
-
         </script>
         <script src="/scripts/problemopen.js"></script>
 </body>

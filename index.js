@@ -5,7 +5,9 @@ import passport from "passport";
 import connectDB from './config/db.js';
 import "./config/passportConfig.js"
 import authstudentRoutes from "./routes/authstudentRoutes.js";
-import authprofessorRoutes from "./routes/authprofessorRoutes.js"
+import authprofessorRoutes from "./routes/authprofessorRoutes.js";
+import studentRoutes from "./routes/studentRoutes.js";
+import qandaforumRoutes from "./routes/qandaforumRoutes.js"
 
 const app=express();
 env.config();
@@ -31,6 +33,8 @@ app.use(passport.session());
 
 app.use("/", authstudentRoutes);
 app.use("/", authprofessorRoutes);
+app.use("/", studentRoutes);
+app.use("/", qandaforumRoutes);
 
 app.get("/", (req, res) => {
   res.render("home.ejs");

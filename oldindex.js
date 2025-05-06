@@ -482,6 +482,43 @@ app.post('/submit-answer', (req, res) => {
   });
 });
 
+app.get("/ask", (req, res)=>{
+  if(req.session.user){
+    res.render("askquestion.ejs", {
+      name: req.session.user.name, 
+    });
+  }
+  else{
+    res.redirect("/");
+  }
+})
+
+app.post("/ask", (req, res) => {
+  if (req.session.user) {
+    const { title, desc, tags } = req.body;
+    const newId = (questions.length + 1).toString();
+    const date = new Date();
+    const formattedDate = `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}`;
+
+    const tagsArray = tags.split(",").map(tag => tag.trim());
+    const newQuestion = {
+      id: newId,
+      heading: title,
+      desc: desc,
+      votes: 0,
+      tags: tagsArray,
+      asker: req.session.user.id, 
+      time: formattedDate,
+      wealth: 0,
+      views: 0,
+      answers: []
+    };
+    questions.push(newQuestion);
+    res.redirect("/problemslvfrm"); 
+  } else {
+    res.redirect("/");
+  }
+});
 
 app.get("/attendance", (req, res) => {
   if(req.session.user){
@@ -526,45 +563,6 @@ app.get("/bellgraph", (req, res) => {
       bellgraphSubjects: Object.keys(bellgraph),
       userinfo: req.session.user.courses[0].grade.predgrade
     });
-  } else {
-    res.redirect("/");
-  }
-});
-
-
-app.get("/ask", (req, res)=>{
-  if(req.session.user){
-    res.render("askquestion.ejs", {
-      name: req.session.user.name, 
-    });
-  }
-  else{
-    res.redirect("/");
-  }
-})
-
-app.post("/ask", (req, res) => {
-  if (req.session.user) {
-    const { title, desc, tags } = req.body;
-    const newId = (questions.length + 1).toString();
-    const date = new Date();
-    const formattedDate = `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}`;
-
-    const tagsArray = tags.split(",").map(tag => tag.trim());
-    const newQuestion = {
-      id: newId,
-      heading: title,
-      desc: desc,
-      votes: 0,
-      tags: tagsArray,
-      asker: req.session.user.id, 
-      time: formattedDate,
-      wealth: 0,
-      views: 0,
-      answers: []
-    };
-    questions.push(newQuestion);
-    res.redirect("/problemslvfrm"); 
   } else {
     res.redirect("/");
   }
