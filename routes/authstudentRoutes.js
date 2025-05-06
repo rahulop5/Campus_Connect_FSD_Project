@@ -9,7 +9,7 @@ import {
     signupStudent,
     registerStudent,
     loginStudent
-} from "../controllers/authController.js";
+} from "../controllers/authstudentController.js";
 
 const router = express.Router();
 

@@ -4,7 +4,8 @@ import env from "dotenv";
 import passport from "passport";
 import connectDB from './config/db.js';
 import "./config/passportConfig.js"
-import authRoutes from "./routes/authRoutes.js"
+import authstudentRoutes from "./routes/authstudentRoutes.js";
+import authprofessorRoutes from "./routes/authprofessorRoutes.js"
 
 const app=express();
 env.config();
@@ -28,11 +29,19 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.use("/", authRoutes);
+app.use("/", authstudentRoutes);
+app.use("/", authprofessorRoutes);
 
 app.get("/", (req, res) => {
   res.render("home.ejs");
 });
 
+app.get("/temp", (req, res)=>{
+  res.render("otherauth.ejs");
+})
+
+app.get("/temp2", (req, res)=>{
+  res.render("otherauthsignup.ejs");
+})
 
 app.listen(3000);

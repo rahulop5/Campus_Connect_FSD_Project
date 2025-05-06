@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/styles/Login.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&family=Rubik:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
+    <title>Document</title>
+</head>
+<body class="outfit">
+    <div>
+        <p class="logo">Campus<span>C</span>onnect</p>
+        <form action="/auth/<%= role %>/login" method="post">
+            <input type="email" placeholder="Email" name="email" required>
+            <input type="password" placeholder="Password" name="password" required>
+            <button type="submit"><p>Login</p></button>
+        </form>
+        <div class="other">
+            <p>Not registered? <a href="http://localhost:3000/signup">Sign up</a></p>
+        </div>
+    </div>
+</body>
+</html>
