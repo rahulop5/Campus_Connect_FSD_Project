@@ -9,6 +9,4 @@ const courseSchema = new mongoose.Schema({
     professor: { type: mongoose.Schema.Types.ObjectId, ref: 'Professor', required: true },
 });
 
-//prof sec creds totclassses noofclasseshpnd
-
 export default mongoose.model("Course", courseSchema);

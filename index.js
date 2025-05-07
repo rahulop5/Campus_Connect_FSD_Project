@@ -7,7 +7,9 @@ import "./config/passportConfig.js"
 import authstudentRoutes from "./routes/authstudentRoutes.js";
 import authprofessorRoutes from "./routes/authprofessorRoutes.js";
 import studentRoutes from "./routes/studentRoutes.js";
-import qandaforumRoutes from "./routes/qandaforumRoutes.js"
+import qandaforumRoutes from "./routes/qandaforumRoutes.js";
+import professorRoutes from "./routes/professorRoutes.js";
+import Course from "./models/Course.js";
 
 const app=express();
 env.config();
@@ -35,17 +37,73 @@ app.use("/", authstudentRoutes);
 app.use("/", authprofessorRoutes);
 app.use("/", studentRoutes);
 app.use("/", qandaforumRoutes);
+app.use("/", professorRoutes);
 
 app.get("/", (req, res) => {
   res.render("home.ejs");
 });
 
-app.get("/temp", (req, res)=>{
-  res.render("otherauth.ejs");
-})
+const courses = [
+  {
+    name: "Mathematics for Computer Science",
+    section: "1",
+    classeshpnd: 20,
+    totalclasses: 40,
+    credits: 3,
+    professor: "681a606c07dc5eb482cbf2de"
+  },
+  {
+    name: "Introduction to Artificial Intelligence",
+    section: "2",
+    classeshpnd: 15,
+    totalclasses: 30,
+    credits: 4,
+    professor: "681a606c07dc5eb482cbf2de"
+  },
+  {
+    name: "Software Engineering",
+    section: "3",
+    classeshpnd: 25,
+    totalclasses: 50,
+    credits: 3,
+    professor: "681a606c07dc5eb482cbf2de"
+  },
+  {
+    name: "Algorithms and Data Structures",
+    section: "4",
+    classeshpnd: 18,
+    totalclasses: 36,
+    credits: 3,
+    professor: "681a606c07dc5eb482cbf2de"
+  },
+  {
+    name: "Theory of Computation",
+    section: "1",
+    classeshpnd: 12,
+    totalclasses: 24,
+    credits: 3,
+    professor: "681a606c07dc5eb482cbf2de"
+  },
+  {
+    name: "Database Management Systems",
+    section: "2",
+    classeshpnd: 20,
+    totalclasses: 40,
+    credits: 4,
+    professor: "681a606c07dc5eb482cbf2de"
+  }
+];
 
-app.get("/temp2", (req, res)=>{
-  res.render("otherauthsignup.ejs");
-})
+async function insertCourses() {
+  try {
+    await Course.insertMany(courses);
+    console.log("Courses added successfully!");
+  } catch (error) {
+    console.error("Error inserting courses:", error);
+  }
+}
+
+// insertCourses();
+
 
 app.listen(3000);

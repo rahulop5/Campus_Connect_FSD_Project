@@ -54,7 +54,7 @@
                 <div class="db_topq">
                     <p>Top Questions of the Week</p>
                     <div>
-                        <% for(var i=0;i<3;i++){ %>
+                        <% for(var i=0;i<Math.min(3, questions.length);i++){ %>
                             <div class="problem">
                                 <div class="votes">
                                     <p><%= questions[i].votes %> votes</p>
@@ -73,7 +73,7 @@
                                 <div class="user">
                                     <div class="useruser">
                                         <img src="./assets/duck_with_A_gun 1.png" alt="">
-                                        <p><%= questions[i].asker %></p>
+                                        <p><%= questions[i].asker.name %></p>
                                     </div>
                                 </div>
                             </div>

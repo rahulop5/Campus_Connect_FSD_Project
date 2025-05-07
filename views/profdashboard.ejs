@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="/styles/Profdashboard.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;700&family=Outfit:wght@100..900&display=swap" rel="stylesheet" />
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <title>Dashboard</title>
+</head>
+<body class="outfit">
+  <%- include("header.ejs") %>
+
+  <div class="dashboard-wrapper">
+    <p class="dashboard-title">Dashboard</p>
+
+    <div class="welcome-text">
+      <p>
+        <span class="gradient-text">Welcome back,</span><br />
+        <span class="prof-light">Dr.</span>
+        <span class="prof-bold"><%= professor.name %></span>
+      </p>
+    </div>
+
+    <div class="assigned-courses-title">
+      <p>Assigned Courses:</p>
+    </div>
+
+    <div class="assigned-courses-box">
+      <% if (courses.length > 0) { %>
+        <% courses.forEach(course => { %>
+          <div class="course-box">
+            <p class="course-code"><%= course.name %></p>
+            <p class="course-section">Sec-<%= course.section %></p>
+          </div>
+        <% }) %>
+      <% } else { %>
+        <p>No assigned courses available.</p>
+      <% } %>
+    </div>
+
+    <div class="operation-buttons">
+      <div class="operation-btn">Attendance Upload</div>
+      <div class="operation-btn selected">Marksheet Upload</div>
+    </div>
+
+    <div class="upload-box">
+      <p class="upload-title">Upload page:</p>
+      <div class="file-upload">
+        <input type="file" name="marksheet" id="file" class="hidden-file" accept=".csv" />
+        <label for="file" class="custom-file-label">
+          <div class="upload-content">
+            <div class="upload-icon"></div>
+            <div class="upload-text">Upload files here</div>
+          </div>
+        </label>
+      </div>
+      <div class="left-div">
+        <p class="file-note">Note:</p>
+        <p class="file-note1">Only .csv supported</p>
+      </div>
+
+      <button class="submit-btn"><span class="submit-text">Submit</span></button>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,3 +1,5 @@
+import Question from "../models/Question.js";
+
 export const studentDashboard = async (req, res) => {
   if (req.session.user) {
     const courses = req.session.user.courses.map(course => {
@@ -8,7 +10,6 @@ export const studentDashboard = async (req, res) => {
         attendancePercentage
       };
     });
-    const questions=[]
 
     const date = new Date();
     
@@ -20,6 +21,7 @@ export const studentDashboard = async (req, res) => {
     const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
     const month = months[date.getMonth()];
     const year = date.getFullYear();
+    const questions = await Question.find().populate("asker").sort({ createdAt: -1 });
 
     res.render("dashboard.ejs", {
       name: req.session.user.name,

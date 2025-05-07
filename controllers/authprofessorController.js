@@ -45,7 +45,6 @@ export const professorLogin = async (req, res) => {
     if (!professor) {
       return res.status(400).json({ message: "Invalid email or password" });
     }
-    console.log(professor);
     // Compare the entered password with the hashed password stored in the database
     const isMatch = await bcrypt.compare(password, professor.password);
     if (!isMatch) {
