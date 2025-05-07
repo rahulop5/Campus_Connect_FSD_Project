@@ -28,25 +28,25 @@
                     </div>                      
                 </div>
                 <div class="db_attengrade">
-                    <% courses.forEach((course, index) => {  %>                       
-                       <% if(index<3) { %> 
-                      <div class="db_subject">
-                        <div class="db_grade">
-                          <p><%= course.subject %> </p>
-                          <p>Predicted Grade</p>
-                          <p><%= course.grade.predgrade %> <span>A</span> B C D P F</p>
-                        </div>
-                        <div class="db_attendance">
-                          <p>Attendance</p>
-                          <div class="progress-container">
-                            <svg width="100" height="100">
-                              <circle cx="50" cy="50" r="40" class="background-circle"></circle>
-                              <circle cx="50" cy="50" r="40" class="progress-ring progress-circle" id="progress-ring-<%= index %>"></circle>
-                            </svg>
-                            <div class="progress-text" id="progress-text-<%= index %>"><%= course.attendancePercentage %>%</div>
+                    <% courses.forEach((course, index) => { %>
+                      <% if (index < 3) { %>
+                        <div class="db_subject">
+                          <div class="db_grade">
+                            <p><%= course.subject %></p>
+                            <p>Predicted Grade</p>
+                            <p><%= course.grade.predgrade %> <span>A</span> B C D P F</p>
+                          </div>
+                          <div class="db_attendance">
+                            <p>Attendance</p>
+                            <div class="progress-container">
+                              <svg width="100" height="100">
+                                <circle cx="50" cy="50" r="40" class="background-circle"></circle>
+                                <circle cx="50" cy="50" r="40" class="progress-ring progress-circle" id="progress-ring-<%= index %>"></circle>
+                              </svg>
+                              <div class="progress-text" id="progress-text-<%= index %>"><%= course.attendancePercentage %>%</div>
+                            </div>
                           </div>
                         </div>
-                      </div>
                       <% } %>
                     <% }) %>
                   </div>

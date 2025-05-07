@@ -149,6 +149,6 @@ async function addCoursesToStudents() {
   }
 }
 
-addCoursesToStudents();
+// addCoursesToStudents();
 
 app.listen(3000);
