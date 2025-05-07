@@ -21,6 +21,10 @@
     color: white;
 }
 
+.premium{
+    margin-top:550px;
+}
+
 .sidebar>ul>li>a>img{
     height: 40px;
     width: 40px;

@@ -46,5 +46,9 @@ router.get("/rolechoosesignup", (req, res) => {
   res.render("verifysignup.ejs");
 });
 
+router.get("/pricing", (req, res) => {
+  res.render("pricing.ejs");
+});
+
 export default router;
 

@@ -151,8 +151,5 @@ async function addCoursesToStudents() {
 
 // addCoursesToStudents();
 
-app.get("/pricing", (req, res) => {
-  res.render("pricing.ejs");
-});
 
 app.listen(3000);
