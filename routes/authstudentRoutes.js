@@ -38,5 +38,13 @@ router.get("/register", (req, res) => {
   res.render("register.ejs");
 });
 
+router.get("/rolechooselogin", (req, res) => {
+  res.render("verifylogin.ejs");
+});
+
+router.get("/rolechoosesignup", (req, res) => {
+  res.render("verifysignup.ejs");
+});
+
 export default router;
 

@@ -105,5 +105,43 @@ async function insertCourses() {
 
 // insertCourses();
 
+async function addCoursesToStudents() {
+  try {
+
+    // Fetch all students from the database
+    const students = await Student.find();
+
+    for (const student of students) {
+      if (student.ug && student.section) {
+        // Find matching courses based on ug and section
+        const matchingCourses = await Course.find({
+          ug: student.ug,
+          section: student.section,
+        });
+
+        // Add matching courses to the student's courses field
+        for (const course of matchingCourses) {
+          // Check if the course is already added to avoid duplicates
+          const alreadyAdded = student.courses.some(
+            (c) => c.course.toString() === course._id.toString()
+          );
+
+          if (!alreadyAdded) {
+            student.courses.push({ course: course._id, attendance: 0, grade: 0 });
+          }
+        }
+
+        // Save the updated student document
+        await student.save();
+      }
+    }
+
+    console.log("Courses successfully added to students!");
+  } catch (error) {
+    console.error("Error adding courses to students:", error);
+  }
+}
+
+addCoursesToStudents();
 
 app.listen(3000);
