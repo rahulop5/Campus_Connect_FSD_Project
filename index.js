@@ -48,6 +48,7 @@ const courses = [
   {
     name: "Mathematics for Computer Science",
     section: "1",
+    ug: "2",
     classeshpnd: 20,
     totalclasses: 40,
     credits: 3,
@@ -56,6 +57,7 @@ const courses = [
   {
     name: "Introduction to Artificial Intelligence",
     section: "2",
+    ug: "2",
     classeshpnd: 15,
     totalclasses: 30,
     credits: 4,
@@ -64,6 +66,7 @@ const courses = [
   {
     name: "Software Engineering",
     section: "3",
+    ug: "1",
     classeshpnd: 25,
     totalclasses: 50,
     credits: 3,
@@ -72,6 +75,7 @@ const courses = [
   {
     name: "Algorithms and Data Structures",
     section: "4",
+    ug: "2",
     classeshpnd: 18,
     totalclasses: 36,
     credits: 3,
@@ -80,6 +84,7 @@ const courses = [
   {
     name: "Theory of Computation",
     section: "1",
+    ug: "3",
     classeshpnd: 12,
     totalclasses: 24,
     credits: 3,
@@ -88,6 +93,7 @@ const courses = [
   {
     name: "Database Management Systems",
     section: "2",
+    ug: "2",
     classeshpnd: 20,
     totalclasses: 40,
     credits: 4,
