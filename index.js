@@ -3,13 +3,14 @@ import session from "express-session";
 import env from "dotenv";
 import passport from "passport";
 import connectDB from './config/db.js';
-import "./config/passportConfig.js"
+import "./config/passportConfig.js";
 import authstudentRoutes from "./routes/authstudentRoutes.js";
 import authprofessorRoutes from "./routes/authprofessorRoutes.js";
 import studentRoutes from "./routes/studentRoutes.js";
 import qandaforumRoutes from "./routes/qandaforumRoutes.js";
 import professorRoutes from "./routes/professorRoutes.js";
 import Course from "./models/Course.js";
+import Student from "./models/Student.js";
 
 const app=express();
 env.config();
