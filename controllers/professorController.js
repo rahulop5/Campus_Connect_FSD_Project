@@ -10,7 +10,13 @@ export const professorDashboard = async (req, res) => {
 
     // Fetch only the courses assigned to this professor
     const courses = await Course.find({ professor: professorId });
-
+    courses.forEach((course) => {
+      const shortForm = course.name
+        .split(" ")
+        .map((word) => word[0].toUpperCase())
+        .join("");
+      course.name = shortForm;
+    });
     // Pass the professor details and the assigned courses to the template
     res.render("profdashboard.ejs", {
       professor: req.session.user,

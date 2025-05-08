@@ -37,7 +37,6 @@ export const githubAuthCallback = passport.authenticate("github", { failureRedir
 export const handleGithubAuthCallback = async (req, res) => {
   try {
     const { user } = req.session.passport;
-    console.log(user);
     // Check if user already exists in the database
     const existingStudent = await Student.findOne({ email: user.email });
 

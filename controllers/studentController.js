@@ -25,7 +25,14 @@ export const studentDashboard = async (req, res) => {
           },
         };
       });
-
+      console.log(courses);
+      courses.forEach((course)=>{
+        const shortform=course.subject
+          .split(" ")
+          .map(word => word[0].toUpperCase())
+          .join("");
+        course.subject=shortform;
+      });
       // Get the current date details
       const date = new Date();
       const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
