@@ -34,12 +34,12 @@ body
 
 .my_profile
 {
-    width: 45px;
+    width: 35px;
     color: rgba(255, 255, 255, 0.65);
-    font-size: 50px;
+    font-size: 47px;
     margin-right: 25px;
     z-index: 2;
-    font-family: 'Times New Roman', Times, serif;
+    font-family: "Dream Orphans";
 }
 
 #my_profile1
@@ -282,3 +282,24 @@ body
     flex-direction: column;
     align-items: center;
 }
+
+.editable-input {
+    border: none;
+    background: transparent;
+    font-size: 18px;
+    flex: 1;
+    padding-top: 4px;
+    padding-right:4px;
+    padding-bottom:4px;
+    padding-left:-4px;
+    transition: all 0.3s ease;
+    font-family: Outfit;
+    color:white;
+  }
+  
+  .editable-input.editing {
+    border: 1px solid #18651f;
+    background: #fff;
+    box-shadow: 0 0 2px #aaa;
+    border-radius: 4px;
+  }

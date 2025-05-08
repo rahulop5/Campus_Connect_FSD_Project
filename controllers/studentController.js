@@ -76,3 +76,14 @@ export const studentDashboard = async (req, res) => {
     res.redirect("/");
   }
 };
+
+export const studentProfile = async (req, res) => {
+  if(req.session.user){
+    res.render("profile.ejs", {
+      student: req.session.user,
+    });
+  }
+  else{
+    res.redirect("/login");
+  }
+};

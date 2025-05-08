@@ -10,7 +10,7 @@
     <title>Document</title>
 </head>
 <body>
-    <div id="bodbod">
+    <form id="bodbod">
         <div>
             <div id="my_profile1" class="my_profile">
                 M Y
@@ -28,10 +28,10 @@
                     </div>
                     <div class="auth_a">
                         <div>
-                            Sahal Ansar Therapambil
+                            <input type="text" value="<%= student.name %>" readonly class="editable-input" />
                         </div>
                         <div class="image_div">
-                            <img class="edit_mark" src="./assets/edit-text 2.png" alt="its is a pencil mark">
+                            <image  class="edit_mark" src="./assets/edit-text 2.png" alt="its is a pencil mark">
                         </div>
                     </div>    
             </div>
@@ -41,11 +41,11 @@
                 </div>
                 <div class="auth_a">
                     <div>
-                        sahalansar.t23@iiits.in
+                        <%= student.email %>
                     </div>
-                    <div class="image_div">
+                    <!-- <div class="image_div">
                         <img class="edit_mark" src="./assets/edit-text 2.png" alt="its is a pencil mark">
-                    </div>
+                    </div> -->
                 </div>    
             </div>
             <div class="auth_qa" id="third_auth">
@@ -54,7 +54,7 @@
                 </div>
                 <div class="auth_a">
                     <div>
-                        ***************
+                        <input type="text" value="" readonly class="editable-input" />
                     </div>
                     <div class="image_div">
                         <img class="edit_mark" src="./assets/edit-text 2.png" alt="its is a pencil mark">
@@ -67,7 +67,7 @@
                 </div>
                 <div class="auth_a">
                     <div>
-                        +91 9037374658
+                        <input type="text" value="<%= student.phone %>" readonly class="editable-input" />
                     </div>
                     <div class="image_div">
                         <img class="edit_mark" src="./assets/edit-text 2.png" alt="its is a pencil mark">
@@ -80,10 +80,11 @@
                 </div>
                 <div class="auth_a">
                     <div>
-                        S20230010210                     </div>
-                    <div class="image_div">
-                        <img class="edit_mark" src="./assets/edit-text 2.png" alt="its is a pencil mark">
+                        <%= student.roll %>
                     </div>
+                    <!-- <div class="image_div">
+                        <img class="edit_mark" src="./assets/edit-text 2.png" alt="its is a pencil mark">
+                    </div> -->
                 </div>    
             </div>
             <div id="rb_row1">
@@ -92,7 +93,7 @@
                         Branch
                     </div>
                     <div class="rb_r1_a">
-                        CSE
+                        <%= student.branch %>
                     </div>
                 </div>
                 <div class="rb_r1_col" id="second_col">
@@ -100,7 +101,7 @@
                         Year
                     </div>
                     <div class="rb_r1_a">
-                        UG2
+                        UG<%= student.ug %>
                     </div>
                 </div>
                 <div class="rb_r1_col" id="second_col">
@@ -108,7 +109,7 @@
                         Section
                     </div>
                     <div class="rb_r1_a">
-                        2
+                        <%= student.section %>
                     </div>
                 </div>
             </div>
@@ -214,6 +215,6 @@
                     </clipPath></defs>
                 </svg>
         </div>
-    </div>        
+    </form>
 </body>
 </html>
