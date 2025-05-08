@@ -11,6 +11,10 @@ import qandaforumRoutes from "./routes/qandaforumRoutes.js";
 import professorRoutes from "./routes/professorRoutes.js";
 import Course from "./models/Course.js";
 import Student from "./models/Student.js";
+import multer from "multer";
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
 
 const app=express();
 env.config();
@@ -33,6 +37,10 @@ app.use(
 
 app.use(passport.initialize());
 app.use(passport.session());
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const uploadDir = path.join(__dirname, "uploads");
 
 app.use("/", authstudentRoutes);
 app.use("/", authprofessorRoutes);
@@ -150,6 +158,27 @@ async function addCoursesToStudents() {
 }
 
 // addCoursesToStudents();
+
+
+
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true });
+}
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, uploadDir);
+  },
+  filename: function (req, file, cb) {
+    cb(null, "marksheet.csv");
+  },
+});
+
+const upload = multer({ storage: storage });
+
+app.post("/prof/submit", upload.single("marksheet"), (req, res)=>{
+  res.send("ok");
+});
 
 
 app.listen(3000);

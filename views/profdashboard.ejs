@@ -46,7 +46,7 @@
       <div class="operation-btn selected">Marksheet Upload</div>
     </div>
 
-    <form class="upload-box">
+    <form class="upload-box" action="/prof/submit" method="post" enctype="multipart/form-data">
       <p class="upload-title">Upload page:</p>
       <div class="file-upload">
         <input type="file" name="marksheet" id="file" class="hidden-file" accept=".csv" />
@@ -62,7 +62,7 @@
         <p class="file-note1">Only .csv supported</p>
       </div>
 
-      <button class="submit-btn"><span class="submit-text">Submit</span></button>
+      <button class="submit-btn" type="submit"><span class="submit-text">Submit</span></button>
     </form>
   </div>
 </body>
