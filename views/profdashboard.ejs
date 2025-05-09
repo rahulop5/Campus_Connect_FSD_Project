@@ -28,25 +28,21 @@
       <p>Assigned Courses:</p>
     </div>
 
-    <div class="assigned-courses-box">
-      <% if (courses.length > 0) { %>
-        <% courses.forEach(course => { %>
-          <div class="course-box">
-            <p class="course-code"><%= course.name %></p>
-            <p class="course-section">Sec-<%= course.section %></p>
-          </div>
-        <% }) %>
-      <% } else { %>
-        <p>No assigned courses available.</p>
-      <% } %>
-    </div>
-
-    <div class="operation-buttons">
-      <div class="operation-btn">Attendance Upload</div>
-      <div class="operation-btn selected">Marksheet Upload</div>
-    </div>
-
+    
     <form class="upload-box" action="/prof/submit" method="post" enctype="multipart/form-data">
+      <div class="assigned-courses-box">
+        <% if (courses.length > 0) { %>
+          <% courses.forEach(course => { %>
+            <div class="course-box">
+              <input type="checkbox" name="courseId" value="<%= course.id %>" required>
+              <p class="course-code"><%= course.name %></p>
+              <p class="course-section">Sec-<%= course.section %></p>
+            </div>
+          <% }) %>
+        <% } else { %>
+          <p>No assigned courses available.</p>
+        <% } %>
+      </div>
       <p class="upload-title">Upload page:</p>
       <div class="file-upload">
         <input type="file" name="marksheet" id="file" class="hidden-file" accept=".csv" />

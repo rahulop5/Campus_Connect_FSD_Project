@@ -13,6 +13,8 @@ import Course from "./models/Course.js";
 import Student from "./models/Student.js";
 import multer from "multer";
 import fs from "fs";
+import csvParser from "csv-parser";
+import mongoose from "mongoose";
 
 const app=express();
 env.config();
@@ -168,8 +170,63 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-app.post("/prof/submit", upload.single("marksheet"), (req, res)=>{
-  
+app.post("/prof/submit", upload.single("marksheet"), async (req, res) => {
+  try {
+    console.log(req.body);
+    const courseId = req.body.courseId; // Get the course ID from the form submission
+    if (!courseId) {
+      return res.status(400).send("Course ID is required.");
+    }
+
+    const filePath = "./uploads/marksheet.csv"; // Path to the uploaded CSV file
+    const updates = [];
+
+    // Read the CSV file and process the data
+    fs.createReadStream(filePath)
+      .pipe(csvParser())
+      .on("data", (row) => {
+        // Push valid rows into the updates array
+        if (row.email && row.grade && row.attendance) {
+          updates.push({
+            email: row.email.trim(),
+            grade: parseInt(row.grade.trim(), 10),
+            attendance: parseInt(row.attendance.trim(), 10),
+          });
+        }
+      })
+      .on("end", async () => {
+        // Iterate over the updates array and update student documents
+        for (const update of updates) {
+          const student = await Student.findOne({ email: update.email });
+
+          if (student) {
+            // Find the course in the student's courses array
+            const courseIndex = student.courses.findIndex(
+              (c) => c.course.toString() === courseId
+            );
+
+            console.log(courseIndex); 
+            if (courseIndex !== -1) {
+              // Update the grade and attendance for the course
+              student.courses[courseIndex].grade = update.grade;
+              student.courses[courseIndex].attendance = update.attendance;
+            }
+            await student.save();
+          }
+
+          // Save the updated student document
+        }
+
+        res.status(200).send("Student grades and attendance updated successfully.");
+      })
+      .on("error", (error) => {
+        console.error("Error reading CSV file:", error);
+        res.status(500).send("Error processing the file.");
+      });
+  } catch (error) {
+    console.error("Error updating student data:", error);
+    res.status(500).send("Internal Server Error.");
+  }
 });
 
 

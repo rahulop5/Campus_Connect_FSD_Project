@@ -23,13 +23,7 @@
                 <div class="subject">
                   <p><%= course.subject %></p>
                 </div>
-                <div class="line"></div>
-                <div class="details">
-                  <p>Total Classes: <%= course.attendance.totalclasses %></p>
-                  <p>Classes Held: <%= course.attendance.classesheld %></p>
-                  <p>Classes Attended: <%= course.attendance.classesattended %></p>
-                </div>
-                <div class="line"></div>
+                <div class="line"></div>                
                 <div class="status">
                   <p>Attendance Status</p>
                   <p id="<%= course.attendanceColor %>"><%= course.attendanceStatus %></p>

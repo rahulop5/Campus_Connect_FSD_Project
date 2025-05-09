@@ -7,16 +7,13 @@ export const studentDashboard = async (req, res) => {
       // Fetch the current student from the database (populate the courses)
       const student = await Student.findById(req.session.user._id).populate("courses.course");
 
-      // Map over the student's courses to include course details, attendance percentage, and predicted grade
       const courses = student.courses.map((courseObj) => {
         const course = courseObj.course; // Populated course document
 
-        // Calculate attendance percentage
         const attendancePercentage = courseObj.attendance
-          ? Math.round((courseObj.attendance / course.totalclasses) * 100)
+          ? courseObj.attendance
           : 0;
 
-        // Return the mapped course object
         return {
           subject: course.name,
           attendancePercentage,
@@ -25,7 +22,6 @@ export const studentDashboard = async (req, res) => {
           },
         };
       });
-      console.log(courses);
       courses.forEach((course)=>{
         const shortform=course.subject
           .split(" ")
@@ -87,3 +83,66 @@ export const studentProfile = async (req, res) => {
     res.redirect("/login");
   }
 };
+
+export const studentAttendance = async (req, res) => {
+  if (req.session.user) {
+    try {
+      // Fetch the student from the database and populate the courses
+      const student = await Student.findById(req.session.user._id).populate("courses.course");
+
+      // Map over the student's courses to calculate attendance details
+      const courses = student.courses.map((courseObj) => {
+        const course = courseObj.course; // Populated course document
+        console.log(courseObj);
+        const percentage = courseObj.attendance
+          ? courseObj.attendance
+          : "0.00";
+
+        let status = "";
+        let color = "";
+
+        if (percentage >= 90) {
+          status = "Good";
+          color = "green";
+        } else if (percentage >= 80) {
+          status = "Average";
+          color = "yellow";
+        } else {
+          status = "Poor";
+          color = "red";
+        }
+
+        return {
+          subject: course.name, // Course name
+          attendancePercentage: percentage,
+          attendanceStatus: status,
+          attendanceColor: color,
+        };
+      });
+
+      res.render("attendance.ejs", {
+        name: student.name,
+        courses: courses,
+      });
+    } catch (error) {
+      console.error("Error fetching attendance data:", error);
+      res.status(500).send("Internal Server Error");
+    }
+  } else {
+    res.redirect("/");
+  }
+};
+
+export const studentGrades = async (req, res)=>{
+  if (req.session.user) {
+    const defaultSubject = "AI";
+    res.render("bellgraph.ejs", {
+      subject: defaultSubject,
+      bellgraphData: JSON.stringify(bellgraph),
+      bellgraphSubjects: Object.keys(bellgraph),
+      userinfo: req.session.user.courses[0].grade.predgrade
+    });
+  } else {
+    res.redirect("/");
+  }
+}
