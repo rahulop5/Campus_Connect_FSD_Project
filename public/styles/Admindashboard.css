@@ -1,13 +1,11 @@
-*{
+/* Existing untouched header and sidebar CSS */
+* {
     margin: 0;
     padding: 0;
 }
 
-header{
+header {
     display: flex;
-}
-
-header{
     height: 75px;
     width: 100%;
     backdrop-filter: blur(20px);
@@ -17,13 +15,11 @@ header{
     background: rgba(165, 165, 165, 0.13);
 }
 
-body
-{
+body {
     background-color: black;
-    
 }
 
-.logo{
+.logo {
     color: #FFF;
     font-family: Kameron;
     font-size: 30px;
@@ -35,33 +31,28 @@ body
     margin-left: 10px;
 }
 
-.logo>span{
+.logo > span {
     color: rgba(72, 255, 0, 0.68);
 }
 
-.notification>img{
+.notification > img {
     width: 35px;
     height: 35px;
     padding: 20px 10px;
 }
 
-header> :nth-child(2) {
+header > :nth-child(2) {
     margin-left: auto;
 }
 
-.profile>img{
+.profile > img {
     width: 55px;
     height: 55px;
     padding: 10px;
     padding-right: 20px;
 }
 
-*{
-    margin: 0;
-    padding: 0;
-}
-
-.sidebar{
+.sidebar {
     width: 70px;
     height: 100vh;
     top: 75px;
@@ -80,7 +71,7 @@ header> :nth-child(2) {
     color: white;
 }
 
-.sidebar>ul>li>a>img{
+.sidebar > ul > li > a > img {
     height: 40px;
     width: 40px;
     padding: 10px 15px;
@@ -88,36 +79,35 @@ header> :nth-child(2) {
 }
 
 .sidebar .text {
-  transition: opacity 1s ease 0.1s; 
+    transition: opacity 1s ease 0.1s;
 }
 
-.text>span{
+.text > span {
     margin-left: 5px;
 }
 
 .sidebar:hover {
-  width: 250px; 
+    width: 250px;
 }
 
-.sidebar li:hover{
+.sidebar li:hover {
     background: rgba(217, 217, 217, 0.15);
 }
 
-
-#content_space_div
-{
-
+/* === Content Styling Starts Here === */
+main {
     position: absolute;
     top: 75px;
     z-index: 2;
     color: white;
     left: 70px;
-    width: 100%;
-    height: 100%;
+    width: calc(100% - 70px);
+    padding: 40px;
+    box-sizing: border-box;
 }
 
-#dashboard_div
-{
+/* Dashboard Greeting */
+#dashboard_div {
     position: absolute;
     left: 48px;
     top: 33px;
@@ -126,49 +116,36 @@ header> :nth-child(2) {
     font-weight: 600;
 }
 
-#welcm_nd_admn_div
-{
+#welcm_nd_admn_div {
     position: absolute;
     left: 48px;
     top: 109px;
     font-family: Outfit;
 }
 
-.green_gradient
-{
+.green_gradient {
     background: linear-gradient(90deg, #2B9900 0%, #949494 73.9%);
     background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
 }
 
-#welcome_div
-{
+#welcome_div {
     font-size: 70px;
     font-weight: 400;
-    line-height: 75px; 
+    line-height: 75px;
     letter-spacing: -3.5px;
 }
 
-#admin_div
-{
+#admin_div {
     font-size: 85px;
     font-weight: 700;
-    line-height: 75px; 
+    line-height: 75px;
     letter-spacing: 2.55px;
-}
-
-#dash_welcm_admn_div
-{
-    position: absolute;
-    z-index: 2;
     color: white;
-    width: 50%;
-    height: 300px;
 }
 
-#date_holding_container_outer
-{
+#date_holding_container_outer {
     position: absolute;
     display: flex;
     justify-content: end;
@@ -176,39 +153,35 @@ header> :nth-child(2) {
     z-index: 2;
     color: white;
     left: 50%;
-    height: 370px;
+    height: 270px;
     right: 120px;
 }
 
-#date_holding_container_inner
-{
+#date_holding_container_inner {
     width: 255px;
     height: 237px;
+    background-color: rgba(43, 153, 0, 0.60);
+    border-radius: 30px;
 }
 
-#top_row
-{
+#top_row {
+    margin-top: 50px;
+    margin-left: 50px;
     width: 100%;
-    position: absolute;
-    /* border: solid; */
-    height: 340px;
-
+    height: 290px;
 }
 
-#date_img
-{
+#date_img {
     position: absolute;
 }
 
-#content_inside_dateboox_container
-{
+#content_inside_dateboox_container {
     position: absolute;
     align-items: center;
     flex-direction: column;
 }
 
-#day
-{
+#day {
     color: #000;
     text-align: center;
     margin-left: 36px;
@@ -220,8 +193,7 @@ header> :nth-child(2) {
     margin-top: 15px;
 }
 
-#date
-{
+#date {
     text-align: center;
     margin-left: 60px;
     font-family: Outfit;
@@ -231,8 +203,7 @@ header> :nth-child(2) {
     line-height: 100px;
 }
 
-#month_year
-{
+#month_year {
     color: #000;
     text-align: center;
     font-family: Outfit;
@@ -243,138 +214,255 @@ header> :nth-child(2) {
     margin-top: 5px;
 }
 
-.contents_inside_datebox
-{
-}
-
-#banner_div
-{
-    position: absolute;
-    height: 635px;
-    top: 340px;
-    left: 50px;
-    right: 120px;
-    border-radius: 20px;
-    border: 3px solid rgba(55, 55, 55, 0.50);
-}
-
-.banner
-{
-    position: absolute;
-    left: 10px;
-    right: 10px;
-    margin: 30px;
-    height: 165px;
-    border-radius: 10px;
-    background: linear-gradient(244deg, rgba(43, 153, 0, 0.15) 9.11%, rgba(0, 0, 0, 0.08) 28.07%), rgba(55, 55, 55, 0.30);
+/* Container for Course and Student Management */
+.management-section {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    gap: 60px; /* Increased gap for better spacing */
+    margin: 50px 0;
+    flex-wrap: wrap;
 }
 
-#banner_2
-{
-    top: 200px;
+/* Course and Student Management Containers */
+.course-container, .student-container {
+    flex: 1;
+    min-width: 450px; /* Increased for better readability */
+    max-width: 550px; /* Increased for more space */
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    padding: 40px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 0 10px rgba(0,0,0,0.3);
+    color: white;
+    font-family: 'Outfit', sans-serif;
 }
 
-#banner_3
-{
-    top: 400px;
+.course-container button, .student-container button{
+    padding: 8px 15px;
+    background-color: #2B9900 !important;
+    color: white !important;
+    border: none;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-right: 10px;
 }
 
-.left_box
-{
-    z-index: 2;
-    position: absolute;
-    left: 20px;
-
-}
-
-.middle_box
-{
-    z-index: 2;
-    position: absolute;
-    left: 200px;
-    right: 205px;
-    top: 15px;
-    bottom: 15px;
-    border-radius: 10px;
-}
-
-.right_box
-{
-    z-index: 2;
-    position: absolute;
-    right: 20px;
-    display: flex;
-    justify-content: space-between;
-    flex-direction: column;
-    height: 90px;
-}
-
-.title
-{
-    color: #FFF;
-    font-family: Outfit;
+.course-container h2, .student-container h2 {
+    background: linear-gradient(90deg, #2B9900 0%, #949494 50.9%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
     font-size: 24px;
-    font-style: normal;
+    margin-bottom: 20px;
+}
+
+.course-form label, .student-form label {
+    display: block;
+    margin-bottom: 10px; /* Increased for better spacing */
+    margin-top: 15px; /* Added for spacing above labels */
     font-weight: 500;
-    line-height: normal;
 }
 
-.abhisarga
-{
-    color: #FFF;
-    font-family: Outfit;
-    font-size: 30px;
-    font-style: normal;
-    font-weight: 100;
-    line-height: normal;
+.course-form input,
+.course-form select,
+.student-form input {
+    width: 100%;
+    padding: 12px; /* Increased for better usability */
+    border-radius: 8px;
+    border: 1px solid #2B9900 !important;
+    background-color: #0F0F0F !important;
+    color: white !important;
+    margin-bottom: 15px; /* Adjusted for consistent spacing */
+    font-family: 'Outfit', sans-serif;
+    box-sizing: border-box;
+    -webkit-appearance: none; /* Remove default browser styling for select */
+    -moz-appearance: none;
+    appearance: none;
 }
 
-.banner_img
+/* Add custom arrow for select */
+.course-form select {
+    background-image: url('data:image/svg+xml;utf8,<svg fill="%23FFFFFF" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>');
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    padding-right: 30px; /* Space for the arrow */
+}
+
+/* Stack Input Groups Vertically */
+.input-group {
+    display: block;
+    margin-bottom: 15px;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 12px;
+    background: #0F0F0F;
+    border: 1px solid #2B9900;
+    color: white;
+    border-radius: 5px;
+    box-sizing: border-box;
+    margin-bottom: 10px;
+}
+
+.input-group button {
+    padding: 8px 15px;
+    background-color: #2B9900 !important;
+    color: white !important;
+    border: none;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-right: 10px;
+}
+
+.input-group button:hover {
+    background-color: #237a00 !important;
+}
+
+/* Remove extra margin for specific fields */
+#course-name, #professor {
+    margin-right: 0;
+}
+
+/* Add Course and Add Student Buttons */
+.course-form button[type="submit"],
+.student-form button[type="submit"] {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    background-color: #2B9900;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    font-family: 'Outfit', sans-serif;
+    font-weight: 600;
+    font-size: 18px;
+    margin-top: 20px;
+}
+
+.course-form button[type="submit"]:hover,
+.student-form button[type="submit"]:hover {
+    background-color: #237a00;
+}
+
+/* Toggle Button */
+.toggle-btn {
+    display: block;
+    margin: 10px 0 20px; /* Increased bottom margin for spacing */
+    padding: 10px 20px;
+    background-color: #2B9900;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    font-family: 'Outfit', sans-serif;
+    font-weight: 600;
+}
+
+.toggle-btn:hover {
+    background-color: #237a00;
+}
+
+/* Error Messages */
+.course-error, .student-error {
+    color: #FF4D4D;
+    font-family: 'Outfit', sans-serif;
+    font-size: 16px;
+    text-align: center;
+    margin-top: 10px;
+    padding: 10px;
+    border-radius: 5px;
+    background: rgba(255, 77, 77, 0.2);
+}
+
+/* Lists */
+h2 {
+    background: linear-gradient(90deg, #2B9900 0%, #949494 50.9%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-family: 'Outfit', sans-serif;
+    font-size: 24px;
+    margin: 10px 0 20px; /* Increased top margin for better section separation */
+}
+
+.course-list, .professor-list, .student-list {
+    list-style: none;
+    padding: 0;
+}
+
+.course-list li, .professor-list li, .student-list li {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 15px;
+    margin: 10px 0;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: white;
+    font-family: 'Outfit', sans-serif;
+    font-size: 16px;
+}
+
+.no-items {
+    color: rgba(255, 255, 255, 0.5);
+    font-family: 'Outfit', sans-serif;
+    font-size: 16px;
+    text-align: center;
+    margin: 20px 0;
+}
+
+/* Back to Home Link */
+.back-home {
+    display: inline-block;
+    margin: 40px 0;
+    padding: 10px 20px;
+    background-color: #2B9900;
+    color: white;
+    text-decoration: none;
+    border-radius: 10px;
+    font-family: 'Outfit', sans-serif;
+    font-weight: 600;
+    transition: background-color 0.3s ease;
+}
+
+.back-home:hover {
+    background-color: #237a00;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .management-section {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .course-container, .student-container {
+        max-width: 100%;
+        min-width: 0;
+    }
+}
+
+#course-name,#professor,.student-container input
 {
     width: 100%;
-    height: 100%;
-    top: 10px;
-    bottom: 10px;
-    object-fit: cover;
-    border-radius: 10px;
+    padding: 12px; /* Increased for better usability */
+    border-radius: 8px;
+    border: 1px solid #2B9900 !important;
+    background-color: #0F0F0F !important;
+    color: white !important;
+    margin-bottom: 15px; /* Adjusted for consistent spacing */
+    font-family: 'Outfit', sans-serif;
+    box-sizing: border-box;
+    -webkit-appearance: none; /* Remove default browser styling for select */
+    -moz-appearance: none;
+    appearance: none;
 }
 
-.accept_button
-{
-    border-radius: 30px;
-    border: 2px solid rgba(43, 153, 0, 0.40);
-    background: #080808;
-    color: #FFF;
-    font-family: Outfit;
-    font-size: 18px;
-    font-weight: 400;
-    line-height: 40px; 
-    width: 140px;
-}
 
-.reject_button
-{
-    border-radius: 30px;
-    border: 2px solid rgba(255, 0, 0, 0.40);
-    background: #080808;
-    color: #FFF;
-    font-family: Outfit;
-    font-size: 18px;
-    font-weight: 400;
-    line-height: 40px; 
-    width: 140px;
-}
-
-#third_row
-{
-    border: solid;
-    position: absolute;
-    z-index: 2;
-    top: 1010px;
-    left: 50px;
-    width: 35%;
-    height: 200px;
-}

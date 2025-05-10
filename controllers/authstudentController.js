@@ -62,21 +62,58 @@ export const registerStudent = async (req, res) => {
   try {
     const { roll, section, phone } = req.body;
 
+    // Validate roll number
+    const rollRegex = /^S(20[0-2][0-5])00(10|20|30)([0-9]{3})$/;
+    if (!roll || !rollRegex.test(roll)) {
+      const rollErrors = [];
+      if (!roll || roll[0] !== 'S') {
+        rollErrors.push("Roll number must start with capital 'S'");
+      }
+      const yearMatch = roll && roll.match(/^S(\d{4})/);
+      const year = yearMatch ? parseInt(yearMatch[1]) : null;
+      const currentYear = new Date().getFullYear();
+      if (!year || year <= 2000 || year >= currentYear) {
+        rollErrors.push(`Year must be between 2001 and ${currentYear}`);
+      }
+      if (!roll || roll.substring(5, 7) !== '00') {
+        rollErrors.push("Roll number must have '00' after the year");
+      }
+      if (!roll || !['10', '20', '30'].includes(roll.substring(7, 9))) {
+        rollErrors.push("Branch code must be '10', '20', or '30'");
+      }
+      const lastThree = roll && roll.match(/(\d{3})$/);
+      const lastThreeNum = lastThree ? parseInt(lastThree[1]) : 0;
+      if (!lastThree || lastThreeNum === 0) {
+        rollErrors.push("Last three digits must be a number greater than 0");
+      }
+      return res.status(400).json({ message: rollErrors.join("; ") });
+    }
+
+    // Validate section
+    if (!section || !/^\d+$/.test(section) || !Number.isInteger(parseInt(section)) || parseInt(section) <= 0) {
+      return res.status(400).json({ message: "Section must be a natural number (positive integer greater than 0)" });
+    }
+
+    // Validate phone number
+    if (!phone || !/^\d{10}$/.test(phone)) {
+      return res.status(400).json({ message: "Phone number must be exactly 10 digits" });
+    }
+
     // Extract year, branch, and UG year from roll number
     const year = parseInt(roll.substring(1, 5));
     const currentYear = new Date().getFullYear();
     const ugYear = currentYear - year;
 
-    const branchCode = roll.charAt(7);
+    const branchCode = roll.substring(7, 9);
     let branch;
     switch (branchCode) {
-      case "1":
+      case "10":
         branch = "CSE";
         break;
-      case "2":
+      case "20":
         branch = "ECE";
         break;
-      case "3":
+      case "30":
         branch = "AIDS";
         break;
       default:
@@ -117,6 +154,39 @@ export const signupStudent = async (req, res) => {
   try {
     const { name, email, password, confirm_password } = req.body;
 
+    // Validate name
+    if (!name || name.trim().length === 0) {
+      return res.status(400).json({ message: "Name is required" });
+    }
+
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!email || !emailRegex.test(email)) {
+      return res.status(400).json({ message: "Invalid email format" });
+    }
+
+    // Validate password requirements
+    const passwordErrors = [];
+    if (password.length < 6) {
+      passwordErrors.push("Password must be at least 6 characters long");
+    }
+    if (!/[A-Z]/.test(password)) {
+      passwordErrors.push("Password must contain at least one uppercase letter");
+    }
+    if (!/[a-z]/.test(password)) {
+      passwordErrors.push("Password must contain at least one lowercase letter");
+    }
+    if (!/[0-9]/.test(password)) {
+      passwordErrors.push("Password must contain at least one number");
+    }
+    if (!/[@$!%*?&]/.test(password)) {
+      passwordErrors.push("Password must contain at least one special character (@$!%*?&)");
+    }
+
+    if (passwordErrors.length > 0) {
+      return res.status(400).json({ message: passwordErrors.join("; ") });
+    }
+
     // Check if passwords match
     if (password !== confirm_password) {
       return res.status(400).json({ message: "Passwords do not match" });
@@ -127,6 +197,7 @@ export const signupStudent = async (req, res) => {
     if (existingUser) {
       return res.status(400).json({ message: "Email already exists" });
     }
+
     const hashedPassword = await bcrypt.hash(password, 10);
 
     req.session.user = {

@@ -1,113 +1,179 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="./styles/Admindashboard.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&family=Rubik:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
-    <title>Document</title>
+  <title>Admin Dashboard</title>
+  <link rel="stylesheet" href="/styles/Admindashboard.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&family=Rubik:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
+  <script src="/scripts/admin.js" defer></script>
 </head>
 <body>
-    <header>
-            <p class="logo">Campus<span>C</span>onnect</p>
-            <a href="" class="notification"><img src="./assets/notification(1) 1.png" alt="notification"></a>
-            <a href="" class="profile"><img src="./assets/user(2) 1.png" alt="profile"></a>
-    </header>
-    <div class="sidebar">
-        <ul>
-            <li><a href=""><img src="./assets/question-and-answer 1.png" alt=""> <span class="text">Q&A<span>Forum</span></span></a></li>
-            <li><a href=""><img src="./assets/attendance 1.png" alt=""> <span class="text">Attendance<span>Tracking</span></span></a></li>
-            <li><a href=""><img src="./assets/wave-graph 1.png" alt=""> <span class="text">Grade<span>Prediction</span></span></a></li>
-        </ul>
-    </div>
-    <div id="content_space_div">
-        <div id="top_row">
-            <div id="dash_welcm_admn_div">
-                <div class="green_gradient" id="dashboard_div">
-                    Dashboard
-                </div>
-                <div id="welcm_nd_admn_div">
-                    <div class="green_gradient" id="welcome_div">
-                        Welcome back,
-                    </div>
-                    <div id="admin_div">
-                        Admin
-                    </div>
-                </div>
-            </div>
-            <div id="date_holding_container_outer">
-                <div id="date_holding_container_inner">
-                    <img id="date_img"  src="./assets/Rectangle 76.svg" alt="a_bloody_box">
-                    <div id="content_inside_dateboox_container">
-                        <div id="day" class="contents_inside_datebox">
-                            Tuesday  
-                        </div>
-                        <div id="date" class="contents_inside_datebox">
-                            18
-                        </div>
-                        <div id="month_year" class="contents_inside_datebox">
-                            March, 2025 
-                        </div>
-                    </div>
-                </div>
-            </div>
+  <header>
+    <a href="http://localhost:3000/dashboard" style="text-decoration: none;"><p class="logo">Campus<span>C</span>onnect</p></a>
+    <% if (locals.title) { %>
+      <div>|</div>
+      <a href="http://localhost:3000/login"><p>Log in</p></a>
+      <a href="http://localhost:3000/signup" style="text-decoration: none;"><div id="signup"><p>Sign up</p></div></a>
+    <% } else { %>
+      <!-- <a href="" class="notification"><img src="/assets/notification(1) 1.png" alt="notification"></a> -->
+      <a href="/profile" class="profile"><img src="/assets/user(2) 1.png" alt="profile"></a>
+    <% } %>
+  </header>
+  <div class="sidebar">
+    <ul>
+      <li><a href="http://localhost:3000/problemslvfrm"><img src="/assets/question-and-answer 1.png" alt=""> <span class="text">Q&A<span>Forum</span></span></a></li>
+      <li><a href="http://localhost:3000/attendance"><img src="/assets/attendance 1.png" alt=""> <span class="text">Attendance<span>Tracking</span></span></a></li>
+      <li><a href="http://localhost:3000/bellgraph"><img src="/assets/wave-graph 1.png" alt=""> <span class="text">Grade<span>Prediction</span></span></a></li>
+    </ul>
+  </div>
+  <main>
+    <div id="top_row">
+      <div id="dash_welcm_admn_div">
+        <div class="green_gradient" id="dashboard_div">
+          Dashboard
         </div>
-        <div id="banner_div">
-            <div class="banner" id="banner_1">
-                <div class="left_box">
-                    <div class="title">
-                        Title:
-                    </div>
-                    <div class="abhisarga">
-                        Abhisarga
-                    </div>
-                </div>
-                <div class="middle_box">
-                    <img class="banner_img" src="./assets/Group 128.png" alt="">
-                </div>
-                <div class="right_box">
-                    <button class="accept_button">Accept</button>
-                    <button class="reject_button">Reject</button>
-                </div>
-            </div>
-            <div class="banner" id="banner_2">
-                <div class="left_box">
-                    <div class="title">
-                        Title:
-                    </div>
-                    <div class="abhisarga">
-                        Abhisarga
-                    </div>
-                </div>
-                <div class="middle_box">
-                    <img class="banner_img" src="./assets/Group 124.png" alt="">
-                </div>
-                <div class="right_box">
-                    <button class="accept_button">Accept</button>
-                    <button class="reject_button">Reject</button>
-                </div>
-            </div>
-            <div class="banner" id="banner_3">
-                <div class="left_box">
-                    <div class="title">
-                        Title:
-                    </div>
-                    <div class="abhisarga">
-                        Abhisarga
-                    </div>
-                </div>
-                <div class="middle_box">
-                    <img class="banner_img" src="./assets/Group 123.png" alt="">
-                </div>
-                <div class="right_box">
-                    <button class="accept_button">Accept</button>
-                    <button class="reject_button">Reject</button>
-                </div>
-            </div>
+        <div id="welcm_nd_admn_div">
+          <div class="green_gradient" id="welcome_div">
+            Welcome back,
+          </div>
+          <div id="admin_div">
+            <%= name %>
+          </div>
         </div>
-        
+      </div>
+      <div id="date_holding_container_outer">
+        <div id="date_holding_container_inner">
+          <div id="content_inside_dateboox_container">
+            <div id="day" class="contents_inside_datebox">
+              Tuesday  
+            </div>
+            <div id="date" class="contents_inside_datebox">
+              18
+            </div>
+            <div id="month_year" class="contents_inside_datebox">
+              March, 2025 
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
+
+    <!-- Course and Student Management Section -->
+    <div class="management-section">
+      <!-- Course Management Section -->
+      <div class="course-container">
+        <h2>Course Management</h2>
+        <form id="add-course-form" action="/admin/dashboard" method="POST">
+          <input type="hidden" name="action" value="add-course">
+          <label for="course-name">Name of the Course:</label>
+          <input type="text" id="course-name" name="name" placeholder="e.g., Operating Systems" required>
+
+          <label for="professor">Professor Assigned:</label>
+          <select id="professor" name="professor" required>
+            <option value="">Select a Professor</option>
+            <% professors.forEach(prof => { %>
+              <option value="<%= prof._id %>"><%= prof.name %> (<%= prof.email %>)</option>
+            <% }) %>
+          </select>
+
+          <label for="section">Section:</label>
+          <div class="input-group">
+            <input type="text" id="section" name="section" placeholder="e.g., 1" required>
+            <button type="button">+</button>
+            <button type="button">−</button>
+          </div>
+
+          <label for="total-classes">Total No. of Classes:</label>
+          <div class="input-group">
+            <input type="number" id="total-classes" name="totalclasses" placeholder="e.g., 36" min="1" required>
+            <button type="button">+</button>
+            <button type="button">−</button>
+          </div>
+
+          <label for="credits">Course's Credits:</label>
+          <div class="input-group">
+            <input type="number" id="credits" name="credits" placeholder="e.g., 4" min="1" required>
+            <button type="button">+</button>
+            <button type="button">−</button>
+          </div>
+
+          <button type="submit">Add Course</button>
+        </form>
+        <div id="error-message" class="course-error"></div>
+      </div>
+
+      <!-- Student Management Section -->
+      <div class="student-container">
+        <h2 id="student-form-title">Add New Student</h2>
+        <button id="toggle-student-mode" class="toggle-btn">Switch to Remove Student</button>
+        <form id="student-form" action="/admin/dashboard" method="POST">
+          <input type="hidden" name="action" value="add-student">
+          <div id="student-form-fields">
+            <label for="student-name">Name of the Student:</label>
+            <input type="text" id="student-name" name="name" placeholder="e.g., John Doe" required>
+
+            <label for="student-email">Email of the Student:</label>
+            <input type="email" id="student-email" name="email" placeholder="e.g., john@example.com" required>
+
+            <label for="student-rollnumber">Roll Number:</label>
+            <input type="text" id="student-rollnumber" name="rollnumber" placeholder="e.g., 22CS123" required>
+
+            <label for="student-phone">Phone Number:</label>
+            <input type="tel" id="student-phone" name="phone" placeholder="e.g., 9876543210" required>
+
+            <label for="student-section">Section:</label>
+            <input type="text" id="student-section" name="section" placeholder="e.g., A" required>
+          </div>
+          <button type="submit" id="student-submit-btn">Add Student</button>
+        </form>
+        <div id="student-error-message" class="student-error"></div>
+      </div>
+    </div>
+
+    <h2>Existing Courses</h2>
+    <% if (courses.length > 0) { %>
+      <ul class="course-list">
+        <% courses.forEach(course => { %>
+          <li>
+            <%= course.name %> (Section <%= course.section %>) - 
+            Professor: <%= course.professor.name %> - 
+            Credits: <%= course.credits %> - 
+            Total Classes: <%= course.totalclasses %>
+          </li>
+        <% }) %>
+      </ul>
+    <% } else { %>
+      <p class="no-items">No courses available.</p>
+    <% } %>
+
+    <h2>Existing Professors</h2>
+    <% if (professors.length > 0) { %>
+      <ul class="professor-list">
+        <% professors.forEach(prof => { %>
+          <li>
+            <%= prof.name %> - Email: <%= prof.email %> - Phone: <%= prof.phone %>
+          </li>
+        <% }) %>
+      </ul>
+    <% } else { %>
+      <p class="no-items">No professors available.</p>
+    <% } %>
+
+    <h2>Existing Students</h2>
+    <% if (students.length > 0) { %>
+      <ul class="student-list">
+        <% students.forEach(student => { %>
+          <li>
+            <%= student.name %> - Email: <%= student.email %> - Roll Number: <%= student.rollnumber %> - Phone: <%= student.phone %> - Section: <%= student.section %>
+          </li>
+        <% }) %>
+      </ul>
+    <% } else { %>
+      <p class="no-items">No students available.</p>
+    <% } %>
+
+    <a href="/" class="back-home">Back to Home</a>
+  </main>
 </body>
 </html>
