@@ -137,32 +137,31 @@ export const studentAttendance = async (req, res) => {
 export const studentGrades = async (req, res) => {
   if (req.session.user) {
     try {
-      const courseId = req.query.courseId; // Get the course ID from the query string
-      console.log(req.query);
-      const course = await Course.findById(courseId);
+      const studentCourses = req.session.user.courses.map((course) => course.course);
 
-      if (!course || !course.gradeDistribution) {
-        return res.status(404).send("No grade distribution data available for this course.");
+      // Fetch all courses the student is enrolled in
+      const courses = await Course.find({ _id: { $in: studentCourses } });
+
+      if (!courses || courses.length === 0) {
+        return res.status(404).send("No courses found for the student.");
       }
 
-      const gradeDistribution = Array.from(course.gradeDistribution.entries())
-        .sort((a, b) => a[0] - b[0]) // Sort grades in ascending order
-        .reduce((acc, [grade, frequency]) => {
-          acc.grades.push(grade);
-          acc.frequencies.push(frequency);
-          return acc;
-        }, { grades: [], frequencies: [] });
+      // Prepare the list of subjects for rendering
+      const bellgraphSubjects = courses.map((course) => ({
+        courseId: course._id.toString(),
+        name: course.name,
+      }));
+      console.log(bellgraphSubjects);
 
+      // Render the initial page with the first course selected
       res.render("bellgraph.ejs", {
-        subject: course.name,
-        bellgraphData: JSON.stringify(gradeDistribution.frequencies),
-        bellgraphSubjects: [course.name],
-        userinfo: req.session.user.courses.find(
-          (c) => c.course.toString() === courseId
-        )?.grade || "N/A",
+        subject: bellgraphSubjects[0].name,
+        bellgraphSubjects: bellgraphSubjects,
+        defaultCourseId: bellgraphSubjects[0].courseId,
+        userinfo: req.session.user.courses[0]?.grade || "N/A", // Predicted Grade
       });
     } catch (error) {
-      console.error("Error fetching grade distribution:", error);
+      console.error("Error fetching student grades:", error);
       res.status(500).send("Internal Server Error.");
     }
   } else {

@@ -15,56 +15,53 @@
     <%- include("sidebar.ejs") %>
 
     <div class="bg_mainpage">
-    <div class="bg_subjects">
-        <% bellgraphSubjects.forEach((sub) => { %>
-            <div class="subject" 
-                 data-course-id="<%= sub.courseId %>" 
-                 onclick="updateGraphForSubject('<%= sub.courseId %>', '<%= sub.name %>', this)">
-                <p><%= sub.name %></p>
-            </div>
-        <% }) %>
+  <div class="bg_subjects">
+    <% bellgraphSubjects.forEach((sub) => { %>
+      <div class="subject" 
+           data-course-id="<%= sub.courseId %>" 
+           onclick="updateGraphForSubject('<%= sub.courseId %>', '<%= sub.name %>', this)">
+        <p><%= sub.name %></p>
+      </div>
+    <% }) %>
+  </div>
+
+  <div class="bg_main">
+    <div class="bg_graph">
+      <p>Bell Graph Curve for <span id="currentSubject"><%= subject %></span></p>
+      <canvas id="bellChart" width="800" height="400"></canvas>
     </div>
 
-    <div class="bg_main">
-        <div class="bg_graph">
-            <p>Bell Graph Curve for <span id="currentSubject"><%= subject %></span></p>
-            <div>
-                <div id="chart"></div>
-            </div>
+    <div class="bg_graphright">
+      <div>
+        <p>Your Grade</p>
+        <p><%= userinfo %></p>
+      </div>
+      <div class="bg_details">
+        <div>
+          <p>Allotted Credits</p>
+          <p><span>4</span></p>
         </div>
-
-        <div class="bg_graphright">
-            <div>
-                <p>Predicted Grade</p>
-                <p><%= userinfo %></p>
-            </div>
-            <div class="bg_details">
-                <div>
-                    <p>Allotted Credits</p>
-                    <p><span>4</span></p>
-                </div>
-                <div>
-                    <p>Total Hours Assigned</p>
-                    <p><span>46</span>hrs</p>
-                </div>
-                <div>
-                    <p>Total Enrollments</p>
-                    <p><span>146</span></p>
-                </div>
-            </div>
+        <div>
+          <p>Total Hours Assigned</p>
+          <p><span>46</span>hrs</p>
         </div>
+        <div>
+          <p>Total Enrollments</p>
+          <p><span>146</span></p>
+        </div>
+      </div>
     </div>
+  </div>
 
-    <div class="bg_ads"></div>
-    <script>
-
-    </script>
-    <!-- <script>
-        const defaultCourseId = "<%= defaultCourseId %>";
-        const defaultSubject = "<%= subject %>";
-        const bellgraphData = <%- bellgraphData %>;
-    </script>
-    <script src="./scripts/bellgraph.js"></script> -->
+  <div class="bg_ads"></div>
+  <script>
+    const defaultCourseId = "<%= defaultCourseId %>";
+    const defaultSubject = "<%= subject %>";
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="/scripts/bellgraph.js"></script>
 </div>
+    
+   
 </body>
 </html>
