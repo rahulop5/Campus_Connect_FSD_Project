@@ -172,49 +172,55 @@ const upload = multer({ storage: storage });
 
 app.post("/prof/submit", upload.single("marksheet"), async (req, res) => {
   try {
-    console.log(req.body);
-    const courseId = req.body.courseId; // Get the course ID from the form submission
+    const courseId = req.body.courseId; // Get the course ID
     if (!courseId) {
       return res.status(400).send("Course ID is required.");
     }
 
     const filePath = "./uploads/marksheet.csv"; // Path to the uploaded CSV file
     const updates = [];
+    const grades = []; // Array to store grades for frequency calculation
 
     // Read the CSV file and process the data
     fs.createReadStream(filePath)
       .pipe(csvParser())
       .on("data", (row) => {
-        // Push valid rows into the updates array
         if (row.email && row.grade && row.attendance) {
           updates.push({
             email: row.email.trim(),
             grade: parseInt(row.grade.trim(), 10),
             attendance: parseInt(row.attendance.trim(), 10),
           });
+          grades.push(parseInt(row.grade.trim(), 10)); // Collect grades for distribution
         }
       })
       .on("end", async () => {
-        // Iterate over the updates array and update student documents
+        // Update students' grades and attendance
         for (const update of updates) {
           const student = await Student.findOne({ email: update.email });
-
           if (student) {
-            // Find the course in the student's courses array
             const courseIndex = student.courses.findIndex(
               (c) => c.course.toString() === courseId
             );
-
-            console.log(courseIndex); 
             if (courseIndex !== -1) {
-              // Update the grade and attendance for the course
               student.courses[courseIndex].grade = update.grade;
               student.courses[courseIndex].attendance = update.attendance;
             }
             await student.save();
           }
+        }
 
-          // Save the updated student document
+        // Calculate grade distribution
+        const gradeDistribution = grades.reduce((acc, grade) => {
+          acc[grade] = (acc[grade] || 0) + 1; // Increment frequency for the grade
+          return acc;
+        }, {});
+
+        // Update the course with the grade distribution
+        const course = await Course.findById(courseId);
+        if (course) {
+          course.gradeDistribution = gradeDistribution;
+          await course.save();
         }
 
         res.status(200).send("Student grades and attendance updated successfully.");
@@ -228,6 +234,5 @@ app.post("/prof/submit", upload.single("marksheet"), async (req, res) => {
     res.status(500).send("Internal Server Error.");
   }
 });
-
 
 app.listen(3000);

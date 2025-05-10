@@ -1,16 +1,17 @@
 document.addEventListener("DOMContentLoaded", function () {
-    // Automatically select and update the default subject graph
-    const defaultElement = [...document.querySelectorAll(".subject p")]
-        .find(p => p.innerText.trim() === defaultSubject)?.parentElement;
-    
-    if (defaultSubject && bellgraphData[defaultSubject]) {
-        updateGraphForSubject(defaultSubject, defaultElement);
+    const defaultSubjectElement = [...document.querySelectorAll(".subject")].find(
+        (el) => el.querySelector("p").innerText.trim() === defaultSubject
+    );
+
+    if (defaultSubject && defaultSubjectElement) {
+        const defaultCourseId = defaultSubjectElement.getAttribute("data-course-id");
+        updateGraphForSubject(defaultCourseId, defaultSubject, defaultSubjectElement);
     } else {
         console.error("Default subject is not defined or has no data.");
     }
 });
 
-function updateGraphForSubject(subject, element) {
+function updateGraphForSubject(courseId, subject, element) {
     console.log("Updating graph for:", subject);
 
     // Remove the ID from the previously selected subject (if any)
@@ -28,15 +29,23 @@ function updateGraphForSubject(subject, element) {
 
     // Update the displayed subject name
     document.getElementById("currentSubject").innerText = subject;
-
-    // Update the graph with the new subject's data
-    const data = bellgraphData[subject];
-    if (data) {
-        updateGraph(data);
-    } else {
-        console.error("No data found for subject:", subject);
-    }
+    console.log("hi ig?");
+    // Fetch updated graph data from the server
+    fetch(`/bellgraph?courseId=${courseId}`)
+        .then((response) => response.json())
+        .then((data) => {
+            if (data && data.bellgraphData) {
+                updateGraph(data.bellgraphData);
+            } else {
+                console.error("No data found for subject:", subject);
+            }
+        })
+        .catch((error) => {
+            console.error("Error fetching bell graph data:", error);
+        });
 }
+
+// updateGraphForSubject("681b234ca3e106baceb08612", "aids", document.getElementById("temp"));
 
 function updateGraph(inputData) {
     const width = 1100, height = 500;
@@ -66,18 +75,6 @@ function updateGraph(inputData) {
         .datum(inputData)
         .attr("fill", "lime")
         .attr("opacity", 0.3)
-        .attr("filter", "url(#glow)")
-        .attr("d", d3.area()
-            .x((d, i) => xScale(i))
-            .y0(yScale(d3.min(inputData) - 10))
-            .y1(d => yScale(d))
-            .curve(d3.curveCardinal)
-        );
-
-    // Gradient overlay for visual effect
-    svg.append("path")
-        .datum(inputData)
-        .attr("fill", "url(#glow-gradient)")
         .attr("d", d3.area()
             .x((d, i) => xScale(i))
             .y0(yScale(d3.min(inputData) - 10))

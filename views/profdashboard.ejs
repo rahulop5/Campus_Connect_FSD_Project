@@ -34,7 +34,7 @@
         <% if (courses.length > 0) { %>
           <% courses.forEach(course => { %>
             <div class="course-box">
-              <input type="checkbox" name="courseId" value="<%= course.id %>" required>
+              <input type="checkbox" name="courseId" value="<%= course.id %>">
               <p class="course-code"><%= course.name %></p>
               <p class="course-section">Sec-<%= course.section %></p>
             </div>

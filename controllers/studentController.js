@@ -1,5 +1,6 @@
 import Question from "../models/Question.js";
 import Student from "../models/Student.js";
+import Course from "../models/Course.js";
 
 export const studentDashboard = async (req, res) => {
   if (req.session.user) {
@@ -133,16 +134,38 @@ export const studentAttendance = async (req, res) => {
   }
 };
 
-export const studentGrades = async (req, res)=>{
+export const studentGrades = async (req, res) => {
   if (req.session.user) {
-    const defaultSubject = "AI";
-    res.render("bellgraph.ejs", {
-      subject: defaultSubject,
-      bellgraphData: JSON.stringify(bellgraph),
-      bellgraphSubjects: Object.keys(bellgraph),
-      userinfo: req.session.user.courses[0].grade.predgrade
-    });
+    try {
+      const courseId = req.query.courseId; // Get the course ID from the query string
+      console.log(req.query);
+      const course = await Course.findById(courseId);
+
+      if (!course || !course.gradeDistribution) {
+        return res.status(404).send("No grade distribution data available for this course.");
+      }
+
+      const gradeDistribution = Array.from(course.gradeDistribution.entries())
+        .sort((a, b) => a[0] - b[0]) // Sort grades in ascending order
+        .reduce((acc, [grade, frequency]) => {
+          acc.grades.push(grade);
+          acc.frequencies.push(frequency);
+          return acc;
+        }, { grades: [], frequencies: [] });
+
+      res.render("bellgraph.ejs", {
+        subject: course.name,
+        bellgraphData: JSON.stringify(gradeDistribution.frequencies),
+        bellgraphSubjects: [course.name],
+        userinfo: req.session.user.courses.find(
+          (c) => c.course.toString() === courseId
+        )?.grade || "N/A",
+      });
+    } catch (error) {
+      console.error("Error fetching grade distribution:", error);
+      res.status(500).send("Internal Server Error.");
+    }
   } else {
     res.redirect("/");
   }
-}
+};
