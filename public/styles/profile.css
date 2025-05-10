@@ -61,7 +61,7 @@ body
 
 .auth_q
 {
-    color: rgba(43, 153, 31, 0.50);
+    color: #2B9900;
     font-size: 16px;
 }
 
@@ -85,6 +85,7 @@ body
 .image_div
 {
     width: 21px;
+    cursor: pointer;
 }
 
 #second_auth
@@ -105,6 +106,7 @@ body
 #fifth_auth
 {
     margin-top: 255px;
+    /* margin-bottom:20px; */
 }
 
 #rb_row1
@@ -112,7 +114,7 @@ body
     position: absolute;
     z-index: 2;
     color: white;
-    margin-top: 310px;
+    margin-top: 320px;
     margin-left: 510px;
     display: flex;
     justify-content: space-between;
@@ -129,7 +131,7 @@ body
 
 .rb_r1_q
 {
-    color: rgba(43, 153, 31, 0.50);
+    color: #2B9900;
     font-size: 16px;
 }
 
@@ -143,7 +145,7 @@ body
 {
     position: absolute;
     z-index: 2;
-    margin-top: 375px;
+    margin-top: 395px;
     margin-left: 510px;
     color: white;
     display: flex;
@@ -152,7 +154,7 @@ body
 
 .rb_r2_q
 {
-    color: rgba(43, 153, 31, 0.50);
+    color: #2B9900;
 }
 
 #rb_r2_course_r1
@@ -161,6 +163,7 @@ body
     margin-top: 10px;
     font-size: 22px;
     width: 310px;
+    gap:40px;
     justify-content: space-between;
 }
 
@@ -299,7 +302,7 @@ body
   
   .editable-input.editing {
     border: 1px solid #18651f;
-    background: #fff;
+    background: transparent;
     box-shadow: 0 0 2px #aaa;
     border-radius: 4px;
   }

@@ -76,8 +76,12 @@ export const studentDashboard = async (req, res) => {
 
 export const studentProfile = async (req, res) => {
   if(req.session.user){
+    const student = await Student.findById(req.session.user._id).populate("courses.course");
+    console.log("yoyo")
+    console.log(student.courses);
+    console.log("yoyo")
     res.render("profile.ejs", {
-      student: req.session.user,
+      student: student,
     });
   }
   else{
@@ -189,3 +193,30 @@ export const studentGradebyId = async (req, res) => {
     res.status(500).json({ error: "Internal Server Error." });
   }
 };
+// Controller function to handle updating the student's profile
+export const updateStudentProfile = async (req, res) => {
+  if (req.session.user) {
+    try {
+      const { field, value } = req.body;
+
+      // Update the student's profile in the database using the field and value provided
+      const updatedStudent = await Student.findByIdAndUpdate(
+        req.session.user._id, 
+        { [field]: value }, 
+        { new: true } 
+      );
+
+      // Update the session user object with the updated student data
+      req.session.user = updatedStudent;
+
+      // Send a success response to the client
+      res.status(200).send("Profile updated successfully");
+    } catch (error) {
+      console.error("Error updating student profile:", error);
+      res.status(500).send("Internal Server Error");
+    }
+  } else {
+    res.status(401).send("Unauthorized");
+  }
+};
+

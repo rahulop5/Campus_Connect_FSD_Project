@@ -15,6 +15,8 @@ import multer from "multer";
 import fs from "fs";
 import csvParser from "csv-parser";
 import mongoose from "mongoose";
+import profileRoutes from './routes/studentRoutes.js';
+
 
 const app=express();
 env.config();
@@ -233,6 +235,14 @@ app.post("/prof/submit", upload.single("marksheet"), async (req, res) => {
     console.error("Error updating student data:", error);
     res.status(500).send("Internal Server Error.");
   }
+});
+
+app.use('/profile', profileRoutes);
+
+app.get("/profileprof", (req, res) => {
+  res.render("profileprof.ejs",{
+      student: req.session.user,
+    } );
 });
 
 app.listen(3000);
