@@ -7,19 +7,21 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&family=Rubik:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
-    <title>Document</title>
+    <title>Student Dashboard</title>
 </head>
+
 <body class="outfit">
     <%- include("header.ejs") %>
     <%- include("sidebar.ejs") %>
+
+    <div id="dashboard-container">
         <div class="db_mainpage">
             <div class="db_mainmain">
-                <p>
-                    Welcome <%= name %>
-                </p>
+                <p>Welcome <%= name %></p>
+
                 <div class="db_clubs">
                     <div class="db_banners">
-                         <img src="./assets/abhisarga_banner.png" alt="">
+                        <img src="./assets/abhisarga_banner.png" alt="">
                     </div>
                     <div class="db_date">
                         <p class="db_dateblack"><%= dayOfWeek %></p>
@@ -27,34 +29,35 @@
                         <p class="db_dateblack"><%= month %>, <%= year %></p>
                     </div>                      
                 </div>
+
                 <div class="db_attengrade">
                     <% courses.forEach((course, index) => { %>
-                      <% if (index < 3) { %>
-                        <div class="db_subject">
-                          <div class="db_grade">
-                            <p><%= course.subject %></p>
-                            <p>Predicted Grade</p>
-                            <p><%= course.grade.predgrade %> <span>A</span> B C D P F</p>
-                          </div>
-                          <div class="db_attendance">
-                            <p>Attendance</p>
-                            <div class="progress-container">
-                              <svg width="100" height="100">
-                                <circle cx="50" cy="50" r="40" class="background-circle"></circle>
-                                <circle cx="50" cy="50" r="40" class="progress-ring progress-circle" id="progress-ring-<%= index %>"></circle>
-                              </svg>
-                              <div class="progress-text" id="progress-text-<%= index %>"><%= course.attendancePercentage %>%</div>
+                        <% if (index < 3) { %>
+                            <div class="db_subject">
+                                <div class="db_grade">
+                                    <p><%= course.subject %></p>
+                                    <p>Predicted Grade</p>
+                                    <p><%= course.grade.predgrade %> <span>A</span> B C D P F</p>
+                                </div>
+                                <div class="db_attendance">
+                                    <p>Attendance</p>
+                                    <div class="progress-container">
+                                        <svg width="100" height="100">
+                                            <circle cx="50" cy="50" r="40" class="background-circle"></circle>
+                                            <circle cx="50" cy="50" r="40" class="progress-ring progress-circle" id="progress-ring-<%= index %>"></circle>
+                                        </svg>
+                                        <div class="progress-text" id="progress-text-<%= index %>"><%= course.attendancePercentage %>%</div>
+                                    </div>
+                                </div>
                             </div>
-                          </div>
-                        </div>
-                      <% } %>
+                        <% } %>
                     <% }) %>
-                  </div>
+                </div>
                   
                 <div class="db_topq">
                     <p>Top Questions of the Week</p>
                     <div>
-                        <% for(var i=0;i<Math.min(3, questions.length);i++){ %>
+                        <% for (var i = 0; i < Math.min(3, questions.length); i++) { %>
                             <div class="problem">
                                 <div class="votes">
                                     <p><%= questions[i].votes %> votes</p>
@@ -78,10 +81,10 @@
                                 </div>
                             </div>
                         <% } %>
-
                     </div>
                 </div>
             </div>
+
             <div class="db_notice">
                 <div class="po_noticeboard">
                     <p>Notice!</p>
@@ -89,7 +92,7 @@
                     <div class="po_noticenews">
                         <div>
                             <img src="/assets/pin.png" alt="">
-                            <p>Abhisarga night concert ticket sale is now live! </p>
+                            <p>Abhisarga night concert ticket sale is now live!</p>
                         </div>
                         <div>
                             <img src="/assets/pin.png" alt="">
@@ -97,7 +100,7 @@
                         </div>
                         <div>
                             <img src="/assets/pin.png" alt="">
-                            <p>Enigma , E-Cell , TedX are new Trend Setters!</p>
+                            <p>Enigma, E-Cell, TedX are new Trend Setters!</p>
                         </div>
                     </div>
                     <hr class="noticeline">
@@ -121,23 +124,37 @@
                 </div>
             </div>
         </div>
-        <script>
-            function setProgress(percent, index) {
-              const circle = document.getElementById(`progress-ring-${index}`);
-              const text = document.getElementById(`progress-text-${index}`);
-              const radius = 40;
-              const circumference = 2 * Math.PI * radius;
-              const offset = circumference * (1 - percent / 100);
-          
-              circle.style.strokeDasharray = `${circumference}`;
-              circle.style.strokeDashoffset = offset;
-              text.innerText = `${percent}%`;
+    </div>
+
+    <script>
+        function setProgress(percent, index) {
+            const circle = document.getElementById(`progress-ring-${index}`);
+            const text = document.getElementById(`progress-text-${index}`);
+            if (!circle || !text) return;
+            const radius = 40;
+            const circumference = 2 * Math.PI * radius;
+            const offset = circumference * (1 - percent / 100);
+            circle.style.strokeDasharray = `${circumference}`;
+            circle.style.strokeDashoffset = offset;
+            text.innerText = `${percent}%`;
+        }
+
+        <% courses.forEach((course, index) => { %>
+            setProgress(<%= course.attendancePercentage %>, <%= index %>);
+        <% }) %>
+
+        async function loadDashboardPartial() {
+            try {
+                const res = await fetch("/student/dashboard");
+                if (!res.ok) throw new Error("Failed to fetch dashboard");
+                const html = await res.text();
+                document.getElementById("dashboard-container").innerHTML = html;
+            } catch (err) {
+                console.error(err);
             }
-          
-            <% courses.forEach((course, index) => { %>
-              setProgress(<%= course.attendancePercentage %>, <%= index %>);
-            <% }) %>
-          </script>
-        <!-- <script src="./scripts/dashboard.js"></script> -->
+        }
+
+        setInterval(loadDashboardPartial, 30000);
+    </script>
 </body>
 </html>

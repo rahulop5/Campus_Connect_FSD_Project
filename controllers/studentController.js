@@ -1,6 +1,66 @@
 import Question from "../models/Question.js";
 import Student from "../models/Student.js";
 import Course from "../models/Course.js";
+import ejs from "ejs";
+
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+export const studentDashboardPartial = async (req, res) => {
+  if (!req.session.user) return res.status(401).send("Unauthorized");
+
+  try {
+    const student = await Student.findById(req.session.user._id).populate("courses.course");
+
+    const courses = student.courses.map((courseObj) => {
+      const course = courseObj.course;
+      const shortform = course.name
+        .split(" ")
+        .map(w => w[0].toUpperCase())
+        .join("");
+      return {
+        subject: shortform,
+        attendancePercentage: courseObj.attendance || 0,
+        grade: courseObj.grade || "NA",
+      };
+    });
+
+    const date = new Date();
+    const daysOfWeek = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+    const months = [
+      "January","February","March","April","May","June","July","August","September","October","November","December"
+    ];
+
+    const data = {
+      name: student.name,
+      courses,
+      dayOfWeek: daysOfWeek[date.getDay()],
+      day: date.getDate(),
+      month: months[date.getMonth()],
+      year: date.getFullYear(),
+      questions: await Question.find().populate("asker").sort({ createdAt: -1 }).limit(3),
+    };
+
+      const fullHtml = await ejs.renderFile(
+        path.join(__dirname, "../views/dashboard.ejs"),
+        data
+      );
+
+      const match = fullHtml.match(/<div id="dashboard-container">([\s\S]*)<\/div>\s*<\/body>/);
+      const partialHtml = match ? match[1] : fullHtml;
+
+      res.send(partialHtml);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Internal Server Error");
+  }
+};
+
+ 
+
 
 export const studentDashboard = async (req, res) => {
   if (req.session.user) {
