@@ -48,6 +48,19 @@
                 });
             }
         }
+
+         async function loadProfilePartial() {
+            try {
+            const res = await fetch("/student/profile/partial");
+            if (!res.ok) throw new Error("Failed to fetch profile partial");
+            const html = await res.text();
+            document.getElementById("bodbod").outerHTML = html;
+            } catch (err) {
+            console.error(err);
+            }
+         }
+         loadProfilePartial()
+         setInterval(loadProfilePartial, 30000);
     </script>
     
     

@@ -145,7 +145,7 @@
 
         async function loadDashboardPartial() {
             try {
-                const res = await fetch("/student/dashboard");
+                const res = await fetch("/student/dashboard/partial");
                 if (!res.ok) throw new Error("Failed to fetch dashboard");
                 const html = await res.text();
                 document.getElementById("dashboard-container").innerHTML = html;
@@ -153,7 +153,8 @@
                 console.error(err);
             }
         }
-
+        
+        loadDashboardPartial();
         setInterval(loadDashboardPartial, 30000);
     </script>
 </body>

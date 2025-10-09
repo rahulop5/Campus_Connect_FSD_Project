@@ -61,7 +61,23 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="/scripts/bellgraph.js"></script>
 </div>
-    
+    <script>
+      async function loadGradesPartial() {
+        try {
+              const res = await fetch("/student/grades/partial");
+              if (!res.ok) throw new Error("Failed to fetch grades partial");
+              const html = await res.text();
+              document.querySelector(".bg_mainpage").outerHTML = html;
+
+              if (typeof initBellGraph === "function") initBellGraph();
+            } catch (err) {
+              console.error(err);
+        }
+      }
+
+      loadGradesPartial()
+      setInterval(loadGradesPartial, 30000);
+    </script>
    
 </body>
 </html>
