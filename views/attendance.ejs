@@ -41,5 +41,20 @@
 
         </div>
     </div>
+    <script>
+    async function loadAttendancePartial() {
+    try {
+      const res = await fetch("/student/attendance/partial");
+      if (!res.ok) throw new Error("Failed to fetch attendance partial");
+      const html = await res.text();
+      document.querySelector(".at_mainpage").outerHTML = html;
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  loadAttendancePartial()
+  setInterval(loadAttendancePartial, 30000);
+</script>
 </body>
 </html>
