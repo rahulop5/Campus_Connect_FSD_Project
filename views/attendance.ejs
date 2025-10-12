@@ -7,54 +7,87 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&family=Rubik:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
-    <title>Document</title>
+    <title>Attendance</title>
 </head>
 <body class="outfit">
     <%- include("header.ejs") %>
     <%- include("sidebar.ejs") %>
 
     <div class="at_mainpage">
-        <p>
-            <%= name %>'s attendance
-        </p>
-        <div class="at_courses">
-            <% courses.forEach((course) => { %>
-              <div class="at_course">
-                <div class="subject">
-                  <p><%= course.subject %></p>
+        <p>Student's attendance</p>
+        <div class="at_courses" id="at_courses_container">
+            <!-- Template Course Div (will be cloned) -->
+            <template id="courseTemplate">
+                <div class="at_course">
+                    <div class="subject">
+                        <p>Subject</p>
+                    </div>
+                    <div class="line"></div>                
+                    <div class="status">
+                        <p>Attendance Status</p>
+                        <p class="statusValue">NA</p>
+                    </div>
+                    <div class="line"></div>
+                    <div class="percentage">
+                        <p>Attendance Percentage</p>
+                        <p class="percentageValue">0%</p>
+                    </div>
                 </div>
-                <div class="line"></div>                
-                <div class="status">
-                  <p>Attendance Status</p>
-                  <p id="<%= course.attendanceColor %>"><%= course.attendanceStatus %></p>
-                </div>
-                <div class="line"></div>
-                <div class="percentage">
-                  <p>Attendance Percentage</p>
-                  <p id="<%= course.attendanceColor %>"><%= course.attendancePercentage %>%</p>
-                </div>
-              </div>
-            <% }) %>
-          </div>
-          
-        <div class="at_ads">
-
+            </template>
         </div>
+          
+        <div class="at_ads"></div>
     </div>
+
     <script>
     async function loadAttendancePartial() {
-    try {
-      const res = await fetch("/student/attendance/partial");
-      if (!res.ok) throw new Error("Failed to fetch attendance partial");
-      const html = await res.text();
-      document.querySelector(".at_mainpage").outerHTML = html;
-    } catch (err) {
-      console.error(err);
-    }
-  }
+        try {
+            const res = await fetch("/student/attendance/partial/");
+            if (!res.ok) throw new Error("Failed to fetch attendance JSON");
+            const data = await res.json();
+            const mainPage = document.querySelector(".at_mainpage");
+            const coursesContainer = document.getElementById("at_courses_container");
+            const template = document.getElementById("courseTemplate");
+            if (!mainPage || !coursesContainer || !template) return;
+            const p = mainPage.querySelector("p");
+            if (p) p.textContent = `${data.name || "Student"}'s Attendance`;
+            coursesContainer.innerHTML = "";
+            (data.courses || []).forEach((course, index) => {
+                const clone = template.content.cloneNode(true);
+                const courseDiv = clone.querySelector(".at_course");
+                const subjectEl = courseDiv.querySelector(".subject p");
+                const statusEl = courseDiv.querySelector(".statusValue");
+                const percentageEl = courseDiv.querySelector(".percentageValue");
 
-  loadAttendancePartial()
-  setInterval(loadAttendancePartial, 30000);
-</script>
+                if (subjectEl) subjectEl.textContent = course.subject || "Unnamed Subject";
+                if (statusEl) {
+                    statusEl.textContent = course.attendanceStatus || "NA";
+                    statusEl.id = course.attendanceColor || `status${index}`;
+                }
+                if (percentageEl) {
+                    const percent = course.attendancePercentage != null ? course.attendancePercentage : 0;
+                    percentageEl.textContent = `${percent}%`;
+                    percentageEl.id = course.attendanceColor || `percentage${index}`;
+                }
+
+                coursesContainer.appendChild(clone);
+            });
+
+            if (!data.courses || data.courses.length === 0) {
+                const emptyDiv = document.createElement("div");
+                emptyDiv.classList.add("at_course");
+                emptyDiv.innerHTML = "<p>No courses found.</p>";
+                coursesContainer.appendChild(emptyDiv);
+            }
+
+        } catch (err) {
+            console.error("Error loading attendance:", err);
+        }
+    }
+
+    // Load once + refresh every 30s
+    loadAttendancePartial();
+    setInterval(loadAttendancePartial, 30000);
+    </script>
 </body>
 </html>

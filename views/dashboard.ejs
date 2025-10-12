@@ -17,70 +17,136 @@
     <div id="dashboard-container">
         <div class="db_mainpage">
             <div class="db_mainmain">
-                <p>Welcome <%= name %></p>
+                <p>Welcome ...</p>
 
                 <div class="db_clubs">
                     <div class="db_banners">
                         <img src="./assets/abhisarga_banner.png" alt="">
                     </div>
                     <div class="db_date">
-                        <p class="db_dateblack"><%= dayOfWeek %></p>
-                        <p><%= day %></p>
-                        <p class="db_dateblack"><%= month %>, <%= year %></p>
+                        <p class="db_dateblack">Day</p>
+                        <p>DD</p>
+                        <p class="db_dateblack">Month, Year</p>
                     </div>                      
                 </div>
 
                 <div class="db_attengrade">
-                    <% courses.forEach((course, index) => { %>
-                        <% if (index < 3) { %>
-                            <div class="db_subject">
-                                <div class="db_grade">
-                                    <p><%= course.subject %></p>
-                                    <p>Predicted Grade</p>
-                                    <p><%= course.grade.predgrade %> <span>A</span> B C D P F</p>
-                                </div>
-                                <div class="db_attendance">
-                                    <p>Attendance</p>
-                                    <div class="progress-container">
-                                        <svg width="100" height="100">
-                                            <circle cx="50" cy="50" r="40" class="background-circle"></circle>
-                                            <circle cx="50" cy="50" r="40" class="progress-ring progress-circle" id="progress-ring-<%= index %>"></circle>
-                                        </svg>
-                                        <div class="progress-text" id="progress-text-<%= index %>"><%= course.attendancePercentage %>%</div>
-                                    </div>
-                                </div>
+                    <!-- 3 static placeholders for courses -->
+                    <div class="db_subject">
+                        <div class="db_grade">
+                            <p>SUB</p>
+                            <p>Predicted Grade</p>
+                            <p>NA <span>A</span> B C D P F</p>
+                        </div>
+                        <div class="db_attendance">
+                            <p>Attendance</p>
+                            <div class="progress-container">
+                                <svg width="100" height="100">
+                                    <circle cx="50" cy="50" r="40" class="background-circle"></circle>
+                                    <circle cx="50" cy="50" r="40" class="progress-ring progress-circle" id="progress-ring-0"></circle>
+                                </svg>
+                                <div class="progress-text" id="progress-text-0">0%</div>
                             </div>
-                        <% } %>
-                    <% }) %>
+                        </div>
+                    </div>
+
+                    <div class="db_subject">
+                        <div class="db_grade">
+                            <p>SUB</p>
+                            <p>Predicted Grade</p>
+                            <p>NA <span>A</span> B C D P F</p>
+                        </div>
+                        <div class="db_attendance">
+                            <p>Attendance</p>
+                            <div class="progress-container">
+                                <svg width="100" height="100">
+                                    <circle cx="50" cy="50" r="40" class="background-circle"></circle>
+                                    <circle cx="50" cy="50" r="40" class="progress-ring progress-circle" id="progress-ring-1"></circle>
+                                </svg>
+                                <div class="progress-text" id="progress-text-1">0%</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="db_subject">
+                        <div class="db_grade">
+                            <p>SUB</p>
+                            <p>Predicted Grade</p>
+                            <p>NA <span>A</span> B C D P F</p>
+                        </div>
+                        <div class="db_attendance">
+                            <p>Attendance</p>
+                            <div class="progress-container">
+                                <svg width="100" height="100">
+                                    <circle cx="50" cy="50" r="40" class="background-circle"></circle>
+                                    <circle cx="50" cy="50" r="40" class="progress-ring progress-circle" id="progress-ring-2"></circle>
+                                </svg>
+                                <div class="progress-text" id="progress-text-2">0%</div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                  
+
                 <div class="db_topq">
                     <p>Top Questions of the Week</p>
                     <div>
-                        <% for (var i = 0; i < Math.min(3, questions.length); i++) { %>
-                            <div class="problem">
-                                <div class="votes">
-                                    <p><%= questions[i].votes %> votes</p>
-                                    <p><%= questions[i].answers.length %> answers</p>
-                                    <p><%= questions[i].views %> views</p>
-                                </div>
-                                <div class="main">
-                                    <h4><%= questions[i].heading %></h4>
-                                    <p><%= questions[i].desc.slice(0, 100) %>...</p>
-                                    <div class="tags">
-                                        <% questions[i].tags.forEach(tag => { %>
-                                            <div><p><%= tag %></p></div>
-                                        <% }) %>
-                                    </div>
-                                </div>
-                                <div class="user">
-                                    <div class="useruser">
-                                        <img src="./assets/duck_with_A_gun 1.png" alt="">
-                                        <p><%= questions[i].asker.name %></p>
-                                    </div>
+                        <!-- 3 static placeholders for questions -->
+                        <div class="problem">
+                            <div class="votes">
+                                <p>0 votes</p>
+                                <p>0 answers</p>
+                                <p>0 views</p>
+                            </div>
+                            <div class="main">
+                                <h4>Question title</h4>
+                                <p>Short description...</p>
+                                <div class="tags"></div>
+                            </div>
+                            <div class="user">
+                                <div class="useruser">
+                                    <img src="./assets/duck_with_A_gun 1.png" alt="">
+                                    <p>Username</p>
                                 </div>
                             </div>
-                        <% } %>
+                        </div>
+
+                        <div class="problem">
+                            <div class="votes">
+                                <p>0 votes</p>
+                                <p>0 answers</p>
+                                <p>0 views</p>
+                            </div>
+                            <div class="main">
+                                <h4>Question title</h4>
+                                <p>Short description...</p>
+                                <div class="tags"></div>
+                            </div>
+                            <div class="user">
+                                <div class="useruser">
+                                    <img src="./assets/duck_with_A_gun 1.png" alt="">
+                                    <p>Username</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="problem">
+                            <div class="votes">
+                                <p>0 votes</p>
+                                <p>0 answers</p>
+                                <p>0 views</p>
+                            </div>
+                            <div class="main">
+                                <h4>Question title</h4>
+                                <p>Short description...</p>
+                                <div class="tags"></div>
+                            </div>
+                            <div class="user">
+                                <div class="useruser">
+                                    <img src="./assets/duck_with_A_gun 1.png" alt="">
+                                    <p>Username</p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -90,33 +156,15 @@
                     <p>Notice!</p>
                     <hr class="noticeline">
                     <div class="po_noticenews">
-                        <div>
-                            <img src="/assets/pin.png" alt="">
-                            <p>Abhisarga night concert ticket sale is now live!</p>
-                        </div>
-                        <div>
-                            <img src="/assets/pin.png" alt="">
-                            <p>Recharge Point now has Burgers because of a certain someone!</p>
-                        </div>
-                        <div>
-                            <img src="/assets/pin.png" alt="">
-                            <p>Enigma, E-Cell, TedX are new Trend Setters!</p>
-                        </div>
+                        <div><img src="/assets/pin.png" alt=""><p>Abhisarga night concert ticket sale is now live!</p></div>
+                        <div><img src="/assets/pin.png" alt=""><p>Recharge Point now has Burgers because of a certain someone!</p></div>
+                        <div><img src="/assets/pin.png" alt=""><p>Enigma, E-Cell, TedX are new Trend Setters!</p></div>
                     </div>
                     <hr class="noticeline">
                     <div class="po_noticenews">
-                        <div>
-                            <img src="/assets/premium.png" alt="">
-                            <p>Campus Connect now brings you Premium at Rupees 1000 ONLY!</p>
-                        </div>
-                        <div>
-                            <img src="/assets/premium.png" alt="">
-                            <p>Get 30% OFF using student id verification!</p>
-                        </div>
-                        <div>
-                            <img src="/assets/premium.png" alt="">
-                            <p>Campus Connect now can track your attendance for you!</p>
-                        </div>
+                        <div><img src="/assets/premium.png" alt=""><p>Campus Connect now brings you Premium at Rupees 1000 ONLY!</p></div>
+                        <div><img src="/assets/premium.png" alt=""><p>Get 30% OFF using student id verification!</p></div>
+                        <div><img src="/assets/premium.png" alt=""><p>Campus Connect now can track your attendance for you!</p></div>
                     </div>
                 </div>
                 <div class="ads">
@@ -127,35 +175,81 @@
     </div>
 
     <script>
-        function setProgress(percent, index) {
-            const circle = document.getElementById(`progress-ring-${index}`);
-            const text = document.getElementById(`progress-text-${index}`);
-            if (!circle || !text) return;
-            const radius = 40;
-            const circumference = 2 * Math.PI * radius;
-            const offset = circumference * (1 - percent / 100);
-            circle.style.strokeDasharray = `${circumference}`;
-            circle.style.strokeDashoffset = offset;
-            text.innerText = `${percent}%`;
+    async function loadDashboardData() {
+      try{
+        const res = await fetch("/student/dashboard/partial");
+        if (!res.ok) throw new Error("Failed to fetch dashboard data");
+        const data = await res.json();
+
+        const welcomeText = document.querySelector(".db_mainmain > p");
+        if (welcomeText) welcomeText.textContent = `Welcome ${data.name}`;
+
+        const dateDiv = document.querySelector(".db_date");
+        if (dateDiv) {
+          dateDiv.querySelectorAll("p")[0].textContent = data.dayOfWeek;
+          dateDiv.querySelectorAll("p")[1].textContent = data.day;
+          dateDiv.querySelectorAll("p")[2].textContent = `${data.month}, ${data.year}`;
         }
 
-        <% courses.forEach((course, index) => { %>
-            setProgress(<%= course.attendancePercentage %>, <%= index %>);
-        <% }) %>
+        const courseDivs = document.querySelectorAll(".db_subject");
+        data.courses.slice(0, 3).forEach((course, i) => {
+          const courseDiv = courseDivs[i];
+          if (!courseDiv) return;
+          courseDiv.querySelector(".db_grade p:nth-child(1)").textContent = course.subject;
+          courseDiv.querySelector(".db_grade p:nth-child(3)").innerHTML = `${course.grade.predgrade} <span>A</span> B C D P F`;
+          setProgress(course.attendancePercentage, i);
+        });
 
-        async function loadDashboardPartial() {
-            try {
-                const res = await fetch("/student/dashboard/partial");
-                if (!res.ok) throw new Error("Failed to fetch dashboard");
-                const html = await res.text();
-                document.getElementById("dashboard-container").innerHTML = html;
-            } catch (err) {
-                console.error(err);
-            }
-        }
-        
-        loadDashboardPartial();
-        setInterval(loadDashboardPartial, 30000);
+        const problemDivs = document.querySelectorAll(".db_topq .problem");
+        data.questions.slice(0, 3).forEach((q, i) => {
+          const problem = problemDivs[i];
+          if (!problem) return;
+          problem.querySelector(".votes p:nth-child(1)").textContent = `${q.votes} votes`;
+          problem.querySelector(".votes p:nth-child(2)").textContent = `${q.answers.length} answers`;
+          problem.querySelector(".votes p:nth-child(3)").textContent = `${q.views} views`;
+          problem.querySelector(".main h4").textContent = q.heading;
+          problem.querySelector(".main p").textContent = `${q.desc.slice(0, 100)}`;
+        //   problem.querySelector(".main p").textContent = ${q.desc.slice(0, 100)}...;
+
+          const tagsContainer = problem.querySelector(".tags");
+          tagsContainer.innerHTML = "";
+          q.tags.forEach(tag => {
+            const div = document.createElement("div");
+            div.innerHTML = `<p>${tag}</p>`;
+            tagsContainer.appendChild(div);
+          });
+
+          problem.querySelector(".useruser p").textContent = q.asker.name;
+        });
+      } 
+      catch(err){
+        console.error(err);
+      }
+      
+    }
+
+    function setProgress(percent, index) {
+      const circle = document.getElementById(`progress-ring-${index}`);
+      const text = document.getElementById(`progress-text-${index}`);
+      if (!circle || !text) return;
+      const radius = 40;
+      const circumference = 2 * Math.PI * radius;
+      const offset = circumference * (1 - percent / 100);
+      circle.style.strokeDasharray = `${circumference}`;
+      circle.style.strokeDashoffset = offset;
+      text.innerText = `${percent}%`;
+    }
+
+    loadDashboardData();
+    setInterval(loadDashboardData, 30000);
     </script>
+
 </body>
 </html>
+
+
+
+
+
+
+

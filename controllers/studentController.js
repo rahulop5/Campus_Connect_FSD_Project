@@ -13,6 +13,18 @@ const __dirname = path.dirname(__filename);
 export const studentDashboard = async (req, res) => {
   if (req.session.user) {
     try {
+      res.render("dashboard.ejs");
+    } catch (error) {
+      console.error("Error rendering student dashboard:", error);
+      res.status(500).send("Internal Server Error");
+    }
+  } else {
+    res.redirect("/");
+  }
+};
+export const studentDashboardNew = async (req, res) => {
+  if (req.session.user) {
+    try {
       // Fetch the current student from the database (populate the courses)
       const student = await Student.findById(req.session.user._id).populate("courses.course");
 
@@ -64,7 +76,7 @@ export const studentDashboard = async (req, res) => {
       const questions = await Question.find().populate("asker").sort({ createdAt: -1 });
 
       // Render the dashboard with the required data
-      res.render("dashboard.ejs", {
+        res.json({
         name: student.name,
         courses,
         dayOfWeek,
@@ -73,6 +85,7 @@ export const studentDashboard = async (req, res) => {
         year,
         questions,
       });
+      
     } catch (error) {
       console.error("Error rendering student dashboard:", error);
       res.status(500).send("Internal Server Error");
@@ -81,6 +94,7 @@ export const studentDashboard = async (req, res) => {
     res.redirect("/");
   }
 };
+
 
 export const studentProfile = async (req, res) => {
   if(req.session.user){
@@ -97,7 +111,21 @@ export const studentProfile = async (req, res) => {
   }
 };
 
+
+
 export const studentAttendance = async (req, res) => {
+  if (req.session.user) {
+    try {
+      res.render("attendance.ejs");
+    } catch (error) {
+      console.error("Error fetching attendance data:", error);
+      res.status(500).send("Internal Server Error");
+    }
+  } else {
+    res.redirect("/");
+  }
+};
+export const studentAttendanceNew = async (req, res) => {
   if (req.session.user) {
     try {
       // Fetch the student from the database and populate the courses
@@ -132,11 +160,11 @@ export const studentAttendance = async (req, res) => {
           attendanceColor: color,
         };
       });
-
-      res.render("attendance.ejs", {
+      res.json({
         name: student.name,
         courses: courses,
       });
+      
     } catch (error) {
       console.error("Error fetching attendance data:", error);
       res.status(500).send("Internal Server Error");
@@ -145,6 +173,7 @@ export const studentAttendance = async (req, res) => {
     res.redirect("/");
   }
 };
+
 
 export const studentGrades = async (req, res) => {
   if (req.session.user) {
@@ -180,6 +209,10 @@ export const studentGrades = async (req, res) => {
     res.redirect("/");
   }
 };
+
+
+
+
 
 export const studentGradebyId = async (req, res) => {
   try {
@@ -225,106 +258,6 @@ export const updateStudentProfile = async (req, res) => {
     }
   } else {
     res.status(401).send("Unauthorized");
-  }
-};
-
-
-
-export const studentDashboardPartial = async (req, res) => {
-  if (!req.session.user) return res.status(401).send("Unauthorized");
-
-  try {
-    const student = await Student.findById(req.session.user._id).populate("courses.course");
-
-    const courses = student.courses.map((courseObj) => {
-      const course = courseObj.course;
-      const shortform = course.name
-        .split(" ")
-        .map(w => w[0].toUpperCase())
-        .join("");
-      return {
-        subject: shortform,
-        attendancePercentage: courseObj.attendance || 0,
-        grade: courseObj.grade || "NA",
-      };
-    });
-
-    const date = new Date();
-    const daysOfWeek = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
-    const months = [
-      "January","February","March","April","May","June","July","August","September","October","November","December"
-    ];
-
-    const data = {
-      name: student.name,
-      courses,
-      dayOfWeek: daysOfWeek[date.getDay()],
-      day: date.getDate(),
-      month: months[date.getMonth()],
-      year: date.getFullYear(),
-      questions: await Question.find().populate("asker").sort({ createdAt: -1 }).limit(3),
-    };
-
-      const fullHtml = await ejs.renderFile(
-        path.join(__dirname, "../views/dashboard.ejs"),
-        data
-      );
-
-      const match = fullHtml.match(/<div id="dashboard-container">([\s\S]*)<\/div>\s*<\/body>/);
-      const partialHtml = match ? match[1] : fullHtml;
-
-      res.send(partialHtml);
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Internal Server Error");
-  }
-};
-
-export const studentAttendancePartial = async (req, res) => {
-  if (!req.session.user) return res.status(401).send("Unauthorized");
-
-  try {
-    const student = await Student.findById(req.session.user._id).populate("courses.course");
-
-    const courses = student.courses.map((courseObj) => {
-      const course = courseObj.course;
-      const percentage = courseObj.attendance || 0;
-
-      let status = "";
-      let color = "";
-
-      if (percentage >= 90) {
-        status = "Good";
-        color = "green";
-      } else if (percentage >= 80) {
-        status = "Average";
-        color = "yellow";
-      } else {
-        status = "Poor";
-        color = "red";
-      }
-
-      return {
-        subject: course.name,
-        attendancePercentage: percentage,
-        attendanceStatus: status,
-        attendanceColor: color,
-      };
-    });
-
-    const html = await ejs.renderFile(
-      path.join(__dirname, "../views/attendance.ejs"),
-      { name: student.name, courses }
-    );
-
-    // Extract only the div content inside <div class="at_mainpage"> ... </div>
-    const match = html.match(/<div class="at_mainpage">([\s\S]*)<\/div>\s*<\/body>/);
-    const partialHtml = match ? match[0] : html;
-
-    res.send(partialHtml);
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Internal Server Error");
   }
 };
 
@@ -382,3 +315,8 @@ export const studentGradesPartial = async (req, res) => {
     res.status(500).send("Internal Server Error");
   }
 };
+
+
+
+
+//yaapi
