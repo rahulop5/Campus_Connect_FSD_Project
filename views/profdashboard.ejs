@@ -93,5 +93,115 @@
         </div>
     </form>
   </div>
+
+    <script>
+      const uploadForm = document.getElementById('marksUploadForm');
+      const fileInput = document.getElementById('file');
+      const fileUploadLabel = document.querySelector('.custom-file-label');
+      const uploadContent = document.querySelector('.upload-content');
+      const csvPreviewContainer = document.getElementById('csvPreviewContainer');
+      const csvPreviewTable = document.getElementById('csvPreviewTable');
+      const originalUploadContentHTML = uploadContent.innerHTML;
+
+      function removeFile() {
+        fileInput.value = null;
+        uploadContent.innerHTML = originalUploadContentHTML;
+        csvPreviewTable.innerHTML = '';
+        csvPreviewContainer.style.display = 'none';
+        fileUploadLabel.classList.remove('file-uploaded');
+      }
+
+      function generatePreview(file) {
+        const reader = new FileReader();
+        reader.onload = function(event) {
+          const csvContent = event.target.result;
+          const rows = csvContent.trim().split('\n');
+          if (rows.length === 0) return;
+          let tableHTML = '<table><thead><tr>';
+          const headers = rows[0].split(',');
+          headers.forEach(header => { tableHTML += `<th>${header.trim()}</th>`; });
+          tableHTML += '</tr></thead><tbody>';
+          for (let i = 1; i < rows.length; i++) {
+            const cells = rows[i].split(',');
+            tableHTML += '<tr>';
+            cells.forEach(cell => { tableHTML += `<td>${cell.trim()}</td>`; });
+            tableHTML += '</tr>';
+          }
+          tableHTML += '</tbody></table>';
+          csvPreviewTable.innerHTML = tableHTML;
+          csvPreviewContainer.style.display = 'flex';
+        };
+        reader.readAsText(file);
+      }
+
+      function displayFile(file) {
+        if (!file.name.endsWith('.csv')) {
+          alert('Invalid file type. Please upload a .csv file.');
+          removeFile();
+          return;
+        }
+        fileUploadLabel.classList.add('file-uploaded');
+        uploadContent.innerHTML = `
+          <div class="file-uploaded-icon"></div>
+          <div class="file-display">
+            <p class="file-name" title="${file.name}">${file.name}</p>
+            <span class="remove-file-btn" role="button" aria-label="Remove file"></span>
+          </div>
+        `;
+        uploadContent.querySelector('.remove-file-btn').addEventListener('click', (e) => {
+          e.stopPropagation();
+          removeFile();
+        });
+        generatePreview(file);
+      }
+
+      fileUploadLabel.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        fileUploadLabel.classList.add('dragged-over');
+      });
+      fileUploadLabel.addEventListener('dragleave', () => {
+        fileUploadLabel.classList.remove('dragged-over');
+      });
+      fileUploadLabel.addEventListener('drop', (e) => {
+        e.preventDefault();
+        fileUploadLabel.classList.remove('dragged-over');
+        const files = e.dataTransfer.files;
+        if (files.length > 0) {
+          fileInput.files = files;
+          displayFile(files[0]);
+        }
+      });
+      fileInput.addEventListener('change', () => {
+        if (fileInput.files.length > 0) {
+          displayFile(fileInput.files[0]);
+        }
+      });
+
+      uploadForm.addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        const formData = new FormData(uploadForm);
+
+        fetch('/prof/submit', {
+          method: 'POST',
+          body: formData,
+        })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+          return true; 
+        })
+        .then(success => {
+          alert('Successfully done!');
+          window.location.reload();
+        })
+        .catch(error => {
+          console.error('There was a problem with the submission:', error);
+          alert('An error occurred. Please try again.');
+        });
+      });
+    </script>
 </body>
+
 </html>
