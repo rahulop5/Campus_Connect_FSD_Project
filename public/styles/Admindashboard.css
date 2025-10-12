@@ -230,26 +230,25 @@ main {
     margin-bottom: 10px;
 }
 
-/* Container for Course and Student Management */
+/* Container for Course, Student, Professor, and Allotment Management */
 .management-section {
     display: flex;
-    justify-content: space-between;
-    gap: 60px; /* Increased gap for better spacing */
-    margin: 50px 0;
+    justify-content: flex-start;
+    gap: 20px; /* Reduced gap for tighter layout */
+    margin: 40px 0;
     flex-wrap: wrap;
 }
 
-/* Course and Student Management Containers */
-.course-container, .student-container {
-    flex: 1;
-    min-width: 450px; /* Increased for better readability */
-    max-width: 550px; /* Increased for more space */
+.course-container, .student-container, .professor-container, .course-allotment-container {
+    flex: 1 1 auto;
+    min-width: 300px; /* Preserved original min-width */
+    max-width: 340px;
     background: rgba(255, 255, 255, 0.05);
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 15px;
-    padding: 40px;
+    padding: 25px;
     backdrop-filter: blur(10px);
-    box-shadow: 0 0 10px rgba(0,0,0,0.3);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
     color: white;
     font-family: 'Outfit', sans-serif;
 }
