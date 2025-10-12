@@ -40,8 +40,6 @@
                 inputBox.setAttribute('readonly', true);
                 inputBox.classList.remove('editing');
 
-                console.log("Saving field:", field, "with value:", newValue);
-
                 fetch('/profile/update', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -69,105 +67,54 @@
         </div>
         <div>
             <div class="auth_qa" id="first_auth">
-                <div class="auth_q">
-                    Name
-                </div>
+                <div class="auth_q">Name</div>
                 <div class="auth_a">
-                    <div>
-                        <input type="text" name="name" value="<%= student.name %>" readonly class="editable-input" />
-                    </div>
-                    <div class="image_div">
-                        <img class="edit_mark" src="./assets/edit-text 2.png" alt="its is a pencil mark" onclick="makeEditable(this)">
-                    </div>
+                    <div><input type="text" name="name" value="<%= student.name %>" readonly class="editable-input" /></div>
+                    <div class="image_div"><img class="edit_mark" src="./assets/edit-text 2.png" alt="edit name" onclick="makeEditable(this)"></div>
                 </div>    
             </div>
             <div class="auth_qa" id="second_auth">
-                <div class="auth_q">
-                    Email
-                </div>
-                <div class="auth_a">
-                    <div>
-                        <%= student.email %>
-                    </div>
-                </div>    
+                <div class="auth_q">Email</div>
+                <div class="auth_a"><div><%= student.email %></div></div>    
             </div>
             <div class="auth_qa" id="third_auth">
-                <div class="auth_q">
-                    Password
-                </div>
+                <div class="auth_q">Password</div>
                 <div class="auth_a">
-                    <div>
-                        <input type="text" name="password" value="••••••••••••••••••" readonly class="editable-input" />
-                    </div>
-                    <div class="image_div">
-                        <img class="edit_mark" src="./assets/edit-text 2.png" alt="its is a pencil mark" onclick="makeEditable(this)">
-                    </div>
+                    <div><input type="text" name="password" value="••••••••••••••••••" readonly class="editable-input" /></div>
+                    <div class="image_div"><img class="edit_mark" src="./assets/edit-text 2.png" alt="edit password" onclick="makeEditable(this)"></div>
                 </div>    
             </div>
             <div class="auth_qa" id="fourth_auth">
-                <div class="auth_q">
-                    Phone Number
-                </div>
+                <div class="auth_q">Phone Number</div>
                 <div class="auth_a">
-                    <div>
-                        <input type="text" name="phone" value="<%= student.phone %>" readonly class="editable-input" />
-                    </div>
-                    <div class="image_div">
-                        <img class="edit_mark" src="./assets/edit-text 2.png" alt="its is a pencil mark" onclick="makeEditable(this)">
-                    </div>
+                    <div><input type="text" name="phone" value="<%= student.phone %>" readonly class="editable-input" /></div>
+                    <div class="image_div"><img class="edit_mark" src="./assets/edit-text 2.png" alt="edit phone" onclick="makeEditable(this)"></div>
                 </div>    
             </div>
             <div class="auth_qa" id="fifth_auth">
-                <div class="auth_q">
-                    Roll Number
-                </div>
-                <div class="auth_a">
-                    <div>
-                        <%= student.roll %>
-                    </div>
-                </div>    
+                <div class="auth_q">Roll Number</div>
+                <div class="auth_a"><div><%= student.roll %></div></div>    
             </div>
             <div id="rb_row1">
-                <div class="rb_r1_col" id="first_col">
-                    <div class="rb_r1_q">
-                        Branch
-                    </div>
-                    <div class="rb_r1_a">
-                        <%= student.branch %>
-                    </div>
+                <div class="rb_r1_col">
+                    <div class="rb_r1_q">Branch</div>
+                    <div class="rb_r1_a"><%= student.branch %></div>
                 </div>
-                <div class="rb_r1_col" id="second_col">
-                    <div class="rb_r1_q">
-                        Year
-                    </div>
-                    <div class="rb_r1_a">
-                        UG<%= student.ug %>
-                    </div>
+                <div class="rb_r1_col">
+                    <div class="rb_r1_q">Year</div>
+                    <div class="rb_r1_a">UG<%= student.ug %></div>
                 </div>
-                <div class="rb_r1_col" id="second_col">
-                    <div class="rb_r1_q">
-                        Section
-                    </div>
-                    <div class="rb_r1_a">
-                        <%= student.section %>
-                    </div>
+                <div class="rb_r1_col">
+                    <div class="rb_r1_q">Section</div>
+                    <div class="rb_r1_a"><%= student.section %></div>
                 </div>
             </div>
             <div id="rb_row2">
-                <div class="rb_r2_q">
-                    Courses Enrolled
-                </div>
+                <div class="rb_r2_q">Courses Enrolled</div>
                 <div id="rb_r2_course_r1">
                     <% if (student.courses && student.courses.length > 0) { %>
-                        <% student.courses.forEach(course => { 
-                            const shortform = course.course.name
-                                .split(" ")
-                                .map(word => word[0].toUpperCase())
-                                .join("");
-                        %>
-                            <div id="course_<%= course._id %>">
-                                <%= shortform %>
-                            </div>
+                        <% student.courses.forEach(course => { const shortform = course.course.name.split(" ").map(w => w[0].toUpperCase()).join(""); %>
+                            <div><%= shortform %></div>
                         <% }); %>
                     <% } else { %>
                         <div>No courses enrolled</div>
@@ -176,9 +123,7 @@
                 <div id="rb_r2_course_r2">
                     <% if (student.additionalCourses && student.additionalCourses.length > 0) { %>
                         <% student.additionalCourses.forEach(course => { %>
-                            <div id="course_<%= course.course?._id %>">
-                                <%= course.course?.name || 'Unnamed Course' %>
-                            </div>
+                            <div><%= course.course?.name || 'Unnamed' %></div>
                         <% }); %>
                     <% } else { %>
                         <div>-</div>
@@ -189,52 +134,28 @@
             <div id="seperator_line"></div>
             <div id="l_row1">
                 <div class="l_r1_col" id="l_r1_c1">
-                    <div class="l_r1_col_q">
-                        Upvotes
-                    </div>
+                    <div class="l_r1_col_q">Upvotes</div>
                     <div class="l_r1_col_aimg">
-                        <div class="l_r1_col_a">
-                            103
-                        </div>
-                        <div class="l_r1_col_img">
-                            <img src="./assets/arrow (1) 1.png" alt="">
-                        </div>
+                        <div class="l_r1_col_a">103</div>
+                        <div class="l_r1_col_img"><img src="./assets/arrow (1) 1.png" alt="upvote icon"></div>
                     </div>
                 </div>
                 <div class="l_r1_col" id="l_r1_c2">
-                    <div class="l_r1_col_q">
-                        Echelons
-                    </div>
+                    <div class="l_r1_col_q">Echelons</div>
                     <div class="l_r1_col_aimg">
-                        <div id="echelons_a" class="l_r1_col_a">
-                            72
-                        </div>
-                        <div class="l_r1_col_img">
-                            <img src="./assets/star 1.png" alt="">
-                        </div>
+                        <div id="echelons_a" class="l_r1_col_a">72</div>
+                        <div class="l_r1_col_img"><img src="./assets/star 1.png" alt="echelons icon"></div>
                     </div>
                 </div>
             </div>
             <div id="l_row2">
                 <div class="l_r2_col" id="l_r2_c1">
-                    <div class="l_r2_col_q">
-                        Total Questions Asked
-                    </div>
-                    <div class="l_r2_col_aimg">
-                        <div class="l_r2_col_a">
-                            23
-                        </div>
-                    </div>
+                    <div class="l_r2_col_q">Total Questions Asked</div>
+                    <div class="l_r2_col_aimg"><div class="l_r2_col_a">23</div></div>
                 </div>
                 <div class="l_r2_col" id="l_r2_c2">
-                    <div class="l_r2_col_q">
-                        Total Questions Answered
-                    </div>
-                    <div class="l_r2_col_aimg">
-                        <div class="l_r2_col_a">
-                            19
-                        </div>
-                    </div>
+                    <div class="l_r2_col_q">Total Questions Answered</div>
+                    <div class="l_r2_col_aimg"><div class="l_r2_col_a">19</div></div>
                 </div>
             </div>
             
@@ -274,11 +195,9 @@
 
             changeBtn.addEventListener('click', () => pfpFileInput.click());
             addBtn.addEventListener('click', () => pfpFileInput.click());
-
             deleteBtn.addEventListener('click', () => {
                 pfpContainer.classList.add('no-image');
             });
-
             pfpFileInput.addEventListener('change', (event) => {
                 const file = event.target.files[0];
                 if (file) {

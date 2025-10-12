@@ -8,8 +8,6 @@
 
 /* --- General Styles --- */
 svg {
-    position: absolute;
-    z-index: 1;
     fill: rgba(31, 31, 31, 0.60);
     stroke-width: 1px;
     stroke: #373737;
@@ -26,9 +24,7 @@ body {
     background-color: black;
 }
 
-#bodbod { 
-    display: flex; 
-}
+#bodbod { display: flex; }
 
 /* --- "MY PROFILE" Text --- */
 .my_profile {
@@ -41,9 +37,7 @@ body {
     line-height: 0.925;
 }
 
-#my_profile1 { 
-    margin-bottom: 20px; 
-}
+#my_profile1 { margin-bottom: 20px; }
 
 /* --- Profile Details Section --- */
 .auth_qa, #rb_row1, #rb_row2, #seperator_line, #l_row1, #l_row2 {
@@ -259,15 +253,17 @@ body {
     box-shadow: 0 0 2px #aaa;
 }
 
-/* --- Profile Picture Section --- */
+/* --- Profile Picture Section (Corrected) --- */
 .pfp-container {
     position: absolute;
     z-index: 1;
-    width: 320px; 
-    height: 320px;
-    top: 50%;
-    left: 20%;
-    transform: translate(-50%, -50%);
+    /* NOTE: Adjust these values to perfectly match your pfp 1.png size and position */
+    width: 430px; 
+    height: 240px;
+    top: 33.5%;
+    left: 37.75%; /* Adjust as needed */
+    transform: translate(-50%, -50%); /* Center based on position */
+    /* --- */
     border-radius: 40px;
     border-bottom-right-radius: 24px;
     overflow: hidden;
@@ -299,24 +295,19 @@ body {
     opacity: 1;
 }
 
-.pfp-container:not(.no-image) #addBtn { 
-    display: none; 
-}
+/* State when image exists */
+.pfp-container:not(.no-image) #addBtn { display: none; }
 
-.pfp-container.no-image { 
-    background-color: #000; 
-}
-
+/* State when no image exists */
+.pfp-container.no-image { background-color: #000; }
 .pfp-container.no-image #profilePic,
 .pfp-container.no-image #changeBtn,
 .pfp-container.no-image #deleteBtn {
     display: none;
 }
+.pfp-container.no-image #addBtn { display: block; }
 
-.pfp-container.no-image #addBtn { 
-    display: block; 
-}
-
+/* Button styles */
 .pfp-btn {
     width: 60px;
     height: 60px;
@@ -337,3 +328,7 @@ body {
 #changeBtn:hover { background-image: url('/assets/edit-pfp-hover.png'); background-color: rgba(0, 0, 0, 0.8); }
 #deleteBtn:hover { background-image: url('/assets/delete-pfp-hover.png'); background-color: rgba(0, 0, 0, 0.8); }
 #addBtn:hover    { background-image: url('/assets/add-pfp-hover.png'); background-color: rgba(0, 0, 0, 0.8); }
+
+.l_r1_col_img > img {
+    position: static;
+}

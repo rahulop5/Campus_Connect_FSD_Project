@@ -73,7 +73,7 @@ export const registerStudent = async (req, res) => {
       const year = yearMatch ? parseInt(yearMatch[1]) : null;
       const currentYear = new Date().getFullYear();
       if (!year || year <= 2000 || year >= currentYear) {
-        rollErrors.push(`Year must be between 2001 and ${currentYear}`);
+        rollErrors.push("Year must be between 2001 and ${currentYear}");
       }
       if (!roll || roll.substring(5, 7) !== '00') {
         rollErrors.push("Roll number must have '00' after the year");
@@ -102,7 +102,7 @@ export const registerStudent = async (req, res) => {
     // Extract year, branch, and UG year from roll number
     const year = parseInt(roll.substring(1, 5));
     const currentYear = new Date().getFullYear();
-    const ugYear = currentYear - year;
+    const ugYear = currentYear - year;x
 
     const branchCode = roll.substring(7, 9);
     let branch;
@@ -247,6 +247,3 @@ export const loginStudent = async (req, res) => {
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
-
-
-
