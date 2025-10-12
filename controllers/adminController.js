@@ -6,24 +6,31 @@ import bcrypt from "bcryptjs";
 
 export const adminDashboard = async (req, res) => {
   try {
-    // Check if user is an admin
+    // Check if admin is logged in
     if (!req.session.user) {
       return res.redirect("/auth/admin/login");
     }
 
     // Fetch data for rendering the dashboard
     const courses = await Course.find().populate("professor");
-    const professors = await Professor.find().select("name email phone");
-    const students = await Student.find().select("name email rollnumber phone section");
+    const professors = await Professor.find().populate({ path: "courses.course", select: "name section" });
+    const students = await Student.find().populate({ path: "courses.course", select: "name section" }).select(
+      "name email rollnumber phone section"
+    );
 
-    // Handle POST requests
+    // ----------------------------
+    // HANDLE POST REQUESTS
+    // ----------------------------
     if (req.method === "POST") {
       const { action } = req.body;
+      console.log(`Received action: ${action}`, req.body); // Debug log
 
+      // ----------------------------
+      // ADD COURSE
+      // ----------------------------
       if (action === "add-course") {
         const { name, section, totalclasses, credits, professor } = req.body;
 
-        // Validate inputs
         const errors = [];
 
         if (!name || typeof name !== "string" || name.trim().length === 0) {
@@ -47,50 +54,73 @@ export const adminDashboard = async (req, res) => {
         }
 
         if (errors.length > 0) {
-          return res.status(400).json({ message: errors.join("; ") });
+          return res.status(400).render("admindashboard.ejs", {
+            name: req.session.user.name,
+            courses,
+            professors,
+            students,
+            error: errors.join("; "),
+          });
         }
 
-        // Verify professor exists
+        // Check if professor exists
         const professorExists = await Professor.findById(professor);
         if (!professorExists) {
-          return res.status(400).json({ message: "Professor does not exist" });
+          return res.status(400).render("admindashboard.ejs", {
+            name: req.session.user.name,
+            courses,
+            professors,
+            students,
+            error: "Professor does not exist",
+          });
         }
 
-        // Check for duplicate course
+        // Prevent duplicate courses
         const existingCourse = await Course.findOne({
           name: name.trim(),
           section: section.trim(),
-          professor
+          professor,
         });
+
         if (existingCourse) {
-          return res.status(400).json({ message: "Course with the same name, section, and professor already exists" });
+          return res.status(400).render("admindashboard.ejs", {
+            name: req.session.user.name,
+            courses,
+            professors,
+            students,
+            error: "Course with the same name, section, and professor already exists",
+          });
         }
 
-        // Create new Course document
+        // Create the new course
         const newCourse = new Course({
           name: name.trim(),
           section: section.trim(),
           classeshpnd: 0,
           totalclasses: Number(totalclasses),
           credits: Number(credits),
-          professor
+          professor,
         });
+
         await newCourse.save();
 
-        // Update Professor.courses
+        // Add course reference to the professor
         await Professor.findByIdAndUpdate(
           professor,
           { $push: { courses: { course: newCourse._id } } },
           { new: true }
         );
 
+        console.log("New course added:", newCourse);
         return res.redirect("/admin/dashboard");
       }
 
+      // ----------------------------
+      // ADD STUDENT
+      // ----------------------------
       if (action === "add-student") {
-        const { name, email, rollnumber, phone, section } = req.body;
+        const { name, email, rollnumber, phone, section, password } = req.body;
 
-        // Validate inputs
         const errors = [];
 
         if (!name || typeof name !== "string" || name.trim().length === 0) {
@@ -115,23 +145,40 @@ export const adminDashboard = async (req, res) => {
         }
 
         if (errors.length > 0) {
-          return res.status(400).json({ message: errors.join("; ") });
+          return res.status(400).render("admindashboard.ejs", {
+            name: req.session.user.name,
+            courses,
+            professors,
+            students,
+            error: errors.join("; "),
+          });
         }
 
-        // Check if email already exists
+        // Prevent duplicates
         const existingEmail = await Student.findOne({ email });
         if (existingEmail) {
-          return res.status(400).json({ message: "Email already exists" });
+          return res.status(400).render("admindashboard.ejs", {
+            name: req.session.user.name,
+            courses,
+            professors,
+            students,
+            error: "Email already exists",
+          });
         }
 
-        // Check if roll number already exists
         const existingRoll = await Student.findOne({ rollnumber });
         if (existingRoll) {
-          return res.status(400).json({ message: "Roll number already exists" });
+          return res.status(400).render("admindashboard.ejs", {
+            name: req.session.user.name,
+            courses,
+            professors,
+            students,
+            error: "Roll number already exists",
+          });
         }
 
-        // Create new student
-        const newStudent = new Student({
+        // Build new student object
+        const studentData = {
           name: name.trim(),
           email,
           rollnumber: rollnumber.trim(),

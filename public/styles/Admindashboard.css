@@ -492,14 +492,14 @@ h2 {
         max-width: 100%;
         min-width: 0;
         padding: 25px;
-}
+    }
 
     #date_holding_container_outer {
         position: relative;
         right: 0;
         height: 200px;
         margin: 20px auto;
-    width: 100%;
+        width: 100%;
         text-align: center;
     }
 
