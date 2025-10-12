@@ -508,7 +508,67 @@
       }
     });
 
-    
+    // Remove Entire Course Form
+    const removeCourseForm = document.getElementById("remove-course-form");
+    const removeCourseEntireSelect = document.getElementById("remove-course-entire-select");
+    const courseErrorDiv = document.getElementById("error-message");
+
+    removeCourseForm.addEventListener("submit", (e) => {
+      console.log("Remove course form submission triggered", {
+        action: removeCourseForm.querySelector("input[name='action']").value,
+        course: removeCourseEntireSelect.value,
+      });
+
+      if (!removeCourseEntireSelect.value) {
+        e.preventDefault();
+        courseErrorDiv.textContent = "Please select a course";
+        console.log("Submission prevented: No course selected");
+      } else {
+        courseErrorDiv.textContent = ""; // Clear any previous errors
+      }
+    });
+
+    // Remove Professor Form
+    const removeProfessorForm = document.getElementById("remove-professor-form");
+    const removeEntireProfessorSelect = document.getElementById("remove-entire-professor-select");
+    const profErrorDiv = document.getElementById("prof-error");
+    const courseAction = document.getElementById("course-action");
+    const reassignProfessorSelectionProf = document.getElementById("reassign-professor-selection-prof");
+
+    courseAction.addEventListener("change", () => {
+      if (courseAction.value === "reassign") {
+        reassignProfessorSelectionProf.style.display = "block";
+        reassignProfessorSelectionProf.querySelector("select").setAttribute("required", "required");
+      } else {
+        reassignProfessorSelectionProf.style.display = "none";
+        reassignProfessorSelectionProf.querySelector("select").removeAttribute("required");
+      }
+    });
+
+    removeProfessorForm.addEventListener("submit", (e) => {
+      console.log("Remove professor form submission triggered", {
+        action: removeProfessorForm.querySelector("input[name='action']").value,
+        professor: removeEntireProfessorSelect.value,
+        course_action: courseAction.value,
+        new_professor: reassignProfessorSelectionProf.querySelector("select").value,
+      });
+
+      if (!removeEntireProfessorSelect.value) {
+        e.preventDefault();
+        profErrorDiv.textContent = "Please select a professor";
+        console.log("Submission prevented: No professor selected");
+      } else if (!courseAction.value) {
+        e.preventDefault();
+        profErrorDiv.textContent = "Please select what to do with assigned courses";
+        console.log("Submission prevented: No course action selected");
+      } else if (courseAction.value === "reassign" && !reassignProfessorSelectionProf.querySelector("select").value) {
+        e.preventDefault();
+        profErrorDiv.textContent = "Please select a new professor for reassignment";
+        console.log("Submission prevented: No new professor selected");
+      } else {
+        profErrorDiv.textContent = ""; // Clear any previous errors
+      }
+    });
   </script>
 </body>
 </html>
