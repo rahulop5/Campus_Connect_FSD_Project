@@ -48,8 +48,6 @@ body {
     color: #FFF;
 }
 
-/* --- Form and Course Selection --- */
-
 .marks-upload-form {
     margin-top: 40px;
 }
@@ -129,8 +127,6 @@ body {
     width: 20px;
     height: 20px;
 }
-
-/* --- Upload Section --- */
 
 .upload-container {
     margin-top: 35px;
@@ -226,8 +222,6 @@ body {
     font-weight: 500;
 }
 
-/* --- Footer Section (Note and Button) --- */
-
 .upload-footer {
     display: flex;
     justify-content: space-between;
@@ -265,7 +259,6 @@ body {
     margin-top: -5px;
 }
 
-
 .submit-btn {
     width: 300px;
     height: 65px;
@@ -287,8 +280,6 @@ body {
     font-weight: 300;
     color: #FFF;
 }
-
-/* --- Uploaded File Display --- */
 
 .file-display {
     display: flex;
@@ -329,8 +320,6 @@ body {
     flex-shrink: 0;
 }
 
-/* --- CSV Preview Section --- */
-
 .csv-preview-container {
     display: none;
     flex-direction: column;
@@ -359,16 +348,11 @@ body {
     border-radius: 10px;
 }
 
-/* --- Custom Scrollbar Styles --- */
-
-/* For Firefox */
 .csv-preview-table-wrapper {
     scrollbar-width: thin;
-    /* Thumb color is now white (#FFFFFF), track color remains the same */
     scrollbar-color: #FFFFFF #202020;
 }
 
-/* For WebKit Browsers (Chrome, Safari, Edge) */
 .csv-preview-table-wrapper::-webkit-scrollbar {
     width: 8px;
 }
@@ -379,18 +363,14 @@ body {
 }
 
 .csv-preview-table-wrapper::-webkit-scrollbar-thumb {
-    /* Thumb color is now white (#FFFFFF) */
     background-color: #FFFFFF;
     border-radius: 10px;
     border: 2px solid #202020;
 }
 
 .csv-preview-table-wrapper::-webkit-scrollbar-thumb:hover {
-    /* Hover color remains green for accent */
     background-color: #3ccf00;
 }
-
-/* --- CSV Table --- */
 
 .csv-preview-table-wrapper table {
     width: 100%;

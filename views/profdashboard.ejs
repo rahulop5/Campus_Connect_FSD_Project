@@ -119,12 +119,12 @@
           if (rows.length === 0) return;
           let tableHTML = '<table><thead><tr>';
           const headers = rows[0].split(',');
-          headers.forEach(header => { tableHTML += `<th>${header.trim()}</th>`; });
+          headers.forEach(header => { tableHTML += <th>${header.trim()}</th>; });
           tableHTML += '</tr></thead><tbody>';
           for (let i = 1; i < rows.length; i++) {
             const cells = rows[i].split(',');
             tableHTML += '<tr>';
-            cells.forEach(cell => { tableHTML += `<td>${cell.trim()}</td>`; });
+            cells.forEach(cell => { tableHTML += <td>${cell.trim()}</td>; });
             tableHTML += '</tr>';
           }
           tableHTML += '</tbody></table>';
@@ -177,35 +177,26 @@
         }
       });
 
-      // --- NEW: FORM SUBMISSION LOGIC ---
       uploadForm.addEventListener('submit', function(event) {
-        // 1. Prevent the default form submission
         event.preventDefault();
 
-        // 2. Collect the form data
         const formData = new FormData(uploadForm);
 
-        // 3. Send the data using fetch
         fetch('/prof/submit', {
           method: 'POST',
           body: formData,
         })
         .then(response => {
           if (!response.ok) {
-            // If the server returns an error, throw an error to be caught by .catch()
             throw new Error('Network response was not ok');
           }
-          // The request was successful, even if we don't need to read a JSON response
           return true; 
         })
         .then(success => {
-          // 4. On success, show the pop-up
           alert('Successfully done!');
-          // 5. After the user clicks "OK" on the alert, refresh the page
           window.location.reload();
         })
         .catch(error => {
-          // 6. On failure, log the error and show an error pop-up
           console.error('There was a problem with the submission:', error);
           alert('An error occurred. Please try again.');
         });
