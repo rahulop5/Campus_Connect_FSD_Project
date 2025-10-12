@@ -213,23 +213,21 @@ main {
 
 #date {
     text-align: center;
-    margin-left: 60px;
     font-family: Outfit;
-    font-size: 110px;
+    font-size: 80px; /* Adjusted for compactness */
     font-weight: 700;
-    letter-spacing: 6px;
-    line-height: 100px;
+    letter-spacing: 4.8px;
+    line-height: 80px;
 }
 
 #month_year {
     color: #000;
     text-align: center;
     font-family: Outfit;
-    font-size: 35px;
+    font-size: 25px;
     font-weight: 500;
-    letter-spacing: -2.8px;
-    margin-left: 36px;
-    margin-top: 5px;
+    letter-spacing: -2px;
+    margin-bottom: 10px;
 }
 
 /* Container for Course and Student Management */
