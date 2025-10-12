@@ -98,7 +98,7 @@
         <div id="error-message" class="course-error"><% if (error) { %><%= error %><% } %></div>
       </div>
 
-      <!-- Student Management Section -->
+      <!-- ========================== STUDENT MANAGEMENT ========================== -->
       <div class="student-container">
         <h2 id="student-form-title">Add New Student</h2>
         <button id="toggle-student-mode" class="toggle-btn">Switch to Remove Student</button>
@@ -106,19 +106,22 @@
           <input type="hidden" name="action" value="add-student">
           <div id="student-form-fields">
             <label for="student-name">Name of the Student:</label>
-            <input type="text" id="student-name" name="name" placeholder="e.g., John Doe" required>
+            <input type="text" id="student-name" name="name" required>
 
             <label for="student-email">Email of the Student:</label>
-            <input type="email" id="student-email" name="email" placeholder="e.g., john@example.com" required>
+            <input type="email" id="student-email" name="email" required>
 
             <label for="student-rollnumber">Roll Number:</label>
-            <input type="text" id="student-rollnumber" name="rollnumber" placeholder="e.g., 22CS123" required>
+            <input type="text" id="student-rollnumber" name="rollnumber" required>
 
             <label for="student-phone">Phone Number:</label>
-            <input type="tel" id="student-phone" name="phone" placeholder="e.g., 9876543210" required>
+            <input type="tel" id="student-phone" name="phone" required>
 
             <label for="student-section">Section:</label>
-            <input type="text" id="student-section" name="section" placeholder="e.g., A" required>
+            <input type="text" id="student-section" name="section" required>
+
+            <label for="student-password">Set Password:</label>
+            <input type="password" id="student-password" name="password" required>
           </div>
           <button type="submit" id="student-submit-btn">Add Student</button>
         </form>
