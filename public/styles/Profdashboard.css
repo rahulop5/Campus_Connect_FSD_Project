@@ -195,28 +195,60 @@ body {
     text-align: center;
   }
   
-  /* Upload icon */
   .upload-icon {
     width: 50px;
     height: 50px;
-    flex-shrink: 0;
-    aspect-ratio: 1 / 1;
     background: url('/assets/upload.png') transparent 50% / cover no-repeat;
 }
   
-  /* Upload text */
   .upload-text {
-    width: 228px;
-    height: 31px;
     color: #FFF;
-    font-family: Outfit;
-    font-size: 30px;
+    font-size: 20px;
     font-weight: 400;
   }
   
-  .file-note {
-    margin-top: 15px;
-    font-size: 14px;
+.upload-text p {
+    margin: 5px 0;
+}
+
+.upload-text span {
+    color: #949494;
+    font-size: 16px;
+}
+
+.browse-files {
+    color: #2B9900;
+    text-decoration: underline;
+    font-weight: 500;
+}
+
+.upload-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+    margin-left: 20px;
+}
+
+.file-note-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.warning-icon {
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+}
+
+.note-text-content {
+    display: flex;
+    flex-direction: column;
+}
+
+.file-note{
+    font-size: 22px;
     color: #a8a8a8;
     font-family: Outfit;
     color: #FFF;
