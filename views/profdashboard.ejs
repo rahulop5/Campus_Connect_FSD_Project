@@ -29,12 +29,12 @@
         </p>
       </div>
 
-      <form class="marks-upload-form" action="/prof/submit" method="post" enctype="multipart/form-data">
+      <form id="marksUploadForm" class="marks-upload-form" action="/prof/submit" method="post" enctype="multipart/form-data">
         <div class="courses-selection-container">
           <p class="assigned-courses-title">Assigned Courses:</p>
           <div class="assigned-courses-box">
-            <% if (courses.length> 0) { %>
-              <% courses.forEach(course=> { %>
+            <% if (courses.length > 0) { %>
+              <% courses.forEach(course => { %>
                 <label class="course-box-label">
                   <input type="radio" name="courseId" value="<%= course.id %>" class="hidden-radio">
                   <div class="course-box">
@@ -47,10 +47,10 @@
                     </div>
                   </div>
                 </label>
-                <% }) %>
-                  <% } else { %>
-                    <p>No assigned courses available.</p>
-                    <% } %>
+              <% }) %>
+            <% } else { %>
+              <p>No assigned courses available.</p>
+            <% } %>
           </div>
         </div>
 
@@ -85,7 +85,6 @@
                   <p class="file-note1">Only .csv supported</p>
                 </div>
               </div>
-
               <button class="submit-btn" type="submit">
                 <span class="submit-text">Submit</span>
               </button>
@@ -96,97 +95,122 @@
     </div>
 
     <script>
-    const fileInput = document.getElementById('file');
-    const fileUploadLabel = document.querySelector('.custom-file-label');
-    const uploadContent = document.querySelector('.upload-content');
-    const csvPreviewContainer = document.getElementById('csvPreviewContainer');
-    const csvPreviewTable = document.getElementById('csvPreviewTable');
+      const uploadForm = document.getElementById('marksUploadForm');
+      const fileInput = document.getElementById('file');
+      const fileUploadLabel = document.querySelector('.custom-file-label');
+      const uploadContent = document.querySelector('.upload-content');
+      const csvPreviewContainer = document.getElementById('csvPreviewContainer');
+      const csvPreviewTable = document.getElementById('csvPreviewTable');
+      const originalUploadContentHTML = uploadContent.innerHTML;
 
-    const originalUploadContentHTML = uploadContent.innerHTML;
-
-    function removeFile() {
+      function removeFile() {
         fileInput.value = null;
         uploadContent.innerHTML = originalUploadContentHTML;
         csvPreviewTable.innerHTML = '';
         csvPreviewContainer.style.display = 'none';
-        fileUploadLabel.classList.remove('file-uploaded'); // <-- REMOVE CLASS HERE
-    }
+        fileUploadLabel.classList.remove('file-uploaded');
+      }
 
-    function generatePreview(file) {
+      function generatePreview(file) {
         const reader = new FileReader();
         reader.onload = function(event) {
-            const csvContent = event.target.result;
-            const rows = csvContent.trim().split('\n');
-            if (rows.length === 0) return;
-
-            let tableHTML = '<table><thead><tr>';
-            const headers = rows[0].split(',');
-            headers.forEach(header => {
-                tableHTML += `<th>${header.trim()}</th>`;
-            });
-            tableHTML += '</tr></thead><tbody>';
-
-            for (let i = 1; i < rows.length; i++) {
-                const cells = rows[i].split(',');
-                tableHTML += '<tr>';
-                cells.forEach(cell => {
-                    tableHTML += `<td>${cell.trim()}</td>`;
-                });
-                tableHTML += '</tr>';
-            }
-            tableHTML += '</tbody></table>';
-
-            csvPreviewTable.innerHTML = tableHTML;
-            csvPreviewContainer.style.display = 'flex';
+          const csvContent = event.target.result;
+          const rows = csvContent.trim().split('\n');
+          if (rows.length === 0) return;
+          let tableHTML = '<table><thead><tr>';
+          const headers = rows[0].split(',');
+          headers.forEach(header => { tableHTML += `<th>${header.trim()}</th>`; });
+          tableHTML += '</tr></thead><tbody>';
+          for (let i = 1; i < rows.length; i++) {
+            const cells = rows[i].split(',');
+            tableHTML += '<tr>';
+            cells.forEach(cell => { tableHTML += `<td>${cell.trim()}</td>`; });
+            tableHTML += '</tr>';
+          }
+          tableHTML += '</tbody></table>';
+          csvPreviewTable.innerHTML = tableHTML;
+          csvPreviewContainer.style.display = 'flex';
         };
         reader.readAsText(file);
-    }
+      }
 
-    function displayFile(file) {
+      function displayFile(file) {
         if (!file.name.endsWith('.csv')) {
-            alert('Invalid file type. Please upload a .csv file.');
-            removeFile();
-            return;
+          alert('Invalid file type. Please upload a .csv file.');
+          removeFile();
+          return;
         }
-
-        fileUploadLabel.classList.add('file-uploaded'); // <-- ADD CLASS HERE
-
+        fileUploadLabel.classList.add('file-uploaded');
         uploadContent.innerHTML = `
-            <div class="file-uploaded-icon"></div>
-            <div class="file-display">
-                <p class="file-name" title="${file.name}">${file.name}</p>
-                <span class="remove-file-btn" role="button" aria-label="Remove file"></span>
-            </div>
+          <div class="file-uploaded-icon"></div>
+          <div class="file-display">
+            <p class="file-name" title="${file.name}">${file.name}</p>
+            <span class="remove-file-btn" role="button" aria-label="Remove file"></span>
+          </div>
         `;
         uploadContent.querySelector('.remove-file-btn').addEventListener('click', (e) => {
-            e.stopPropagation();
-            removeFile();
+          e.stopPropagation();
+          removeFile();
         });
         generatePreview(file);
-    }
+      }
 
-    fileUploadLabel.addEventListener('dragover', (e) => {
+      fileUploadLabel.addEventListener('dragover', (e) => {
         e.preventDefault();
         fileUploadLabel.classList.add('dragged-over');
-    });
-    fileUploadLabel.addEventListener('dragleave', () => {
+      });
+      fileUploadLabel.addEventListener('dragleave', () => {
         fileUploadLabel.classList.remove('dragged-over');
-    });
-    fileUploadLabel.addEventListener('drop', (e) => {
+      });
+      fileUploadLabel.addEventListener('drop', (e) => {
         e.preventDefault();
         fileUploadLabel.classList.remove('dragged-over');
         const files = e.dataTransfer.files;
         if (files.length > 0) {
-            fileInput.files = files;
-            displayFile(files[0]);
+          fileInput.files = files;
+          displayFile(files[0]);
         }
-    });
-    fileInput.addEventListener('change', () => {
+      });
+      fileInput.addEventListener('change', () => {
         if (fileInput.files.length > 0) {
-            displayFile(fileInput.files[0]);
+          displayFile(fileInput.files[0]);
         }
-    });
-</script>
+      });
+
+      // --- NEW: FORM SUBMISSION LOGIC ---
+      uploadForm.addEventListener('submit', function(event) {
+        // 1. Prevent the default form submission
+        event.preventDefault();
+
+        // 2. Collect the form data
+        const formData = new FormData(uploadForm);
+
+        // 3. Send the data using fetch
+        fetch('/prof/submit', {
+          method: 'POST',
+          body: formData,
+        })
+        .then(response => {
+          if (!response.ok) {
+            // If the server returns an error, throw an error to be caught by .catch()
+            throw new Error('Network response was not ok');
+          }
+          // The request was successful, even if we don't need to read a JSON response
+          return true; 
+        })
+        .then(success => {
+          // 4. On success, show the pop-up
+          alert('Successfully done!');
+          // 5. After the user clicks "OK" on the alert, refresh the page
+          window.location.reload();
+        })
+        .catch(error => {
+          // 6. On failure, log the error and show an error pop-up
+          console.error('There was a problem with the submission:', error);
+          alert('An error occurred. Please try again.');
+        });
+      });
+    </script>
 </body>
 
 </html>
