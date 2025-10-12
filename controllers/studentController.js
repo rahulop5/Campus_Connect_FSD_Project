@@ -292,5 +292,8 @@ export const studentProfilePartial = async (req, res) => {
 
 
 
+export const changepass = async (req, res) => {
+  res.render("changepassword.ejs")
+}
 
 //yaapi
