@@ -320,5 +320,44 @@
 
     <a href="/" class="back-home">Back to Home</a>
   </main>
+
+  <script>
+    // Set dynamic date
+    document.addEventListener("DOMContentLoaded", () => {
+      try {
+        const today = new Date();
+        const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+        const months = [
+          "January", "February", "March", "April", "May", "June",
+          "July", "August", "September", "October", "November", "December"
+        ];
+
+        const dayElement = document.getElementById("day");
+        const dateElement = document.getElementById("date");
+        const monthYearElement = document.getElementById("month_year");
+
+        if (dayElement && dateElement && monthYearElement) {
+          dayElement.textContent = days[today.getDay()];
+          dateElement.textContent = today.getDate();
+          monthYearElement.textContent = `${months[today.getMonth()]}, ${today.getFullYear()}`;
+          console.log("Dynamic date set:", {
+            day: days[today.getDay()],
+            date: today.getDate(),
+            monthYear: `${months[today.getMonth()]}, ${today.getFullYear()}`
+          });
+        } else {
+          console.error("Date elements not found");
+        }
+      } catch (error) {
+        console.error("Error setting dynamic date:", error);
+        // Fallback to static date in case of error
+        document.getElementById("day").textContent = "Unknown";
+        document.getElementById("date").textContent = "?";
+        document.getElementById("month_year").textContent = "Unknown, Unknown";
+      }
+    });
+
+    
+  </script>
 </body>
 </html>
