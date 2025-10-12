@@ -278,3 +278,50 @@ body {
     font-weight: 300;
     color: #FFF;
 }
+
+/* --- Add these new styles to Profdashboard.css --- */
+
+/* Container for the file name and remove button */
+.file-display {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px; /* Adds space between the name and the button */
+}
+
+/* Style for the file name text */
+.file-name {
+    font-size: 18px;
+    color: #FFF;
+    font-weight: 500;
+    margin: 0;
+    /* Prevents very long file names from breaking the layout */
+    max-width: 30vw;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Style for the remove button icon */
+.remove-file-btn {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0; /* Prevents the icon from shrinking */
+    cursor: pointer;
+    background-image: url('/assets/x-button.png'); /* Default icon */
+    background-size: cover;
+    transition: background-image 0.2s ease-in-out;
+}
+
+/* Change icon on hover */
+.remove-file-btn:hover {
+    background-image: url('/assets/x-button-highlighted.png'); /* Highlighted icon */
+}
+
+/* Add this new style for the uploaded file icon */
+.file-uploaded-icon {
+    width: 50px;
+    height: 50px;
+    background: url('/assets/sheets (1).png') transparent 50% / contain no-repeat;
+    flex-shrink: 0;
+}

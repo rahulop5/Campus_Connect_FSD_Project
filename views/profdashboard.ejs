@@ -87,12 +87,37 @@
     </div>
 
     <script>
-      // JavaScript for drag and drop and file name display
       const fileUpload = document.querySelector('.custom-file-label');
       const fileInput = document.getElementById('file');
-      const uploadText = document.querySelector('.upload-text');
-      const originalUploadText = uploadText.innerHTML;
+      const uploadContent = document.querySelector('.upload-content');
+      const originalUploadContentHTML = uploadContent.innerHTML; // Store original icon and text
 
+      // --- Function to remove the selected file ---
+      function removeFile() {
+        fileInput.value = null; // This is the crucial step to clear the file
+        uploadContent.innerHTML = originalUploadContentHTML; // Restore original icon and text
+      }
+
+      // --- Function to display the selected file and the remove button ---
+      function displayFile(file) {
+        // Create new HTML with the file icon, file name, and remove button
+        uploadContent.innerHTML = `
+            <div class="file-uploaded-icon"></div>
+            <div class="file-display">
+                <p class="file-name" title="${file.name}">${file.name}</p>
+                <span class="remove-file-btn" role="button" aria-label="Remove file"></span>
+            </div>
+        `;
+
+        // Add a click event listener to the new remove button
+        const removeBtn = uploadContent.querySelector('.remove-file-btn');
+        removeBtn.addEventListener('click', (e) => {
+          e.stopPropagation(); // Prevents the click from triggering the file input again
+          removeFile();
+        });
+      }
+
+      // --- Event listeners (no changes needed here) ---
       fileUpload.addEventListener('dragover', (e) => {
         e.preventDefault();
         fileUpload.classList.add('dragged-over');
@@ -107,16 +132,14 @@
         fileUpload.classList.remove('dragged-over');
         const files = e.dataTransfer.files;
         if (files.length > 0) {
-          fileInput.files = files;
-          uploadText.innerHTML = `<p class="file-name">${files[0].name}</p>`;
+          fileInput.files = files; // Assign dropped files to the input
+          displayFile(files[0]);
         }
       });
 
       fileInput.addEventListener('change', () => {
         if (fileInput.files.length > 0) {
-          uploadText.innerHTML = `<p class="file-name">${fileInput.files[0].name}</p>`;
-        } else {
-          uploadText.innerHTML = originalUploadText;
+          displayFile(fileInput.files[0]);
         }
       });
     </script>
