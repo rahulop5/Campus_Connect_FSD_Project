@@ -7,7 +7,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 
 const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const _dirname = path.dirname(_filename);
 
  
 export const studentDashboard = async (req, res) => {
@@ -270,7 +270,7 @@ export const studentDashboardPartial = async (req, res) => {
         data
       );
 
-      const match = fullHtml.match(/<div id="dashboard-container">([\s\S]*)<\/div>\s*<\/body>/);
+      const match = fullHtml.match(/<div id="dashboard-container">([\s\S])<\/div>\s<\/body>/);
       const partialHtml = match ? match[1] : fullHtml;
 
       res.send(partialHtml);
@@ -318,7 +318,7 @@ export const studentAttendancePartial = async (req, res) => {
     );
 
     // Extract only the div content inside <div class="at_mainpage"> ... </div>
-    const match = html.match(/<div class="at_mainpage">([\s\S]*)<\/div>\s*<\/body>/);
+    const match = html.match(/<div class="at_mainpage">([\s\S])<\/div>\s<\/body>/);
     const partialHtml = match ? match[0] : html;
 
     res.send(partialHtml);
@@ -373,7 +373,7 @@ export const studentGradesPartial = async (req, res) => {
     );
 
     // Extract main content container for partial refresh
-    const match = html.match(/<div class="bg_mainpage">([\s\S]*?)<\/div>\s*<\/body>/);
+    const match = html.match(/<div class="bg_mainpage">([\s\S]?)<\/div>\s<\/body>/);
     const partialHtml = match ? match[0] : html;
 
     res.send(partialHtml);
@@ -382,3 +382,12 @@ export const studentGradesPartial = async (req, res) => {
     res.status(500).send("Internal Server Error");
   }
 };
+
+
+
+
+
+
+export const changepass = async (req, res) => {
+  res.render("changepassword.ejs")
+}
