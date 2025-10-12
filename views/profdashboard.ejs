@@ -38,14 +38,13 @@
                 <label class="course-box-label">
                   <input type="radio" name="courseId" value="<%= course.id %>" class="hidden-radio">
                   <div class="course-box">
-                    <p class="course-code">
+                    <div class="course-code">
                       <%= course.name %>
-                    </p>
+                    </div>
                     <div class="course-section">
                       <img src="/assets/section-icon.png" alt="Section" class="section-icon" />
                       <span>Sec-<%= course.section %></span>
                     </div>
-                    </p>
                   </div>
                 </label>
                 <% }) %>
@@ -58,18 +57,27 @@
         <div class="upload-container">
           <p class="upload-title">Upload page:</p>
           <div class="upload-box-wrapper">
-            <div class="file-upload">
-              <input type="file" name="marksheet" id="file" class="hidden-file" accept=".csv" />
-              <label for="file" class="custom-file-label">
-                <div class="upload-content">
-                  <div class="upload-icon"></div>
-                  <div class="upload-text">
-                    <p>Drag & drop files here</p>
-                    <span>or</span>
-                    <p class="browse-files">Browse files</p>
+            <div class="upload-main-content">
+              <div class="file-upload">
+                <input type="file" name="marksheet" id="file" class="hidden-file" accept=".csv" />
+                <label for="file" class="custom-file-label">
+                  <div class="upload-content">
+                    <div class="upload-icon"></div>
+                    <div class="upload-text">
+                      <p>Drag & drop files here</p>
+                      <span>or</span>
+                      <p class="browse-files">Browse files</p>
+                    </div>
                   </div>
-                </div>
-              </label>
+                </label>
+              </div>
+              <div class="csv-preview-container" id="csvPreviewContainer">
+                <p class="preview-title">File Preview</p>
+                <div class="csv-preview-table-wrapper" id="csvPreviewTable"></div>
+              </div>
+            </div>
+
+            <div class="upload-footer">
               <div class="file-note-wrapper">
                 <img src="/assets/warn7.png" alt="Warning" class="warning-icon" />
                 <div class="note-text-content">
@@ -77,30 +85,72 @@
                   <p class="file-note1">Only .csv supported</p>
                 </div>
               </div>
+
+              <button class="submit-btn" type="submit">
+                <span class="submit-text">Submit</span>
+              </button>
             </div>
-            <button class="submit-btn" type="submit">
-              <span class="submit-text">Submit</span>
-            </button>
           </div>
         </div>
       </form>
     </div>
 
     <script>
-      const fileUpload = document.querySelector('.custom-file-label');
-      const fileInput = document.getElementById('file');
-      const uploadContent = document.querySelector('.upload-content');
-      const originalUploadContentHTML = uploadContent.innerHTML; // Store original icon and text
+    const fileInput = document.getElementById('file');
+    const fileUploadLabel = document.querySelector('.custom-file-label');
+    const uploadContent = document.querySelector('.upload-content');
+    const csvPreviewContainer = document.getElementById('csvPreviewContainer');
+    const csvPreviewTable = document.getElementById('csvPreviewTable');
 
-      // --- Function to remove the selected file ---
-      function removeFile() {
-        fileInput.value = null; // This is the crucial step to clear the file
-        uploadContent.innerHTML = originalUploadContentHTML; // Restore original icon and text
-      }
+    const originalUploadContentHTML = uploadContent.innerHTML;
 
-      // --- Function to display the selected file and the remove button ---
-      function displayFile(file) {
-        // Create new HTML with the file icon, file name, and remove button
+    function removeFile() {
+        fileInput.value = null;
+        uploadContent.innerHTML = originalUploadContentHTML;
+        csvPreviewTable.innerHTML = '';
+        csvPreviewContainer.style.display = 'none';
+        fileUploadLabel.classList.remove('file-uploaded'); // <-- REMOVE CLASS HERE
+    }
+
+    function generatePreview(file) {
+        const reader = new FileReader();
+        reader.onload = function(event) {
+            const csvContent = event.target.result;
+            const rows = csvContent.trim().split('\n');
+            if (rows.length === 0) return;
+
+            let tableHTML = '<table><thead><tr>';
+            const headers = rows[0].split(',');
+            headers.forEach(header => {
+                tableHTML += `<th>${header.trim()}</th>`;
+            });
+            tableHTML += '</tr></thead><tbody>';
+
+            for (let i = 1; i < rows.length; i++) {
+                const cells = rows[i].split(',');
+                tableHTML += '<tr>';
+                cells.forEach(cell => {
+                    tableHTML += `<td>${cell.trim()}</td>`;
+                });
+                tableHTML += '</tr>';
+            }
+            tableHTML += '</tbody></table>';
+
+            csvPreviewTable.innerHTML = tableHTML;
+            csvPreviewContainer.style.display = 'flex';
+        };
+        reader.readAsText(file);
+    }
+
+    function displayFile(file) {
+        if (!file.name.endsWith('.csv')) {
+            alert('Invalid file type. Please upload a .csv file.');
+            removeFile();
+            return;
+        }
+
+        fileUploadLabel.classList.add('file-uploaded'); // <-- ADD CLASS HERE
+
         uploadContent.innerHTML = `
             <div class="file-uploaded-icon"></div>
             <div class="file-display">
@@ -108,41 +158,35 @@
                 <span class="remove-file-btn" role="button" aria-label="Remove file"></span>
             </div>
         `;
-
-        // Add a click event listener to the new remove button
-        const removeBtn = uploadContent.querySelector('.remove-file-btn');
-        removeBtn.addEventListener('click', (e) => {
-          e.stopPropagation(); // Prevents the click from triggering the file input again
-          removeFile();
+        uploadContent.querySelector('.remove-file-btn').addEventListener('click', (e) => {
+            e.stopPropagation();
+            removeFile();
         });
-      }
+        generatePreview(file);
+    }
 
-      // --- Event listeners (no changes needed here) ---
-      fileUpload.addEventListener('dragover', (e) => {
+    fileUploadLabel.addEventListener('dragover', (e) => {
         e.preventDefault();
-        fileUpload.classList.add('dragged-over');
-      });
-
-      fileUpload.addEventListener('dragleave', () => {
-        fileUpload.classList.remove('dragged-over');
-      });
-
-      fileUpload.addEventListener('drop', (e) => {
+        fileUploadLabel.classList.add('dragged-over');
+    });
+    fileUploadLabel.addEventListener('dragleave', () => {
+        fileUploadLabel.classList.remove('dragged-over');
+    });
+    fileUploadLabel.addEventListener('drop', (e) => {
         e.preventDefault();
-        fileUpload.classList.remove('dragged-over');
+        fileUploadLabel.classList.remove('dragged-over');
         const files = e.dataTransfer.files;
         if (files.length > 0) {
-          fileInput.files = files; // Assign dropped files to the input
-          displayFile(files[0]);
+            fileInput.files = files;
+            displayFile(files[0]);
         }
-      });
-
-      fileInput.addEventListener('change', () => {
+    });
+    fileInput.addEventListener('change', () => {
         if (fileInput.files.length > 0) {
-          displayFile(fileInput.files[0]);
+            displayFile(fileInput.files[0]);
         }
-      });
-    </script>
+    });
+</script>
 </body>
 
 </html>

@@ -73,7 +73,6 @@ body {
     gap: 25px;
 }
 
-/* Hide the actual radio button */
 .hidden-radio {
     display: none;
 }
@@ -96,17 +95,14 @@ body {
     transition: background 0.3s ease, border-color 0.3s ease;
 }
 
-/* Style for hover effect */
 .course-box-label:hover .course-box {
     border-color: #2B9900;
 }
 
-/* Style for selected course box */
-.hidden-radio:checked + .course-box {
+.hidden-radio:checked+.course-box {
     background: linear-gradient(41deg, rgba(43, 153, 0, 0.50) 1.84%, rgba(14, 51, 0, 0.50) 92.49%);
     border-color: #2B9900;
 }
-
 
 .course-code {
     font-family: 'Poppins', sans-serif;
@@ -117,20 +113,20 @@ body {
 }
 
 .course-section {
-    display: flex; /* Aligns items in a row */
-    align-items: center; /* Vertically centers the icon and text */
-    justify-content: center; /* Horizontally centers the content within the box */
-    gap: 8px; /* Adds space between the icon and the text */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
     font-family: 'Poppins', sans-serif;
     font-size: 20px;
     font-weight: 500;
     color: #FFF;
-    margin-top: 5px; /* Adds a little space below the course code */
+    margin-top: 5px;
 }
 
 .section-icon {
-    width: 20px;  /* Adjust size as needed */
-    height: 20px; /* Adjust size as needed */
+    width: 20px;
+    height: 20px;
 }
 
 /* --- Upload Section --- */
@@ -139,9 +135,8 @@ body {
     margin-top: 35px;
     border: 3px solid #202020;
     border-radius: 20px;
-    padding: 20px;
+    padding: 35px;
     color: white;
-    padding-left: 3vw;
 }
 
 .upload-title {
@@ -151,9 +146,16 @@ body {
 }
 
 .upload-box-wrapper {
-    position: relative;
     display: flex;
-    min-height: 350px;
+    flex-direction: column;
+    min-height: 400px;
+}
+
+.upload-main-content {
+    display: flex;
+    flex-direction: row;
+    flex-grow: 1;
+    min-height: 0;
 }
 
 .file-upload {
@@ -161,23 +163,21 @@ body {
     flex-direction: column;
 }
 
-/* Hide default file input */
 .hidden-file {
     display: none;
 }
 
-/* Styled label as custom button */
 .custom-file-label {
     display: flex;
     width: 45vw;
-    height: 250px;
+    height: 320px;
     justify-content: center;
     align-items: center;
     border-radius: 30px;
     border: 2px dashed #949494;
     background: rgba(217, 217, 217, 0.14);
     cursor: pointer;
-    transition: border-color 0.3s ease, background-color 0.3s ease;
+    transition: border-color 0.3s ease, background-color 0.3s ease, border-style 0.3s ease;
 }
 
 .custom-file-label.dragged-over {
@@ -185,9 +185,12 @@ body {
     background: rgba(43, 153, 0, 0.2);
 }
 
-/* Inner content layout */
+.custom-file-label.file-uploaded {
+    border-style: solid;
+    border-color: #2B9900;
+}
+
 .upload-content {
-  margin-top:10px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -195,14 +198,12 @@ body {
     text-align: center;
 }
 
-/* Upload icon */
 .upload-icon {
     width: 50px;
     height: 50px;
     background: url('/assets/upload.png') transparent 50% / cover no-repeat;
 }
 
-/* Upload text */
 .upload-text {
     color: #FFF;
     font-size: 20px;
@@ -224,25 +225,25 @@ body {
     font-weight: 500;
 }
 
-.file-name {
-    font-size: 18px;
-    color: #FFF;
-    font-weight: 500;
-}
+/* --- Footer Section (Note and Button) --- */
 
+.upload-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+}
 
 .file-note-wrapper {
     display: flex;
-    align-items: center; /* Vertically aligns the icon with the text */
-    gap: 10px; /* Adds space between the icon and the text */
-    margin-top: 35px;
-    margin-left:1vw;
+    align-items: center;
+    gap: 20px;
 }
 
 .warning-icon {
-    width: 28px;   /* Adjust size as needed */
-    height: 28px;  /* Adjust size as needed */
-    flex-shrink: 0; /* Prevents the icon from shrinking */
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
 }
 
 .note-text-content {
@@ -250,23 +251,23 @@ body {
     flex-direction: column;
 }
 
-.file-note, .file-note1 {
-    font-size: 18px;
+.file-note,
+.file-note1 {
+    font-size: 22px;
     color: #a8a8a8;
-    /* margin: 1px 0; */
+    margin: 0;
 }
 
 .submit-btn {
-    position: absolute;
-    bottom: 1vh;
-    right: 3vw;
     width: 300px;
     height: 65px;
+    margin-right: 8vw;
     border-radius: 40px;
     border: 3px solid rgba(72, 255, 0, 0.40);
     background: rgba(40, 86, 22, 0.75);
     cursor: pointer;
     transition: background-color 0.3s ease;
+    flex-shrink: 0;
 }
 
 .submit-btn:hover {
@@ -279,49 +280,136 @@ body {
     color: #FFF;
 }
 
-/* --- Add these new styles to Profdashboard.css --- */
+/* --- Uploaded File Display --- */
 
-/* Container for the file name and remove button */
 .file-display {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 15px; /* Adds space between the name and the button */
+    gap: 15px;
 }
 
-/* Style for the file name text */
 .file-name {
     font-size: 18px;
     color: #FFF;
     font-weight: 500;
     margin: 0;
-    /* Prevents very long file names from breaking the layout */
     max-width: 30vw;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
 
-/* Style for the remove button icon */
 .remove-file-btn {
     width: 20px;
     height: 20px;
-    flex-shrink: 0; /* Prevents the icon from shrinking */
+    flex-shrink: 0;
     cursor: pointer;
-    background-image: url('/assets/x-button.png'); /* Default icon */
+    background-image: url('/assets/x-button.png');
     background-size: cover;
     transition: background-image 0.2s ease-in-out;
 }
 
-/* Change icon on hover */
 .remove-file-btn:hover {
-    background-image: url('/assets/x-button-highlighted.png'); /* Highlighted icon */
+    background-image: url('/assets/x-button-highlighted.png');
 }
 
-/* Add this new style for the uploaded file icon */
 .file-uploaded-icon {
     width: 50px;
     height: 50px;
     background: url('/assets/sheets (1).png') transparent 50% / contain no-repeat;
     flex-shrink: 0;
+}
+
+/* --- CSV Preview Section --- */
+
+.csv-preview-container {
+    display: none;
+    flex-direction: column;
+    flex-grow: 1;
+    margin-left: 30px;
+    border: 1px solid #373737;
+    border-radius: 20px;
+    background: rgba(30, 30, 30, 0.5);
+    padding: 15px;
+    max-height: 295px;
+    max-width: 1000px;
+}
+
+.preview-title {
+    font-size: 20px;
+    font-weight: 500;
+    color: #c0c0c0;
+    margin: 0 0 15px 5px;
+    flex-shrink: 0;
+}
+
+.csv-preview-table-wrapper {
+    overflow: auto;
+    flex: 1;
+    min-height: 0;
+    border-radius: 10px;
+}
+
+/* --- Custom Scrollbar Styles --- */
+
+/* For Firefox */
+.csv-preview-table-wrapper {
+    scrollbar-width: thin;
+    /* Thumb color is now white (#FFFFFF), track color remains the same */
+    scrollbar-color: #FFFFFF #202020;
+}
+
+/* For WebKit Browsers (Chrome, Safari, Edge) */
+.csv-preview-table-wrapper::-webkit-scrollbar {
+    width: 8px;
+}
+
+.csv-preview-table-wrapper::-webkit-scrollbar-track {
+    background: #202020;
+    border-radius: 10px;
+}
+
+.csv-preview-table-wrapper::-webkit-scrollbar-thumb {
+    /* Thumb color is now white (#FFFFFF) */
+    background-color: #FFFFFF;
+    border-radius: 10px;
+    border: 2px solid #202020;
+}
+
+.csv-preview-table-wrapper::-webkit-scrollbar-thumb:hover {
+    /* Hover color remains green for accent */
+    background-color: #3ccf00;
+}
+
+/* --- CSV Table --- */
+
+.csv-preview-table-wrapper table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+.csv-preview-table-wrapper th,
+.csv-preview-table-wrapper td {
+    padding: 8px 12px;
+    text-align: left;
+    border-bottom: 1px solid #282828;
+    white-space: nowrap;
+}
+
+.csv-preview-table-wrapper th {
+    background-color: #1a1a1a;
+    color: #2B9900;
+    font-weight: 600;
+    position: sticky;
+    top: 0;
+}
+
+.csv-preview-table-wrapper tbody tr:nth-child(even) {
+    background-color: rgba(255, 255, 255, 0.03);
+}
+
+.csv-preview-table-wrapper tbody tr:hover {
+    background-color: rgba(43, 153, 0, 0.15);
 }
