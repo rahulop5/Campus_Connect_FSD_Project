@@ -125,7 +125,60 @@
           </div>
           <button type="submit" id="student-submit-btn">Add Student</button>
         </form>
-        <div id="student-error-message" class="student-error"></div>
+      </div>
+
+      <!-- ========================== PROFESSOR MANAGEMENT ========================== -->
+      <div class="professor-container">
+        <h2>Add New Professor</h2>
+        <form id="add-professor-form" action="/admin/dashboard" method="POST">
+          <input type="hidden" name="action" value="add-professor">
+          <label for="prof-name">Name of the Professor:</label>
+          <input type="text" id="prof-name" name="name" required>
+
+          <label for="prof-email">Email of the Professor:</label>
+          <input type="email" id="prof-email" name="email" required>
+
+          <label for="prof-phone">Phone Number:</label>
+          <input type="tel" id="prof-phone" name="phone" required>
+
+          <label for="prof-password">Set Password:</label>
+          <input type="password" id="prof-password" name="password" required>
+
+          <button type="submit">Add Professor</button>
+        </form>
+
+        <!-- Remove Professor Form -->
+        <h2>Remove Professor</h2>
+        <form id="remove-professor-form" action="/admin/dashboard" method="POST">
+          <input type="hidden" name="action" value="remove-professor">
+          <label for="remove-entire-professor-select">Select Professor:</label>
+          <select id="remove-entire-professor-select" name="professor" required>
+            <option value="">Select a Professor</option>
+            <% professors.forEach(prof => { %>
+              <option value="<%= prof._id %>"><%= prof.name %> (<%= prof.email %>)</option>
+            <% }) %>
+          </select>
+
+          <label for="course-action">What to do with assigned courses:</label>
+          <select id="course-action" name="course_action" required>
+            <option value="">Select an option</option>
+            <option value="remove">Remove all courses</option>
+            <option value="reassign">Reassign all to another professor</option>
+          </select>
+
+          <div id="reassign-professor-selection-prof" style="display: none;">
+            <label for="new-professor-select-prof">Select New Professor:</label>
+            <select id="new-professor-select-prof" name="new_professor">
+              <option value="">Select a Professor</option>
+              <% professors.forEach(prof => { %>
+                <option value="<%= prof._id %>"><%= prof.name %> (<%= prof.email %>)</option>
+              <% }) %>
+            </select>
+          </div>
+
+          <button type="submit">Remove Professor</button>
+        </form>
+        <div id="prof-error" class="course-error"><% if (error) { %><%= error %><% } %></div>
       </div>
     </div>
 
