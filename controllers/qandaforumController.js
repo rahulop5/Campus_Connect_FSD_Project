@@ -1,33 +1,82 @@
 import Question from "../models/Question.js";
 import Answer from "../models/Answer.js";
 
+// Renders the EJS shell
 export const renderQuestionsPage = async (req, res) => {
   if (req.session.user) {
-    const questions = await Question.find().populate("asker").sort({ createdAt: -1 });
-    res.render("Problemslvfrm.ejs", { questions });
-  } else {
-    res.redirect("/");
-  }
-};
-
-export const renderQuestionDetails = async (req, res) => {
-  if (req.session.user) {
-    const questionId = req.params.id;
-    const question = await Question.findByIdAndUpdate(
-        questionId,
-        { $inc: { views: 1 } }, // Increment the views field by 1
-        { new: true } // Return the updated document
-      ).populate("answers").populate("asker");
-    if (question) {
-       //here write the logic to increase the views by one 
-      res.render("Problemopen.ejs", { question });
-    } else {
-      res.status(404).send("Question not found");
+    try {
+      res.render("Problemslvfrm.ejs");
+    } catch (error) {
+      console.error("Error rendering page:", error);
+      res.status(500).send("Internal Server Error");
     }
   } else {
     res.redirect("/");
   }
 };
+
+// Sends JSON data for AJAX
+export const fetchQuestionsData = async (req, res) => {
+  if (req.session.user) {
+    try {
+      const questions = await Question.find()
+        .populate("asker")
+        .sort({ createdAt: -1 });
+
+      res.json({ questions });
+    } catch (error) {
+      console.error("Error fetching questions:", error);
+      res.status(500).send("Internal Server Error");
+    }
+  } else {
+    res.redirect("/");
+  }
+};
+
+
+// Renders the EJS shell (no data)
+export const renderQuestionDetails = async (req, res) => {
+  if (req.session.user) {
+    try {
+      res.render("Problemopen.ejs");
+    } catch (error) {
+      console.error("Error rendering question page:", error);
+      res.status(500).send("Internal Server Error");
+    }
+  } else {
+    res.redirect("/");
+  }
+};
+
+// Sends question JSON data for AJAX
+export const fetchQuestionDetails = async (req, res) => {
+  if (req.session.user) {
+    try {
+      const questionId = req.params.id;
+      const question = await Question.findByIdAndUpdate(
+        questionId,
+        { $inc: { views: 1 } },
+        { new: true }
+      )
+        .populate("answers")
+        .populate("asker");
+
+      if (!question) return res.status(404).json({ error: "Question not found" });
+
+      res.json({ question });
+    } catch (error) {
+      console.error("Error fetching question details:", error);
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+  } else {
+    res.redirect("/");
+  }
+};
+
+
+
+
+
 
 export const upvoteQuestion = async (req, res) => {
   const questionId = req.body.id;

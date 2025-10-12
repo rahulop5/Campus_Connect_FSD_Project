@@ -19,8 +19,8 @@ router.get("/dashboard", studentDashboard);
 router.get("/profile", studentProfile);
 router.get("/attendance", studentAttendance);
 router.get("/bellgraph", studentGrades);
-
 router.get("/bellgraph-data/:courseId", studentGradebyId);
+
 router.post('/update', updateStudentProfile);
 
 router.get("/student/dashboard/partial",studentDashboardNew);

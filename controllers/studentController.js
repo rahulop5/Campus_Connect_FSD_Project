@@ -211,9 +211,6 @@ export const studentGrades = async (req, res) => {
 };
 
 
-
-
-
 export const studentGradebyId = async (req, res) => {
   try {
     const { courseId } = req.params;
