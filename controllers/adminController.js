@@ -184,45 +184,108 @@ export const adminDashboard = async (req, res) => {
           rollnumber: rollnumber.trim(),
           phone,
           section: section.trim(),
-          courses: []
-        });
+          courses: [],
+        };
 
+        if (password && password.length > 0) {
+          const hashedPassword = await bcrypt.hash(password, 10);
+          studentData.password = hashedPassword;
+          studentData.isOAuth = false;
+        }
+
+        // Optional: derive branch & UG year (safe best-effort)
+        try {
+          const year = parseInt(rollnumber.substring(1, 5));
+          const currentYear = new Date().getFullYear();
+          if (!isNaN(year) && year > 1900 && year <= currentYear) {
+            studentData.ug = (currentYear - year).toString();
+          }
+
+          const branchCode = rollnumber.charAt(7);
+          switch (branchCode) {
+            case "1":
+              studentData.branch = "CSE";
+              break;
+            case "2":
+              studentData.branch = "ECE";
+              break;
+            case "3":
+              studentData.branch = "AIDS";
+              break;
+            default:
+              studentData.branch = "Unknown";
+          }
+        } catch (err) {
+          console.warn("Error deriving UG/branch:", err);
+        }
+
+        const newStudent = new Student(studentData);
         await newStudent.save();
 
         return res.redirect("/admin/dashboard");
       }
 
+      // ----------------------------
+      // REMOVE STUDENT
+      // ----------------------------
       if (action === "remove-student") {
         const { email } = req.body;
-
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
         if (!email || !emailRegex.test(email)) {
-          return res.status(400).json({ message: "Invalid email format" });
+          return res.status(400).render("admindashboard.ejs", {
+            name: req.session.user.name,
+            courses,
+            professors,
+            students,
+            error: "Invalid email format",
+          });
         }
 
         const student = await Student.findOne({ email });
         if (!student) {
-          return res.status(404).json({ message: "Student not found" });
+          return res.status(404).render("admindashboard.ejs", {
+            name: req.session.user.name,
+            courses,
+            professors,
+            students,
+            error: "Student not found",
+          });
         }
 
         await Student.deleteOne({ email });
-
+        console.log("Student removed:", email);
         return res.redirect("/admin/dashboard");
       }
 
-      // If action is not recognized, redirect to dashboard
-      return res.redirect("/admin/dashboard");
+      // Default redirect if unknown action
+      return res.status(400).render("admindashboard.ejs", {
+        name: req.session.user.name,
+        courses,
+        professors,
+        students,
+        error: "Unknown action",
+      });
     }
 
-    // Handle GET request: Render the dashboard
+    // ----------------------------
+    // HANDLE GET REQUEST
+    // ----------------------------
     res.render("admindashboard.ejs", {
       name: req.session.user.name,
       courses,
       professors,
-      students
+      students,
+      error: null,
     });
   } catch (error) {
     console.error("Error in admin dashboard:", error);
-    res.status(500).json({ message: "Internal Server Error" });
+    res.status(500).render("admindashboard.ejs", {
+      name: req.session.user.name,
+      courses,
+      professors,
+      students,
+      error: "Internal Server Error",
+    });
   }
 };
