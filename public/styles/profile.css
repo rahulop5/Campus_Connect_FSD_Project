@@ -1,57 +1,52 @@
-svg
-{
+/* --- Custom Font --- */
+@font-face {
+    font-family: 'Heathergreen';
+    src: url('/assets/fonts/Heathergreen.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+/* --- General Styles --- */
+svg {
     fill: rgba(31, 31, 31, 0.60);
     stroke-width: 1px;
     stroke: #373737;
     backdrop-filter: blur(2px);
 }
-img
-{
-    border-radius: 40px;
-    border-bottom-right-radius: 24px; 
-    position: absolute;
-    z-index: 1;
 
-}
-body
-{
+body {
     font-family: Outfit;
-    background-color: black;
+    background: url("/assets/profil.png") center/cover no-repeat fixed;
     display: flex;
     height: 100vh;
     align-items: center;
     justify-content: center;
-    background: url("/assets/profil.png");
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: cover;
+    background-color: black;
 }
 
-#bodbod
-{
-    display: flex;
-}
+#bodbod { display: flex; }
 
-.my_profile
-{
-    width: 35px;
+/* --- "MY PROFILE" Text --- */
+.my_profile {
+    width: 20px;
     color: rgba(255, 255, 255, 0.65);
-    font-size: 47px;
+    font-size: 60px;
     margin-right: 25px;
     z-index: 2;
-    font-family: "Dream Orphans";
+    font-family: 'Heathergreen', sans-serif;
+    line-height: 0.925;
 }
 
-#my_profile1
-{
-    margin-bottom: 20px;  
-}
+#my_profile1 { margin-bottom: 20px; }
 
-.auth_qa
-{
-    color: white;
+/* --- Profile Details Section --- */
+.auth_qa, #rb_row1, #rb_row2, #seperator_line, #l_row1, #l_row2 {
     position: absolute;
     z-index: 2;
+}
+
+.auth_qa {
+    color: white;
     margin-left: 500px;
     margin-top: 36px;
     display: flex;
@@ -59,60 +54,64 @@ body
     width: 330px;
 }
 
-.auth_q
-{
+.auth_q {
     color: #2B9900;
     font-size: 16px;
 }
 
-.auth_a
-{
+.auth_a {
     display: flex;
     justify-content: space-between;
+    align-items: center;
 }
 
-.auth_a > div
-{
+.auth_a > div {
     font-size: 20px;
 }
 
-.edit_mark
-{
+#second_auth .auth_a > div,
+#fifth_auth .auth_a > div {
+    padding-left: 7px;
+}
+
+.edit_mark {
     height: 21px;
     width: 21px;
+    position: static;
+    transition: opacity 0.2s ease-in-out;
 }
 
-.image_div
-{
+.image_div {
     width: 21px;
+    height: 21px;
     cursor: pointer;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
 }
 
-#second_auth
-{
-    margin-top: 90px;
+.image_div:not(.is-checkmark):hover {
+    background-image: url('/assets/edithover.png');
 }
 
-#third_auth
-{
-    margin-top: 145px;
+.image_div:not(.is-checkmark):hover .edit_mark {
+    opacity: 0;
 }
 
-#fourth_auth
-{
-    margin-top: 195px;
+.image_div.is-checkmark:hover {
+    background-image: url('/assets/check (6).png');
 }
 
-#fifth_auth
-{
-    margin-top: 255px;
-    /* margin-bottom:20px; */
+.image_div.is-checkmark:hover .edit_mark {
+    opacity: 0;
 }
 
-#rb_row1
-{
-    position: absolute;
-    z-index: 2;
+#second_auth { margin-top: 90px; }
+#third_auth { margin-top: 145px; }
+#fourth_auth { margin-top: 195px; }
+#fifth_auth { margin-top: 255px; }
+
+#rb_row1 {
     color: white;
     margin-top: 320px;
     margin-left: 510px;
@@ -121,30 +120,24 @@ body
     width: 310px;
 }
 
-.rb_r1_col
-{
+.rb_r1_col {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
 }
 
-.rb_r1_q
-{
+.rb_r1_q {
     color: #2B9900;
     font-size: 16px;
 }
 
-.rb_r1_a
-{
+.rb_r1_a {
     margin-top: 10px;
     font-size: 22px;
 }
 
-#rb_row2
-{
-    position: absolute;
-    z-index: 2;
+#rb_row2 {
     margin-top: 395px;
     margin-left: 510px;
     color: white;
@@ -152,34 +145,19 @@ body
     flex-direction: column;
 }
 
-.rb_r2_q
-{
-    color: #2B9900;
-}
+.rb_r2_q { color: #2B9900; }
 
-#rb_r2_course_r1
-{
+#rb_r2_course_r1,
+#rb_r2_course_r2 {
     display: flex;
     margin-top: 10px;
     font-size: 22px;
     width: 310px;
-    gap:40px;
+    gap: 40px;
     justify-content: space-between;
 }
 
-#rb_r2_course_r2
-{
-    display: flex;
-    margin-top: 10px;
-    font-size: 22px;
-    width: 310px;
-    justify-content: space-between;
-}
-
-#seperator_line
-{
-    position: absolute;
-    z-index: 2;
+#seperator_line {
     margin-top: 290px;
     margin-left: 450px;
     width: 1px;
@@ -187,80 +165,55 @@ body
     background: #373737;
 }
 
-#l_row1
-{
-    position: absolute;
-    z-index: 2;
+#l_row1 {
     color: white;
     margin-top: 320px;
+    display: flex;
+    justify-content: space-between;
 }
 
-.l_r1_col
-{
+.l_r1_col {
     display: flex;
     flex-direction: column;
     align-items: center;
 }
 
-.l_r1_col_q
-{
+.l_r1_col_q {
     font-size: 16px;
     color: rgba(255, 255, 255, 0.80);
 }
 
-#l_r1_c1
-{
-    margin-left: 58px;
-}
+#l_r1_c1 { margin-left: 58px; }
 
-.l_r1_col_aimg
-{
+.l_r1_col_aimg {
     display: flex;
     justify-content: space-between;
     align-items: center;
     width: 100px;
 }
 
-.l_r1_col_a
-{
-    color: #2E9904;
+.l_r1_col_a {
     font-size: 40px;
     font-weight: 900;
 }
 
-.l_r1_col_img > img
-{
+#l_r1_c1 .l_r1_col_a { color: #2E9904; }
+#l_r1_c2 .l_r1_col_a { color: #FFD93B; }
+
+.l_r1_col_img > img {
     height: 37px;
     width: 40px;
+    position: static;
 }
 
-
-.l_r1_col_img
-{
+.l_r1_col_img {
     height: 40px;
     width: 40px;
 }
 
-#l_row1
-{
-    display: flex;
-    justify-content: space-between;
-}
+#l_r1_c2 { margin-left: 120px; }
 
-#l_r1_c2
-{
-    margin-left: 120px;
-}
-
-#echelons_a
-{
-    color: #FFD93B;
-}
-
-#l_row2
-{
-    position: absolute;
-    z-index: 2;
+#l_row2 {
     color: white;
     margin-top: 410px;
     display: flex;
@@ -268,41 +221,114 @@ body
     width: 420px;
 }
 
-#l_r2_c1
-{
-    margin-left: 30px; 
-}
+#l_r2_c1 { margin-left: 30px; }
 
-.l_r2_col_a
-{
+.l_r2_col_a {
     font-size: 40px;
     font-weight: 900;
 }
 
-.l_r2_col
-{
+.l_r2_col {
     display: flex;
     flex-direction: column;
     align-items: center;
 }
 
+/* --- Input Field Styles --- */
 .editable-input {
-    border: none;
+    border: 1px solid transparent;
     background: transparent;
     font-size: 18px;
     flex: 1;
-    padding-top: 4px;
-    padding-right:4px;
-    padding-bottom:4px;
-    padding-left:-4px;
+    padding: 6px;
     transition: all 0.3s ease;
     font-family: Outfit;
-    color:white;
-  }
-  
-  .editable-input.editing {
+    color: white;
+    border-radius: 4px;
+}
+ 
+.editable-input.editing {
     border: 1px solid #18651f;
     background: transparent;
     box-shadow: 0 0 2px #aaa;
-    border-radius: 4px;
-  }
+}
+
+/* --- Profile Picture Section (Corrected) --- */
+.pfp-container {
+    position: absolute;
+    z-index: 1;
+    /* NOTE: Adjust these values to perfectly match your pfp 1.png size and position */
+    width: 430px; 
+    height: 240px;
+    top: 33.5%;
+    left: 37.75%; /* Adjust as needed */
+    transform: translate(-50%, -50%); /* Center based on position */
+    /* --- */
+    border-radius: 40px;
+    border-bottom-right-radius: 24px;
+    overflow: hidden;
+}
+
+#profilePic {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: filter 0.3s ease;
+}
+
+.pfp-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.pfp-container:hover .pfp-overlay {
+    opacity: 1;
+}
+
+/* State when image exists */
+.pfp-container:not(.no-image) #addBtn { display: none; }
+
+/* State when no image exists */
+.pfp-container.no-image { background-color: #000; }
+.pfp-container.no-image #profilePic,
+.pfp-container.no-image #changeBtn,
+.pfp-container.no-image #deleteBtn {
+    display: none;
+}
+.pfp-container.no-image #addBtn { display: block; }
+
+/* Button styles */
+.pfp-btn {
+    width: 60px;
+    height: 60px;
+    border-radius: 15px;
+    cursor: pointer;
+    background-size: 50%;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-color: rgba(40, 40, 40, 0.7);
+    transition: background-color 0.2s ease;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+#changeBtn { background-image: url('/assets/edit-pfp.png'); }
+#deleteBtn { background-image: url('/assets/delete-pfp.png'); }
+#addBtn    { background-image: url('/assets/add-pfp.png'); }
+
+#changeBtn:hover { background-image: url('/assets/edit-pfp-hover.png'); background-color: rgba(0, 0, 0, 0.8); }
+#deleteBtn:hover { background-image: url('/assets/delete-pfp-hover.png'); background-color: rgba(0, 0, 0, 0.8); }
+#addBtn:hover    { background-image: url('/assets/add-pfp-hover.png'); background-color: rgba(0, 0, 0, 0.8); }
+
+.l_r1_col_img > img {
+    position: static;
+}

@@ -1,5 +1,6 @@
 import express from "express";
 import {
+    changepass,
     studentAttendance,
     studentAttendanceNew,
     studentDashboard,
@@ -32,5 +33,7 @@ router.get("/student/dashboard/partial",studentDashboardNew);
 router.get("/student/attendance/partial", studentAttendanceNew);
 router.get("/profile/partial", studentProfilePartial);
 router.get("/bellgraph/partial", studentGradesPartial);
+
+router.get("/changepassword", changepass);
 
 export default router;
