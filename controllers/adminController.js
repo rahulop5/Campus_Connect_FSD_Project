@@ -6,24 +6,31 @@ import bcrypt from "bcryptjs";
 
 export const adminDashboard = async (req, res) => {
   try {
-    // Check if user is an admin
+    // Check if admin is logged in
     if (!req.session.user) {
       return res.redirect("/auth/admin/login");
     }
 
     // Fetch data for rendering the dashboard
     const courses = await Course.find().populate("professor");
-    const professors = await Professor.find().select("name email phone");
-    const students = await Student.find().select("name email rollnumber phone section");
+    const professors = await Professor.find().populate({ path: "courses.course", select: "name section" });
+    const students = await Student.find().populate({ path: "courses.course", select: "name section" }).select(
+      "name email rollnumber phone section"
+    );
 
-    // Handle POST requests
+    // ----------------------------
+    // HANDLE POST REQUESTS
+    // ----------------------------
     if (req.method === "POST") {
       const { action } = req.body;
+      console.log(`Received action: ${action}`, req.body); // Debug log
 
+      // ----------------------------
+      // ADD COURSE
+      // ----------------------------
       if (action === "add-course") {
         const { name, section, totalclasses, credits, professor } = req.body;
 
-        // Validate inputs
         const errors = [];
 
         if (!name || typeof name !== "string" || name.trim().length === 0) {
@@ -47,50 +54,73 @@ export const adminDashboard = async (req, res) => {
         }
 
         if (errors.length > 0) {
-          return res.status(400).json({ message: errors.join("; ") });
+          return res.status(400).render("admindashboard.ejs", {
+            name: req.session.user.name,
+            courses,
+            professors,
+            students,
+            error: errors.join("; "),
+          });
         }
 
-        // Verify professor exists
+        // Check if professor exists
         const professorExists = await Professor.findById(professor);
         if (!professorExists) {
-          return res.status(400).json({ message: "Professor does not exist" });
+          return res.status(400).render("admindashboard.ejs", {
+            name: req.session.user.name,
+            courses,
+            professors,
+            students,
+            error: "Professor does not exist",
+          });
         }
 
-        // Check for duplicate course
+        // Prevent duplicate courses
         const existingCourse = await Course.findOne({
           name: name.trim(),
           section: section.trim(),
-          professor
+          professor,
         });
+
         if (existingCourse) {
-          return res.status(400).json({ message: "Course with the same name, section, and professor already exists" });
+          return res.status(400).render("admindashboard.ejs", {
+            name: req.session.user.name,
+            courses,
+            professors,
+            students,
+            error: "Course with the same name, section, and professor already exists",
+          });
         }
 
-        // Create new Course document
+        // Create the new course
         const newCourse = new Course({
           name: name.trim(),
           section: section.trim(),
           classeshpnd: 0,
           totalclasses: Number(totalclasses),
           credits: Number(credits),
-          professor
+          professor,
         });
+
         await newCourse.save();
 
-        // Update Professor.courses
+        // Add course reference to the professor
         await Professor.findByIdAndUpdate(
           professor,
           { $push: { courses: { course: newCourse._id } } },
           { new: true }
         );
 
+        console.log("New course added:", newCourse);
         return res.redirect("/admin/dashboard");
       }
 
+      // ----------------------------
+      // ADD STUDENT
+      // ----------------------------
       if (action === "add-student") {
-        const { name, email, rollnumber, phone, section } = req.body;
+        const { name, email, rollnumber, phone, section, password } = req.body;
 
-        // Validate inputs
         const errors = [];
 
         if (!name || typeof name !== "string" || name.trim().length === 0) {
@@ -115,67 +145,700 @@ export const adminDashboard = async (req, res) => {
         }
 
         if (errors.length > 0) {
-          return res.status(400).json({ message: errors.join("; ") });
+          return res.status(400).render("admindashboard.ejs", {
+            name: req.session.user.name,
+            courses,
+            professors,
+            students,
+            error: errors.join("; "),
+          });
         }
 
-        // Check if email already exists
+        // Prevent duplicates
         const existingEmail = await Student.findOne({ email });
         if (existingEmail) {
-          return res.status(400).json({ message: "Email already exists" });
+          return res.status(400).render("admindashboard.ejs", {
+            name: req.session.user.name,
+            courses,
+            professors,
+            students,
+            error: "Email already exists",
+          });
         }
 
-        // Check if roll number already exists
         const existingRoll = await Student.findOne({ rollnumber });
         if (existingRoll) {
-          return res.status(400).json({ message: "Roll number already exists" });
+          return res.status(400).render("admindashboard.ejs", {
+            name: req.session.user.name,
+            courses,
+            professors,
+            students,
+            error: "Roll number already exists",
+          });
         }
 
-        // Create new student
-        const newStudent = new Student({
+        // Build new student object
+        const studentData = {
           name: name.trim(),
           email,
           rollnumber: rollnumber.trim(),
           phone,
           section: section.trim(),
-          courses: []
+          courses: [],
+        };
+
+        if (password && password.length > 0) {
+          const hashedPassword = await bcrypt.hash(password, 10);
+          studentData.password = hashedPassword;
+          studentData.isOAuth = false;
+        }
+
+        // Optional: derive branch & UG year (safe best-effort)
+        try {
+          const year = parseInt(rollnumber.substring(1, 5));
+          const currentYear = new Date().getFullYear();
+          if (!isNaN(year) && year > 1900 && year <= currentYear) {
+            studentData.ug = (currentYear - year).toString();
+          }
+
+          const branchCode = rollnumber.charAt(7);
+          switch (branchCode) {
+            case "1":
+              studentData.branch = "CSE";
+              break;
+            case "2":
+              studentData.branch = "ECE";
+              break;
+            case "3":
+              studentData.branch = "AIDS";
+              break;
+            default:
+              studentData.branch = "Unknown";
+          }
+        } catch (err) {
+          console.warn("Error deriving UG/branch:", err);
+        }
+
+        const newStudent = new Student(studentData);
+        await newStudent.save();
+
+        console.log("New student added:", newStudent);
+        return res.redirect("/admin/dashboard");
+      }
+
+      // ----------------------------
+      // ADD PROFESSOR
+      // ----------------------------
+      if (action === "add-professor") {
+        const { name, email, phone, password } = req.body;
+
+        const errors = [];
+
+        if (!name || typeof name !== "string" || name.trim().length === 0) {
+          errors.push("Professor name must be a non-empty string");
+        }
+
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!email || !emailRegex.test(email)) {
+          errors.push("Invalid email format");
+        }
+
+        if (!phone || !/^\d{10}$/.test(phone)) {
+          errors.push("Phone number must be exactly 10 digits");
+        }
+
+        if (!password || typeof password !== "string" || password.trim().length < 6) {
+          errors.push("Password must be at least 6 characters long");
+        }
+
+        if (errors.length > 0) {
+          return res.status(400).render("admindashboard.ejs", {
+            name: req.session.user.name,
+            courses,
+            professors,
+            students,
+            error: errors.join("; "),
+          });
+        }
+
+        // Prevent duplicate professors
+        const existingProfessor = await Professor.findOne({ email });
+        if (existingProfessor) {
+          return res.status(400).render("admindashboard.ejs", {
+            name: req.session.user.name,
+            courses,
+            professors,
+            students,
+            error: "Professor already exists",
+          });
+        }
+
+        // Hash password
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        const newProfessor = new Professor({
+          name: name.trim(),
+          email,
+          password: hashedPassword,
+          phone,
+          courses: [],
         });
 
-        await newStudent.save();
+        await newProfessor.save();
+        console.log("New professor added:", newProfessor);
 
         return res.redirect("/admin/dashboard");
       }
 
+      // ----------------------------
+      // ASSIGN COURSE TO PROFESSOR
+      // ----------------------------
+      if (action === "assign-course-professor") {
+        const { course, professor } = req.body;
+
+        // Basic validation
+        if (!course || !professor) {
+          return res.status(400).render("admindashboard.ejs", {
+            name: req.session.user.name,
+            courses,
+            professors,
+            students,
+            error: "Course and professor are required",
+          });
+        }
+
+        if (!mongoose.Types.ObjectId.isValid(course) || !mongoose.Types.ObjectId.isValid(professor)) {
+          return res.status(400).render("admindashboard.ejs", {
+            name: req.session.user.name,
+            courses,
+            professors,
+            students,
+            error: "Invalid ObjectId(s) provided",
+          });
+        }
+
+        const courseDoc = await Course.findById(course);
+        const profDoc = await Professor.findById(professor);
+
+        if (!courseDoc || !profDoc) {
+          return res.status(404).render("admindashboard.ejs", {
+            name: req.session.user.name,
+            courses,
+            professors,
+            students,
+            error: "Course or Professor not found",
+          });
+        }
+
+        // Check if the course is already assigned to this professor
+        const isAlreadyAssigned = profDoc.courses.some(c => c.course.toString() === course);
+
+        // Remove course from the old professor's courses array, if any
+        if (courseDoc.professor && courseDoc.professor.toString() !== professor) {
+          await Professor.findByIdAndUpdate(
+            courseDoc.professor,
+            { $pull: { courses: { course: courseDoc._id } } },
+            { new: true }
+          );
+        }
+
+        // Update course's professor
+        courseDoc.professor = professor;
+        await courseDoc.save();
+
+        // Add course to the professor's courses array only if not already assigned
+        if (!isAlreadyAssigned) {
+          await Professor.findByIdAndUpdate(professor, { $addToSet: { courses: { course } } });
+        }
+
+        console.log(`Assigned course ${course} to professor ${professor}`);
+        return res.redirect("/admin/dashboard");
+      }
+
+      // ----------------------------
+      // ASSIGN COURSE TO STUDENT
+      // ----------------------------
+      if (action === "assign-course-student") {
+        const { course, student } = req.body;
+        console.log(`Assign course to student - Course: ${course}, Student: ${student}`);
+
+        // Basic validation
+        if (!course || !student) {
+          return res.status(400).render("admindashboard.ejs", {
+            name: req.session.user.name,
+            courses,
+            professors,
+            students,
+            error: "Course and student are required",
+          });
+        }
+
+        if (!mongoose.Types.ObjectId.isValid(course) || !mongoose.Types.ObjectId.isValid(student)) {
+          return res.status(400).render("admindashboard.ejs", {
+            name: req.session.user.name,
+            courses,
+            professors,
+            students,
+            error: "Invalid ObjectId(s) provided",
+          });
+        }
+
+        const courseDoc = await Course.findById(course);
+        const studDoc = await Student.findById(student);
+
+        if (!courseDoc || !studDoc) {
+          return res.status(404).render("admindashboard.ejs", {
+            name: req.session.user.name,
+            courses,
+            professors,
+            students,
+            error: "Course or Student not found",
+          });
+        }
+
+        // Check if the course is already assigned to this student
+        const isAlreadyAssigned = studDoc.courses.some(c => c.course.toString() === course);
+
+        // Add the course to student's courses only if not already assigned
+        if (!isAlreadyAssigned) {
+          const updateResult = await Student.findByIdAndUpdate(
+            student,
+            { $addToSet: { courses: { course } } },
+            { new: true }
+          );
+          if (!updateResult) {
+            console.error(`Failed to update student ${student} with course ${course}`);
+            return res.status(500).render("admindashboard.ejs", {
+              name: req.session.user.name,
+              courses,
+              professors,
+              students,
+              error: "Failed to assign course to student",
+            });
+          }
+          console.log(`Student ${student} updated with course ${course}:`, updateResult.courses);
+        } else {
+          console.log(`Course ${course} already assigned to student ${student}`);
+        }
+
+        return res.redirect("/admin/dashboard");
+      }
+
+      // ----------------------------
+      // REMOVE COURSE FROM PROFESSOR/STUDENT
+      // ----------------------------
+      if (action === "remove-course") {
+        const { course, removeType, professor, student, unassign_action, new_professor } = req.body;
+        console.log(`Remove course - Course: ${course}, Type: ${removeType}, Professor: ${professor}, Student: ${student}, Unassign Action: ${unassign_action}, New Professor: ${new_professor}`);
+
+        // Basic validation
+        if (!course || !removeType || (removeType === "professor" && !professor) || (removeType === "student" && !student)) {
+          return res.status(400).render("admindashboard.ejs", {
+            name: req.session.user.name,
+            courses,
+            professors,
+            students,
+            error: "Course and professor/student are required",
+          });
+        }
+
+        if (!mongoose.Types.ObjectId.isValid(course) || 
+            (removeType === "professor" && !mongoose.Types.ObjectId.isValid(professor)) || 
+            (removeType === "student" && !mongoose.Types.ObjectId.isValid(student))) {
+          return res.status(400).render("admindashboard.ejs", {
+            name: req.session.user.name,
+            courses,
+            professors,
+            students,
+            error: "Invalid ObjectId(s) provided",
+          });
+        }
+
+        const courseDoc = await Course.findById(course);
+        if (!courseDoc) {
+          return res.status(404).render("admindashboard.ejs", {
+            name: req.session.user.name,
+            courses,
+            professors,
+            students,
+            error: "Course not found",
+          });
+        }
+
+        if (removeType === "professor") {
+          const profDoc = await Professor.findById(professor);
+          if (!profDoc) {
+            return res.status(404).render("admindashboard.ejs", {
+              name: req.session.user.name,
+              courses,
+              professors,
+              students,
+              error: "Professor not found",
+            });
+          }
+
+          // Check if the course is assigned to this professor
+          const isAssigned = profDoc.courses.some(c => c.course.toString() === course);
+          if (!isAssigned) {
+            return res.status(400).render("admindashboard.ejs", {
+              name: req.session.user.name,
+              courses,
+              professors,
+              students,
+              error: "Course is not assigned to this professor",
+            });
+          }
+
+          // Remove course from professor's courses array
+          await Professor.findByIdAndUpdate(
+            professor,
+            { $pull: { courses: { course: courseDoc._id } } },
+            { new: true }
+          );
+
+          // Handle unassign action
+          if (courseDoc.professor && courseDoc.professor.toString() === professor) {
+            if (unassign_action === "remove") {
+              // Remove course from all students
+              await Student.updateMany(
+                { "courses.course": course },
+                { $pull: { courses: { course } } }
+              );
+
+              // Delete the course
+              await Course.deleteOne({ _id: course });
+              console.log(`Course ${course} removed`);
+            } else if (unassign_action === "reassign") {
+              if (!new_professor || !mongoose.Types.ObjectId.isValid(new_professor)) {
+                return res.status(400).render("admindashboard.ejs", {
+                  name: req.session.user.name,
+                  courses,
+                  professors,
+                  students,
+                  error: "Invalid new professor",
+                });
+              }
+
+              const newProfDoc = await Professor.findById(new_professor);
+              if (!newProfDoc) {
+                return res.status(404).render("admindashboard.ejs", {
+                  name: req.session.user.name,
+                  courses,
+                  professors,
+                  students,
+                  error: "New professor not found",
+                });
+              }
+
+              // Reassign to new professor
+              courseDoc.professor = new_professor;
+              await courseDoc.save();
+
+              // Add to new professor's courses
+              await Professor.findByIdAndUpdate(
+                new_professor,
+                { $addToSet: { courses: { course } } }
+              );
+
+              console.log(`Course ${course} reassigned to new professor ${new_professor}`);
+            } else {
+              return res.status(400).render("admindashboard.ejs", {
+                name: req.session.user.name,
+                courses,
+                professors,
+                students,
+                error: "Invalid unassign action",
+              });
+            }
+          }
+        } else if (removeType === "student") {
+          const studDoc = await Student.findById(student);
+          if (!studDoc) {
+            return res.status(404).render("admindashboard.ejs", {
+              name: req.session.user.name,
+              courses,
+              professors,
+              students,
+              error: "Student not found",
+            });
+          }
+
+          // Check if the course is assigned to this student
+          const isAssigned = studDoc.courses.some(c => c.course.toString() === course);
+          if (!isAssigned) {
+            return res.status(400).render("admindashboard.ejs", {
+              name: req.session.user.name,
+              courses,
+              professors,
+              students,
+              error: "Course is not assigned to this student",
+            });
+          }
+
+          // Remove course from student's courses array
+          await Student.findByIdAndUpdate(
+            student,
+            { $pull: { courses: { course: courseDoc._id } } },
+            { new: true }
+          );
+
+          console.log(`Removed course ${course} from student ${student}`);
+        } else {
+          return res.status(400).render("admindashboard.ejs", {
+            name: req.session.user.name,
+            courses,
+            professors,
+            students,
+            error: "Invalid remove type",
+          });
+        }
+
+        return res.redirect("/admin/dashboard");
+      }
+
+      // ----------------------------
+      // REMOVE ENTIRE COURSE
+      // ----------------------------
+      if (action === "remove-entire-course") {
+        const { course } = req.body;
+        console.log(`Remove entire course - Course: ${course}`);
+
+        // Basic validation
+        if (!course) {
+          return res.status(400).render("admindashboard.ejs", {
+            name: req.session.user.name,
+            courses,
+            professors,
+            students,
+            error: "Course is required",
+          });
+        }
+
+        if (!mongoose.Types.ObjectId.isValid(course)) {
+          return res.status(400).render("admindashboard.ejs", {
+            name: req.session.user.name,
+            courses,
+            professors,
+            students,
+            error: "Invalid course ObjectId",
+          });
+        }
+
+        const courseDoc = await Course.findById(course);
+        if (!courseDoc) {
+          return res.status(404).render("admindashboard.ejs", {
+            name: req.session.user.name,
+            courses,
+            professors,
+            students,
+            error: "Course not found",
+          });
+        }
+
+        // Remove course from all professors' courses arrays
+        await Professor.updateMany(
+          { "courses.course": course },
+          { $pull: { courses: { course } } }
+        );
+
+        // Remove course from all students' courses arrays
+        await Student.updateMany(
+          { "courses.course": course },
+          { $pull: { courses: { course } } }
+        );
+
+        // Delete the course
+        await Course.deleteOne({ _id: course });
+        console.log(`Course ${course} deleted`);
+
+        return res.redirect("/admin/dashboard");
+      }
+
+      // ----------------------------
+      // REMOVE PROFESSOR
+      // ----------------------------
+      if (action === "remove-professor") {
+        const { professor, course_action, new_professor } = req.body;
+        console.log(`Remove professor - Professor: ${professor}, Course Action: ${course_action}, New Professor: ${new_professor}`);
+
+        // Basic validation
+        if (!professor) {
+          return res.status(400).render("admindashboard.ejs", {
+            name: req.session.user.name,
+            courses,
+            professors,
+            students,
+            error: "Professor is required",
+          });
+        }
+
+        if (!mongoose.Types.ObjectId.isValid(professor)) {
+          return res.status(400).render("admindashboard.ejs", {
+            name: req.session.user.name,
+            courses,
+            professors,
+            students,
+            error: "Invalid professor ObjectId",
+          });
+        }
+
+        const profDoc = await Professor.findById(professor);
+        if (!profDoc) {
+          return res.status(404).render("admindashboard.ejs", {
+            name: req.session.user.name,
+            courses,
+            professors,
+            students,
+            error: "Professor not found",
+          });
+        }
+
+        const professorCourses = await Course.find({ professor: professor });
+        if (professorCourses.length > 0) {
+          if (!course_action) {
+            return res.status(400).render("admindashboard.ejs", {
+              name: req.session.user.name,
+              courses,
+              professors,
+              students,
+              error: "Please select what to do with assigned courses",
+            });
+          }
+
+          if (course_action === "remove") {
+            for (const course of professorCourses) {
+              // Remove from students
+              await Student.updateMany(
+                { "courses.course": course._id },
+                { $pull: { courses: { course: course._id } } }
+              );
+
+              // Delete course
+              await Course.deleteOne({ _id: course._id });
+            }
+            console.log(`Removed all courses for professor ${professor}`);
+          } else if (course_action === "reassign") {
+            if (!new_professor || !mongoose.Types.ObjectId.isValid(new_professor)) {
+              return res.status(400).render("admindashboard.ejs", {
+                name: req.session.user.name,
+                courses,
+                professors,
+                students,
+                error: "Invalid new professor",
+              });
+            }
+
+            const newProfDoc = await Professor.findById(new_professor);
+            if (!newProfDoc) {
+              return res.status(404).render("admindashboard.ejs", {
+                name: req.session.user.name,
+                courses,
+                professors,
+                students,
+                error: "New professor not found",
+              });
+            }
+
+            if (new_professor === professor) {
+              return res.status(400).render("admindashboard.ejs", {
+                name: req.session.user.name,
+                courses,
+                professors,
+                students,
+                error: "Cannot reassign to the same professor",
+              });
+            }
+
+            for (const course of professorCourses) {
+              course.professor = new_professor;
+              await course.save();
+
+              // Add to new professor's courses
+              await Professor.findByIdAndUpdate(
+                new_professor,
+                { $addToSet: { courses: { course: course._id } } }
+              );
+            }
+            console.log(`Reassigned all courses from professor ${professor} to ${new_professor}`);
+          } else {
+            return res.status(400).render("admindashboard.ejs", {
+              name: req.session.user.name,
+              courses,
+              professors,
+              students,
+              error: "Invalid course action",
+            });
+          }
+        }
+
+        // Delete the professor
+        await Professor.deleteOne({ _id: professor });
+        console.log(`Professor ${professor} deleted`);
+
+        return res.redirect("/admin/dashboard");
+      }
+
+      // ----------------------------
+      // REMOVE STUDENT
+      // ----------------------------
       if (action === "remove-student") {
         const { email } = req.body;
-
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
         if (!email || !emailRegex.test(email)) {
-          return res.status(400).json({ message: "Invalid email format" });
+          return res.status(400).render("admindashboard.ejs", {
+            name: req.session.user.name,
+            courses,
+            professors,
+            students,
+            error: "Invalid email format",
+          });
         }
 
         const student = await Student.findOne({ email });
         if (!student) {
-          return res.status(404).json({ message: "Student not found" });
+          return res.status(404).render("admindashboard.ejs", {
+            name: req.session.user.name,
+            courses,
+            professors,
+            students,
+            error: "Student not found",
+          });
         }
 
         await Student.deleteOne({ email });
-
+        console.log("Student removed:", email);
         return res.redirect("/admin/dashboard");
       }
 
-      // If action is not recognized, redirect to dashboard
-      return res.redirect("/admin/dashboard");
+      // Default redirect if unknown action
+      return res.status(400).render("admindashboard.ejs", {
+        name: req.session.user.name,
+        courses,
+        professors,
+        students,
+        error: "Unknown action",
+      });
     }
 
-    // Handle GET request: Render the dashboard
+    // ----------------------------
+    // HANDLE GET REQUEST
+    // ----------------------------
     res.render("admindashboard.ejs", {
       name: req.session.user.name,
       courses,
       professors,
-      students
+      students,
+      error: null,
     });
   } catch (error) {
     console.error("Error in admin dashboard:", error);
-    res.status(500).json({ message: "Internal Server Error" });
+    res.status(500).render("admindashboard.ejs", {
+      name: req.session.user.name,
+      courses,
+      professors,
+      students,
+      error: "Internal Server Error",
+    });
   }
 };

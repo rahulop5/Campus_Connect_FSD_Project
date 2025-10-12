@@ -16,9 +16,10 @@
       <a href="http://localhost:3000/login"><p>Log in</p></a>
       <a href="http://localhost:3000/signup" style="text-decoration: none;"><div id="signup"><p>Sign up</p></div></a>
     <% } else { %>
-      <!-- <a href="" class="notification"><img src="/assets/notification(1) 1.png" alt="notification"></a> -->
+      <!-- optional header content -->
     <% } %>
   </header>
+
   <main>
     <div id="top_row">
       <div id="dash_welcm_admn_div">
@@ -37,25 +38,19 @@
       <div id="date_holding_container_outer">
         <div id="date_holding_container_inner">
           <div id="content_inside_dateboox_container">
-            <div id="day" class="contents_inside_datebox">
-              Tuesday  
-            </div>
-            <div id="date" class="contents_inside_datebox">
-              18
-            </div>
-            <div id="month_year" class="contents_inside_datebox">
-              March, 2025 
-            </div>
+            <div id="day" class="contents_inside_datebox"></div>
+            <div id="date" class="contents_inside_datebox"></div>
+            <div id="month_year" class="contents_inside_datebox"></div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Course and Student Management Section -->
     <div class="management-section">
-      <!-- Course Management Section -->
+      <!-- ========================== COURSE MANAGEMENT ========================== -->
       <div class="course-container">
         <h2>Course Management</h2>
+        <!-- Add Course Form -->
         <form id="add-course-form" action="/admin/dashboard" method="POST">
           <input type="hidden" name="action" value="add-course">
           <label for="course-name">Name of the Course:</label>
@@ -72,30 +67,38 @@
           <label for="section">Section:</label>
           <div class="input-group">
             <input type="text" id="section" name="section" placeholder="e.g., 1" required>
-            <button type="button">+</button>
-            <button type="button">−</button>
           </div>
 
           <label for="total-classes">Total No. of Classes:</label>
           <div class="input-group">
             <input type="number" id="total-classes" name="totalclasses" placeholder="e.g., 36" min="1" required>
-            <button type="button">+</button>
-            <button type="button">−</button>
           </div>
 
           <label for="credits">Course's Credits:</label>
           <div class="input-group">
             <input type="number" id="credits" name="credits" placeholder="e.g., 4" min="1" required>
-            <button type="button">+</button>
-            <button type="button">−</button>
           </div>
 
           <button type="submit">Add Course</button>
         </form>
-        <div id="error-message" class="course-error"></div>
+
+        <!-- Remove Course Form -->
+        <h2>Remove Course</h2>
+        <form id="remove-course-form" action="/admin/dashboard" method="POST">
+          <input type="hidden" name="action" value="remove-entire-course">
+          <label for="remove-course-entire-select">Select Course:</label>
+          <select id="remove-course-entire-select" name="course" required>
+            <option value="">Select a Course</option>
+            <% courses.forEach(course => { %>
+              <option value="<%= course._id %>"><%= course.name %> (Section <%= course.section %>)</option>
+            <% }) %>
+          </select>
+          <button type="submit">Remove Course</button>
+        </form>
+        <div id="error-message" class="course-error"><% if (error) { %><%= error %><% } %></div>
       </div>
 
-      <!-- Student Management Section -->
+      <!-- ========================== STUDENT MANAGEMENT ========================== -->
       <div class="student-container">
         <h2 id="student-form-title">Add New Student</h2>
         <button id="toggle-student-mode" class="toggle-btn">Switch to Remove Student</button>
@@ -103,23 +106,173 @@
           <input type="hidden" name="action" value="add-student">
           <div id="student-form-fields">
             <label for="student-name">Name of the Student:</label>
-            <input type="text" id="student-name" name="name" placeholder="e.g., John Doe" required>
+            <input type="text" id="student-name" name="name" required>
 
             <label for="student-email">Email of the Student:</label>
-            <input type="email" id="student-email" name="email" placeholder="e.g., john@example.com" required>
+            <input type="email" id="student-email" name="email" required>
 
             <label for="student-rollnumber">Roll Number:</label>
-            <input type="text" id="student-rollnumber" name="rollnumber" placeholder="e.g., 22CS123" required>
+            <input type="text" id="student-rollnumber" name="rollnumber" required>
 
             <label for="student-phone">Phone Number:</label>
-            <input type="tel" id="student-phone" name="phone" placeholder="e.g., 9876543210" required>
+            <input type="tel" id="student-phone" name="phone" required>
 
             <label for="student-section">Section:</label>
-            <input type="text" id="student-section" name="section" placeholder="e.g., A" required>
+            <input type="text" id="student-section" name="section" required>
+
+            <label for="student-password">Set Password:</label>
+            <input type="password" id="student-password" name="password" required>
           </div>
           <button type="submit" id="student-submit-btn">Add Student</button>
         </form>
-        <div id="student-error-message" class="student-error"></div>
+      </div>
+
+      <!-- ========================== PROFESSOR MANAGEMENT ========================== -->
+      <div class="professor-container">
+        <h2>Add New Professor</h2>
+        <form id="add-professor-form" action="/admin/dashboard" method="POST">
+          <input type="hidden" name="action" value="add-professor">
+          <label for="prof-name">Name of the Professor:</label>
+          <input type="text" id="prof-name" name="name" required>
+
+          <label for="prof-email">Email of the Professor:</label>
+          <input type="email" id="prof-email" name="email" required>
+
+          <label for="prof-phone">Phone Number:</label>
+          <input type="tel" id="prof-phone" name="phone" required>
+
+          <label for="prof-password">Set Password:</label>
+          <input type="password" id="prof-password" name="password" required>
+
+          <button type="submit">Add Professor</button>
+        </form>
+
+        <!-- Remove Professor Form -->
+        <h2>Remove Professor</h2>
+        <form id="remove-professor-form" action="/admin/dashboard" method="POST">
+          <input type="hidden" name="action" value="remove-professor">
+          <label for="remove-entire-professor-select">Select Professor:</label>
+          <select id="remove-entire-professor-select" name="professor" required>
+            <option value="">Select a Professor</option>
+            <% professors.forEach(prof => { %>
+              <option value="<%= prof._id %>"><%= prof.name %> (<%= prof.email %>)</option>
+            <% }) %>
+          </select>
+
+          <label for="course-action">What to do with assigned courses:</label>
+          <select id="course-action" name="course_action" required>
+            <option value="">Select an option</option>
+            <option value="remove">Remove all courses</option>
+            <option value="reassign">Reassign all to another professor</option>
+          </select>
+
+          <div id="reassign-professor-selection-prof" style="display: none;">
+            <label for="new-professor-select-prof">Select New Professor:</label>
+            <select id="new-professor-select-prof" name="new_professor">
+              <option value="">Select a Professor</option>
+              <% professors.forEach(prof => { %>
+                <option value="<%= prof._id %>"><%= prof.name %> (<%= prof.email %>)</option>
+              <% }) %>
+            </select>
+          </div>
+
+          <button type="submit">Remove Professor</button>
+        </form>
+        <div id="prof-error" class="course-error"><% if (error) { %><%= error %><% } %></div>
+      </div>
+
+      <!-- ========================== COURSE ALLOTMENT ========================== -->
+      <div class="course-allotment-container">
+        <h2 id="course-allotment-title">Assign Course to Professor</h2>
+        <button id="toggle-allotment-mode" class="toggle-btn">Switch to Student Allotment</button>
+
+        <form id="course-allotment-form" action="/admin/dashboard" method="POST">
+          <input type="hidden" name="action" value="assign-course-professor">
+          <label for="course-select">Select Course:</label>
+          <select id="course-select" name="course" required>
+            <option value="">Select a Course</option>
+            <% courses.forEach(course => { %>
+              <option value="<%= course._id %>"><%= course.name %> (Section <%= course.section %>)</option>
+            <% }) %>
+          </select>
+
+          <div id="professor-selection">
+            <label for="professor-select">Select Professor:</label>
+            <select id="professor-select" name="professor" required>
+              <option value="">Select a Professor</option>
+              <% professors.forEach(prof => { %>
+                <option value="<%= prof._id %>"><%= prof.name %> (<%= prof.email %>)</option>
+              <% }) %>
+            </select>
+          </div>
+
+          <div id="student-selection" style="display: none;">
+            <label for="student-select">Select Student:</label>
+            <select id="student-select" name="student">
+              <option value="">Select a Student</option>
+              <% students.forEach(stud => { %>
+                <option value="<%= stud._id %>"><%= stud.name %> (<%= stud.email %>)</option>
+              <% }) %>
+            </select>
+          </div>
+
+          <button type="submit" id="allotment-submit-btn">Assign to Professor</button>
+        </form>
+
+        <!-- ========================== COURSE REMOVAL ========================== -->
+        <h2 id="course-removal-title">Remove Course for prof/student</h2>
+        <button id="toggle-removal-mode" class="toggle-btn">Switch to Student Removal</button>
+        <form id="course-removal-form" action="/admin/dashboard" method="POST">
+          <input type="hidden" name="action" value="remove-course">
+          <input type="hidden" name="removeType" value="professor">
+          <label for="remove-course-select">Select Course:</label>
+          <select id="remove-course-select" name="course" required>
+            <option value="">Select a Course</option>
+            <% courses.forEach(course => { %>
+              <option value="<%= course._id %>"><%= course.name %> (Section <%= course.section %>)</option>
+            <% }) %>
+          </select>
+
+          <div id="remove-professor-selection">
+            <label for="remove-professor-select">Select Professor:</label>
+            <select id="remove-professor-select" name="professor" required>
+              <option value="">Select a Professor</option>
+              <% professors.forEach(prof => { %>
+                <option value="<%= prof._id %>"><%= prof.name %> (<%= prof.email %>)</option>
+              <% }) %>
+            </select>
+
+            <label for="unassign-action">Action after unassign:</label>
+            <select id="unassign-action" name="unassign_action" required>
+              <option value="">Select an option</option>
+              <option value="remove">Remove the course</option>
+              <option value="reassign">Reassign to another professor</option>
+            </select>
+
+            <div id="reassign-professor-selection-course" style="display: none;">
+              <label for="new-professor-select-course">Select New Professor:</label>
+              <select id="new-professor-select-course" name="new_professor">
+                <option value="">Select a Professor</option>
+                <% professors.forEach(prof => { %>
+                  <option value="<%= prof._id %>"><%= prof.name %> (<%= prof.email %>)</option>
+                <% }) %>
+              </select>
+            </div>
+          </div>
+
+          <div id="remove-student-selection" style="display: none;">
+            <label for="remove-student-select">Select Student:</label>
+            <select id="remove-student-select" name="student">
+              <option value="">Select a Student</option>
+              <% students.forEach(stud => { %>
+                <option value="<%= stud._id %>"><%= stud.name %> (<%= stud.email %>)</option>
+              <% }) %>
+            </select>
+          </div>
+
+          <button type="submit" id="removal-submit-btn">Remove from Professor</button>
+        </form>
+        <div id="allotment-error" class="course-error"><% if (error) { %><%= error %><% } %></div>
       </div>
     </div>
 
@@ -128,10 +281,7 @@
       <ul class="course-list">
         <% courses.forEach(course => { %>
           <li>
-            <%= course.name %> (Section <%= course.section %>) - 
-            Professor: <%= course.professor.name %> - 
-            Credits: <%= course.credits %> - 
-            Total Classes: <%= course.totalclasses %>
+            <%= course.name %> (Section <%= course.section %>) - Professor: <%= course.professor ? course.professor.name : "Unassigned" %> - Credits: <%= course.credits %> - Total Classes: <%= course.totalclasses %>
           </li>
         <% }) %>
       </ul>
@@ -143,9 +293,7 @@
     <% if (professors.length > 0) { %>
       <ul class="professor-list">
         <% professors.forEach(prof => { %>
-          <li>
-            <%= prof.name %> - Email: <%= prof.email %> - Phone: <%= prof.phone %>
-          </li>
+          <li><%= prof.name %> - Email: <%= prof.email %> - Phone: <%= prof.phone %> - Courses: <%= prof.courses.map(c => `${c.course.name} (Section ${c.course.section})`).join(', ') || 'None' %></li>
         <% }) %>
       </ul>
     <% } else { %>
@@ -157,7 +305,8 @@
       <ul class="student-list">
         <% students.forEach(student => { %>
           <li>
-            <%= student.name %> - Email: <%= student.email %> - Roll Number: <%= student.rollnumber %> - Phone: <%= student.phone %> - Section: <%= student.section %>
+            <%= student.name %> - Email: <%= student.email %> - Roll Number: <%= student.rollnumber %> -
+            Phone: <%= student.phone %> - Section: <%= student.section %> - Courses: <%= student.courses.map(c => `${c.course.name} (Section ${c.course.section})`).join(', ') || 'None' %>
           </li>
         <% }) %>
       </ul>
@@ -167,5 +316,259 @@
 
     <a href="/" class="back-home">Back to Home</a>
   </main>
+
+  <script>
+    // Set dynamic date
+    document.addEventListener("DOMContentLoaded", () => {
+      try {
+        const today = new Date();
+        const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+        const months = [
+          "January", "February", "March", "April", "May", "June",
+          "July", "August", "September", "October", "November", "December"
+        ];
+
+        const dayElement = document.getElementById("day");
+        const dateElement = document.getElementById("date");
+        const monthYearElement = document.getElementById("month_year");
+
+        if (dayElement && dateElement && monthYearElement) {
+          dayElement.textContent = days[today.getDay()];
+          dateElement.textContent = today.getDate();
+          monthYearElement.textContent = `${months[today.getMonth()]}, ${today.getFullYear()}`;
+          console.log("Dynamic date set:", {
+            day: days[today.getDay()],
+            date: today.getDate(),
+            monthYear: `${months[today.getMonth()]}, ${today.getFullYear()}`
+          });
+        } else {
+          console.error("Date elements not found");
+        }
+      } catch (error) {
+        console.error("Error setting dynamic date:", error);
+        // Fallback to static date in case of error
+        document.getElementById("day").textContent = "Unknown";
+        document.getElementById("date").textContent = "?";
+        document.getElementById("month_year").textContent = "Unknown, Unknown";
+      }
+    });
+
+    // Assignment Form
+    const toggleAllotmentBtn = document.getElementById("toggle-allotment-mode");
+    const profSelect = document.getElementById("professor-selection");
+    const studSelect = document.getElementById("student-selection");
+    const allotmentForm = document.getElementById("course-allotment-form");
+    const allotmentTitle = document.getElementById("course-allotment-title");
+    const allotmentSubmitBtn = document.getElementById("allotment-submit-btn");
+    const courseSelect = document.getElementById("course-select");
+    const studentSelect = document.getElementById("student-select");
+    const professorSelect = document.getElementById("professor-select");
+    const errorDiv = document.getElementById("allotment-error");
+
+    let isProfMode = true;
+
+    toggleAllotmentBtn.addEventListener("click", () => {
+      isProfMode = !isProfMode;
+      if (isProfMode) {
+        allotmentTitle.textContent = "Assign Course to Professor";
+        toggleAllotmentBtn.textContent = "Switch to Student Allotment";
+        profSelect.style.display = "block";
+        studSelect.style.display = "none";
+        allotmentForm.querySelector("input[name='action']").value = "assign-course-professor";
+        allotmentSubmitBtn.textContent = "Assign to Professor";
+        studentSelect.removeAttribute("required");
+        professorSelect.setAttribute("required", "required");
+        console.log("Switched to Professor assignment mode");
+      } else {
+        allotmentTitle.textContent = "Assign Course to Student";
+        toggleAllotmentBtn.textContent = "Switch to Professor Allotment";
+        profSelect.style.display = "none";
+        studSelect.style.display = "block";
+        allotmentForm.querySelector("input[name='action']").value = "assign-course-student";
+        allotmentSubmitBtn.textContent = "Assign to Student";
+        studentSelect.setAttribute("required", "required");
+        professorSelect.removeAttribute("required");
+        console.log("Switched to Student assignment mode");
+      }
+    });
+
+    allotmentForm.addEventListener("submit", (e) => {
+      console.log("Assignment form submission triggered", {
+        action: allotmentForm.querySelector("input[name='action']").value,
+        course: courseSelect.value,
+        professor: professorSelect.value,
+        student: studentSelect.value,
+        isProfMode: isProfMode,
+      });
+
+      if (!isProfMode && !studentSelect.value) {
+        e.preventDefault();
+        errorDiv.textContent = "Please select a student";
+        console.log("Submission prevented: No student selected");
+      } else if (isProfMode && !professorSelect.value) {
+        e.preventDefault();
+        errorDiv.textContent = "Please select a professor";
+        console.log("Submission prevented: No professor selected");
+      } else if (!courseSelect.value) {
+        e.preventDefault();
+        errorDiv.textContent = "Please select a course";
+        console.log("Submission prevented: No course selected");
+      } else {
+        errorDiv.textContent = ""; // Clear any previous errors
+      }
+    });
+
+    // Removal Form (Course from Professor/Student)
+    const toggleRemovalBtn = document.getElementById("toggle-removal-mode");
+    const removeProfSelect = document.getElementById("remove-professor-selection");
+    const removeStudSelect = document.getElementById("remove-student-selection");
+    const removalForm = document.getElementById("course-removal-form");
+    const removalTitle = document.getElementById("course-removal-title");
+    const removalSubmitBtn = document.getElementById("removal-submit-btn");
+    const removeCourseSelect = document.getElementById("remove-course-select");
+    const removeStudentSelect = document.getElementById("remove-student-select");
+    const removeProfessorSelect = document.getElementById("remove-professor-select");
+    const unassignAction = document.getElementById("unassign-action");
+    const reassignProfessorSelectionCourse = document.getElementById("reassign-professor-selection-course");
+
+    let isProfRemovalMode = true;
+
+    toggleRemovalBtn.addEventListener("click", () => {
+      isProfRemovalMode = !isProfRemovalMode;
+      if (isProfRemovalMode) {
+        removalTitle.textContent = "Remove Course from Professor";
+        toggleRemovalBtn.textContent = "Switch to Student Removal";
+        removeProfSelect.style.display = "block";
+        removeStudSelect.style.display = "none";
+        removalForm.querySelector("input[name='removeType']").value = "professor";
+        removalSubmitBtn.textContent = "Remove from Professor";
+        removeStudentSelect.removeAttribute("required");
+        removeProfessorSelect.setAttribute("required", "required");
+        unassignAction.style.display = "block";
+        console.log("Switched to Professor removal mode");
+      } else {
+        removalTitle.textContent = "Remove Course from Student";
+        toggleRemovalBtn.textContent = "Switch to Professor Removal";
+        removeProfSelect.style.display = "none";
+        removeStudSelect.style.display = "block";
+        removalForm.querySelector("input[name='removeType']").value = "student";
+        removalSubmitBtn.textContent = "Remove from Student";
+        removeStudentSelect.setAttribute("required", "required");
+        removeProfessorSelect.removeAttribute("required");
+        unassignAction.style.display = "none";
+        reassignProfessorSelectionCourse.style.display = "none";
+        console.log("Switched to Student removal mode");
+      }
+    });
+
+    unassignAction.addEventListener("change", () => {
+      if (unassignAction.value === "reassign") {
+        reassignProfessorSelectionCourse.style.display = "block";
+        reassignProfessorSelectionCourse.querySelector("select").setAttribute("required", "required");
+      } else {
+        reassignProfessorSelectionCourse.style.display = "none";
+        reassignProfessorSelectionCourse.querySelector("select").removeAttribute("required");
+      }
+    });
+
+    removalForm.addEventListener("submit", (e) => {
+      console.log("Removal form submission triggered", {
+        action: removalForm.querySelector("input[name='action']").value,
+        removeType: removalForm.querySelector("input[name='removeType']").value,
+        course: removeCourseSelect.value,
+        professor: removeProfessorSelect.value,
+        student: removeStudentSelect.value,
+        unassign_action: unassignAction.value,
+        new_professor: reassignProfessorSelectionCourse.querySelector("select").value,
+        isProfRemovalMode: isProfRemovalMode,
+      });
+
+      if (!isProfRemovalMode && !removeStudentSelect.value) {
+        e.preventDefault();
+        errorDiv.textContent = "Please select a student";
+        console.log("Submission prevented: No student selected");
+      } else if (isProfRemovalMode && !removeProfessorSelect.value) {
+        e.preventDefault();
+        errorDiv.textContent = "Please select a professor";
+        console.log("Submission prevented: No professor selected");
+      } else if (!removeCourseSelect.value) {
+        e.preventDefault();
+        errorDiv.textContent = "Please select a course";
+        console.log("Submission prevented: No course selected");
+      } else if (isProfRemovalMode && !unassignAction.value) {
+        e.preventDefault();
+        errorDiv.textContent = "Please select an action after unassign";
+        console.log("Submission prevented: No unassign action selected");
+      } else if (isProfRemovalMode && unassignAction.value === "reassign" && !reassignProfessorSelectionCourse.querySelector("select").value) {
+        e.preventDefault();
+        errorDiv.textContent = "Please select a new professor for reassignment";
+        console.log("Submission prevented: No new professor selected");
+      } else {
+        errorDiv.textContent = ""; // Clear any previous errors
+      }
+    });
+
+    // Remove Entire Course Form
+    const removeCourseForm = document.getElementById("remove-course-form");
+    const removeCourseEntireSelect = document.getElementById("remove-course-entire-select");
+    const courseErrorDiv = document.getElementById("error-message");
+
+    removeCourseForm.addEventListener("submit", (e) => {
+      console.log("Remove course form submission triggered", {
+        action: removeCourseForm.querySelector("input[name='action']").value,
+        course: removeCourseEntireSelect.value,
+      });
+
+      if (!removeCourseEntireSelect.value) {
+        e.preventDefault();
+        courseErrorDiv.textContent = "Please select a course";
+        console.log("Submission prevented: No course selected");
+      } else {
+        courseErrorDiv.textContent = ""; // Clear any previous errors
+      }
+    });
+
+    // Remove Professor Form
+    const removeProfessorForm = document.getElementById("remove-professor-form");
+    const removeEntireProfessorSelect = document.getElementById("remove-entire-professor-select");
+    const profErrorDiv = document.getElementById("prof-error");
+    const courseAction = document.getElementById("course-action");
+    const reassignProfessorSelectionProf = document.getElementById("reassign-professor-selection-prof");
+
+    courseAction.addEventListener("change", () => {
+      if (courseAction.value === "reassign") {
+        reassignProfessorSelectionProf.style.display = "block";
+        reassignProfessorSelectionProf.querySelector("select").setAttribute("required", "required");
+      } else {
+        reassignProfessorSelectionProf.style.display = "none";
+        reassignProfessorSelectionProf.querySelector("select").removeAttribute("required");
+      }
+    });
+
+    removeProfessorForm.addEventListener("submit", (e) => {
+      console.log("Remove professor form submission triggered", {
+        action: removeProfessorForm.querySelector("input[name='action']").value,
+        professor: removeEntireProfessorSelect.value,
+        course_action: courseAction.value,
+        new_professor: reassignProfessorSelectionProf.querySelector("select").value,
+      });
+
+      if (!removeEntireProfessorSelect.value) {
+        e.preventDefault();
+        profErrorDiv.textContent = "Please select a professor";
+        console.log("Submission prevented: No professor selected");
+      } else if (!courseAction.value) {
+        e.preventDefault();
+        profErrorDiv.textContent = "Please select what to do with assigned courses";
+        console.log("Submission prevented: No course action selected");
+      } else if (courseAction.value === "reassign" && !reassignProfessorSelectionProf.querySelector("select").value) {
+        e.preventDefault();
+        profErrorDiv.textContent = "Please select a new professor for reassignment";
+        console.log("Submission prevented: No new professor selected");
+      } else {
+        profErrorDiv.textContent = ""; // Clear any previous errors
+      }
+    });
+  </script>
 </body>
 </html>
