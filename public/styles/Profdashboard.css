@@ -5,12 +5,18 @@ body {
     flex-direction: column;
   }
   
-  .dashboard-title {
+.outfit {
     font-family: 'Outfit', sans-serif;
+}
+
+.dashboard-wrapper {
+    margin: 0 35px;
+}
+
+.dashboard-title {
     font-size: 24px;
     font-weight: 500;
     color: white;
-    margin-left: 35px;
     margin-bottom: 40px;
     margin-top: 20px;
   }
@@ -21,7 +27,6 @@ body {
     font-weight: 300;
     line-height: 75px;
     letter-spacing: -3.5px;
-    margin-left: 35px;
   }
   
   .gradient-text {
@@ -43,36 +48,42 @@ body {
     color: #FFF;
   }
   
-  .assigned-courses-title{
-    font-family: Outfit;
+.marks-upload-form {
+    margin-top: 40px;
+}
+
+.courses-selection-container {
+    border: 3px solid #202020;
+    border-radius: 20px;
+    padding: 35px;
+}
+
+.assigned-courses-title {
     font-size: 30px;
     font-weight: 400;
     color: #FFF;
-    margin-left: 35px;
-    margin-top: 40px;
+    margin: 0 0 15px 0;
 }
+
 .assigned-courses-box {
-    display: inline-flex;
-    height: 235px;
-    width: 91vw;
-    /* padding: 22px 23px 23px 23px; */
-    padding-left:23px;
-    padding-top:23px;
-    padding-bottom:23px;
-    align-items: flex-start;
+    display: flex;
+    flex-wrap: wrap;
     gap: 25px;
-    border-radius: 20px;
-    border: 3px solid #202020;
-    margin-top: 10px;
-    margin-left:35px;
-    margin-right:35px;
-    margin-bottom:10px;
+    margin-top:20px;
+}
+
+.hidden-radio {
+    display: none;
+}
+
+.course-box-label {
+    cursor: pointer;
 }
 
 .course-box {
     display: flex;
     width: 120px;
-    height: 190px;
+    height: 150px;
     padding: 25px;
     flex-direction: column;
     justify-content: center;
@@ -80,8 +91,7 @@ body {
     border-radius: 15px;
     border: 1px solid rgba(148, 148, 148, 0.5);
     background: rgba(217, 217, 217, 0.08);
-    cursor: pointer;
-    transition: background 0.3s ease;
+    transition: background 0.3s ease, border-color 0.3s ease;
 }
 
 .course-box:hover,
