@@ -281,10 +281,7 @@
       <ul class="course-list">
         <% courses.forEach(course => { %>
           <li>
-            <%= course.name %> (Section <%= course.section %>) - 
-            Professor: <%= course.professor.name %> - 
-            Credits: <%= course.credits %> - 
-            Total Classes: <%= course.totalclasses %>
+            <%= course.name %> (Section <%= course.section %>) - Professor: <%= course.professor ? course.professor.name : "Unassigned" %> - Credits: <%= course.credits %> - Total Classes: <%= course.totalclasses %>
           </li>
         <% }) %>
       </ul>
@@ -296,9 +293,7 @@
     <% if (professors.length > 0) { %>
       <ul class="professor-list">
         <% professors.forEach(prof => { %>
-          <li>
-            <%= prof.name %> - Email: <%= prof.email %> - Phone: <%= prof.phone %>
-          </li>
+          <li><%= prof.name %> - Email: <%= prof.email %> - Phone: <%= prof.phone %> - Courses: <%= prof.courses.map(c => `${c.course.name} (Section ${c.course.section})`).join(', ') || 'None' %></li>
         <% }) %>
       </ul>
     <% } else { %>
@@ -310,7 +305,8 @@
       <ul class="student-list">
         <% students.forEach(student => { %>
           <li>
-            <%= student.name %> - Email: <%= student.email %> - Roll Number: <%= student.rollnumber %> - Phone: <%= student.phone %> - Section: <%= student.section %>
+            <%= student.name %> - Email: <%= student.email %> - Roll Number: <%= student.rollnumber %> -
+            Phone: <%= student.phone %> - Section: <%= student.section %> - Courses: <%= student.courses.map(c => `${c.course.name} (Section ${c.course.section})`).join(', ') || 'None' %>
           </li>
         <% }) %>
       </ul>
@@ -417,6 +413,96 @@
         e.preventDefault();
         errorDiv.textContent = "Please select a course";
         console.log("Submission prevented: No course selected");
+      } else {
+        errorDiv.textContent = ""; // Clear any previous errors
+      }
+    });
+
+    // Removal Form (Course from Professor/Student)
+    const toggleRemovalBtn = document.getElementById("toggle-removal-mode");
+    const removeProfSelect = document.getElementById("remove-professor-selection");
+    const removeStudSelect = document.getElementById("remove-student-selection");
+    const removalForm = document.getElementById("course-removal-form");
+    const removalTitle = document.getElementById("course-removal-title");
+    const removalSubmitBtn = document.getElementById("removal-submit-btn");
+    const removeCourseSelect = document.getElementById("remove-course-select");
+    const removeStudentSelect = document.getElementById("remove-student-select");
+    const removeProfessorSelect = document.getElementById("remove-professor-select");
+    const unassignAction = document.getElementById("unassign-action");
+    const reassignProfessorSelectionCourse = document.getElementById("reassign-professor-selection-course");
+
+    let isProfRemovalMode = true;
+
+    toggleRemovalBtn.addEventListener("click", () => {
+      isProfRemovalMode = !isProfRemovalMode;
+      if (isProfRemovalMode) {
+        removalTitle.textContent = "Remove Course from Professor";
+        toggleRemovalBtn.textContent = "Switch to Student Removal";
+        removeProfSelect.style.display = "block";
+        removeStudSelect.style.display = "none";
+        removalForm.querySelector("input[name='removeType']").value = "professor";
+        removalSubmitBtn.textContent = "Remove from Professor";
+        removeStudentSelect.removeAttribute("required");
+        removeProfessorSelect.setAttribute("required", "required");
+        unassignAction.style.display = "block";
+        console.log("Switched to Professor removal mode");
+      } else {
+        removalTitle.textContent = "Remove Course from Student";
+        toggleRemovalBtn.textContent = "Switch to Professor Removal";
+        removeProfSelect.style.display = "none";
+        removeStudSelect.style.display = "block";
+        removalForm.querySelector("input[name='removeType']").value = "student";
+        removalSubmitBtn.textContent = "Remove from Student";
+        removeStudentSelect.setAttribute("required", "required");
+        removeProfessorSelect.removeAttribute("required");
+        unassignAction.style.display = "none";
+        reassignProfessorSelectionCourse.style.display = "none";
+        console.log("Switched to Student removal mode");
+      }
+    });
+
+    unassignAction.addEventListener("change", () => {
+      if (unassignAction.value === "reassign") {
+        reassignProfessorSelectionCourse.style.display = "block";
+        reassignProfessorSelectionCourse.querySelector("select").setAttribute("required", "required");
+      } else {
+        reassignProfessorSelectionCourse.style.display = "none";
+        reassignProfessorSelectionCourse.querySelector("select").removeAttribute("required");
+      }
+    });
+
+    removalForm.addEventListener("submit", (e) => {
+      console.log("Removal form submission triggered", {
+        action: removalForm.querySelector("input[name='action']").value,
+        removeType: removalForm.querySelector("input[name='removeType']").value,
+        course: removeCourseSelect.value,
+        professor: removeProfessorSelect.value,
+        student: removeStudentSelect.value,
+        unassign_action: unassignAction.value,
+        new_professor: reassignProfessorSelectionCourse.querySelector("select").value,
+        isProfRemovalMode: isProfRemovalMode,
+      });
+
+      if (!isProfRemovalMode && !removeStudentSelect.value) {
+        e.preventDefault();
+        errorDiv.textContent = "Please select a student";
+        console.log("Submission prevented: No student selected");
+      } else if (isProfRemovalMode && !removeProfessorSelect.value) {
+        e.preventDefault();
+        errorDiv.textContent = "Please select a professor";
+        console.log("Submission prevented: No professor selected");
+      } else if (!removeCourseSelect.value) {
+        e.preventDefault();
+        errorDiv.textContent = "Please select a course";
+        console.log("Submission prevented: No course selected");
+      } else if (isProfRemovalMode && !unassignAction.value) {
+        e.preventDefault();
+        errorDiv.textContent = "Please select an action after unassign";
+        console.log("Submission prevented: No unassign action selected");
+      } else if (isProfRemovalMode && unassignAction.value === "reassign" && !reassignProfessorSelectionCourse.querySelector("select").value) {
+        e.preventDefault();
+        errorDiv.textContent = "Please select a new professor for reassignment";
+        console.log("Submission prevented: No new professor selected");
       } else {
         errorDiv.textContent = ""; // Clear any previous errors
       }
