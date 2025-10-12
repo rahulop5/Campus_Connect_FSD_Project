@@ -279,13 +279,125 @@ body {
     font-size: 26px;
     font-weight: 300;
     color: #FFF;
+}
+
+.file-display {
     display: flex;
-    justify-content: center;
     align-items: center;
-  }
-  .left-div{
-    width:45vh;
-    margin-left:20px;
-    margin-top:30px;
+    justify-content: center;
+    gap: 15px;
+}
+
+.file-name {
+    font-size: 18px;
+    color: #FFF;
+    font-weight: 500;
+    margin: 0;
+    max-width: 30vw;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.remove-file-btn {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    cursor: pointer;
+    background-image: url('/assets/x-button.png');
+    background-size: cover;
+    transition: background-image 0.2s ease-in-out;
+}
+
+.remove-file-btn:hover {
+    background-image: url('/assets/x-button-highlighted.png');
+}
+
+.file-uploaded-icon {
+    width: 50px;
+    height: 50px;
+    background: url('/assets/sheets (1).png') transparent 50% / contain no-repeat;
+    flex-shrink: 0;
+}
+
+.csv-preview-container {
+    display: none;
+    flex-direction: column;
+    flex-grow: 1;
+    margin-left: 30px;
+    border: 1px solid #373737;
+    border-radius: 20px;
+    background: rgba(30, 30, 30, 0.5);
+    padding: 15px;
+    max-height: 295px;
+    max-width: 1000px;
+}
+
+.preview-title {
+    font-size: 20px;
+    font-weight: 500;
+    color: #c0c0c0;
+    margin: 0 0 15px 5px;
+    flex-shrink: 0;
+}
+
+.csv-preview-table-wrapper {
+    overflow-y: auto;
+    flex: 1;
+    min-height: 0;
+    border-radius: 10px;
+}
+
+.csv-preview-table-wrapper {
+    scrollbar-width: thin;
+    scrollbar-color: #FFFFFF #202020;
+}
+
+.csv-preview-table-wrapper::-webkit-scrollbar {
+    width: 8px;
+}
+
+.csv-preview-table-wrapper::-webkit-scrollbar-track {
+    background: #202020;
+    border-radius: 10px;
+}
+
+.csv-preview-table-wrapper::-webkit-scrollbar-thumb {
+    background-color: #FFFFFF;
+    border-radius: 10px;
+    border: 2px solid #202020;
+}
+
+.csv-preview-table-wrapper::-webkit-scrollbar-thumb:hover {
+    background-color: #3ccf00;
+}
+
+.csv-preview-table-wrapper table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
   }
   
+.csv-preview-table-wrapper th,
+.csv-preview-table-wrapper td {
+    padding: 8px 12px;
+    text-align: left;
+    border-bottom: 1px solid #282828;
+    white-space: nowrap;
+}
+
+.csv-preview-table-wrapper th {
+    background-color: #1a1a1a;
+    color: #2B9900;
+    font-weight: 600;
+    position: sticky;
+    top: 0;
+}
+
+.csv-preview-table-wrapper tbody tr:nth-child(even) {
+    background-color: rgba(255, 255, 255, 0.03);
+}
+
+.csv-preview-table-wrapper tbody tr:hover {
+    background-color: rgba(43, 153, 0, 0.15);
+}
