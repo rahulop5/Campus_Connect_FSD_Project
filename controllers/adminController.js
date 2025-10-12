@@ -222,6 +222,79 @@ export const adminDashboard = async (req, res) => {
         const newStudent = new Student(studentData);
         await newStudent.save();
 
+        console.log("New student added:", newStudent);
+        return res.redirect("/admin/dashboard");
+      }
+
+      // ----------------------------
+      // ADD PROFESSOR
+      // ----------------------------
+      if (action === "add-professor") {
+        const { name, email, phone, password } = req.body;
+
+        const errors = [];
+
+        if (!name || typeof name !== "string" || name.trim().length === 0) {
+          errors.push("Professor name must be a non-empty string");
+        }
+
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!email || !emailRegex.test(email)) {
+          errors.push("Invalid email format");
+        }
+
+        if (!phone || !/^\d{10}$/.test(phone)) {
+          errors.push("Phone number must be exactly 10 digits");
+        }
+
+        if (!password || typeof password !== "string" || password.trim().length < 6) {
+          errors.push("Password must be at least 6 characters long");
+        }
+
+        if (errors.length > 0) {
+          return res.status(400).render("admindashboard.ejs", {
+            name: req.session.user.name,
+            courses,
+            professors,
+            students,
+            error: errors.join("; "),
+          });
+        }
+
+        // Prevent duplicate professors
+        const existingProfessor = await Professor.findOne({ email });
+        if (existingProfessor) {
+          return res.status(400).render("admindashboard.ejs", {
+            name: req.session.user.name,
+            courses,
+            professors,
+            students,
+            error: "Professor already exists",
+          });
+        }
+
+        // Hash password
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        const newProfessor = new Professor({
+          name: name.trim(),
+          email,
+          password: hashedPassword,
+          phone,
+          courses: [],
+        });
+
+        await newProfessor.save();
+        console.log("New professor added:", newProfessor);
+
+        return res.redirect("/admin/dashboard");
+      }
+
+
+        // Delete the professor
+        await Professor.deleteOne({ _id: professor });
+        console.log(`Professor ${professor} deleted`);
+
         return res.redirect("/admin/dashboard");
       }
 
