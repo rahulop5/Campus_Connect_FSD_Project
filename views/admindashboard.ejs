@@ -46,11 +46,11 @@
       </div>
     </div>
 
-    <!-- Course and Student Management Section -->
     <div class="management-section">
-      <!-- Course Management Section -->
+      <!-- ========================== COURSE MANAGEMENT ========================== -->
       <div class="course-container">
         <h2>Course Management</h2>
+        <!-- Add Course Form -->
         <form id="add-course-form" action="/admin/dashboard" method="POST">
           <input type="hidden" name="action" value="add-course">
           <label for="course-name">Name of the Course:</label>
@@ -67,22 +67,16 @@
           <label for="section">Section:</label>
           <div class="input-group">
             <input type="text" id="section" name="section" placeholder="e.g., 1" required>
-            <button type="button">+</button>
-            <button type="button">−</button>
           </div>
 
           <label for="total-classes">Total No. of Classes:</label>
           <div class="input-group">
             <input type="number" id="total-classes" name="totalclasses" placeholder="e.g., 36" min="1" required>
-            <button type="button">+</button>
-            <button type="button">−</button>
           </div>
 
           <label for="credits">Course's Credits:</label>
           <div class="input-group">
             <input type="number" id="credits" name="credits" placeholder="e.g., 4" min="1" required>
-            <button type="button">+</button>
-            <button type="button">−</button>
           </div>
 
           <button type="submit">Add Course</button>
