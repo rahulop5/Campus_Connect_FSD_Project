@@ -357,6 +357,71 @@
       }
     });
 
+    // Assignment Form
+    const toggleAllotmentBtn = document.getElementById("toggle-allotment-mode");
+    const profSelect = document.getElementById("professor-selection");
+    const studSelect = document.getElementById("student-selection");
+    const allotmentForm = document.getElementById("course-allotment-form");
+    const allotmentTitle = document.getElementById("course-allotment-title");
+    const allotmentSubmitBtn = document.getElementById("allotment-submit-btn");
+    const courseSelect = document.getElementById("course-select");
+    const studentSelect = document.getElementById("student-select");
+    const professorSelect = document.getElementById("professor-select");
+    const errorDiv = document.getElementById("allotment-error");
+
+    let isProfMode = true;
+
+    toggleAllotmentBtn.addEventListener("click", () => {
+      isProfMode = !isProfMode;
+      if (isProfMode) {
+        allotmentTitle.textContent = "Assign Course to Professor";
+        toggleAllotmentBtn.textContent = "Switch to Student Allotment";
+        profSelect.style.display = "block";
+        studSelect.style.display = "none";
+        allotmentForm.querySelector("input[name='action']").value = "assign-course-professor";
+        allotmentSubmitBtn.textContent = "Assign to Professor";
+        studentSelect.removeAttribute("required");
+        professorSelect.setAttribute("required", "required");
+        console.log("Switched to Professor assignment mode");
+      } else {
+        allotmentTitle.textContent = "Assign Course to Student";
+        toggleAllotmentBtn.textContent = "Switch to Professor Allotment";
+        profSelect.style.display = "none";
+        studSelect.style.display = "block";
+        allotmentForm.querySelector("input[name='action']").value = "assign-course-student";
+        allotmentSubmitBtn.textContent = "Assign to Student";
+        studentSelect.setAttribute("required", "required");
+        professorSelect.removeAttribute("required");
+        console.log("Switched to Student assignment mode");
+      }
+    });
+
+    allotmentForm.addEventListener("submit", (e) => {
+      console.log("Assignment form submission triggered", {
+        action: allotmentForm.querySelector("input[name='action']").value,
+        course: courseSelect.value,
+        professor: professorSelect.value,
+        student: studentSelect.value,
+        isProfMode: isProfMode,
+      });
+
+      if (!isProfMode && !studentSelect.value) {
+        e.preventDefault();
+        errorDiv.textContent = "Please select a student";
+        console.log("Submission prevented: No student selected");
+      } else if (isProfMode && !professorSelect.value) {
+        e.preventDefault();
+        errorDiv.textContent = "Please select a professor";
+        console.log("Submission prevented: No professor selected");
+      } else if (!courseSelect.value) {
+        e.preventDefault();
+        errorDiv.textContent = "Please select a course";
+        console.log("Submission prevented: No course selected");
+      } else {
+        errorDiv.textContent = ""; // Clear any previous errors
+      }
+    });
+
     
   </script>
 </body>
