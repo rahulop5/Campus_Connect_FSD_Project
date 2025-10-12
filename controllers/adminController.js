@@ -290,6 +290,141 @@ export const adminDashboard = async (req, res) => {
         return res.redirect("/admin/dashboard");
       }
 
+      // ----------------------------
+      // ASSIGN COURSE TO PROFESSOR
+      // ----------------------------
+      if (action === "assign-course-professor") {
+        const { course, professor } = req.body;
+
+        // Basic validation
+        if (!course || !professor) {
+          return res.status(400).render("admindashboard.ejs", {
+            name: req.session.user.name,
+            courses,
+            professors,
+            students,
+            error: "Course and professor are required",
+          });
+        }
+
+        if (!mongoose.Types.ObjectId.isValid(course) || !mongoose.Types.ObjectId.isValid(professor)) {
+          return res.status(400).render("admindashboard.ejs", {
+            name: req.session.user.name,
+            courses,
+            professors,
+            students,
+            error: "Invalid ObjectId(s) provided",
+          });
+        }
+
+        const courseDoc = await Course.findById(course);
+        const profDoc = await Professor.findById(professor);
+
+        if (!courseDoc || !profDoc) {
+          return res.status(404).render("admindashboard.ejs", {
+            name: req.session.user.name,
+            courses,
+            professors,
+            students,
+            error: "Course or Professor not found",
+          });
+        }
+
+        // Check if the course is already assigned to this professor
+        const isAlreadyAssigned = profDoc.courses.some(c => c.course.toString() === course);
+
+        // Remove course from the old professor's courses array, if any
+        if (courseDoc.professor && courseDoc.professor.toString() !== professor) {
+          await Professor.findByIdAndUpdate(
+            courseDoc.professor,
+            { $pull: { courses: { course: courseDoc._id } } },
+            { new: true }
+          );
+        }
+
+        // Update course's professor
+        courseDoc.professor = professor;
+        await courseDoc.save();
+
+        // Add course to the professor's courses array only if not already assigned
+        if (!isAlreadyAssigned) {
+          await Professor.findByIdAndUpdate(professor, { $addToSet: { courses: { course } } });
+        }
+
+        console.log(`Assigned course ${course} to professor ${professor}`);
+        return res.redirect("/admin/dashboard");
+      }
+
+      // ----------------------------
+      // ASSIGN COURSE TO STUDENT
+      // ----------------------------
+      if (action === "assign-course-student") {
+        const { course, student } = req.body;
+        console.log(`Assign course to student - Course: ${course}, Student: ${student}`);
+
+        // Basic validation
+        if (!course || !student) {
+          return res.status(400).render("admindashboard.ejs", {
+            name: req.session.user.name,
+            courses,
+            professors,
+            students,
+            error: "Course and student are required",
+          });
+        }
+
+        if (!mongoose.Types.ObjectId.isValid(course) || !mongoose.Types.ObjectId.isValid(student)) {
+          return res.status(400).render("admindashboard.ejs", {
+            name: req.session.user.name,
+            courses,
+            professors,
+            students,
+            error: "Invalid ObjectId(s) provided",
+          });
+        }
+
+        const courseDoc = await Course.findById(course);
+        const studDoc = await Student.findById(student);
+
+        if (!courseDoc || !studDoc) {
+          return res.status(404).render("admindashboard.ejs", {
+            name: req.session.user.name,
+            courses,
+            professors,
+            students,
+            error: "Course or Student not found",
+          });
+        }
+
+        // Check if the course is already assigned to this student
+        const isAlreadyAssigned = studDoc.courses.some(c => c.course.toString() === course);
+
+        // Add the course to student's courses only if not already assigned
+        if (!isAlreadyAssigned) {
+          const updateResult = await Student.findByIdAndUpdate(
+            student,
+            { $addToSet: { courses: { course } } },
+            { new: true }
+          );
+          if (!updateResult) {
+            console.error(`Failed to update student ${student} with course ${course}`);
+            return res.status(500).render("admindashboard.ejs", {
+              name: req.session.user.name,
+              courses,
+              professors,
+              students,
+              error: "Failed to assign course to student",
+            });
+          }
+          console.log(`Student ${student} updated with course ${course}:`, updateResult.courses);
+        } else {
+          console.log(`Course ${course} already assigned to student ${student}`);
+        }
+
+        return res.redirect("/admin/dashboard");
+      }
+
+     
 
         // Delete the professor
         await Professor.deleteOne({ _id: professor });
