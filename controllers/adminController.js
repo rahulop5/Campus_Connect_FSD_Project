@@ -596,7 +596,180 @@ export const adminDashboard = async (req, res) => {
         return res.redirect("/admin/dashboard");
       }
 
+      // ----------------------------
+      // REMOVE ENTIRE COURSE
+      // ----------------------------
+      if (action === "remove-entire-course") {
+        const { course } = req.body;
+        console.log(`Remove entire course - Course: ${course}`);
 
+        // Basic validation
+        if (!course) {
+          return res.status(400).render("admindashboard.ejs", {
+            name: req.session.user.name,
+            courses,
+            professors,
+            students,
+            error: "Course is required",
+          });
+        }
+
+        if (!mongoose.Types.ObjectId.isValid(course)) {
+          return res.status(400).render("admindashboard.ejs", {
+            name: req.session.user.name,
+            courses,
+            professors,
+            students,
+            error: "Invalid course ObjectId",
+          });
+        }
+
+        const courseDoc = await Course.findById(course);
+        if (!courseDoc) {
+          return res.status(404).render("admindashboard.ejs", {
+            name: req.session.user.name,
+            courses,
+            professors,
+            students,
+            error: "Course not found",
+          });
+        }
+
+        // Remove course from all professors' courses arrays
+        await Professor.updateMany(
+          { "courses.course": course },
+          { $pull: { courses: { course } } }
+        );
+
+        // Remove course from all students' courses arrays
+        await Student.updateMany(
+          { "courses.course": course },
+          { $pull: { courses: { course } } }
+        );
+
+        // Delete the course
+        await Course.deleteOne({ _id: course });
+        console.log(`Course ${course} deleted`);
+
+        return res.redirect("/admin/dashboard");
+      }
+
+      // ----------------------------
+      // REMOVE PROFESSOR
+      // ----------------------------
+      if (action === "remove-professor") {
+        const { professor, course_action, new_professor } = req.body;
+        console.log(`Remove professor - Professor: ${professor}, Course Action: ${course_action}, New Professor: ${new_professor}`);
+
+        // Basic validation
+        if (!professor) {
+          return res.status(400).render("admindashboard.ejs", {
+            name: req.session.user.name,
+            courses,
+            professors,
+            students,
+            error: "Professor is required",
+          });
+        }
+
+        if (!mongoose.Types.ObjectId.isValid(professor)) {
+          return res.status(400).render("admindashboard.ejs", {
+            name: req.session.user.name,
+            courses,
+            professors,
+            students,
+            error: "Invalid professor ObjectId",
+          });
+        }
+
+        const profDoc = await Professor.findById(professor);
+        if (!profDoc) {
+          return res.status(404).render("admindashboard.ejs", {
+            name: req.session.user.name,
+            courses,
+            professors,
+            students,
+            error: "Professor not found",
+          });
+        }
+
+        const professorCourses = await Course.find({ professor: professor });
+        if (professorCourses.length > 0) {
+          if (!course_action) {
+            return res.status(400).render("admindashboard.ejs", {
+              name: req.session.user.name,
+              courses,
+              professors,
+              students,
+              error: "Please select what to do with assigned courses",
+            });
+          }
+
+          if (course_action === "remove") {
+            for (const course of professorCourses) {
+              // Remove from students
+              await Student.updateMany(
+                { "courses.course": course._id },
+                { $pull: { courses: { course: course._id } } }
+              );
+
+              // Delete course
+              await Course.deleteOne({ _id: course._id });
+            }
+            console.log(`Removed all courses for professor ${professor}`);
+          } else if (course_action === "reassign") {
+            if (!new_professor || !mongoose.Types.ObjectId.isValid(new_professor)) {
+              return res.status(400).render("admindashboard.ejs", {
+                name: req.session.user.name,
+                courses,
+                professors,
+                students,
+                error: "Invalid new professor",
+              });
+            }
+
+            const newProfDoc = await Professor.findById(new_professor);
+            if (!newProfDoc) {
+              return res.status(404).render("admindashboard.ejs", {
+                name: req.session.user.name,
+                courses,
+                professors,
+                students,
+                error: "New professor not found",
+              });
+            }
+
+            if (new_professor === professor) {
+              return res.status(400).render("admindashboard.ejs", {
+                name: req.session.user.name,
+                courses,
+                professors,
+                students,
+                error: "Cannot reassign to the same professor",
+              });
+            }
+
+            for (const course of professorCourses) {
+              course.professor = new_professor;
+              await course.save();
+
+              // Add to new professor's courses
+              await Professor.findByIdAndUpdate(
+                new_professor,
+                { $addToSet: { courses: { course: course._id } } }
+              );
+            }
+            console.log(`Reassigned all courses from professor ${professor} to ${new_professor}`);
+          } else {
+            return res.status(400).render("admindashboard.ejs", {
+              name: req.session.user.name,
+              courses,
+              professors,
+              students,
+              error: "Invalid course action",
+            });
+          }
+        }
 
         // Delete the professor
         await Professor.deleteOne({ _id: professor });
