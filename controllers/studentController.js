@@ -174,63 +174,73 @@ export const studentAttendanceNew = async (req, res) => {
   }
 };
 
-
+// Route 1: Initial Page Render
 export const studentGrades = async (req, res) => {
-  if (req.session.user) {
-    try {
-      const studentCourses = req.session.user.courses.map((course) => course.course);
+  if (!req.session.user) return res.redirect("/");
 
-      // Fetch all courses the student is enrolled in
-      const courses = await Course.find({ _id: { $in: studentCourses } });
-
-      if (!courses || courses.length === 0) {
-        return res.status(404).send("No courses found for the student.");
-      }
-
-      // Prepare the list of subjects for rendering
-      const bellgraphSubjects = courses.map((course) => ({
-        courseId: course._id.toString(),
-        name: course.name,
-      }));
-      console.log(bellgraphSubjects);
-
-      // Render the initial page with the first course selected
-      res.render("bellgraph.ejs", {
-        subject: bellgraphSubjects[0].name,
-        bellgraphSubjects: bellgraphSubjects,
-        defaultCourseId: bellgraphSubjects[0].courseId,
-        userinfo: req.session.user.courses[0]?.grade || "N/A", // Predicted Grade
-      });
-    } catch (error) {
-      console.error("Error fetching student grades:", error);
-      res.status(500).send("Internal Server Error.");
-    }
-  } else {
-    res.redirect("/");
+  try {
+    res.render("bellgraph.ejs");
+  } catch (error) {
+    console.error("Error rendering bellgraph:", error);
+    res.status(500).send("Internal Server Error");
   }
 };
 
+// Route 2: Partial HTML Loader
+export const studentGradesPartial = async (req, res) => {
+  try {
+    const studentCourses = req.session.user.courses.map((c) => c.course);
+    const courses = await Course.find({ _id: { $in: studentCourses } });
 
+    if (!courses || courses.length === 0)
+      return res.status(404).send("No courses found");
+
+    const bellgraphSubjects = courses.map((course) => ({
+      courseId: course._id.toString(),
+      name: course.name,
+    }));
+
+    res.render("partials/bellgraphPartial.ejs", {
+      subject: bellgraphSubjects[0].name,
+      bellgraphSubjects,
+      defaultCourseId: bellgraphSubjects[0].courseId,
+      userinfo: req.session.user.courses[0]?.grade || "N/A",
+    });
+  } catch (error) {
+    console.error("Error loading grades partial:", error);
+    res.status(500).send("Internal Server Error");
+  }
+};
+
+// Route 3: Graph Data Endpoint
 export const studentGradebyId = async (req, res) => {
   try {
     const { courseId } = req.params;
     const course = await Course.findById(courseId);
 
-    if (!course || !course.gradeDistribution) {
-      return res.status(404).json({ error: "No grade distribution data available for this course." });
-    }
+    if (!course || !course.gradeDistribution)
+      return res.status(404).json({ error: "No grade distribution data" });
 
-    // Prepare x (grades) and y (frequencies) data for the graph
-    const gradeDistribution = Array.from(course.gradeDistribution.entries()).sort((a, b) => a[0] - b[0]);
+    const gradeDistribution = Array.from(course.gradeDistribution.entries()).sort(
+      (a, b) => a[0] - b[0]
+    );
+
     const x = gradeDistribution.map(([grade]) => grade);
-    const y = gradeDistribution.map(([, frequency]) => frequency);
+    const y = gradeDistribution.map(([, freq]) => freq);
 
     res.json({ x, y });
   } catch (error) {
     console.error("Error fetching bell graph data:", error);
-    res.status(500).json({ error: "Internal Server Error." });
+    res.status(500).json({ error: "Internal Server Error" });
   }
 };
+
+
+
+
+
+
+
 // Controller function to handle updating the student's profile
 export const updateStudentProfile = async (req, res) => {
   if (req.session.user) {
@@ -271,39 +281,6 @@ export const studentProfilePartial = async (req, res) => {
 
     // Extract only the main content (inside <form id="bodbod"> ... </form>)
     const match = html.match(/<form id="bodbod">([\s\S]*?)<\/form>/);
-    const partialHtml = match ? match[0] : html;
-
-    res.send(partialHtml);
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Internal Server Error");
-  }
-};
-
-export const studentGradesPartial = async (req, res) => {
-  if (!req.session.user) return res.status(401).send("Unauthorized");
-
-  try {
-    const studentCourses = req.session.user.courses.map(c => c.course);
-    const courses = await Course.find({ _id: { $in: studentCourses } });
-
-    const bellgraphSubjects = courses.map(c => ({
-      courseId: c._id.toString(),
-      name: c.name,
-    }));
-
-    const html = await ejs.renderFile(
-      path.join(__dirname, "../views/bellgraph.ejs"),
-      {
-        subject: bellgraphSubjects[0].name,
-        bellgraphSubjects,
-        defaultCourseId: bellgraphSubjects[0].courseId,
-        userinfo: req.session.user.courses[0]?.grade || "N/A",
-      }
-    );
-
-    // Extract main content container for partial refresh
-    const match = html.match(/<div class="bg_mainpage">([\s\S]*?)<\/div>\s*<\/body>/);
     const partialHtml = match ? match[0] : html;
 
     res.send(partialHtml);

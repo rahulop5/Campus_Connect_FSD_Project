@@ -1,0 +1,32 @@
+<div id="bellgraph-data"
+     data-default-subject="<%= subject %>"
+     data-default-course-id="<%= defaultCourseId %>">
+  <div class="bg_subjects">
+    <% bellgraphSubjects.forEach((sub) => { %>
+      <div class="subject"
+           data-course-id="<%= sub.courseId %>"
+           onclick="updateGraphForSubject('<%= sub.courseId %>', '<%= sub.name %>', this)">
+        <p><%= sub.name %></p>
+      </div>
+    <% }) %>
+  </div>
+
+  <div class="bg_main">
+    <div class="bg_graph">
+      <p>Bell Graph Curve for <span id="currentSubject"><%= subject %></span></p>
+      <canvas id="bellChart" width="800" height="400"></canvas>
+    </div>
+
+    <div class="bg_graphright">
+      <div>
+        <p>Your Grade</p>
+        <p><%= userinfo %></p>
+      </div>
+      <div class="bg_details">
+        <div><p>Allotted Credits</p><p><span>4</span></p></div>
+        <div><p>Total Hours Assigned</p><p><span>46</span>hrs</p></div>
+        <div><p>Total Enrollments</p><p><span>146</span></p></div>
+      </div>
+    </div>
+  </div>
+</div>

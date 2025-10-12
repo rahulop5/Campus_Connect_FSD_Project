@@ -1,61 +1,51 @@
 let chartInstance;
 
-document.addEventListener("DOMContentLoaded", function () {
+function initBellGraph() {
+  const defaultSubject = document.querySelector("#bellgraph-data").dataset.defaultSubject;
+  const defaultCourseId = document.querySelector("#bellgraph-data").dataset.defaultCourseId;
+
   const defaultSubjectElement = [...document.querySelectorAll(".subject")].find(
     (el) => el.querySelector("p").innerText.trim() === defaultSubject
   );
 
-  if (defaultSubject && defaultSubjectElement) {
-    const defaultCourseId = defaultSubjectElement.getAttribute("data-course-id");
+  if (defaultCourseId && defaultSubjectElement) {
     updateGraphForSubject(defaultCourseId, defaultSubject, defaultSubjectElement);
   } else {
-    console.error("Default subject is not defined or has no data.");
+    console.error("Default subject not defined or invalid.");
   }
-});
+}
 
 function updateGraphForSubject(courseId, subject, element) {
   console.log("Updating graph for:", subject);
 
-  // Remove the ID from the previously selected subject (if any)
+  // Remove previously selected highlight
   const prevSelected = document.getElementById("selected_subject");
-  if (prevSelected) {
-    prevSelected.removeAttribute("id");
-  }
+  if (prevSelected) prevSelected.removeAttribute("id");
 
-  // Mark the current element as selected
-  if (element) {
-    element.id = "selected_subject";
-  } else {
-    console.error("Element not found for subject:", subject);
-  }
+  // Mark this subject as selected
+  if (element) element.id = "selected_subject";
 
-  // Update the displayed subject name
+  // Update subject title
   document.getElementById("currentSubject").innerText = subject;
 
-  // Fetch updated graph data from the server
+  // Fetch the updated graph data
   fetch(`/bellgraph-data/${courseId}`)
-    .then((response) => response.json())
+    .then((res) => res.json())
     .then((data) => {
       if (data && data.x && data.y) {
         drawGraph(data.x, data.y);
       } else {
-        console.error("No data found for subject:", subject);
+        console.error("No data for subject:", subject);
       }
     })
-    .catch((error) => {
-      console.error("Error fetching bell graph data:", error);
-    });
+    .catch((err) => console.error("Error fetching graph data:", err));
 }
 
 function drawGraph(xData, yData) {
   const ctx = document.getElementById("bellChart").getContext("2d");
 
-  // Destroy the existing chart instance if it exists
-  if (chartInstance) {
-    chartInstance.destroy();
-  }
+  if (chartInstance) chartInstance.destroy();
 
-  // Create a new chart instance
   chartInstance = new Chart(ctx, {
     type: "line",
     data: {
@@ -74,18 +64,8 @@ function drawGraph(xData, yData) {
     options: {
       responsive: true,
       scales: {
-        x: {
-          title: {
-            display: true,
-            text: "Grade",
-          },
-        },
-        y: {
-          title: {
-            display: true,
-            text: "Frequency",
-          },
-        },
+        x: { title: { display: true, text: "Grade" } },
+        y: { title: { display: true, text: "Frequency" } },
       },
     },
   });
