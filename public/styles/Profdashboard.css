@@ -250,33 +250,34 @@ body {
 .file-note{
     font-size: 22px;
     color: #a8a8a8;
-    font-family: Outfit;
-    color: #FFF;
+    margin: 0;
   }
   
-  .file-note {
-    margin-top: 15px;
-    font-size: 14px;
+.file-note1 {
+    font-size: 22px;
     color: #a8a8a8;
-    font-family: Outfit;
-    color: #FFF;
+    margin-top: -5px;
   }
+
   .submit-btn {
-    width: 376px;
-    height: 85px;
+    width: 300px;
+    height: 65px;
+    margin-right: 8vw;
     border-radius: 40px;
     border: 3px solid rgba(72, 255, 0, 0.40);
     background: rgba(40, 86, 22, 0.75);
-    margin-top: -5vw;
-    margin-left:54.8vw;
     cursor: pointer;
+    transition: background-color 0.3s ease;
+    flex-shrink: 0;
+}
+
+.submit-btn:hover {
+    background: rgba(56, 120, 31, 0.9);
   }
   
   .submit-text {
-    height: 51px;
-    font-family: Outfit;
-    font-size: 40px;
-    font-weight: 400;
+    font-size: 26px;
+    font-weight: 300;
     color: #FFF;
     display: flex;
     justify-content: center;
