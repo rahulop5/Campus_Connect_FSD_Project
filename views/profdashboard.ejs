@@ -16,28 +16,28 @@
 <body class="outfit">
   <%- include("header.ejs") %>
 
-  <div class="dashboard-wrapper">
-    <p class="dashboard-title">Dashboard</p>
+    <div class="dashboard-wrapper">
+      <p class="dashboard-title">Dashboard</p>
 
-    <div class="welcome-text">
-      <p>
-        <span class="gradient-text">Welcome back,</span><br />
-        <span class="prof-light">Dr.</span>
+      <div class="welcome-text">
+        <p>
+          <span class="gradient-text">Welcome back,</span><br />
+          <span class="prof-light">Dr.</span>
           <span class="prof-bold">
             <%= professor.name %>
           </span>
-      </p>
-    </div>
+        </p>
+      </div>
 
       <form id="marksUploadForm" class="marks-upload-form" action="/prof/submit" method="post" enctype="multipart/form-data">
         <div class="courses-selection-container">
           <p class="assigned-courses-title">Assigned Courses:</p>
-      <div class="assigned-courses-box">
-        <% if (courses.length > 0) { %>
-          <% courses.forEach(course => { %>
+          <div class="assigned-courses-box">
+            <% if (courses.length > 0) { %>
+              <% courses.forEach(course => { %>
                 <label class="course-box-label">
                   <input type="radio" name="courseId" value="<%= course.id %>" class="hidden-radio">
-            <div class="course-box">
+                  <div class="course-box">
                     <div class="course-code">
                       <%= course.name %>
                     </div>
@@ -45,32 +45,32 @@
                       <img src="/assets/section-icon.png" alt="Section" class="section-icon" />
                       <span>Sec-<%= course.section %></span>
                     </div>
-            </div>
+                  </div>
                 </label>
-          <% }) %>
-        <% } else { %>
-          <p>No assigned courses available.</p>
-        <% } %>
-      </div>
+              <% }) %>
+            <% } else { %>
+              <p>No assigned courses available.</p>
+            <% } %>
+          </div>
         </div>
 
         <div class="upload-container">
-      <p class="upload-title">Upload page:</p>
+          <p class="upload-title">Upload page:</p>
           <div class="upload-box-wrapper">
             <div class="upload-main-content">
-      <div class="file-upload">
-        <input type="file" name="marksheet" id="file" class="hidden-file" accept=".csv" />
-        <label for="file" class="custom-file-label">
-          <div class="upload-content">
-            <div class="upload-icon"></div>
+              <div class="file-upload">
+                <input type="file" name="marksheet" id="file" class="hidden-file" accept=".csv" />
+                <label for="file" class="custom-file-label">
+                  <div class="upload-content">
+                    <div class="upload-icon"></div>
                     <div class="upload-text">
                       <p>Drag & drop files here</p>
                       <span>or</span>
                       <p class="browse-files">Browse files</p>
                     </div>
-          </div>
-        </label>
-      </div>
+                  </div>
+                </label>
+              </div>
               <div class="csv-preview-container" id="csvPreviewContainer">
                 <p class="preview-title">File Preview</p>
                 <div class="csv-preview-table-wrapper" id="csvPreviewTable"></div>
@@ -81,9 +81,9 @@
               <div class="file-note-wrapper">
                 <img src="/assets/warn7.png" alt="Warning" class="warning-icon" />
                 <div class="note-text-content">
-        <p class="file-note">Note:</p>
-        <p class="file-note1">Only .csv supported</p>
-      </div>
+                  <p class="file-note">Note:</p>
+                  <p class="file-note1">Only .csv supported</p>
+                </div>
               </div>
               <button class="submit-btn" type="submit">
                 <span class="submit-text">Submit</span>
@@ -91,8 +91,8 @@
             </div>
           </div>
         </div>
-    </form>
-  </div>
+      </form>
+    </div>
 
     <script>
       const uploadForm = document.getElementById('marksUploadForm');
