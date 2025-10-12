@@ -12,12 +12,27 @@
 <body class="outfit">
     <div>
         <p class="logo">Campus<span>C</span>onnect</p>
-        <form action="/auth/register" method="post">
+        <form id="registerForm" action="/auth/register" method="post">
             <input type="text" placeholder="Roll Number" name="roll" required>
             <input type="text" placeholder="Section" name="section" required>
-            <input type="tel" placeholder="Phone Number" name="phone" required>
+            <input type="tel" id="phoneNumber" placeholder="Phone Number" name="phone" required>
             <button type="submit"><p>Register</p></button>
         </form>
     </div>
+
+    <script>
+        const form = document.getElementById('registerForm');
+        const phoneInput = document.getElementById('phoneNumber');
+
+        form.addEventListener('submit', function(event) {
+            const phoneRegex = /^\d{10}$/;
+
+            if (!phoneRegex.test(phoneInput.value)) {
+                alert('Phone number must be exactly 10 digits long.');
+                
+                event.preventDefault();
+            }
+        });
+    </script>
 </body>
 </html>
