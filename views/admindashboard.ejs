@@ -81,7 +81,21 @@
 
           <button type="submit">Add Course</button>
         </form>
-        <div id="error-message" class="course-error"></div>
+
+        <!-- Remove Course Form -->
+        <h2>Remove Course</h2>
+        <form id="remove-course-form" action="/admin/dashboard" method="POST">
+          <input type="hidden" name="action" value="remove-entire-course">
+          <label for="remove-course-entire-select">Select Course:</label>
+          <select id="remove-course-entire-select" name="course" required>
+            <option value="">Select a Course</option>
+            <% courses.forEach(course => { %>
+              <option value="<%= course._id %>"><%= course.name %> (Section <%= course.section %>)</option>
+            <% }) %>
+          </select>
+          <button type="submit">Remove Course</button>
+        </form>
+        <div id="error-message" class="course-error"><% if (error) { %><%= error %><% } %></div>
       </div>
 
       <!-- Student Management Section -->
