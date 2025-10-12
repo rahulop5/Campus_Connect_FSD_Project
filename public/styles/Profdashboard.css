@@ -3,8 +3,8 @@ body {
     margin: 0 auto;
     display: flex;
     flex-direction: column;
-  }
-  
+}
+
 .outfit {
     font-family: 'Outfit', sans-serif;
 }
@@ -19,35 +19,35 @@ body {
     color: white;
     margin-bottom: 40px;
     margin-top: 20px;
-  }
-  
-  .welcome-text {
+}
+
+.welcome-text {
     font-family: "Open Sans", sans-serif;
     font-size: 70px;
     font-weight: 300;
     line-height: 75px;
     letter-spacing: -3.5px;
-  }
-  
-  .gradient-text {
+}
+
+.gradient-text {
     background: linear-gradient(90deg, #2B9900 0%, #949494 73.9%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-  }
-  
-  .prof-light {
+}
+
+.prof-light {
     font-family: "Open Sans", sans-serif;
     font-weight: 300;
     color: #FFF;
-  }
-  
-  .prof-bold {
+}
+
+.prof-bold {
     font-family: "Open Sans", sans-serif;
     font-weight: 700;
     font-size: 70px;
     color: #FFF;
-  }
-  
+}
+
 .marks-upload-form {
     margin-top: 40px;
 }
@@ -121,8 +121,8 @@ body {
     font-weight: 500;
     color: #FFF;
     margin-top: 5px;
-  }
-  
+}
+
 .section-icon {
     width: 20px;
     height: 20px;
@@ -134,9 +134,9 @@ body {
     border-radius: 20px;
     padding: 35px;
     color: white;
-  }
-  
-  .upload-title {
+}
+
+.upload-title {
     font-size: 30px;
     font-weight: 400;
     margin: 0 0 30px 0;
@@ -153,18 +153,18 @@ body {
     flex-direction: row;
     flex-grow: 1;
     min-height: 0;
-  }
-  
-  .file-upload {
+}
+
+.file-upload {
     display: flex;
     flex-direction: column;
-  }
-  
-  .hidden-file {
+}
+
+.hidden-file {
     display: none;
-  }
-  
-  .custom-file-label {
+}
+
+.custom-file-label {
     display: flex;
     width: 45vw;
     height: 320px;
@@ -187,26 +187,26 @@ body {
     border-color: #2B9900;
 }
 
-  .upload-content {
+.upload-content {
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 10px;
     text-align: center;
-  }
-  
-  .upload-icon {
+}
+
+.upload-icon {
     width: 50px;
     height: 50px;
     background: url('/assets/upload.png') transparent 50% / cover no-repeat;
 }
-  
-  .upload-text {
+
+.upload-text {
     color: #FFF;
     font-size: 20px;
     font-weight: 400;
-  }
-  
+}
+
 .upload-text p {
     margin: 5px 0;
 }
@@ -251,15 +251,15 @@ body {
     font-size: 22px;
     color: #a8a8a8;
     margin: 0;
-  }
-  
+}
+
 .file-note1 {
     font-size: 22px;
     color: #a8a8a8;
     margin-top: -5px;
-  }
+}
 
-  .submit-btn {
+.submit-btn {
     width: 300px;
     height: 65px;
     margin-right: 8vw;
@@ -273,9 +273,9 @@ body {
 
 .submit-btn:hover {
     background: rgba(56, 120, 31, 0.9);
-  }
-  
-  .submit-text {
+}
+
+.submit-text {
     font-size: 26px;
     font-weight: 300;
     color: #FFF;
@@ -376,8 +376,8 @@ body {
     width: 100%;
     border-collapse: collapse;
     font-size: 14px;
-  }
-  
+}
+
 .csv-preview-table-wrapper th,
 .csv-preview-table-wrapper td {
     padding: 8px 12px;
