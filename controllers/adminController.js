@@ -842,3 +842,16 @@ export const adminDashboard = async (req, res) => {
     });
   }
 };
+
+export const adminDetails = async(req, res)=>{
+  if(req.session.user){
+    return res.json({
+      name: req.session.user.name
+    })
+  }
+  else{
+    return res.status(400).json({
+      message: "Not authencated"
+    })
+  }
+}

@@ -31,7 +31,7 @@
             Welcome back,
           </div>
           <div id="admin_div">
-            <%= name %>
+            <!-- <%= name %> -->
           </div>
         </div>
       </div>
@@ -319,6 +319,20 @@
 
   <script>
     // Set dynamic date
+    document.addEventListener("DOMContentLoaded", () => {
+        fetch("/admin/details")
+          .then((res) => res.json())
+          .then((data) => {
+            const container = document.getElementById("admin_div");
+            container.innerHTML = `${data.name}`;
+          })
+          .catch((err) => {
+            console.error("Error fetching courses:", err);
+            document.getElementById("coursesContainer").innerHTML =
+              "<p>Error loading courses.</p>";
+          });
+      });
+
     document.addEventListener("DOMContentLoaded", () => {
       try {
         const today = new Date();
