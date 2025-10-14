@@ -147,6 +147,10 @@
         document.getElementById("questionDesc").textContent = q.desc;
         document.getElementById("askerName").textContent = q.asker?.name || "Anonymous";
 
+        document.getElementById("upvoteBtn").dataset.id = q._id;
+        document.getElementById("downvoteBtn").dataset.id = q._id;
+
+
         const tagsContainer = document.getElementById("tagsContainer");
         tagsContainer.innerHTML = "";
         (q.tags || []).forEach(tag => {
@@ -200,5 +204,6 @@
       });
     });
   </script>
+  <script src="/scripts/problemopen.js"></script>
 </body>
 </html>

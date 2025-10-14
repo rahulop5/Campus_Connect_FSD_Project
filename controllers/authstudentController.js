@@ -2,9 +2,6 @@ import passport from "passport";
 import bcrypt from "bcryptjs";
 import Student from "../models/Student.js";
 
-// ==================================
-// == GOOGLE AUTHENTICATION
-// ==================================
 export const googleAuth = passport.authenticate("google", { scope: ["profile", "email"] });
 
 export const googleAuthCallback = passport.authenticate("google", { failureRedirect: "/" });
@@ -32,9 +29,6 @@ export const handleGoogleAuthCallback = async (req, res) => {
   }
 };
 
-// ==================================
-// == GITHUB AUTHENTICATION
-// ==================================
 export const githubAuth = passport.authenticate("github", { scope: ["user:email"] });
 
 export const githubAuthCallback = passport.authenticate("github", { failureRedirect: "/" });
@@ -62,9 +56,6 @@ export const handleGithubAuthCallback = async (req, res) => {
   }
 };
 
-// ==================================
-// == LOCAL SIGNUP (Step 1: Name, Email, Password)
-// ==================================
 export const signupStudent = async (req, res) => {
   try {
     const { name, email, password, confirm_password } = req.body;
@@ -116,14 +107,10 @@ export const signupStudent = async (req, res) => {
   }
 };
 
-// ==================================
-// == REGISTER (Step 2: Roll, Section, Phone) - The Final Step
-// ==================================
 export const registerStudent = async (req, res) => {
   try {
     const { roll, section, phone } = req.body;
 
-    // --- VALIDATION ---
     const rollRegex = /^S(20[0-2][0-9])00(10|20|30)([0-9]{3})$/; // Updated regex for year 2000-2029
     if (!roll || !rollRegex.test(roll)) {
       return res.status(400).json({ message: "Invalid Roll Number format. Example: S20230010001" });

@@ -12,91 +12,72 @@ filterButton.addEventListener('click', () => {
   }
 });
 
+document.addEventListener('click', async (e) => {
+  const target = e.target;
 
-document.addEventListener('DOMContentLoaded', () => {
-  // Upvote question
-  document.querySelectorAll('.po_qelab .upvote-triangle').forEach(button => {
-    button.addEventListener('click', (e) => {
-      const id = button.getAttribute('data-id');
-      
-      fetch('/upvote-question', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ id })
-      })
-      .then(res => res.json())
-      .then(data => {
-        // Update the votes on the page
-        const voteElement = button.nextElementSibling.querySelector('p');
-        voteElement.textContent = data.votes;
-      });
+  // --- Upvote Question ---
+  if (target.matches('.po_qelab .upvote-triangle')) {
+    const id = target.dataset.id;
+    if (!id) return console.error("Question ID missing in upvote button");
+
+    const res = await fetch('/upvote-question', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id })
     });
-  });
+    const data = await res.json();
+    if (data?.votes !== undefined) {
+      target.nextElementSibling.querySelector('p').textContent = data.votes;
+    }
+  }
 
-  // Downvote question
-  document.querySelectorAll('.po_qelab .downvote-triangle').forEach(button => {
-    button.addEventListener('click', (e) => {
-      const id = button.getAttribute('data-id');
+  // --- Downvote Question ---
+  if (target.matches('.po_qelab .downvote-triangle')) {
+    const id = target.dataset.id;
+    if (!id) return console.error("Question ID missing in downvote button");
 
-      fetch('/downvote-question', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ id })
-      })
-      .then(res => res.json())
-      .then(data => {
-        // Update the votes on the page
-        const voteElement = button.previousElementSibling.querySelector('p');
-        voteElement.textContent = data.votes;
-      });
+    const res = await fetch('/downvote-question', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id })
     });
-  });
+    const data = await res.json();
+    if (data?.votes !== undefined) {
+      target.previousElementSibling.querySelector('p').textContent = data.votes;
+    }
+  }
 
-  // Upvote answer
-  document.querySelectorAll('.ansupdownvote .upvote-triangle').forEach(button => {
-    button.addEventListener('click', (e) => {
-      const questionId = button.getAttribute('data-question-id');
-      const answerId = button.getAttribute('data-answer-id');
+  // --- Upvote Answer ---
+  if (target.matches('.ansupdownvote .upvote-triangle')) {
+    const questionId = target.dataset.questionId;
+    const answerId = target.dataset.answerId;
+    if (!questionId || !answerId) return console.error("Missing IDs for answer upvote");
 
-      fetch('/upvote-answer', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ questionId, answerId })
-      })
-      .then(res => res.json())
-      .then(data => {
-        // Update the votes on the page
-        const voteElement = button.nextElementSibling.querySelector('p');
-        voteElement.textContent = data.votes;
-      });
+    const res = await fetch('/upvote-answer', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ questionId, answerId })
     });
-  });
+    const data = await res.json();
+    if (data?.votes !== undefined) {
+      target.nextElementSibling.querySelector('p').textContent = data.votes;
+    }
+  }
 
-  // Downvote answer
-  document.querySelectorAll('.ansupdownvote .downvote-triangle').forEach(button => {
-    button.addEventListener('click', (e) => {
-      const questionId = button.getAttribute('data-question-id');
-      const answerId = button.getAttribute('data-answer-id');
+  // --- Downvote Answer ---
+  if (target.matches('.ansupdownvote .downvote-triangle')) {
+    const questionId = target.dataset.questionId;
+    const answerId = target.dataset.answerId;
+    if (!questionId || !answerId) return console.error("Missing IDs for answer downvote");
 
-      fetch('/downvote-answer', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ questionId, answerId })
-      })
-      .then(res => res.json())
-      .then(data => {
-        // Update the votes on the page
-        const voteElement = button.previousElementSibling.querySelector('p');
-        voteElement.textContent = data.votes;
-      });
+    const res = await fetch('/downvote-answer', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ questionId, answerId })
     });
-  });
+    const data = await res.json();
+    if (data?.votes !== undefined) {
+      target.previousElementSibling.querySelector('p').textContent = data.votes;
+    }
+  }
 });

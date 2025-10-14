@@ -192,14 +192,17 @@ export const studentGradesPartial = async (req, res) => {
     const studentCourses = req.session.user.courses.map((c) => c.course);
     const courses = await Course.find({ _id: { $in: studentCourses } });
 
+    console.log(courses[0]);
     if (!courses || courses.length === 0)
       return res.status(404).send("No courses found");
 
     const bellgraphSubjects = courses.map((course) => ({
       courseId: course._id.toString(),
       name: course.name,
+      totalclasses: course.totalclasses,
+      credits: course.credits,
+      classescompleted: course.classeshpnd
     }));
-
     res.render("partials/bellgraphPartial.ejs", {
       subject: bellgraphSubjects[0].name,
       bellgraphSubjects,
@@ -293,7 +296,12 @@ export const studentProfilePartial = async (req, res) => {
 
 
 export const changepass = async (req, res) => {
-  res.render("changepassword.ejs")
+  if(!req.session.user) {
+    return res.status(400).json({
+      message: "Not authenticated"
+    })
+  }
+  return res.render("changepassword.ejs");
 }
 
 //yaapi
