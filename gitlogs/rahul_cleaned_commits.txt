@@ -1,0 +1,65 @@
+[80634ee] bellgraph conversion completed - Sun Oct 12 13:24:39 2025 +0530
+[0ee383a] qandaforum conversion completed - Sun Oct 12 13:19:10 2025 +0530
+[2c24d41] conversion attendance and dashboard completed - Sun Oct 12 12:37:37 2025 +0530
+[5241f96] Conversion into AJAX Part 1 - Sun Oct 12 01:08:13 2025 +0530
+[5b3a740] removed sidebar - Sat May 10 13:00:05 2025 +0530
+[dec03a2] final commit project done - Sat May 10 12:20:53 2025 +0530
+[65c7310] bellgraph small edit - Sat May 10 11:32:01 2025 +0530
+[304f1d2] bellgraph completed - Sat May 10 11:29:40 2025 +0530
+[b169f70] bellgraph partial complete - Sat May 10 11:07:57 2025 +0530
+[ef59cab] attendance done - Fri May 9 14:53:12 2025 +0530
+[b79400b] profile student done - Fri May 9 02:53:58 2025 +0530
+[3ed2ecc] changed the multer thingy - Thu May 8 23:45:48 2025 +0530
+[2d9abcd] csv uploading part done - Thu May 8 15:07:56 2025 +0530
+[379952a] abbreviated the courses in both dashboards - Thu May 8 12:31:06 2025 +0530
+[a5d8405] rendered courses from db - Wed May 7 15:52:03 2025 +0530
+[9651d52] temp - Wed May 7 15:23:28 2025 +0530
+[ecda543] prof dashboard done file upload remaining - Wed May 7 14:23:23 2025 +0530
+[0d9d55b] qanda forum completed - Wed May 7 02:34:52 2025 +0530
+[9b92d8b] prof auth done dashboard remaining - Wed May 7 01:00:56 2025 +0530
+[d48dca7] student auth complete - Wed May 7 00:01:58 2025 +0530
+[6a21cbc] beginning of the mongodb phase - Tue May 6 01:36:18 2025 +0530
+[c515a9e] removed notifications - Tue Mar 18 14:57:40 2025 +0530
+[e5c1cdf] user smth fonepnvgkenv - Tue Mar 18 14:55:11 2025 +0530
+[228b9e1] sqlite3 added - Tue Mar 18 14:21:37 2025 +0530
+[b9a65d6] final - Tue Mar 18 02:26:08 2025 +0530
+[12fe4ad] ask a question completed - Mon Mar 17 20:40:11 2025 +0530
+[78fad83] ask question done frontend - Mon Mar 17 15:07:11 2025 +0530
+[aed647d] dashboard completed - Mon Mar 17 06:19:36 2025 +0530
+[233869d] completed attendance backend - Mon Mar 17 04:43:03 2025 +0530
+[3d7b766] completed qanda forum - Mon Mar 17 00:09:29 2025 +0530
+[5646e25] voting completed in qandaforum - Sun Mar 16 23:53:00 2025 +0530
+[ace36bf] question part smwt done - Sun Mar 16 20:00:44 2025 +0530
+[c26c07a] corrected shit - Sun Mar 16 19:06:55 2025 +0530
+[07c669e] test commit qandaforum - Sun Mar 16 18:59:19 2025 +0530
+[ce20e89] corrected code for graph - Sun Mar 16 16:28:36 2025 +0530
+[0619942] bellgraph backend done smwt - Sun Mar 16 16:24:39 2025 +0530
+[ed84c47] google and github auth done sigma ahh - Sun Mar 16 01:07:48 2025 +0530
+[03e7b09] jwt done - Sat Mar 15 21:40:07 2025 +0530
+[01111a2] signup done - Sat Mar 15 16:16:58 2025 +0530
+[3b9b457] temp commit backend - Sat Mar 15 13:51:46 2025 +0530
+[db01b77] started backend and completed models - Fri Mar 14 22:47:15 2025 +0530
+[38e5d45] bellgraph done - Thu Mar 13 16:30:25 2025 +0530
+[58a632b] dashboard done smwt - Wed Mar 12 23:30:18 2025 +0530
+[367cf81] signup and login done - Wed Mar 12 00:32:10 2025 +0530
+[40c2166] completed scroller - Tue Mar 11 22:40:35 2025 +0530
+[5e940af] part2 ie scroller done - Tue Mar 11 22:30:50 2025 +0530
+[5366750] scroller part1 done in homepage - Tue Mar 11 20:36:57 2025 +0530
+[f4f47b8] changed bg of signup - Tue Mar 11 12:04:24 2025 +0530
+[5c269d6] added radial background to home page - Tue Mar 11 08:26:01 2025 +0530
+[9d4eb47] completed hompage - Tue Mar 11 07:20:26 2025 +0530
+[4bdc1a8] completed problemopenpage lets goooo - Mon Mar 10 23:01:32 2025 +0530
+[8257a81] halfway done thru the problemopen page - Mon Mar 10 17:32:52 2025 +0530
+[8b71ede] completed header - Mon Mar 10 14:02:19 2025 +0530
+[6116d75] removed styles too - Mon Mar 10 14:01:30 2025 +0530
+[798e0fb] separated header and removed menuicon - Mon Mar 10 14:00:13 2025 +0530
+[2e3c7d0] github auth done - Tue Mar 4 14:20:09 2025 +0530
+[0907015] google auth with passport - Mon Mar 3 14:51:43 2025 +0530
+[201d91d] filter button functionality half working - Mon Feb 17 12:02:23 2025 +0530
+[a4a84a1] when u press filter button search bar moves - Sat Feb 1 16:49:42 2025 +0530
+[ca3f02a] hover sidebar complete - Fri Jan 31 23:33:46 2025 +0530
+[e39be40] fixed the positions of nav and sidebars - Fri Jan 31 22:43:31 2025 +0530
+[00d80be] problemslvfrm smwt completed - Mon Jan 27 23:10:45 2025 +0530
+[2c68bbb] toptop completed - Mon Jan 27 21:50:03 2025 +0530
+[16d4579] navbar completed - Mon Jan 27 11:00:37 2025 +0530
+[01c402a] starting of the greatest ffsd project - Sat Jan 18 17:20:37 2025 +0530
