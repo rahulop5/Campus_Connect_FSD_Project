@@ -7,84 +7,94 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&family=Rubik:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
-    <title>Document</title>
+    <title>Ask a Question</title>
 </head>
 <body class="outfit">
     <%- include("header.ejs") %>
     <%- include("sidebar.ejs") %>
-    <div class="ask_mainpage">
-        <p class="welcome">Welcome <%= name %></p>
-        <p class="addq">Add Question</p>
-        <hr class="hrhr">
-        <div class="mainpg">
-            <div class="mainmain">
+
+    <div class="main-content-area">
+        <div class="page-header">
+            <p class="welcome-user">Welcome <%= name %></p>
+            <h1 class="page-title" style="font-weight: 400;">Ask a Question</h1>
+        </div>
+
+        <div class="content-wrapper">
+            <div class="form-card">
                 <form action="/ask" method="POST">
-                  <div class="hoho">
-                    <p>Title</p>
-                    <input type="text" placeholder="Title" name="title" required>
-                  </div>
-                  <div class="outfit po_userans">
-                    <div class="po_useransheading"><p>Describe your Question:</p></div>
-                    <div class="po_useranscontainer">
-                      <div class="po_useranstools">
-                        <img src="/assets/bold.png" alt="">
-                        <img src="/assets/italic.png" alt="">
-                        <img src="/assets/heading.png" alt="">
-                        <img src="/assets/codeansbox.png" alt="">
-                      </div>
-                      <textarea type="textarea" id="answer-textarea" class="po_useransbox" name="desc" required></textarea>  
+                    <div class="form-group">
+                        <label for="title" class="form-label">Title</label>
+                        <p class="form-hint">Be specific and imagine you’re asking a question to another person.</p>
+                        <input type="text" id="title" class="form-control" placeholder="e.g., How to implement a binary search tree in C++?" name="title" required>
                     </div>
-                  </div>
-                  <div class="hoho">
-                    <p>Tags</p>
-                    <input type="text" placeholder="Tags (comma separated)" name="tags" required>
-                  </div>
-                  <button type="submit">
-                    <p>Submit</p>
-                  </button>
+
+                    <div class="form-group">
+                        <label for="description-textarea" class="form-label">Description</label>
+                        <p class="form-hint">Introduce the problem and expand on what you put in the title.</p>
+                        <div class="editor-container">
+                            <div class="editor-tools">
+                                <button type="button" id="bold-btn" class="tool-btn" title="Bold"><img src="/assets/bold.png" alt="Bold"></button>
+                                <button type="button" id="italic-btn" class="tool-btn" title="Italic"><img src="/assets/italic.png" alt="Italic"></button>
+                                <button type="button" class="tool-btn" title="Heading"><img src="/assets/heading.png" alt="Heading"></button>
+                                <button type="button" class="tool-btn" title="Code Block"><img src="/assets/codeansbox.png" alt="Code"></button>
+                            </div>
+                            <textarea id="description-textarea" class="form-control description-box" name="desc" placeholder="Provide details, what you've tried, and what you're expecting." required></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="tags" class="form-label">Tags</label>
+                        <p class="form-hint">Add up to 5 tags to describe what your question is about. Use commas to separate tags.</p>
+                        <input type="text" id="tags" class="form-control" placeholder="e.g., c++, data-structures, algorithms" name="tags" required>
+                    </div>
+
+                    <button type="submit" class="submit-btn">
+                        Post Your Question
+                    </button>
                 </form>
-              </div>
-              
-            <div class="db_notice">
-                <div class="po_noticeboard">
-                    <p>Notice!</p>
-                    <hr class="noticeline">
-                    <div class="po_noticenews">
-                        <div>
-                            <img src="/assets/pin.png" alt="">
-                            <p>Abhisarga night concert ticket sale is now live! </p>
-                        </div>
-                        <div>
-                            <img src="/assets/pin.png" alt="">
-                            <p>Recharge Point now has Burgers because of a certain someone!</p>
-                        </div>
-                        <div>
-                            <img src="/assets/pin.png" alt="">
-                            <p>Enigma , E-Cell , TedX are new Trend Setters!</p>
-                        </div>
+            </div>
+            
+            <div class="sidebar-container">
+                <div class="sidebar-card notice-board">
+                    <h2 class="sidebar-title">Notice Board</h2>
+                    <div class="notice-news">
+                        <div><img src="/assets/pin.png" alt="pin"><p>Abhisarga night concert ticket sale is now live!</p></div>
+                        <div><img src="/assets/pin.png" alt="pin"><p>Recharge Point now has Burgers thanks to community feedback.</p></div>
+                        <div><img src="/assets/pin.png" alt="pin"><p>Enigma, E-Cell, & TedX are setting new trends on campus!</p></div>
                     </div>
-                    <hr class="noticeline">
-                    <div class="po_noticenews">
-                        <div>
-                            <img src="/assets/premium.png" alt="">
-                            <p>Campus Connect now brings you Premium at Rupees 1000 ONLY!</p>
-                        </div>
-                        <div>
-                            <img src="/assets/premium.png" alt="">
-                            <p>Get 30% OFF using student id verification!</p>
-                        </div>
-                        <div>
-                            <img src="/assets/premium.png" alt="">
-                            <p>Campus Connect now can track your attendance for you!</p>
-                        </div>
+                    <div class="notice-news premium-section">
+                        <div><img src="/assets/premium.png" alt="premium"><p>Campus Connect Premium is now available for ₹1000!</p></div>
+                        <div><img src="/assets/premium.png" alt="premium"><p>Get 30% OFF with your student ID verification!</p></div>
                     </div>
                 </div>
-                <div class="po_ads">
-                    <p>Ads Come Here</p>   
+                <div class="sidebar-card ads-box">
+                    <p>Ads</p>   
                 </div>
             </div>
         </div>
-        <hr class="hrhr">
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const textarea = document.getElementById('description-textarea');
+            const boldBtn = document.getElementById('bold-btn');
+            const italicBtn = document.getElementById('italic-btn');
+
+            function applyFormat(syntax) {
+                const start = textarea.selectionStart;
+                const end = textarea.selectionEnd;
+                const selectedText = textarea.value.substring(start, end);
+                const textBefore = textarea.value.substring(0, start);
+                const textAfter = textarea.value.substring(end);
+                const newText = `${syntax}${selectedText}${syntax}`;
+                textarea.value = textBefore + newText + textAfter;
+                textarea.focus();
+                textarea.setSelectionRange(start + syntax.length, end + syntax.length);
+            }
+
+            boldBtn.addEventListener('click', () => applyFormat('**'));
+            italicBtn.addEventListener('click', () => applyFormat('*'));
+        });
+    </script>
 </body>
 </html>
