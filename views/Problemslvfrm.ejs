@@ -1,140 +1,178 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="./styles/Problemslvfrm.css" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&family=Rubik:wght@300..900&display=swap" rel="stylesheet">
-  <title>CampusConnect</title>
-</head>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./styles/Problemslvfrm.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap"
+      rel="stylesheet"
+    />
+    <title>CampusConnect</title>
+  </head>
 
-<body>
-  <%- include("header.ejs") %>
-  <%- include("sidebar.ejs") %>
+  <body>
+    <%- include("header.ejs") %> 
+    <%- include("sidebar.ejs") %>
 
-  <div class="maincon">
-    <div class="mainpage">
-      <div class="toptop">
-        <div class="top">
-          <div class="searchques">
-            <h1 class="outfit">Trending <span>Q</span>uestions</h1>
-            <p class="outfit" id="quesCount">Loading questions...</p>
-          </div>
-          <div class="askaques">
-            <a href="/ask" style="text-decoration: none;">
-              <button class="outfit">Ask a Question</button>
-            </a>
-          </div>
-        </div>
-
-        <div class="searchquesinput">
-          <div class="input-container">
-            <div class="input">
-              <form>
-                <div class="advsearch">
-                  <input type="text" id="searchInput" placeholder="Search a Question">
-                  <button type="submit"><img src="./assets/search.png" alt=""></button>
-                </div>
-              </form>
+    <div class="maincon">
+      <div class="mainpage outfit">
+        <div class="toptop">
+          <div class="top">
+            <div class="searchques">
+              <h1 class="outfit">Trending <span>Q</span>uestions</h1>
+              <p class="outfit" id="quesCount">Loading questions...</p>
             </div>
-            <div class="hidden-div">
-              <p>Filters will go here</p>
-            </div>
-          </div>
-          <div class="filter">
-            <button><img src="./assets/filter (1).png" alt=""></button>
-          </div>
-        </div>
-      </div>
-
-      <hr>
-
-      <div class="problems" id="problemsContainer">
-        <!-- Template for questions -->
-        <template id="questionTemplate">
-          <div class="problem outfit">
-            <div class="votes">
-              <p class="votesCount">0 votes</p>
-              <p class="answersCount">0 answers</p>
-              <p class="viewsCount">0 views</p>
-            </div>
-            <div class="main">
-              <a class="questionLink" href="#" style="text-decoration: none;">
-                <h4 class="questionHeading">Heading</h4>
+            <div class="askaques">
+              <a href="/ask" style="text-decoration: none">
+                <button class="outfit submit-btn">Ask a Question</button>
               </a>
-              <p class="questionDesc">Description...</p>
-              <div class="tags"></div>
             </div>
-            <div class="user">
-              <div class="useruser">
-                <img src="./assets/duck_with_A_gun 1.png" alt="">
-                <p class="askerName">Anonymous</p>
+          </div>
+
+          <div class="searchquesinput">
+            <div class="input-container">
+              <div class="input">
+                <form>
+                  <div class="advsearch">
+                    <input
+                      type="text"
+                      id="searchInput"
+                      placeholder="Search a Question"
+                    />
+                    <button type="submit">
+                      <img src="./assets/search.png" alt="" />
+                    </button>
+                  </div>
+                </form>
+              </div>
+              <div class="hidden-div">
+                <p>Filters will go here</p>
               </div>
             </div>
+            <div class="filter">
+              <button><img src="./assets/filter (1).png" alt="" /></button>
+            </div>
           </div>
-          <hr class="problemline">
-        </template>
+        </div>
+
+        <div class="content-wrapper">
+          <div class="problems" id="problemsContainer">
+            <template id="questionTemplate">
+              <div class="problem outfit">
+                <div class="votes">
+                  <p class="votesCount">0 votes</p>
+                  <p class="answersCount">0 answers</p>
+                  <p class="viewsCount">0 views</p>
+                </div>
+                <div class="main">
+                  <a
+                    class="questionLink"
+                    href="#"
+                    style="text-decoration: none"
+                  >
+                    <h4 class="questionHeading">Heading</h4>
+                  </a>
+                  <p class="questionDesc">Description...</p>
+                  <div class="tags"></div>
+                </div>
+                <div class="user">
+                  <div class="useruser">
+                    <img src="./assets/duck_with_A_gun 1.png" alt="" />
+                    <p class="askerName">Anonymous</p>
+                  </div>
+                </div>
+              </div>
+              <hr class="problemline" />
+            </template>
+          </div>
+
+          <div class="sidebar-container">
+                <div class="sidebar-card notice-board">
+                    <h2 class="sidebar-title">Notice Board</h2>
+                    <div class="notice-news">
+                        <div><img src="/assets/pin.png" alt="pin"><p>Abhisarga night concert ticket sale is now live!</p></div>
+                        <div><img src="/assets/pin.png" alt="pin"><p>Recharge Point now has Burgers thanks to community feedback.</p></div>
+                        <div><img src="/assets/pin.png" alt="pin"><p>Enigma, E-Cell, & TedX are setting new trends on campus!</p></div>
+                    </div>
+                    <div class="notice-news premium-section">
+                        <div><img src="/assets/premium.png" alt="premium"><p>Campus Connect Premium is now available for ₹1000!</p></div>
+                        <div><img src="/assets/premium.png" alt="premium"><p>Get 30% OFF with your student ID verification!</p></div>
+                    </div>
+                </div>
+                <div class="sidebar-card ads-box">
+                    <p>Ads</p>   
+                </div>
+            </div>
+        </div>
       </div>
     </div>
-  </div>
 
-  <script>
-    async function loadQuestions() {
-      try {
-        const res = await fetch("/questions/partial");
-        if (!res.ok) throw new Error("Failed to fetch questions");
-        const data = await res.json();
+    <script>
+      async function loadQuestions() {
+        try {
+          const res = await fetch("/questions/partial");
+          if (!res.ok) throw new Error("Failed to fetch questions");
+          const data = await res.json();
 
-        const container = document.getElementById("problemsContainer");
-        const template = document.getElementById("questionTemplate");
-        const countEl = document.getElementById("quesCount");
+          const container = document.getElementById("problemsContainer");
+          const template = document.getElementById("questionTemplate");
+          const countEl = document.getElementById("quesCount");
 
-        container.innerHTML = "";
-        const questions = data.questions || [];
+          container.innerHTML = "";
+          const questions = data.questions || [];
 
-        if (countEl) countEl.textContent = `Available Questions - ${questions.length.toLocaleString()}`;
+          if (countEl)
+            countEl.textContent = `Available Questions - ${questions.length.toLocaleString()}`;
 
-        if (questions.length === 0) {
-          container.innerHTML = "<p>No questions found.</p>";
-          return;
-        }
+          if (questions.length === 0) {
+            container.innerHTML =
+              '<p style="padding: 25px;">No questions found.</p>';
+            return;
+          }
 
-        questions.forEach((q) => {
-          const clone = template.content.cloneNode(true);
+          questions.forEach((q) => {
+            const clone = template.content.cloneNode(true);
 
-          clone.querySelector(".votesCount").textContent = `${q.votes} votes`;
-          clone.querySelector(".answersCount").textContent = `${q.answers.length} answers`;
-          clone.querySelector(".viewsCount").textContent = `${q.views} views`;
+            clone.querySelector(".votesCount").textContent = `${q.votes} votes`;
+            clone.querySelector(
+              ".answersCount"
+            ).textContent = `${q.answers.length} answers`;
+            clone.querySelector(
+              ".viewsCount"
+            ).textContent = `${q.views} views`;
 
-          const link = clone.querySelector(".questionLink");
-          link.href = `/problemopen/${q._id}`;
-          link.querySelector(".questionHeading").textContent = q.heading;
+            const link = clone.querySelector(".questionLink");
+            link.href = `/problemopen/${q._id}`;
+            link.querySelector(".questionHeading").textContent = q.heading;
 
-          clone.querySelector(".questionDesc").textContent =
-            (q.desc?.slice(0, 100) || "") + "...";
+            clone.querySelector(".questionDesc").textContent =
+              (q.desc?.slice(0, 100) || "") + "...";
 
-          const tagsContainer = clone.querySelector(".tags");
-          tagsContainer.innerHTML = "";
-          (q.tags || []).forEach((tag) => {
-            const tagDiv = document.createElement("div");
-            tagDiv.innerHTML = `<p>${tag}</p>`;
-            tagsContainer.appendChild(tagDiv);
+            const tagsContainer = clone.querySelector(".tags");
+            tagsContainer.innerHTML = "";
+            (q.tags || []).forEach((tag) => {
+              const tagDiv = document.createElement("div");
+              tagDiv.innerHTML = `<p>${tag}</p>`;
+              tagsContainer.appendChild(tagDiv);
+            });
+
+            clone.querySelector(".askerName").textContent =
+              q.asker?.name || "Unknown";
+
+            container.appendChild(clone);
           });
-
-          clone.querySelector(".askerName").textContent = q.asker?.name || "Unknown";
-
-          container.appendChild(clone);
-        });
-      } catch (err) {
-        console.error("Error loading questions:", err);
+        } catch (err) {
+          console.error("Error loading questions:", err);
+          document.getElementById("problemsContainer").innerHTML =
+            '<p style="padding: 25px; color: #ff8a8a;">Failed to load questions. Please try again later.</p>';
+        }
       }
-    }
 
-    // Load immediately + refresh every 30s
-    loadQuestions();
-    setInterval(loadQuestions, 30000);
-  </script>
-</body>
+      loadQuestions();
+      setInterval(loadQuestions, 30000);
+    </script>
+  </body>
 </html>
