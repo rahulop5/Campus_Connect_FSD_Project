@@ -16,3 +16,20 @@ main {
     /* padding: 20px; */
     box-sizing: border-box;
 }
+
+/* Dashboard Greeting */
+#dashboard_div {
+    position: absolute;
+    left: 48px;
+    top: 33px;
+    font-family: Outfit;
+    font-size: 24px;
+    font-weight: 600;
+}
+
+#welcm_nd_admn_div {
+    position: absolute;
+    left: 48px;
+    top: 109px;
+    font-family: Outfit;
+}
