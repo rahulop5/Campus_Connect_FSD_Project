@@ -33,3 +33,74 @@ main {
     top: 109px;
     font-family: Outfit;
 }
+
+.green_gradient {
+    background: linear-gradient(90deg, #2B9900 0%, #949494 73.9%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+#welcome_div {
+    font-size: 70px;
+    font-weight: 400;
+    line-height: 75px;
+    letter-spacing: -3.5px;
+}
+
+#admin_div {
+    font-size: 85px;
+    font-weight: 700;
+    line-height: 75px;
+    letter-spacing: 2.55px;
+    color: white;
+}
+
+#date_holding_container_outer {
+    position: absolute;
+    display: flex;
+    justify-content: center; /* Center for better balance */
+    align-items: center;
+    z-index: 2;
+    color: white;
+    right: 20px; /* Simplified positioning */
+    height: 200px; /* Reduced height for compactness */
+}
+
+#date_holding_container_inner {
+    width: 200px; /* Smaller for better fit */
+    height: 180px;
+    background-color: rgba(43, 153, 0, 0.60);
+    border-radius: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#content_inside_datebox_container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+
+#day {
+    color: #000;
+    text-align: center;
+    font-family: Outfit;
+    font-size: 30px; /* Slightly smaller for balance */
+    font-weight: 500;
+    letter-spacing: -2.4px;
+    line-height: 40px;
+    margin-top: 10px;
+}
+
+#date {
+    text-align: center;
+    font-family: Outfit;
+    font-size: 80px; /* Adjusted for compactness */
+    font-weight: 700;
+    letter-spacing: 4.8px;
+    line-height: 80px;
+}
