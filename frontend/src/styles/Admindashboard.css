@@ -104,3 +104,36 @@ main {
     letter-spacing: 4.8px;
     line-height: 80px;
 }
+
+#month_year {
+    color: #000;
+    text-align: center;
+    font-family: Outfit;
+    font-size: 25px;
+    font-weight: 500;
+    letter-spacing: -2px;
+    margin-bottom: 10px;
+}
+
+/* Container for Course, Student, Professor, and Allotment Management */
+.management-section {
+    display: flex;
+    justify-content: flex-start;
+    gap: 20px; /* Reduced gap for tighter layout */
+    margin: 40px 0;
+    flex-wrap: wrap;
+}
+
+.course-container, .student-container, .professor-container, .course-allotment-container {
+    flex: 1 1 auto;
+    min-width: 300px; /* Preserved original min-width */
+    max-width: 340px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    padding: 25px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    color: white;
+    font-family: 'Outfit', sans-serif;
+}
