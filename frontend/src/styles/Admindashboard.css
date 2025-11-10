@@ -137,3 +137,85 @@ main {
     color: white;
     font-family: 'Outfit', sans-serif;
 }
+
+/* Form Styling */
+form {
+    position: relative; /* For positioning error messages */
+}
+
+#add-course-form, #student-form, #add-professor-form, #remove-course-form, #remove-professor-form, #course-allotment-form, #course-removal-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px; /* Preserved original gap */
+}
+
+#add-course-form label, #student-form label, #add-professor-form label, #remove-course-form label, #remove-professor-form label, #course-allotment-form label, #course-removal-form label {
+    display: block;
+    margin-bottom: 5px; /* Preserved original margin */
+    margin-top: 10px; /* Preserved original margin */
+    font-weight: 500;
+    font-size: 16px;
+}
+
+#add-course-form input, #add-course-form select,
+#student-form input,
+#add-professor-form input, #add-professor-form select,
+#remove-course-form select,
+#remove-professor-form select,
+#course-allotment-form select,
+#course-removal-form select {
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #2B9900;
+    background-color: #0F0F0F;
+    color: white;
+    margin-bottom: 10px; /* Preserved original margin */
+    font-family: 'Outfit', sans-serif;
+    box-sizing: border-box;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.1s ease;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+
+#add-course-form select, #remove-course-form select, #remove-professor-form select, #course-allotment-form select, #course-removal-form select {
+    background-image: url('data:image/svg+xml;utf8,<svg fill="%23FFFFFF" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>');
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    padding-right: 30px;
+}
+
+#add-course-form input:focus, #add-course-form select:focus,
+#student-form input:focus,
+#add-professor-form input:focus, #add-professor-form select:focus,
+#remove-course-form select:focus,
+#remove-professor-form select:focus,
+#course-allotment-form select:focus,
+#course-removal-form select:focus {
+    outline: none;
+    border-color: #48FF00;
+    box-shadow: 0 0 8px rgba(72, 255, 0, 0.5);
+    transform: scale(1.02); /* Subtle zoom on focus */
+}
+
+/* Button Styling */
+.course-container button, .student-container button, .professor-container button, .course-allotment-container button {
+    padding: 12px;
+    background-color: #2B9900;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-family: 'Outfit', sans-serif;
+    font-weight: 600;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    width: 100%;
+    min-height: 48px; /* Consistent button height */
+}
+
+.course-container button:hover, .student-container button:hover, .professor-container button:hover, .course-allotment-container button:hover {
+    background-color: #237a00;
+    transform: translateY(-2px);
+}
