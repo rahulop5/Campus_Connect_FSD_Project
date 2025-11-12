@@ -261,3 +261,37 @@ form {
         transform: translateY(0);
     }
 }
+
+/* Headings */
+h2 {
+    background: linear-gradient(90deg, #2B9900 0%, #949494 50.9%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-family: 'Outfit', sans-serif;
+    font-size: 24px;
+    margin: 20px 0;
+}
+
+/* Lists */
+.course-list, .professor-list, .student-list {
+    list-style: none;
+    padding: 0;
+}
+
+.course-list li, .professor-list li, .student-list li {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 15px;
+    margin: 10px 0;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: white;
+    font-family: 'Outfit', sans-serif;
+    font-size: 16px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.course-list li:hover, .professor-list li:hover, .student-list li:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
