@@ -295,3 +295,39 @@ h2 {
     transform: translateY(-2px);
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
+
+.no-items {
+    color: rgba(255, 255, 255, 0.5);
+    font-family: 'Outfit', sans-serif;
+    font-size: 16px;
+    text-align: center;
+    margin: 20px 0;
+}
+
+/* Back to Home Link */
+.back-home {
+    display: inline-block;
+    margin: 40px 0;
+    padding: 10px 20px;
+    background-color: #2B9900;
+    color: white;
+    text-decoration: none;
+    border-radius: 10px;
+    font-family: 'Outfit', sans-serif;
+    font-weight: 600;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.back-home:hover {
+    background-color: #237a00;
+    transform: translateY(-2px);
+}
+
+/* Responsive Design */
+@media (min-width: 1400px) {
+    .course-container, .student-container, .professor-container, .course-allotment-container {
+        flex: 1 1 ;
+        max-width: calc(50% - 20px);
+        min-width: 300px;
+    }
+}
