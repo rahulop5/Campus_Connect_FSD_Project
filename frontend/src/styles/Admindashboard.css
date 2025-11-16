@@ -331,3 +331,103 @@ h2 {
         min-width: 300px;
     }
 }
+
+@media (max-width: 1399px) and (min-width: 1000px) {
+    .course-container, .student-container, .professor-container, .course-allotment-container {
+        flex: 1 1 calc(33.33% - 20px);
+        max-width: calc(33.33% - 20px);
+        min-width: 300px;
+    }
+}
+
+@media (max-width: 999px) and (min-width: 600px) {
+    .course-container, .student-container, .professor-container, .course-allotment-container {
+        flex: 1 1 calc(50% - 20px);
+        max-width: calc(50% - 20px);
+        min-width: 300px;
+    }
+}
+
+@media (max-width: 599px) {
+    .sidebar {
+        width: 0; /* Hidden by default on mobile */
+    }
+
+    .sidebar.active {
+        width: 250px; /* Match desktop hover width */
+    }
+
+    #sidebar-toggle {
+        display: block; /* Show toggle button on mobile */
+    }
+
+    main {
+        left: 0;
+        width: 100%;
+    }
+
+    .management-section {
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .course-container, .student-container, .professor-container, .course-allotment-container {
+        flex: 1 1 100%;
+        max-width: 100%;
+        min-width: 0;
+        padding: 25px;
+    }
+
+    #date_holding_container_outer {
+        position: relative;
+        right: 0;
+        height: 200px;
+        margin: 20px auto;
+        width: 100%;
+        text-align: center;
+    }
+
+    #date_holding_container_inner {
+        width: 200px;
+        height: 180px;
+        margin: 0 auto;
+    }
+
+    #day {
+        font-size: 30px;
+        line-height: 40px;
+        margin-top: 10px;
+    }
+
+    #date {
+        font-size: 80px;
+        line-height: 80px;
+    }
+
+    #month_year {
+        font-size: 25px;
+        margin-bottom: 10px;
+    }
+
+    #dashboard_div {
+        font-size: 24px;
+        left: 48px;
+        top: 33px;
+    }
+
+    #welcm_nd_admn_div {
+        left: 48px;
+        top: 109px;
+    }
+
+    #welcome_div {
+        font-size: 70px;
+        line-height: 75px;
+    }
+
+    #admin_div {
+        font-size: 85px;
+        line-height: 75px;
+    }
+}
