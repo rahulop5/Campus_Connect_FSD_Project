@@ -431,3 +431,15 @@ h2 {
         line-height: 75px;
     }
 }
+
+.management-section { 
+    display: flex;
+    position:static;
+    margin-top: 300px;
+}
+
+#top_row {
+    margin-bottom: 10px;
+    position:static;
+}
+
