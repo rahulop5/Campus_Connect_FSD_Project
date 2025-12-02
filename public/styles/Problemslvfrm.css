@@ -1,441 +1,236 @@
-/* --- ROOT VARIABLES --- */
-:root {
-  --primary-green: #2b9900;
-  --glow-green: rgba(43, 153, 0, 0.3);
-  --dark-bg: #0a0a0a;
-  --card-bg: rgba(10, 10, 10, 0.5);
-  --border-color: rgba(43, 153, 0, 0.2);
-  --text-primary: #eaeaea;
-  --text-secondary: #b6b6b6;
+*{
+    margin: 0;
+    padding: 0;
 }
 
-body {
-  background-color: var(--dark-bg); /* Changed from #090909 */
-  color: var(--text-primary); /* Added default text color */
-  min-height: 100vh;
+.forum-list-page{
+    background-color: #090909;
 }
 
-.outfit {
-  font-family: "Outfit", sans-serif;
-  font-optical-sizing: auto;
-  font-weight: 400;
-  font-style: normal;
+/* searchquestion */
+
+.outfit{
+    font-family: "Outfit", serif;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-style: normal;
+  }
+
+.mainpage{
+    color: white;
+    flex-grow: 1;
 }
 
-/* --- NEW: Fixed Left Sidebar Styles (Copied from Ask page) --- */
-.sidebar {
-  position: fixed;
-  top: 10; /* Corrected from 10 */
-  left: 0;
-  height: 100vh;
-  width: 75px;
-  background-color: rgba(0, 0, 0, 0.8);
-  border-right: 1px solid var(--border-color);
-  backdrop-filter: blur(10px);
-  z-index: 1000;
+.searchques{
+    padding: 20px 30px;
 }
 
-/* --- Original Header & Search Styles (Restored) --- */
-.mainpage {
-  color: white;
-  flex-grow: 1;
-  margin-left: 75px;
-  padding: 0 30px; /* Added padding for spacing */
-  position: relative; /* For background blobs */
-  overflow-x: hidden; /* For background blobs */
-  min-height: 100vh;
+.searchques>h1{
+    color: #FFF;
+    font-size: 49px;
+    line-height: normal;
 }
 
-/* NEW: Green gradient blobs, attached to mainpage */
-.mainpage::before {
-  content: "";
-  position: fixed;
-  top: 0;
-  bottom: 0;
-  left: 75px;
-  right: 0;
-  z-index: -1;
-  background-image: radial-gradient(
-      ellipse 40% 60% at 5% 30%,
-      var(--glow-green),
-      transparent 80%
-    ),
-    radial-gradient(
-      ellipse 40% 60% at 95% 80%,
-      var(--glow-green),
-      transparent 80%
-    ),
-    radial-gradient(
-      ellipse 30% 50% at 80% 10%,
-      rgba(43, 153, 0, 0.3),
-      transparent 70%
-    );
+.searchques>h1>span{
+    color: rgba(72, 255, 0, 0.68);
 }
 
-.searchques {
-  padding: 20px 0; /* Removed horizontal padding, handled by mainpage */
+.searchques>p{
+    font-size: 21px;
+    font-style: normal;
+    line-height: normal;
+    padding-left: 8px;
+    padding-top: 10px;
 }
 
-.searchques > h1 {
-  color: #fff;
-  font-size: 49px;
-  line-height: normal;
+.top{
+    display: flex;
+}
+.askaques{
+    margin-left: auto;
+    margin-top: 60px;
+    margin-right: 25px;
 }
 
-.searchques > h1 > span {
-  color: rgba(72, 255, 0, 0.68); /* Original color */
+.askaques button{
+    padding: 18px 18px;
+    font-size: 16px;
+    color: white;
+    background-color: #090909;
+    border: 3px solid rgba(72, 255, 0, 0.68);
+    border-radius: 40px;
 }
 
-.searchques > p {
-  font-size: 21px;
-  font-style: normal;
-  line-height: normal;
-  padding-left: 8px;
-  padding-top: 10px;
-  color: var(--text-secondary); /* Adjusted for consistency */
-}
-
-.top {
-  display: flex;
-  align-items: center; /* Vertically align items */
-  padding-top: 20px; /* Added padding */
-  padding-bottom:-20px;
-}
-.askaques {
-  margin-left: auto;
-  margin-right: 25px;
-}
-
-.searchquesinput {
-  color: white;
-  display: flex;
-  margin-top: -2.5vh;
-  align-items: center;
+.searchquesinput{
+    color: white;
+    display: flex;
+    margin-top: 15px;
+    align-items: center;
 }
 
 .input-container {
-  margin-left: auto;
-  margin-right: 20px;
-  position: relative;
-  display: flex;
-  align-items: center;
-  width: 400px; /* Adjust as needed */
-  overflow: hidden;
+    margin-left: auto;
+    margin-right: 20px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 400px; /* Adjust as needed */
+    overflow: hidden;
 }
 
-.input {
-  position: relative;
-  transition: transform 0.5s ease-in-out;
-  z-index: 2;
-  width: 100%;
+.input{
+    /* margin-left: auto;
+    margin-right: 20px; */
+    position: relative;
+    transition: transform 0.5s ease-in-out;
+    z-index: 2;
+    width: 100%;
 }
 
 .hidden-div {
-  position: absolute;
-  left: 100%;
-  width: 100%;
-  height: 100%;
-  background: rgba(72, 255, 0, 0.68);
-  transition: left 0.5s ease-in-out;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1;
+    position: absolute;
+    left: 100%;
+    width: 100%;
+    height: 100%;
+    background: rgba(72, 255, 0, 0.68);
+    transition: left 0.5s ease-in-out;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1;
 }
 
 .advsearch {
-  position: relative;
-  width: 100%;
+    position: relative;
+    width: 100%;
+    margin-right: 25px;
 }
 
 .advsearch input {
-  height: 55px;
-  width: 100%;
-  padding: 10px 50px 10px 20px;
-  border: none;
-  border-radius: 25px;
-  font-size: 16px;
-  outline: none;
-  box-sizing: border-box;
-  background-color: rgba(217, 217, 217, 0.26);
-  color: white;
+    height: 55px;
+    width: 100%;
+    padding: 10px 50px 10px 20px;
+    border: none;
+    border-radius: 25px;
+    font-size: 16px;
+    outline: none;
+    box-sizing: border-box;
+    background-color: rgba(217, 217, 217, 0.26);;
+    color: white;
 }
 
 .advsearch button {
-  position: absolute;
-  right: 15px;
-  top: 50%;
-  transform: translateY(-50%);
-  border: none;
-  background: white;
-  cursor: pointer;
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    border: none;
+    background: white;
+    cursor: pointer;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
 }
 
 .advsearch button img {
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  border: 2px solid white;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: 2px solid white;
 }
 
 .advsearch input:focus {
-  border-color: #014791;
+    border-color: #014791;
 }
 
 .advsearch input::placeholder {
-  color: white;
+    color: white;
 }
 
-.filter {
-  margin-right: 35px;
-  margin-left: 5px;
+.filter{
+    margin-right: 35px;
+    margin-left: 5px;
 }
 
-.filter > button {
-  background-color: transparent; /* Changed from #090909 */
-  border: none;
+.filter>button{
+    background-color: #090909;
+    border: none;
 }
 
-.filter > button > img {
-  width: 29px;
+.filter>button>img{
+    width: 29px;
 }
 
-.toptop {
-  margin-bottom: 30px;
-  border-bottom: 1px solid var(--border-color); /* Added border */
-  padding-bottom: 25px;
+.toptop{
+    margin-bottom: 30px;
 }
 
-/* --- NEW: Submit Button (For "Ask a Question") --- */
-.submit-btn {
-  border-radius: 50px;
-  background: transparent;
-  border: 2px solid var(--primary-green);
-  color: var(--primary-green);
-  padding: 16px 40px;
-  font-size: 18px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.6s ease;
-  white-space: nowrap; /* Prevent button text wrapping */
+/* end of toptop */
+
+.problem{
+    display: flex;
+    margin-left: 5%;
+    margin-top: 40px;
+    margin-bottom: 40px;
+}
+.votes{
+    width: 8%;
 }
 
-.submit-btn:hover {
-  color: white;
-  background: linear-gradient(
-    145deg,
-    rgba(51, 179, 0, 0.32),
-    rgba(42, 168, 0, 0.325)
-  );
-  border-color: #32b300;
-  box-shadow: 0 0 20px rgba(43, 153, 0, 0.8);
-  transform: translateY(-2px);
+.votes>p{
+    font-size: 15px;
 }
 
-/* --- NEW: Content Layout (List + Sidebar) --- */
-.content-wrapper {
-  display: flex;
-  gap: 40px;
-  align-items: flex-start;
-  margin-top: 40px; /* Space from the header */
+.main{
+    margin-left: 4%;
+    width: 65%;
 }
 
-/* --- Main Question List (Left Column) --- */
-.problems {
-  flex: 3;
-  background: var(--card-bg);
-  border: 1px solid var(--border-color);
-  /* padding-left:0px; */
-  padding: 10px;
-  /* padding-top:10px;
-  padding-right:20px;
-  padding-bottom:20px; */
-  border-radius: 16px;
-  box-shadow: 0 0 15px rgba(255, 255, 255, 0.078),
-    0 15px 40px rgba(25, 113, 0, 0.1);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  display: flex;
-  flex-direction: column;
-  gap: 0; /* Gaps handled by items/dividers */
+.main h4{
+    color: #FFF;
+    margin-bottom: 10px;
 }
 
-/* Individual Question Item */
-.problem {
-  display: flex;
-  gap: 40px;
-  padding: 25px;
-  border-radius: 12px;
-  transition: background-color 0.2s ease;
+.tags{
+    display: flex; 
+    margin-top: 15px;
 }
 
-/* REQUESTED: Hover effect for the entire question card */
-.problem:hover {
-  background-color: rgba(255, 255, 255, 0.05);
+.tags>div{
+    /* height: px; */
+    border-radius: 40px;
+    border: 3px solid rgba(72, 255, 0, 0.68);
+    backdrop-filter: blur(15.5px);
+    padding: 8px 20px;
+    margin: 7px;
 }
 
-.votes {
-  flex-basis: 80px;
-  flex-shrink: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  text-align: right;
-  color: var(--text-secondary);
-  font-size: 15px;
-  font-weight: 500;
+.tags>div>p{
+    font-size: 15px;
 }
 
-.main {
-  flex: 1;
-  min-width: 0; /* Prevents flex overflow */
+.user{
+    margin-top: auto;
+    margin-left: 1%;
+    width: 18%;
 }
 
-.questionHeading {
-  color: #fff;
-  margin-bottom: 10px;
-  font-size: 20px;
-  font-weight: 500;
-  transition: color 0.2s ease;
+.useruser{
+    display: flex;
+    align-items: center;
+    
 }
 
-/* REQUESTED: Hover effect for the question title */
-.questionHeading:hover {
-  color: var(--primary-green);
-  text-decoration: underline;
+.useruser>img{
+    height: 36px;
+    width: 36px;
+    margin-right: 10px;
 }
 
-.questionDesc {
-  color: var(--text-secondary);
-  font-size: 15px;
-  line-height: 1.6;
+.useruser>p{
+    font-size: 15px;
 }
 
-.tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-top: 15px;
-}
-
-.tags > div {
-  border-radius: 6px;
-  /* border: 2px solid var(--border-color); */
-  border: 2px solid #2b9900;
-  background: rgba(0, 0, 0, 0.2);
-  color: var(--text-secondary);
-  padding: 6px 15px;
-  border-radius: 30px;
-}
-
-.tags > div > p {
-  font-size: 13px;
-  font-weight: 500;
-}
-
-.user {
-  flex-basis: 150px;
-  flex-shrink: 0;
-  margin-top: auto;
-  margin-left: auto;
-}
-
-.useruser {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-}
-
-.useruser > img {
-  height: 30px;
-  width: 30px;
-  margin-right: 10px;
-  border-radius: 50%;
-}
-
-.useruser > p {
-  font-size: 14px;
-  color: var(--text-secondary);
-}
-
-/* Divider line between questions */
-.problemline {
-  border: none;
-  height: 1px;
-  background-color: var(--border-color);
-  margin: 0 20px; /* Aligns with padding */
-  opacity: 1; /* Override original opacity */
-}
-
-/* --- Sidebar Cards (Notice & Ads) --- */
-.sidebar-container {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 30px;
-  max-width: 380px;
-}
-
-.sidebar-card {
-  border-radius: 16px;
-  border: 1px solid var(--border-color);
-  background: var(--card-bg);
-  box-shadow: 0 0 15px rgba(255, 255, 255, 0.078),
-    0 15px 40px rgba(25, 113, 0, 0.1);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-}
-
-.notice-board {
-  padding: 25px;
-}
-
-.sidebar-title {
-  font-size: 20px;
-  font-weight: 500;
-  color: var(--text-primary);
-  padding-bottom: 15px;
-  border-bottom: 1px solid var(--border-color);
-}
-
-.notice-news {
-  padding-top: 15px;
-}
-
-.notice-news + .notice-news {
-  border-top: 1px solid var(--border-color);
-  margin-top: 15px;
-}
-
-.notice-news div {
-  display: flex;
-  gap: 15px;
-  align-items: flex-start;
-  padding: 12px 0;
-}
-
-.notice-news img {
-  width: 18px;
-  height: 18px;
-  flex-shrink: 0;
-  margin-top: 3px;
-  opacity: 0.7;
-}
-
-.notice-news p {
-  font-size: 14px;
-  color: var(--text-secondary);
-  line-height: 1.6;
-}
-
-.ads-box {
-  height: 400px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 16px;
-  color: #444;
+.problemline{
+    opacity: 40%;
 }
