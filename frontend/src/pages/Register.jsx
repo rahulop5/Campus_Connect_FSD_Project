@@ -3,6 +3,9 @@ import { useNavigate, Link, useSearchParams } from 'react-router';
 import api from '../api/axios';
 import '../styles/Register.css';
 
+import { useDispatch } from 'react-redux';
+import { fetchUserData } from '../store/slices/authSlice';
+
 const Register = () => {
   const [searchParams] = useSearchParams();
   const isOAuth = searchParams.get('oauth') === 'true';
@@ -20,6 +23,7 @@ const Register = () => {
     confirm_password: ''
   });
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [error, setError] = useState('');
 
   useEffect(() => {
@@ -49,8 +53,8 @@ const Register = () => {
       // Registration returns JWT token
       if (response.data.token) {
         localStorage.setItem('token', response.data.token);
+        await dispatch(fetchUserData()); // Fetch user data into Redux
         navigate('/dashboard');
-        window.location.reload(); // Reload to trigger auth context
       } else {
         navigate('/login');
       }
@@ -76,23 +80,23 @@ const Register = () => {
         </div>
 
         <form onSubmit={handleSubmit}>
-            <input type="text" placeholder="Name" name="name" value={formData.name} onChange={handleChange} required readOnly={isOAuth} />
-            <input type="email" placeholder="Email" name="email" value={formData.email} onChange={handleChange} required readOnly={isOAuth} />
+            <input type="text" placeholder="Name" name="name" value={formData.name} onChange={handleChange} required readOnly={isOAuth} maxLength={300} />
+            <input type="email" placeholder="Email" name="email" value={formData.email} onChange={handleChange} required readOnly={isOAuth} maxLength={300} />
             {!isOAuth && (
               <>
-                <input type="password" placeholder="Password" name="password" value={formData.password} onChange={handleChange} required />
-                <input type="password" placeholder="Confirm Password" name="confirm_password" value={formData.confirm_password} onChange={handleChange} required />
+                <input type="password" placeholder="Password" name="password" value={formData.password} onChange={handleChange} required minLength={6} maxLength={300} />
+                <input type="password" placeholder="Confirm Password" name="confirm_password" value={formData.confirm_password} onChange={handleChange} required minLength={6} maxLength={300} />
               </>
             )}
             
             {formData.role === 'Student' && (
                 <>
-                    <input type="text" placeholder="Roll Number" name="roll" value={formData.roll} onChange={handleChange} required />
-                    <input type="text" placeholder="Section" name="section" value={formData.section} onChange={handleChange} required />
+                    <input type="text" placeholder="Roll Number" name="roll" value={formData.roll} onChange={handleChange} required maxLength={300} />
+                    <input type="text" placeholder="Section" name="section" value={formData.section} onChange={handleChange} required maxLength={300} />
                 </>
             )}
             
-            <input type="tel" placeholder="Phone Number" name="phone" value={formData.phone} onChange={handleChange} required />
+            <input type="tel" placeholder="Phone Number" name="phone" value={formData.phone} onChange={handleChange} required pattern="[0-9]{10}" title="10 digit mobile number" maxLength={300} />
             
             <button type="submit"><p>Register</p></button>
         </form>

@@ -61,6 +61,7 @@ const ProfessorProfile = () => {
                                 readOnly={editing !== 'name'}
                                 onChange={handleChange}
                                 className={editing === 'name' ? 'editable-input editing' : 'editable-input'}
+                                maxLength={300}
                             />
                         </div>
                         <div className="image_div">
@@ -92,12 +93,15 @@ const ProfessorProfile = () => {
                     <div className="auth_a">
                         <div>
                             <input 
-                                type="text" 
+                                type="tel" 
                                 name="phone" 
                                 value={formData.phone || ''} 
                                 readOnly={editing !== 'phone'}
                                 onChange={handleChange}
                                 className={editing === 'phone' ? 'editable-input editing' : 'editable-input'}
+                                pattern="[0-9]{10}"
+                                title="10 digit mobile number"
+                                maxLength={300}
                             />
                         </div>
                         <div className="image_div">

@@ -1,5 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router';
-import { AuthProvider, useAuth } from './context/AuthContext';
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchUserData } from './store/slices/authSlice';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
@@ -16,22 +18,27 @@ import AskQuestion from './pages/AskQuestion';
 import OAuthCallback from './pages/OAuthCallback';
 
 const ProtectedRoute = ({ children }) => {
-  const { user, loading } = useAuth();
+  const { user, loading } = useSelector((state) => state.auth);
   if (loading) return <div>Loading...</div>;
   if (!user) return <Navigate to="/login" />;
   return children;
 };
 
 const RoleRoute = ({ children, role }) => {
-    const { user, loading } = useAuth();
+    const { user, loading } = useSelector((state) => state.auth);
     if (loading) return <div>Loading...</div>;
     if (!user || user.role !== role) return <Navigate to="/dashboard" />;
     return children;
 }
 
 function App() {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(fetchUserData());
+  }, [dispatch]);
+
   return (
-    <AuthProvider>
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Home />} />
@@ -89,12 +96,11 @@ function App() {
 
         </Routes>
       </BrowserRouter>
-    </AuthProvider>
   );
 }
 
 const ProfileWrapper = () => {
-    const { user } = useAuth();
+    const { user } = useSelector((state) => state.auth);
     if (user.role === 'Student') return <Profile />;
     if (user.role === 'Professor') return <ProfessorProfile />;
     return <div>Profile not available for this role</div>;

@@ -1,11 +1,12 @@
 import { useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router';
-import { useAuth } from '../context/AuthContext';
+import { useDispatch } from 'react-redux';
+import { fetchUserData } from '../store/slices/authSlice';
 
 const OAuthCallback = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const { refreshUser } = useAuth();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const processOAuth = async () => {
@@ -20,7 +21,7 @@ const OAuthCallback = () => {
 
       if (token) {
         localStorage.setItem('token', token);
-        await refreshUser();
+        await dispatch(fetchUserData());
         navigate('/dashboard');
       } else {
         navigate('/login');
@@ -28,7 +29,7 @@ const OAuthCallback = () => {
     };
 
     processOAuth();
-  }, [searchParams, navigate, refreshUser]);
+  }, [searchParams, navigate, dispatch]);
 
   return (
     <div style={{ 

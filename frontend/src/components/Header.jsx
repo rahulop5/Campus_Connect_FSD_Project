@@ -1,15 +1,17 @@
 import { Link, useNavigate } from 'react-router';
-import { useAuth } from '../context/AuthContext';
+import { useSelector, useDispatch } from 'react-redux';
+import { logout } from '../store/slices/authSlice';
 import '../styles/Header.css';
 
 const Header = () => {
-  const { user, logout } = useAuth();
+  const { user } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const handleLogout = () => {
     navigate('/');
     setTimeout(() => {
-        logout();
+        dispatch(logout());
     }, 100);
   };
 

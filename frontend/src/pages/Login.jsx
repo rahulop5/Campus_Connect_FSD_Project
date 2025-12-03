@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { useAuth } from '../context/AuthContext';
+import { useDispatch, useSelector } from 'react-redux';
+import { loginUser } from '../store/slices/authSlice';
 import { useNavigate, Link } from 'react-router';
 import '../styles/Login.css';
 
@@ -7,17 +8,23 @@ const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [role, setRole] = useState('Student');
-  const { login } = useAuth();
+  const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [error, setError] = useState('');
+  const { error: authError } = useSelector((state) => state.auth);
+  const [localError, setLocalError] = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLocalError('');
     try {
-      await login(email, password, role);
-      navigate('/dashboard');
+      const resultAction = await dispatch(loginUser({ email, password, role }));
+      if (loginUser.fulfilled.match(resultAction)) {
+        navigate('/dashboard');
+      } else {
+        setLocalError(resultAction.payload || 'Login failed');
+      }
     } catch (err) {
-      setError('Login failed. Please check your credentials.');
+      setLocalError('Login failed. Please check your credentials.');
     }
   };
 
@@ -25,7 +32,7 @@ const Login = () => {
     <div className="outfit login-page">
       <div>
         <p className="logo">Campus<span>C</span>onnect</p>
-        {error && <p style={{color: 'red', textAlign: 'center'}}>{error}</p>}
+        {(localError || authError) && <p style={{color: 'red', textAlign: 'center'}}>{localError || authError}</p>}
         
         <div style={{textAlign: 'center', marginTop: '20px', marginBottom: '10px'}}>
             <label style={{color: '#FFF', marginRight: '10px'}}>Login as:</label>
@@ -43,6 +50,7 @@ const Login = () => {
                 value={email} 
                 onChange={(e) => setEmail(e.target.value)} 
                 required 
+                maxLength={300}
             />
             <input 
                 type="password" 
@@ -50,6 +58,7 @@ const Login = () => {
                 value={password} 
                 onChange={(e) => setPassword(e.target.value)} 
                 required 
+                maxLength={300}
             />
             <button type="submit"><p>Login</p></button>
         </form>

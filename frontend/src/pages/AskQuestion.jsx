@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
-import { useAuth } from '../context/AuthContext';
+import { useSelector } from 'react-redux';
 import api from '../api/axios';
 import Layout from '../components/Layout';
 import '../styles/Askquestion.css';
 
 const AskQuestion = () => {
-  const { user } = useAuth();
+  const { user } = useSelector((state) => state.auth);
   const navigate = useNavigate();
   const [formData, setFormData] = useState({ title: '', desc: '', tags: '' });
 
@@ -36,7 +36,7 @@ const AskQuestion = () => {
             <form onSubmit={handleSubmit}>
               <div className="hoho">
                 <p>Title</p>
-                <input type="text" placeholder="Title" name="title" value={formData.title} onChange={handleChange} required />
+                <input type="text" placeholder="Title" name="title" value={formData.title} onChange={handleChange} required maxLength={300} />
               </div>
               <div className="outfit po_userans">
                 <div className="po_useransheading"><p>Describe your Question:</p></div>
@@ -47,12 +47,12 @@ const AskQuestion = () => {
                     <img src="/assets/heading.png" alt="" />
                     <img src="/assets/codeansbox.png" alt="" />
                   </div>
-                  <textarea className="po_useransbox" name="desc" value={formData.desc} onChange={handleChange} required></textarea>  
+                  <textarea className="po_useransbox" name="desc" value={formData.desc} onChange={handleChange} required maxLength={300}></textarea>  
                 </div>
               </div>
               <div className="hoho">
                 <p>Tags</p>
-                <input type="text" placeholder="Tags (comma separated)" name="tags" value={formData.tags} onChange={handleChange} required />
+                <input type="text" placeholder="Tags (comma separated)" name="tags" value={formData.tags} onChange={handleChange} required maxLength={300} />
               </div>
               <button type="submit">
                 <p>Submit</p>

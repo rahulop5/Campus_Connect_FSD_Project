@@ -1,12 +1,15 @@
 import { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchDashboardData } from '../store/slices/adminSlice';
 import api from '../api/axios';
 import Layout from '../components/Layout';
 import '../styles/Admindashboard.css';
 
 const AdminDashboard = () => {
-  const [data, setData] = useState({ courses: [], professors: [], students: [] });
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+  const dispatch = useDispatch();
+  const { courses, professors, students, loading } = useSelector((state) => state.admin);
+  const data = { courses, professors, students }; // Map redux state to local variable name used in render
+
   const [activeSection, setActiveSection] = useState('course'); // course, student, professor, allotment
   
   // Form States
@@ -26,19 +29,11 @@ const AdminDashboard = () => {
   const [isProfRemoval, setIsProfRemoval] = useState(true);
 
   useEffect(() => {
-    fetchDashboardData();
-  }, []);
+    dispatch(fetchDashboardData());
+  }, [dispatch]);
 
-  const fetchDashboardData = async () => {
-    try {
-      const res = await api.get('/admin/dashboard');
-      setData(res.data);
-      setLoading(false);
-    } catch (err) {
-      console.error("Error fetching dashboard data", err);
-      setLoading(false);
-    }
-  };
+  // Helper to refresh data
+  const refreshData = () => dispatch(fetchDashboardData());
 
   const handleAddCourse = async (e) => {
     e.preventDefault();
@@ -57,7 +52,7 @@ const AdminDashboard = () => {
     try {
       await api.post('/admin/student/add', studentForm);
       alert('Student added successfully');
-      fetchDashboardData();
+      refreshData();
       setStudentForm({ name: '', email: '', rollnumber: '', phone: '', section: '', password: '' });
     } catch (err) {
       alert(err.response?.data?.message || 'Error adding student');
@@ -69,7 +64,7 @@ const AdminDashboard = () => {
     try {
       await api.post('/admin/professor/add', profForm);
       alert('Professor added successfully');
-      fetchDashboardData();
+      refreshData();
       setProfForm({ name: '', email: '', phone: '', password: '' });
     } catch (err) {
       alert(err.response?.data?.message || 'Error adding professor');
@@ -81,7 +76,7 @@ const AdminDashboard = () => {
     try {
       await api.post('/admin/remove/course', { course: removeCourseId, removeType: 'entire-course' });
       alert('Course removed successfully');
-      fetchDashboardData();
+      refreshData();
       setRemoveCourseId('');
     } catch (err) {
       alert(err.response?.data?.message || 'Error removing course');
@@ -93,7 +88,7 @@ const AdminDashboard = () => {
     try {
       await api.post('/admin/remove/professor', removeProfData);
       alert('Professor removed successfully');
-      fetchDashboardData();
+      refreshData();
       setRemoveProfData({ professor: '', course_action: '', new_professor: '' });
     } catch (err) {
       alert(err.response?.data?.message || 'Error removing professor');
@@ -106,7 +101,7 @@ const AdminDashboard = () => {
     try {
       await api.post(endpoint, assignCourseData);
       alert('Assignment successful');
-      fetchDashboardData();
+      refreshData();
     } catch (err) {
       alert(err.response?.data?.message || 'Error assigning course');
     }
@@ -117,7 +112,7 @@ const AdminDashboard = () => {
     try {
       await api.post('/admin/remove/course', { ...removeCourseFromData, removeType: isProfRemoval ? 'professor' : 'student' });
       alert('Removal successful');
-      fetchDashboardData();
+      refreshData();
     } catch (err) {
       alert(err.response?.data?.message || 'Error removing course from user');
     }
@@ -189,12 +184,12 @@ const AdminDashboard = () => {
         </div>
 
         <div className="management-section">
-          {/* Course Management */}
+            {/* Course Management */}
           <div className="course-container">
             <h2>Course Management</h2>
             <form onSubmit={handleAddCourse}>
               <label>Name of the Course:</label>
-              <input type="text" value={courseForm.name} onChange={e => setCourseForm({...courseForm, name: e.target.value})} required placeholder="e.g., Operating Systems"/>
+              <input type="text" value={courseForm.name} onChange={e => setCourseForm({...courseForm, name: e.target.value})} required placeholder="e.g., Operating Systems" maxLength={300}/>
               
               <label>Professor Assigned:</label>
               <select value={courseForm.professor} onChange={e => setCourseForm({...courseForm, professor: e.target.value})} required>
@@ -203,13 +198,13 @@ const AdminDashboard = () => {
               </select>
 
               <label>Section:</label>
-              <input type="text" value={courseForm.section} onChange={e => setCourseForm({...courseForm, section: e.target.value})} required placeholder="e.g., 1"/>
+              <input type="text" value={courseForm.section} onChange={e => setCourseForm({...courseForm, section: e.target.value})} required placeholder="e.g., 1" maxLength={300}/>
 
               <label>Total No. of Classes:</label>
-              <input type="number" value={courseForm.totalclasses} onChange={e => setCourseForm({...courseForm, totalclasses: e.target.value})} required min="1"/>
+              <input type="number" value={courseForm.totalclasses} onChange={e => setCourseForm({...courseForm, totalclasses: e.target.value})} required min="1" max="300"/>
 
               <label>Course's Credits:</label>
-              <input type="number" value={courseForm.credits} onChange={e => setCourseForm({...courseForm, credits: e.target.value})} required min="1"/>
+              <input type="number" value={courseForm.credits} onChange={e => setCourseForm({...courseForm, credits: e.target.value})} required min="1" max="300"/>
 
               <button type="submit">Add Course</button>
             </form>
@@ -229,17 +224,17 @@ const AdminDashboard = () => {
             <h2>Add New Student</h2>
             <form onSubmit={handleAddStudent}>
               <label>Name:</label>
-              <input type="text" value={studentForm.name} onChange={e => setStudentForm({...studentForm, name: e.target.value})} required/>
+              <input type="text" value={studentForm.name} onChange={e => setStudentForm({...studentForm, name: e.target.value})} required maxLength={300}/>
               <label>Email:</label>
-              <input type="email" value={studentForm.email} onChange={e => setStudentForm({...studentForm, email: e.target.value})} required/>
+              <input type="email" value={studentForm.email} onChange={e => setStudentForm({...studentForm, email: e.target.value})} required maxLength={300}/>
               <label>Roll Number:</label>
-              <input type="text" value={studentForm.rollnumber} onChange={e => setStudentForm({...studentForm, rollnumber: e.target.value})} required/>
+              <input type="text" value={studentForm.rollnumber} onChange={e => setStudentForm({...studentForm, rollnumber: e.target.value})} required maxLength={300}/>
               <label>Phone:</label>
-              <input type="text" value={studentForm.phone} onChange={e => setStudentForm({...studentForm, phone: e.target.value})} required/>
+              <input type="tel" value={studentForm.phone} onChange={e => setStudentForm({...studentForm, phone: e.target.value})} required pattern="[0-9]{10}" title="10 digit mobile number" maxLength={300}/>
               <label>Section:</label>
-              <input type="text" value={studentForm.section} onChange={e => setStudentForm({...studentForm, section: e.target.value})} required/>
+              <input type="text" value={studentForm.section} onChange={e => setStudentForm({...studentForm, section: e.target.value})} required maxLength={300}/>
               <label>Password:</label>
-              <input type="password" value={studentForm.password} onChange={e => setStudentForm({...studentForm, password: e.target.value})} required/>
+              <input type="password" value={studentForm.password} onChange={e => setStudentForm({...studentForm, password: e.target.value})} required minLength={6} maxLength={300}/>
               <button type="submit">Add Student</button>
             </form>
           </div>
@@ -249,13 +244,13 @@ const AdminDashboard = () => {
             <h2>Add New Professor</h2>
             <form onSubmit={handleAddProfessor}>
               <label>Name:</label>
-              <input type="text" value={profForm.name} onChange={e => setProfForm({...profForm, name: e.target.value})} required/>
+              <input type="text" value={profForm.name} onChange={e => setProfForm({...profForm, name: e.target.value})} required maxLength={300}/>
               <label>Email:</label>
-              <input type="email" value={profForm.email} onChange={e => setProfForm({...profForm, email: e.target.value})} required/>
+              <input type="email" value={profForm.email} onChange={e => setProfForm({...profForm, email: e.target.value})} required maxLength={300}/>
               <label>Phone:</label>
-              <input type="text" value={profForm.phone} onChange={e => setProfForm({...profForm, phone: e.target.value})} required/>
+              <input type="tel" value={profForm.phone} onChange={e => setProfForm({...profForm, phone: e.target.value})} required pattern="[0-9]{10}" title="10 digit mobile number" maxLength={300}/>
               <label>Password:</label>
-              <input type="password" value={profForm.password} onChange={e => setProfForm({...profForm, password: e.target.value})} required/>
+              <input type="password" value={profForm.password} onChange={e => setProfForm({...profForm, password: e.target.value})} required minLength={6} maxLength={300}/>
               <button type="submit">Add Professor</button>
             </form>
 
@@ -361,7 +356,7 @@ const AdminDashboard = () => {
                 <h3>Nominate Candidate</h3>
                 <form onSubmit={handleNominate}>
                   <label>Student Email:</label>
-                  <input type="email" value={nominateEmail} onChange={e => setNominateEmail(e.target.value)} required placeholder="student@example.com"/>
+                  <input type="email" value={nominateEmail} onChange={e => setNominateEmail(e.target.value)} required placeholder="student@example.com" maxLength={300}/>
                   <button type="submit">Nominate</button>
                 </form>
 

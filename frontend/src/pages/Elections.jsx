@@ -1,54 +1,39 @@
 import { useState, useEffect } from 'react';
-import api from '../api/axios';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchElection, voteCandidate, updateManifesto } from '../store/slices/electionSlice';
 import Layout from '../components/Layout';
-import { useAuth } from '../context/AuthContext';
 import '../styles/Elections.css';
 
 const Elections = () => {
-  const { user } = useAuth();
-  const [election, setElection] = useState(null);
-  const [hasVoted, setHasVoted] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const { user } = useSelector((state) => state.auth);
+  const { electionData: election, hasVoted, loading } = useSelector((state) => state.election);
+  const dispatch = useDispatch();
+  
   const [showQuoteModal, setShowQuoteModal] = useState(false);
   const [newQuote, setNewQuote] = useState('');
 
-  const fetchElection = async () => {
-    try {
-      const res = await api.get('/election');
-      setElection(res.data.election);
-      setHasVoted(res.data.hasVoted);
-    } catch (error) {
-      console.error("Error fetching election:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
-    fetchElection();
-  }, []);
+    dispatch(fetchElection());
+  }, [dispatch]);
 
   const handleVote = async (candidateId) => {
     if (hasVoted) return;
     if (!window.confirm("Are you sure you want to vote for this candidate? You cannot change your vote later.")) return;
 
-    try {
-      await api.post('/election/vote', { candidateId });
-      setHasVoted(true);
-      fetchElection(); // Refresh data
+    const result = await dispatch(voteCandidate(candidateId));
+    if (voteCandidate.fulfilled.match(result)) {
       alert("Vote cast successfully!");
-    } catch (error) {
-      alert(error.response?.data?.message || "Error casting vote");
+    } else {
+      alert(result.payload || "Error casting vote");
     }
   };
 
   const handleUpdateQuote = async () => {
-    try {
-      await api.post('/election/manifesto', { manifesto: newQuote });
+    const result = await dispatch(updateManifesto(newQuote));
+    if (updateManifesto.fulfilled.match(result)) {
       setShowQuoteModal(false);
-      fetchElection(); // Refresh data
-    } catch (error) {
-      alert(error.response?.data?.message || "Error updating quote");
+    } else {
+      alert(result.payload || "Error updating quote");
     }
   };
 
@@ -121,7 +106,7 @@ const Elections = () => {
                 value={newQuote} 
                 onChange={(e) => setNewQuote(e.target.value)}
                 placeholder="Enter your manifesto or quote here..."
-                maxLength={200}
+                maxLength={300}
               />
               <div className="modal-actions">
                 <button className="cancel-btn" onClick={() => setShowQuoteModal(false)}>Cancel</button>

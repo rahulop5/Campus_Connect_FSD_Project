@@ -1,4 +1,4 @@
-import { useAuth } from '../context/AuthContext';
+import { useSelector } from 'react-redux';
 import ProfessorDashboard from './ProfessorDashboard';
 import AdminDashboard from './AdminDashboard';
 import Layout from '../components/Layout';
@@ -170,7 +170,7 @@ const StudentDashboard = () => {
 };
 
 const Dashboard = () => {
-  const { user } = useAuth();
+  const { user } = useSelector((state) => state.auth);
   // console.log(user);
   if (!user) return <div>Loading...</div>;
 

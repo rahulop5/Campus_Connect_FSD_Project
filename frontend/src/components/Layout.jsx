@@ -1,9 +1,9 @@
 import Header from './Header';
 import Sidebar from './Sidebar';
-import { useAuth } from '../context/AuthContext';
+import { useSelector } from 'react-redux';
 
 const Layout = ({ children }) => {
-  const { user } = useAuth();
+  const { user } = useSelector((state) => state.auth);
 
   return (
     <div>

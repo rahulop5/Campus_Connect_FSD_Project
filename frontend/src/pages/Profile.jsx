@@ -1,11 +1,11 @@
 import { useState, useEffect, useRef } from 'react';
-import { useAuth } from '../context/AuthContext';
+import { useSelector } from 'react-redux';
 import api from '../api/axios';
 import Header from '../components/Header';
 import '../styles/profile.css';
 
 const Profile = () => {
-  const { user } = useAuth();
+  const { user } = useSelector((state) => state.auth);
   const [student, setStudent] = useState(null);
   const [editing, setEditing] = useState(null);
   const [formData, setFormData] = useState({});
@@ -77,6 +77,7 @@ const Profile = () => {
                                 readOnly={editing !== 'name'}
                                 onChange={handleChange}
                                 className={editing === 'name' ? 'editable-input editing' : 'editable-input'}
+                                maxLength={300}
                             />
                         </div>
                         <div className="image_div">
@@ -108,12 +109,15 @@ const Profile = () => {
                     <div className="auth_a">
                         <div>
                             <input 
-                                type="text" 
+                                type="tel" 
                                 name="phone" 
                                 value={formData.phone || ''} 
                                 readOnly={editing !== 'phone'}
                                 onChange={handleChange}
                                 className={editing === 'phone' ? 'editable-input editing' : 'editable-input'}
+                                pattern="[0-9]{10}"
+                                title="10 digit mobile number"
+                                maxLength={300}
                             />
                         </div>
                         <div className="image_div">
