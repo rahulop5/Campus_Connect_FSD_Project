@@ -21,6 +21,7 @@ export const handleGoogleAuthCallback = async (req, res) => {
     if (student) {
       // Existing user - generate JWT and redirect
       const payload = {
+        id: student._id,
         email: student.email,
         role: "Student",
       };
@@ -64,6 +65,7 @@ export const handleGithubAuthCallback = async (req, res) => {
     if (student) {
       // Existing user - generate JWT and redirect
       const payload = {
+        id: student._id,
         email: student.email,
         role: "Student",
       };
@@ -176,6 +178,7 @@ export const registerStudent = async (req, res) => {
 
     // Generate JWT token
     const payload = {
+      id: newStudent._id,
       email: newStudent.email,
       role: "Student",
     };

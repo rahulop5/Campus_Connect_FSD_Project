@@ -21,6 +21,7 @@ export const handleStudentLogin = async (req, res) => {
     });
   }
   const payload = {
+    id: user._id,
     email: user.email,
     role: "Student",
   };
@@ -49,6 +50,7 @@ export const handleProfLogin = async (req, res) => {
     });
   }
   const payload = {
+    id: user._id,
     email: user.email,
     role: "Professor",
   };
@@ -77,6 +79,7 @@ export const handleAdminLogin = async (req, res) => {
     });
   }
   const payload = {
+    id: user._id,
     email: user.email,
     role: "Admin",
   };
@@ -147,7 +150,7 @@ export const registerStudent = async (req, res) => {
 
     // Create JWT
     const token = jwt.sign(
-      { email: newStudent.email, role: "Student" },
+      { id: newStudent._id, email: newStudent.email, role: "Student" },
       process.env.JWT_SECRET,
       { expiresIn: "1h" }
     );
@@ -191,7 +194,7 @@ export const registerProfessor = async (req, res) => {
     await newProfessor.save();
 
     const token = jwt.sign(
-      { email: newProfessor.email, role: "Professor" },
+      { id: newProfessor._id, email: newProfessor.email, role: "Professor" },
       process.env.JWT_SECRET,
       { expiresIn: "1h" }
     );
@@ -240,7 +243,7 @@ export const registerAdmin = async (req, res) => {
     await newAdmin.save();
 
     const token = jwt.sign(
-      { email: newAdmin.email, role: "Admin" },
+      { id: newAdmin._id, email: newAdmin.email, role: "Admin" },
       process.env.JWT_SECRET,
       { expiresIn: "1h" }
     );
