@@ -1,0 +1,152 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+.attendance-page {
+    background-color: #090909;
+    height: 400vh;
+    color: white;
+}
+
+.outfit {
+    font-family: "Outfit", serif;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-style: normal;
+}
+
+.at_mainpage {
+    padding-top: 20px;
+}
+
+.at_mainpage > p {
+    background: linear-gradient(90deg, #2B9900 0%, #949494 73.9%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-size: 24px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: normal;
+    display: inline; 
+    margin: 20px;
+}
+
+.at_courses{
+    border-radius: 20px;
+    margin: 20px 20px;
+    border: 2px solid rgba(255, 255, 255, 0.30);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.at_course{
+    width: 80%;
+    border-radius: 20px;
+    background: linear-gradient(209deg, rgba(43, 153, 0, 0.30) -0.03%, rgba(0, 0, 0, 0.15) 37.8%), rgba(55, 55, 55, 0.50);
+    display: flex;
+    gap: 15px;
+    padding: 30px 50px;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.subject{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.subject p{
+    color: #FFF;
+    font-size: 50px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+}
+
+.details p{
+    color: #FFF;
+    font-size: 18px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+}
+
+.status{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.status>:nth-child(1){
+    color: #FFF;
+    font-size: 20px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+}
+
+.status>:nth-child(2){
+    color: #FFD400;
+    font-size: 50px;
+    font-style: normal;
+    font-weight: 300;
+    line-height: normal;
+}
+
+.percentage{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.percentage>:nth-child(1){
+    color: #FFF;
+    font-size: 20px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+}
+
+.percentage>:nth-child(2){
+    color: #FFD400;
+    font-size: 50px;
+    font-style: normal;
+    font-weight: 300;
+    line-height: normal;
+}
+
+.line{
+    width: 3px;
+    height: 120px;
+    background: #505050;
+}
+
+#green{
+    color: #2B9900;
+}
+
+#red{
+    color: #980000;
+}
+
+#yellow{
+    color: #FFD400;
+}
+
+.at_ads{
+    border-radius: 15px;
+    border: 1px solid #FFF;
+    width: 95%;
+    height: 40vh;
+    background: rgba(217, 217, 217, 0.07);
+    margin: 30px 20px;
+}

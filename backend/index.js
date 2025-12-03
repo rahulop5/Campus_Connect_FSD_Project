@@ -1,9 +1,10 @@
 import express from "express";
-import session from "express-session";
 import env from "dotenv";
+import cors from "cors";
 import passport from "passport";
+import session from "express-session";
 import connectDB from './config/db.js';
-import "./config/passportConfig.js";
+import './config/passportConfig.js'; // Initialize passport strategies
 import authstudentRoutes from "./routes/authstudentRoutes.js";
 import authprofessorRoutes from "./routes/authprofessorRoutes.js";
 import authadminRoutes from "./routes/authadminRoutes.js";
@@ -16,42 +17,42 @@ import Student from "./models/Student.js";
 import multer from "multer";
 import fs from "fs";
 import csvParser from "csv-parser";
-import mongoose from "mongoose";
 import profileRoutes from './routes/studentRoutes.js';
 
 
 const app=express();
 env.config();
 connectDB();
-app.set("view engine", "ejs");
+
+// Session configuration for OAuth
+app.use(session({
+  secret: process.env.SESSION_SECRET || 'your-secret-key',
+  resave: false,
+  saveUninitialized: false,
+  cookie: { secure: false } // Set to true if using HTTPS
+}));
+
+// Initialize Passport
+app.use(passport.initialize());
+app.use(passport.session());
+
+app.use(cors()); // Allow all origins for now, or specify frontend URL
 app.use(express.static("public"));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-app.use(
-  session({
-    secret: process.env.EXPRESS_SESSION_SECRET,
-    resave: false,
-    saveUninitialized: true,
-    cookie: {
-      maxAge: 1000 * 60 * 60,
-    },
-  })
-);
-
-app.use(passport.initialize());
-app.use(passport.session());
-
-app.use("/", authstudentRoutes);
-app.use("/", authprofessorRoutes);
-app.use("/", authadminRoutes);
-app.use("/", studentRoutes);
-app.use("/", qandaforumRoutes);
-app.use("/", professorRoutes);
-app.use("/", adminRoutes);
+// Routes
+app.use("/api/auth/student", authstudentRoutes);
+app.use("/api/auth/professor", authprofessorRoutes);
+app.use("/api/auth/admin", authadminRoutes);
+app.use("/api/student", studentRoutes);
+app.use("/api/forum", qandaforumRoutes);
+app.use("/api/professor", professorRoutes);
+app.use("/api/admin", adminRoutes);
+app.use('/api/profile', profileRoutes);
 
 app.get("/", (req, res) => {
-  res.render("home.ejs");
+  res.send("API is running");
 });
 
 const courses = [
@@ -243,10 +244,6 @@ app.post("/prof/submit", upload.single("marksheet"), async (req, res) => {
 
 app.use('/profile', profileRoutes);
 
-app.get("/profileprof", (req, res) => {
-  res.render("profileprof.ejs",{
-      student: req.session.user,
-    } );
-});
+
 
 app.listen(3000);

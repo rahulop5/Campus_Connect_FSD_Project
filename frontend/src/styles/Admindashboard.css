@@ -1,0 +1,560 @@
+/* Existing untouched header and sidebar CSS with enhancements */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box; /* Ensure consistent box model */
+}
+
+header {
+    display: flex;
+    height: 75px;
+    width: 100%;
+    backdrop-filter: blur(20px);
+    position: fixed;
+    top: 0;
+    z-index: 100;
+    background: rgba(165, 165, 165, 0.13);
+}
+
+.admin-dashboard-page {
+    background-color: black;
+    font-family: 'Outfit', sans-serif; /* Set default font for consistency */
+}
+
+.logo {
+    color: #FFF;
+    font-family: Kameron;
+    font-size: 30px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+    height: 35px;
+    padding: 20px 20px;
+    margin-left: 10px;
+}
+
+.logo > span {
+    color: rgba(72, 255, 0, 0.68);
+}
+
+.notification > img {
+    width: 35px;
+    height: 35px;
+    padding: 20px 10px;
+}
+
+header > :nth-child(2) {
+    margin-left: auto;
+}
+
+.profile > img {
+    width: 55px;
+    height: 55px;
+    padding: 10px;
+    padding-right: 20px;
+}
+
+.sidebar {
+    width: 70px;
+    height: 100vh;
+    top: 75px;
+    position: fixed;
+    transition: width 0.3s ease;
+    overflow: hidden;
+    z-index: 99;
+    background: rgba(165, 165, 165, 0.13);
+    backdrop-filter: blur(20px);
+}
+
+.sidebar a {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: white;
+}
+
+.sidebar > ul > li > a > img {
+    height: 40px;
+    width: 40px;
+    padding: 10px 15px;
+    margin-right: 15px;
+}
+
+.sidebar .text {
+    transition: opacity 0.3s ease;
+    opacity: 0;
+}
+
+.sidebar:hover .text, .sidebar.active .text {
+    opacity: 1;
+}
+
+.text > span {
+    margin-left: 5px;
+}
+
+.sidebar:hover {
+    width: 250px;
+}
+
+.sidebar li:hover {
+    background: rgba(217, 217, 217, 0.15);
+}
+
+#sidebar-toggle {
+    display: none;
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 1000;
+    background: #2B9900;
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: 'Outfit', sans-serif;
+}
+
+#sidebar-toggle:hover {
+    background: #237a00;
+}
+
+/* === Content Styling Starts Here === */
+main {
+    position: absolute;
+    top: 75px;
+    z-index: 10;
+    color: white;
+    left: 70px;
+    width: calc(100% - 70px);
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+/* Dashboard Greeting */
+#dashboard_div {
+    position: absolute;
+    left: 48px;
+    top: 33px;
+    font-family: Outfit;
+    font-size: 24px;
+    font-weight: 600;
+}
+
+#welcm_nd_admn_div {
+    position: absolute;
+    left: 48px;
+    top: 109px;
+    font-family: Outfit;
+}
+
+.green_gradient {
+    background: linear-gradient(90deg, #2B9900 0%, #949494 73.9%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+#welcome_div {
+    font-size: 70px;
+    font-weight: 400;
+    line-height: 75px;
+    letter-spacing: -3.5px;
+}
+
+#admin_div {
+    font-size: 85px;
+    font-weight: 700;
+    line-height: 75px;
+    letter-spacing: 2.55px;
+    color: white;
+}
+
+#date_holding_container_outer {
+    position: absolute;
+    display: flex;
+    justify-content: center; /* Center for better balance */
+    align-items: center;
+    z-index: 2;
+    color: white;
+    right: 20px; /* Simplified positioning */
+    height: 200px; /* Reduced height for compactness */
+}
+
+#date_holding_container_inner {
+    width: 200px; /* Smaller for better fit */
+    height: 180px;
+    background-color: rgba(43, 153, 0, 0.60);
+    border-radius: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#content_inside_datebox_container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+
+#day {
+    color: #000;
+    text-align: center;
+    font-family: Outfit;
+    font-size: 30px; /* Slightly smaller for balance */
+    font-weight: 500;
+    letter-spacing: -2.4px;
+    line-height: 40px;
+    margin-top: 10px;
+}
+
+#date {
+    text-align: center;
+    font-family: Outfit;
+    font-size: 80px; /* Adjusted for compactness */
+    font-weight: 700;
+    letter-spacing: 4.8px;
+    line-height: 80px;
+}
+
+#month_year {
+    color: #000;
+    text-align: center;
+    font-family: Outfit;
+    font-size: 25px;
+    font-weight: 500;
+    letter-spacing: -2px;
+    margin-bottom: 10px;
+}
+
+/* Container for Course, Student, Professor, and Allotment Management */
+.management-section {
+    display: flex;
+    justify-content: flex-start;
+    gap: 20px; /* Reduced gap for tighter layout */
+    margin: 40px 0;
+    flex-wrap: wrap;
+}
+
+.course-container, .student-container, .professor-container, .course-allotment-container {
+    flex: 1 1 auto;
+    min-width: 300px; /* Preserved original min-width */
+    max-width: 340px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    padding: 25px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    color: white;
+    font-family: 'Outfit', sans-serif;
+}
+
+/* Form Styling */
+form {
+    position: relative; /* For positioning error messages */
+}
+
+#add-course-form, #student-form, #add-professor-form, #remove-course-form, #remove-professor-form, #course-allotment-form, #course-removal-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px; /* Preserved original gap */
+}
+
+#add-course-form label, #student-form label, #add-professor-form label, #remove-course-form label, #remove-professor-form label, #course-allotment-form label, #course-removal-form label {
+    display: block;
+    margin-bottom: 5px; /* Preserved original margin */
+    margin-top: 10px; /* Preserved original margin */
+    font-weight: 500;
+    font-size: 16px;
+}
+
+#add-course-form input, #add-course-form select,
+#student-form input,
+#add-professor-form input, #add-professor-form select,
+#remove-course-form select,
+#remove-professor-form select,
+#course-allotment-form select,
+#course-removal-form select {
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #2B9900;
+    background-color: #0F0F0F;
+    color: white;
+    margin-bottom: 10px; /* Preserved original margin */
+    font-family: 'Outfit', sans-serif;
+    box-sizing: border-box;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.1s ease;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+
+#add-course-form select, #remove-course-form select, #remove-professor-form select, #course-allotment-form select, #course-removal-form select {
+    background-image: url('data:image/svg+xml;utf8,<svg fill="%23FFFFFF" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>');
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    padding-right: 30px;
+}
+
+#add-course-form input:focus, #add-course-form select:focus,
+#student-form input:focus,
+#add-professor-form input:focus, #add-professor-form select:focus,
+#remove-course-form select:focus,
+#remove-professor-form select:focus,
+#course-allotment-form select:focus,
+#course-removal-form select:focus {
+    outline: none;
+    border-color: #48FF00;
+    box-shadow: 0 0 8px rgba(72, 255, 0, 0.5);
+    transform: scale(1.02); /* Subtle zoom on focus */
+}
+
+/* Button Styling */
+.course-container button, .student-container button, .professor-container button, .course-allotment-container button {
+    padding: 12px;
+    background-color: #2B9900;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-family: 'Outfit', sans-serif;
+    font-weight: 600;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    width: 100%;
+    min-height: 48px; /* Consistent button height */
+}
+
+.course-container button:hover, .student-container button:hover, .professor-container button:hover, .course-allotment-container button:hover {
+    background-color: #237a00;
+    transform: translateY(-2px);
+}
+
+.toggle-btn {
+    padding: 10px;
+    background-color: #2B9900;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-family: 'Outfit', sans-serif;
+    font-weight: 600;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    min-height: 44px; /* Consistent toggle button height */
+}
+
+.toggle-btn:hover {
+    background-color: #237a00;
+    transform: translateY(-2px);
+}
+
+/* Error Messages */
+.course-error, .student-error, .professor-error, .allotment-error {
+    color: #FF4D4D;
+    font-family: 'Outfit', sans-serif;
+    font-size: 14px;
+    text-align: center;
+    margin-top: 10px;
+    padding: 8px;
+    border-radius: 5px;
+    background: rgba(255, 77, 77, 0.2);
+    border: 1px solid #FF4D4D;
+    opacity: 0;
+    transform: translateY(-10px);
+    animation: slideIn 0.3s ease forwards;
+}
+
+@keyframes slideIn {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Headings */
+h2 {
+    background: linear-gradient(90deg, #2B9900 0%, #949494 50.9%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-family: 'Outfit', sans-serif;
+    font-size: 24px;
+    margin: 20px 0;
+}
+
+/* Lists */
+.course-list, .professor-list, .student-list {
+    list-style: none;
+    padding: 0;
+}
+
+.course-list li, .professor-list li, .student-list li {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 15px;
+    margin: 10px 0;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: white;
+    font-family: 'Outfit', sans-serif;
+    font-size: 16px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.course-list li:hover, .professor-list li:hover, .student-list li:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.no-items {
+    color: rgba(255, 255, 255, 0.5);
+    font-family: 'Outfit', sans-serif;
+    font-size: 16px;
+    text-align: center;
+    margin: 20px 0;
+}
+
+/* Back to Home Link */
+.back-home {
+    display: inline-block;
+    margin: 40px 0;
+    padding: 10px 20px;
+    background-color: #2B9900;
+    color: white;
+    text-decoration: none;
+    border-radius: 10px;
+    font-family: 'Outfit', sans-serif;
+    font-weight: 600;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.back-home:hover {
+    background-color: #237a00;
+    transform: translateY(-2px);
+}
+
+/* Responsive Design */
+@media (min-width: 1400px) {
+    .course-container, .student-container, .professor-container, .course-allotment-container {
+        flex: 1 1 ;
+        max-width: calc(50% - 20px);
+        min-width: 300px;
+    }
+}
+
+@media (max-width: 1399px) and (min-width: 1000px) {
+    .course-container, .student-container, .professor-container, .course-allotment-container {
+        flex: 1 1 calc(33.33% - 20px);
+        max-width: calc(33.33% - 20px);
+        min-width: 300px;
+    }
+}
+
+@media (max-width: 999px) and (min-width: 600px) {
+    .course-container, .student-container, .professor-container, .course-allotment-container {
+        flex: 1 1 calc(50% - 20px);
+        max-width: calc(50% - 20px);
+        min-width: 300px;
+    }
+}
+
+@media (max-width: 599px) {
+    .sidebar {
+        width: 0; /* Hidden by default on mobile */
+    }
+
+    .sidebar.active {
+        width: 250px; /* Match desktop hover width */
+    }
+
+    #sidebar-toggle {
+        display: block; /* Show toggle button on mobile */
+    }
+
+    main {
+        left: 0;
+        width: 100%;
+    }
+
+    .management-section {
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .course-container, .student-container, .professor-container, .course-allotment-container {
+        flex: 1 1 100%;
+        max-width: 100%;
+        min-width: 0;
+        padding: 25px;
+    }
+
+    #date_holding_container_outer {
+        position: relative;
+        right: 0;
+        height: 200px;
+        margin: 20px auto;
+        width: 100%;
+        text-align: center;
+    }
+
+    #date_holding_container_inner {
+        width: 200px;
+        height: 180px;
+        margin: 0 auto;
+    }
+
+    #day {
+        font-size: 30px;
+        line-height: 40px;
+        margin-top: 10px;
+    }
+
+    #date {
+        font-size: 80px;
+        line-height: 80px;
+    }
+
+    #month_year {
+        font-size: 25px;
+        margin-bottom: 10px;
+    }
+
+    #dashboard_div {
+        font-size: 24px;
+        left: 48px;
+        top: 33px;
+    }
+
+    #welcm_nd_admn_div {
+        left: 48px;
+        top: 109px;
+    }
+
+    #welcome_div {
+        font-size: 70px;
+        line-height: 75px;
+    }
+
+    #admin_div {
+        font-size: 85px;
+        line-height: 75px;
+    }
+}
+
+.management-section { 
+    display: flex;
+    position:static;
+    margin-top: 300px;
+}
+
+#top_row {
+    margin-bottom: 10px;
+    position:static;
+}
+

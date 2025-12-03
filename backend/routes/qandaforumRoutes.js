@@ -1,41 +1,28 @@
 import express from "express";
 import {
-  renderQuestionsPage,
-  renderQuestionDetails,
+  getQuestions,
+  getQuestionDetails,
   upvoteQuestion,
   downvoteQuestion,
   upvoteAnswer,
   downvoteAnswer,
   submitAnswer,
-  fetchQuestionsData,
-  fetchQuestionDetails,
-  renderAskQuestionPage,
   askQuestion,
 } from "../controllers/qandaforumController.js";
+import { verifyToken } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-router.get("/problemslvfrm", renderQuestionsPage);
-router.get("/questions/partial", fetchQuestionsData);
+router.use(verifyToken);
 
-
-
-router.get("/problemopen/:id", renderQuestionDetails);
-router.get("/problemopen/:id/partial", fetchQuestionDetails);
-
-
-
+router.get("/questions", getQuestions);
+router.get("/question/:id", getQuestionDetails);
 
 router.post("/upvote-question", upvoteQuestion);
 router.post("/downvote-question", downvoteQuestion);
 router.post("/upvote-answer", upvoteAnswer);
 router.post("/downvote-answer", downvoteAnswer);
 router.post("/submit-answer", submitAnswer);
-router.get("/ask", renderAskQuestionPage);
 router.post("/ask", askQuestion);
-
-
-
-
 
 export default router;

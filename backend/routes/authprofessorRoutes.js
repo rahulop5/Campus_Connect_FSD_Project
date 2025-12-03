@@ -1,24 +1,15 @@
 import express from "express";
 import {
-    professorLogin,
-    professorSignup
-} from "../controllers/authprofessorController.js"
+    handleProfLogin,
+    registerProfessor,
+    getMe
+} from "../controllers/auth/authController.js";
+import { verifyToken } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-router.get("/auth/prof/signup", (req, res)=>{
-    res.render("otherauthsignup.ejs", {
-        role: "prof",
-    });
-});
-
-router.get("/auth/prof/login", (req, res)=>{
-    res.render("otherauthlogin.ejs", {
-        role: "prof",
-    });
-});
-
-router.post("/auth/prof/signup", professorSignup);
-router.post("/auth/prof/login", professorLogin);
+router.post("/login", handleProfLogin);
+router.post("/register", registerProfessor);
+router.get("/me", verifyToken, getMe);
 
 export default router;

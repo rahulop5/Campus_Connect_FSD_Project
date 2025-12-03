@@ -1,64 +1,94 @@
 import passport from "passport";
 import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
 import Student from "../models/Student.js";
 
+// ==================================
+// == GOOGLE OAUTH
+// ==================================
 export const googleAuth = passport.authenticate("google", { scope: ["profile", "email"] });
 
-export const googleAuthCallback = passport.authenticate("google", { failureRedirect: "/" });
+export const googleAuthCallback = passport.authenticate("google", { failureRedirect: "http://localhost:5173/login?error=oauth_failed" });
 
 export const handleGoogleAuthCallback = async (req, res) => {
   try {
-    const { user } = req.session.passport;
-    const existingStudent = await Student.findOne({ email: user.email });
+    // req.user contains the authenticated user from passport
+    const { email, name } = req.user;
+    
+    // Check if user already exists
+    let student = await Student.findOne({ email });
 
-    if (existingStudent) {
-      // User already exists, log them in and redirect to dashboard
-      req.session.user = existingStudent;
-      res.redirect("/dashboard");
-    } else {
-      // New user, store their Google info in session and redirect to complete registration
-      req.session.user = {
-        name: user.name,
-        email: user.email,
+    if (student) {
+      // Existing user - generate JWT and redirect
+      const payload = {
+        email: student.email,
+        role: "Student",
       };
-      res.redirect("/register");
+      const token = jwt.sign(payload, process.env.JWT_SECRET, {
+        expiresIn: "1h",
+      });
+      
+      // Redirect to frontend with token in URL
+      return res.redirect(`http://localhost:5173/oauth-callback?token=${token}&name=${encodeURIComponent(student.name)}&role=Student`);
+    } else {
+      // New user - redirect to registration with pre-filled data
+      // Since we need additional info (roll, section, phone), redirect to register page
+      // Pass the OAuth data so user can complete registration
+      return res.redirect(`http://localhost:5173/register?oauth=true&email=${encodeURIComponent(email)}&name=${encodeURIComponent(name)}`);
     }
   } catch (error) {
     console.error("Error during Google callback:", error);
-    res.redirect("/");
+    res.redirect("http://localhost:5173/login?error=oauth_error");
   }
 };
 
+// ==================================
+// == GITHUB OAUTH
+// ==================================
 export const githubAuth = passport.authenticate("github", { scope: ["user:email"] });
 
-export const githubAuthCallback = passport.authenticate("github", { failureRedirect: "/" });
+export const githubAuthCallback = passport.authenticate("github", { failureRedirect: "http://localhost:5173/login?error=oauth_failed" });
 
 export const handleGithubAuthCallback = async (req, res) => {
   try {
-    const { user } = req.session.passport;
-    const existingStudent = await Student.findOne({ email: user.email });
+    // req.user contains the authenticated user from passport
+    const { email, name } = req.user;
 
-    if (existingStudent) {
-      // User already exists, log them in
-      req.session.user = existingStudent;
-      res.redirect("/dashboard");
-    } else {
-      // New user, store GitHub info and redirect to complete registration
-      req.session.user = {
-        name: user.name,
-        email: user.email,
+    if (!email) {
+      return res.redirect("http://localhost:5173/login?error=no_email");
+    }
+
+    // Check if user already exists
+    let student = await Student.findOne({ email });
+
+    if (student) {
+      // Existing user - generate JWT and redirect
+      const payload = {
+        email: student.email,
+        role: "Student",
       };
-      res.redirect("/register");
+      const token = jwt.sign(payload, process.env.JWT_SECRET, {
+        expiresIn: "1h",
+      });
+      
+      // Redirect to frontend with token in URL
+      return res.redirect(`http://localhost:5173/oauth-callback?token=${token}&name=${encodeURIComponent(student.name)}&role=Student`);
+    } else {
+      // New user - redirect to registration with pre-filled data
+      return res.redirect(`http://localhost:5173/register?oauth=true&email=${encodeURIComponent(email)}&name=${encodeURIComponent(name)}`);
     }
   } catch (error) {
     console.error("Error during GitHub callback:", error);
-    res.redirect("/");
+    res.redirect("http://localhost:5173/login?error=oauth_error");
   }
 };
 
-export const signupStudent = async (req, res) => {
+// ==================================
+// == STUDENT REGISTRATION (JWT-based)
+// ==================================
+export const registerStudent = async (req, res) => {
   try {
-    const { name, email, password, confirm_password } = req.body;
+    const { name, email, password, confirm_password, roll, section, phone } = req.body;
 
     // --- VALIDATION ---
     if (!name || name.trim().length === 0) {
@@ -70,48 +100,38 @@ export const signupStudent = async (req, res) => {
       return res.status(400).json({ message: "Invalid email format" });
     }
 
-    const passwordErrors = [];
-    if (password.length < 6) passwordErrors.push("Password must be at least 6 characters long");
-    if (!/[A-Z]/.test(password)) passwordErrors.push("Password must contain at least one uppercase letter");
-    if (!/[0-9]/.test(password)) passwordErrors.push("Password must contain at least one number");
-    if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) passwordErrors.push("Password must contain at least one special character");
-
-    if (passwordErrors.length > 0) {
-      return res.status(400).json({ message: passwordErrors.join(".\n") });
-    }
-
-    if (password !== confirm_password) {
-      return res.status(400).json({ message: "Passwords do not match" });
-    }
-
+    // Check if user already exists
     const existingUser = await Student.findOne({ email });
     if (existingUser) {
       return res.status(400).json({ message: "An account with this email already exists" });
     }
-    // --- END VALIDATION ---
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+    // Password validation (only if not OAuth)
+    let hashedPassword = null;
+    let isOAuth = false;
 
-    // Store partial data in session and proceed to the next registration step
-    req.session.user = {
-      name,
-      email,
-      password: hashedPassword,
-    };
+    if (password) {
+      const passwordErrors = [];
+      if (password.length < 6) passwordErrors.push("Password must be at least 6 characters long");
+      if (!/[A-Z]/.test(password)) passwordErrors.push("Password must contain at least one uppercase letter");
+      if (!/[0-9]/.test(password)) passwordErrors.push("Password must contain at least one number");
+      if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) passwordErrors.push("Password must contain at least one special character");
 
-    res.redirect("/register");
+      if (passwordErrors.length > 0) {
+        return res.status(400).json({ message: passwordErrors.join(".\n") });
+      }
 
-  } catch (error) {
-    console.error("Error during signup:", error);
-    res.status(500).json({ message: "Internal Server Error" });
-  }
-};
+      if (password !== confirm_password) {
+        return res.status(400).json({ message: "Passwords do not match" });
+      }
 
-export const registerStudent = async (req, res) => {
-  try {
-    const { roll, section, phone } = req.body;
+      hashedPassword = await bcrypt.hash(password, 10);
+    } else {
+      isOAuth = true;
+    }
 
-    const rollRegex = /^S(20[0-2][0-9])00(10|20|30)([0-9]{3})$/; // Updated regex for year 2000-2029
+    // Roll number validation (for students)
+    const rollRegex = /^S(20[0-2][0-9])00(10|20|30)([0-9]{3})$/;
     if (!roll || !rollRegex.test(roll)) {
       return res.status(400).json({ message: "Invalid Roll Number format. Example: S20230010001" });
     }
@@ -123,7 +143,6 @@ export const registerStudent = async (req, res) => {
     if (!phone || !/^\d{10}$/.test(phone)) {
       return res.status(400).json({ message: "Phone number must be exactly 10 digits" });
     }
-    // --- END VALIDATION ---
 
     // Extract data from roll number
     const year = parseInt(roll.substring(1, 5));
@@ -139,12 +158,12 @@ export const registerStudent = async (req, res) => {
       default: branch = "Unknown";
     }
 
-    // Create the final student object using data from session and form
+    // Create the student
     const newStudent = new Student({
-      name: req.session.user.name,
-      email: req.session.user.email,
-      password: req.session.user.password || null, // Password will be null for OAuth users
-      isOAuth: !req.session.user.password,
+      name,
+      email,
+      password: hashedPassword,
+      isOAuth,
       phone,
       roll,
       section,
@@ -155,45 +174,24 @@ export const registerStudent = async (req, res) => {
 
     await newStudent.save();
 
-    // Update session with the complete, saved user profile
-    req.session.user = newStudent;
+    // Generate JWT token
+    const payload = {
+      email: newStudent.email,
+      role: "Student",
+    };
+    const token = jwt.sign(payload, process.env.JWT_SECRET, {
+      expiresIn: "1h",
+    });
 
-    res.redirect("/dashboard");
+    // Return JWT token
+    return res.json({
+      name: newStudent.name,
+      role: "Student",
+      token,
+    });
 
   } catch (error) {
     console.error("Error during student registration:", error);
-    res.status(500).send("Internal Server Error");
-  }
-};
-
-// ==================================
-// == LOCAL LOGIN
-// ==================================
-export const loginStudent = async (req, res) => {
-  try {
-    const { email, password } = req.body;
-    const user = await Student.findOne({ email });
-
-    if (!user) {
-      return res.status(400).json({ message: "Invalid email or password" });
-    }
-
-    if (user.isOAuth) {
-      return res.status(400).json({
-        message: "This account was created using Google or GitHub. Please log in using those methods.",
-      });
-    }
-
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
-      return res.status(400).json({ message: "Invalid email or password" });
-    }
-
-    req.session.user = user;
-    res.redirect("/dashboard");
-
-  } catch (error) {
-    console.error("Error during login:", error);
     res.status(500).json({ message: "Internal Server Error" });
   }
 };

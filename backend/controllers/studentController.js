@@ -1,143 +1,83 @@
 import Question from "../models/Question.js";
 import Student from "../models/Student.js";
 import Course from "../models/Course.js";
-import ejs from "ejs";
 
-import path from "path";
-import { fileURLToPath } from "url";
-
-const __filename = fileURLToPath(import.meta.url);
-// const _dirname = path.dirname(_filename);
-
- 
 export const studentDashboard = async (req, res) => {
-  if (req.session.user) {
-    try {
-      res.render("dashboard.ejs");
-    } catch (error) {
-      console.error("Error rendering student dashboard:", error);
-      res.status(500).send("Internal Server Error");
-    }
-  } else {
-    res.redirect("/");
+  try {
+    const studentId = req.user.email ? (await Student.findOne({email: req.user.email}))._id : req.user._id;
+    // Or better, if JWT has ID, use that. Assuming JWT has email, let's find user.
+    // Actually, getMe or middleware could attach full user, but middleware attaches payload.
+    // Let's assume payload has email.
+    
+    const student = await Student.findOne({ email: req.user.email }).populate("courses.course");
+    if (!student) return res.status(404).json({ message: "Student not found" });
+
+    const courses = student.courses.map((courseObj) => {
+      const course = courseObj.course;
+      const attendancePercentage = courseObj.attendance ? courseObj.attendance : 0;
+
+      return {
+        subject: course.name,
+        attendancePercentage,
+        grade: {
+          predgrade: courseObj.grade || "NA",
+        },
+      };
+    });
+
+    courses.forEach((course)=>{
+      const shortform=course.subject
+        .split(" ")
+        .map(word => word[0].toUpperCase())
+        .join("");
+      course.subject=shortform;
+    });
+
+    const date = new Date();
+    const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+    const dayOfWeek = daysOfWeek[date.getDay()];
+    const day = date.getDate();
+    const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+    const month = months[date.getMonth()];
+    const year = date.getFullYear();
+
+    const questions = await Question.find().populate("asker").sort({ createdAt: -1 });
+
+    res.json({
+      name: student.name,
+      courses,
+      dayOfWeek,
+      day,
+      month,
+      year,
+      questions,
+    });
+    
+  } catch (error) {
+    console.error("Error in student dashboard:", error);
+    res.status(500).json({ message: "Internal Server Error" });
   }
 };
-export const studentDashboardNew = async (req, res) => {
-  if (req.session.user) {
-    try {
-      // Fetch the current student from the database (populate the courses)
-      const student = await Student.findById(req.session.user._id).populate("courses.course");
-
-      const courses = student.courses.map((courseObj) => {
-        const course = courseObj.course; // Populated course document
-
-        const attendancePercentage = courseObj.attendance
-          ? courseObj.attendance
-          : 0;
-
-        return {
-          subject: course.name,
-          attendancePercentage,
-          grade: {
-            predgrade: courseObj.grade || "NA", // Default to "NA" if grade is not present
-          },
-        };
-      });
-      courses.forEach((course)=>{
-        const shortform=course.subject
-          .split(" ")
-          .map(word => word[0].toUpperCase())
-          .join("");
-        course.subject=shortform;
-      });
-      // Get the current date details
-      const date = new Date();
-      const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-      const dayOfWeek = daysOfWeek[date.getDay()];
-      const day = date.getDate();
-      const months = [
-        "January",
-        "February",
-        "March",
-        "April",
-        "May",
-        "June",
-        "July",
-        "August",
-        "September",
-        "October",
-        "November",
-        "December",
-      ];
-      const month = months[date.getMonth()];
-      const year = date.getFullYear();
-
-      // Fetch the latest questions for the dashboard
-      const questions = await Question.find().populate("asker").sort({ createdAt: -1 });
-
-      // Render the dashboard with the required data
-        res.json({
-        name: student.name,
-        courses,
-        dayOfWeek,
-        day,
-        month,
-        year,
-        questions,
-      });
-      
-    } catch (error) {
-      console.error("Error rendering student dashboard:", error);
-      res.status(500).send("Internal Server Error");
-    }
-  } else {
-    res.redirect("/");
-  }
-};
-
 
 export const studentProfile = async (req, res) => {
-  if(req.session.user){
-    const student = await Student.findById(req.session.user._id).populate("courses.course");
-    console.log("yoyo")
-    console.log(student.courses);
-    console.log("yoyo")
-    res.render("profile.ejs", {
-      student: student,
-    });
-  }
-  else{
-    res.redirect("/login");
-  }
+    try {
+        const student = await Student.findOne({ email: req.user.email }).populate("courses.course");
+        if (!student) return res.status(404).json({ message: "Student not found" });
+        res.json({ student });
+    } catch (error) {
+        console.error("Error fetching profile:", error);
+        res.status(500).json({ message: "Internal Server Error" });
+    }
 };
-
-
 
 export const studentAttendance = async (req, res) => {
-  if (req.session.user) {
     try {
-      res.render("attendance.ejs");
-    } catch (error) {
-      console.error("Error fetching attendance data:", error);
-      res.status(500).send("Internal Server Error");
-    }
-  } else {
-    res.redirect("/");
-  }
-};
-export const studentAttendanceNew = async (req, res) => {
-  if (req.session.user) {
-    try {
-      // Fetch the student from the database and populate the courses
-      const student = await Student.findById(req.session.user._id).populate("courses.course");
+      const student = await Student.findOne({ email: req.user.email }).populate("courses.course");
+      if (!student) return res.status(404).json({ message: "Student not found" });
 
-      // Map over the student's courses to calculate attendance details
       const courses = student.courses.map((courseObj) => {
-        const course = courseObj.course; // Populated course document
-        console.log(courseObj);
-        const percentage = courseObj.attendance
-          ? courseObj.attendance
-          : "0.00";
+        const course = courseObj.course;
+        const percentage = courseObj.attendance ? courseObj.attendance : "0.00";
 
         let status = "";
         let color = "";
@@ -154,7 +94,7 @@ export const studentAttendanceNew = async (req, res) => {
         }
 
         return {
-          subject: course.name, // Course name
+          subject: course.name,
           attendancePercentage: percentage,
           attendanceStatus: status,
           attendanceColor: color,
@@ -167,34 +107,20 @@ export const studentAttendanceNew = async (req, res) => {
       
     } catch (error) {
       console.error("Error fetching attendance data:", error);
-      res.status(500).send("Internal Server Error");
+      res.status(500).json({ message: "Internal Server Error" });
     }
-  } else {
-    res.redirect("/");
-  }
 };
 
-// Route 1: Initial Page Render
 export const studentGrades = async (req, res) => {
-  if (!req.session.user) return res.redirect("/");
-
   try {
-    res.render("bellgraph.ejs");
-  } catch (error) {
-    console.error("Error rendering bellgraph:", error);
-    res.status(500).send("Internal Server Error");
-  }
-};
+    const student = await Student.findOne({ email: req.user.email });
+    if (!student) return res.status(404).json({ message: "Student not found" });
 
-// Route 2: Partial HTML Loader
-export const studentGradesPartial = async (req, res) => {
-  try {
-    const studentCourses = req.session.user.courses.map((c) => c.course);
+    const studentCourses = student.courses.map((c) => c.course);
     const courses = await Course.find({ _id: { $in: studentCourses } });
 
-    console.log(courses[0]);
     if (!courses || courses.length === 0)
-      return res.status(404).send("No courses found");
+      return res.status(404).json({ message: "No courses found" });
 
     const bellgraphSubjects = courses.map((course) => ({
       courseId: course._id.toString(),
@@ -203,19 +129,18 @@ export const studentGradesPartial = async (req, res) => {
       credits: course.credits,
       classescompleted: course.classeshpnd
     }));
-    res.render("partials/bellgraphPartial.ejs", {
-      subject: bellgraphSubjects[0].name,
+
+    res.json({
       bellgraphSubjects,
       defaultCourseId: bellgraphSubjects[0].courseId,
-      userinfo: req.session.user.courses[0]?.grade || "N/A",
+      userinfo: student.courses[0]?.grade || "N/A",
     });
   } catch (error) {
-    console.error("Error loading grades partial:", error);
-    res.status(500).send("Internal Server Error");
+    console.error("Error loading grades:", error);
+    res.status(500).json({ message: "Internal Server Error" });
   }
 };
 
-// Route 3: Graph Data Endpoint
 export const studentGradebyId = async (req, res) => {
   try {
     const { courseId } = req.params;
@@ -238,70 +163,27 @@ export const studentGradebyId = async (req, res) => {
   }
 };
 
-
-
-
-
-
-
-// Controller function to handle updating the student's profile
 export const updateStudentProfile = async (req, res) => {
-  if (req.session.user) {
     try {
       const { field, value } = req.body;
+      const student = await Student.findOne({ email: req.user.email });
+      if (!student) return res.status(404).json({ message: "Student not found" });
 
-      // Update the student's profile in the database using the field and value provided
       const updatedStudent = await Student.findByIdAndUpdate(
-        req.session.user._id, 
+        student._id, 
         { [field]: value }, 
         { new: true } 
       );
 
-      // Update the session user object with the updated student data
-      req.session.user = updatedStudent;
-
-      // Send a success response to the client
-      res.status(200).send("Profile updated successfully");
+      res.status(200).json({ message: "Profile updated successfully", user: updatedStudent });
     } catch (error) {
       console.error("Error updating student profile:", error);
-      res.status(500).send("Internal Server Error");
+      res.status(500).json({ message: "Internal Server Error" });
     }
-  } else {
-    res.status(401).send("Unauthorized");
-  }
 };
-
-export const studentProfilePartial = async (req, res) => {
-  if (!req.session.user) return res.status(401).send("Unauthorized");
-
-  try {
-    const student = await Student.findById(req.session.user._id).populate("courses.course");
-
-    const html = await ejs.renderFile(
-      path.join(__dirname, "../views/profile.ejs"),
-      { student }
-    );
-
-    // Extract only the main content (inside <form id="bodbod"> ... </form>)
-    const match = html.match(/<form id="bodbod">([\s\S]*?)<\/form>/);
-    const partialHtml = match ? match[0] : html;
-
-    res.send(partialHtml);
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Internal Server Error");
-  }
-};
-
-
 
 export const changepass = async (req, res) => {
-  if(!req.session.user) {
-    return res.status(400).json({
-      message: "Not authenticated"
-    })
-  }
-  return res.render("changepassword.ejs");
+    // This should probably be a POST request to update password, not GET
+    // But keeping it as is for now, just returning message
+    return res.json({ message: "Use POST /update-password to change password" });
 }
-
-//yaapi

@@ -1,0 +1,360 @@
+:root {
+  --accent-color: #2B9900;
+  --text-color: #FFF;
+  --bg-color: #090909;
+}
+
+*{
+    margin: 0;
+    padding: 0;
+}
+
+.home-page{
+    background-color: #090909;
+    height: 400vh;
+
+}
+
+.outfit{
+    font-family: "Outfit", serif;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-style: normal;
+}
+
+header{
+    height: 75px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(165, 165, 165, 0.13);
+    display: flex;
+    align-items: center;
+    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+    backdrop-filter: blur(20px);
+}
+
+.logo{
+    color: #FFF;
+    font-family: Kameron;
+    font-size: 30px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+    height: 35px;
+    padding: 20px 20px;
+    margin-left: 10px;
+}
+
+.logo>span{
+    color: rgba(72, 255, 0, 0.68);
+}
+
+header> :nth-child(2){
+    margin-left: auto;
+    color: #FFF;
+    font-size: 40px;
+    margin-right: 25px;
+}
+
+header> :nth-child(3) {
+    text-decoration: underline;
+    color: #FFF;
+    font-size: 20px;
+    margin-right: 25px;
+}
+
+#signup{
+    border-radius: 40px;
+    border: 3px solid rgba(72, 255, 0, 0.68);
+    background: rgba(72, 255, 0, 0.25);
+    backdrop-filter: blur(15.5px);
+    padding: 8px 20px;
+    margin-right: 25px;
+}
+
+#signup>p{
+    font-size: 18px;
+    color: white;
+}
+
+.hero {
+    background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0) 60%, #090909), url("/assets/homepage.jpeg");
+    background-size: cover; 
+    height: 100vh;
+    background-position: center; 
+    position: relative;
+}
+
+.hero>div{
+    position: absolute;
+    top: 180px;
+    left: 80px;
+}
+
+.herologo{
+    color: #151515;
+    font-size: 90px;
+    line-height: 80px;
+    margin-bottom: 20px;
+}
+
+.herodesc{
+    color: #FFF;
+    font-family: 'Dream Orphans', sans-serif;
+    font-size: 30px;
+    font-style: normal;
+    font-weight: 400;
+    margin-bottom: 20px;
+    line-height: 30px;
+}
+
+.hero>div button{
+    border-radius: 20px;
+    border: 3px solid rgba(72, 255, 0, 0.68);
+    background: #285616;
+    padding: 12px 30px;
+}
+
+.hero>div button>p{
+    font-size: 20px;
+    color: white
+}
+
+.herohr{
+   background-color: white;
+   height: 2px;
+   width: 80%;
+   margin-left: auto;
+   margin-right: auto;
+}
+
+.features{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /* margin-bottom: 150px; */
+    height: 810px;
+    margin-top: 20px;
+    background: radial-gradient(50% 50% at -10% 50%, rgba(72, 255, 0, 0.50) 0%, rgba(115, 115, 115, 0.00) 100%),
+                radial-gradient(circle 160px at 67% 80%, #696969 0%, rgba(8, 8, 8, 0.00) 100%),
+                radial-gradient(50% 50% at 110% 30%, rgba(72, 255, 0, 0.50) 0%, rgba(115, 115, 115, 0.00) 70%);
+}
+
+.features>p{
+    font-size: 200px;
+    color: white;
+    letter-spacing: -15px;
+}
+
+.featurescontent{
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    margin-top: -85px;
+}
+
+.featurescontent>div{
+    border-radius: 31px;
+    background: rgba(55, 55, 55, 0.50);
+    backdrop-filter: blur(7.5px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 50px 38px 15px 38px;
+    box-shadow: -10px 10px 20px 5px rgba(0, 0, 0, 0.25);
+}
+
+.featurescontent> :nth-child(3){
+    box-shadow: 15px 10px 20px 5px rgba(0, 0, 0, 0.25);   
+}
+
+.featurescontent>div>img{
+    height: 178px;
+    width: 178px;
+    margin-bottom: 20px;
+}
+
+.featurescontent>div> :nth-child(2){
+    color: #FFF;
+    font-size: 27px;
+    line-height: 30px;
+    margin-bottom: 63px;
+    text-align: center;
+}
+
+.featurescontent>div> :nth-child(3){
+    color: #FFF;
+    font-size: 18px;
+    line-height: 30px;
+    margin-left: auto;
+    transition: color 0.3s ease;
+}
+
+.featurescontent> :nth-child(1)>:nth-child(3){
+    margin-top: 30px;
+}
+.featurescontent> :nth-child(2)>:nth-child(3){
+    margin-top: 30px;
+}
+.featurescontent> :nth-child(4)>:nth-child(3){
+    margin-top: 30px;
+}
+
+.featurescontent>div> :nth-child(3):hover{
+    color: rgba(72, 255, 0, 0.68);;
+}
+
+.featurescontent> :nth-child(2)>img{
+    height: 150px;
+    width: 150px;
+    margin-bottom: 48px;
+}
+
+.demos{
+    background: radial-gradient(50% 50% at 50% 50%, rgba(72, 255, 0, 0.50) 0%, rgba(115, 115, 115, 0.00) 110%);
+    height: 900px;
+    position: relative;
+    overflow: hidden;
+}
+
+.d_attendance{
+    opacity: 0;
+    display: none; 
+    flex-direction: column;
+    align-items: center;
+    transform: translateX(100%); 
+    transition: transform 1s ease-in-out, opacity 1s ease-in-out;
+}
+
+.d_attendance.active{
+    opacity: 1;
+    display: flex;
+    transform: translateX(0);
+}
+
+.d_attendance>div{
+    display: flex;
+    align-items: center;
+}
+
+.d_attendance>div> :nth-child(1){
+    color: #FFF;
+    font-size: 120px;
+}
+
+.d_attendance>div> :nth-child(2){
+    color: #FFF;
+    font-size: 50px;
+    line-height: 45px;
+}
+
+.d_attendance>:nth-child(2){
+    margin-bottom: 20px;
+}
+
+.d_attendance img{
+    width: 900px;
+}
+
+.scroller{
+    position: absolute;
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    padding: 20px;
+    background-color: #232323;
+    border-radius: 50px;
+    top: 50%;
+    transform: translateX(-50%);
+    transform: translateY(-50%);
+    left: 94%;
+    box-shadow: -10px 10px 20px 5px rgba(0, 0, 0, 0.25);
+}
+
+.scroller .btn{
+    height: 25px;
+    width: 25px;
+    border-radius: 50px;
+    background: #111111;
+    border: none;
+    transition: all 0.3s ease-in-out;
+}
+
+#btnselect{
+    background: linear-gradient(to bottom, #2B9900 0%, #0E3300);
+    height: 80px;
+}
+
+.finalsignup{
+    /* margin-top: 130px; */
+    /* margin-bottom: 130px; */
+    height: 650px;
+    display: flex;
+    justify-content: center;
+    /* background: radial-gradient(25% 50% at 50% 50%, rgba(72, 255, 0, 0.50) 0%, rgba(115, 115, 115, 0.00) 120%);  */
+    background-image: url("/assets/signupbg.jpg");
+    background-position: center; 
+    background-size: cover;
+}
+
+.finalsignup>div{
+    margin-top: 130px;
+    margin-bottom: 130px;
+    border-radius: 68px;
+    background: rgba(55, 55, 55, 0.50);
+    box-shadow: -10px 10px 20px 0px rgba(0, 0, 0, 0.25);
+    backdrop-filter: blur(12.5px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 70px 110px;
+}
+
+.finalsignup>div> :nth-child(1){
+    color: #FFF;
+    font-size: 45px;
+    font-weight: 500;
+    letter-spacing: -2.25px;
+}
+
+.finalsignup>div> :nth-child(2){
+    color: #FFF;
+    font-size: 30px;
+    letter-spacing: 1.5px;
+    font-weight: 150;
+    margin-bottom: 70px;
+}
+
+.finalsignup>div div{
+    border-radius: 20px;
+    border: 3px solid rgba(72, 255, 0, 0.68);
+    background: rgba(72, 255, 0, 0.25);
+    backdrop-filter: blur(15.5px);
+    padding: 8px 50px;
+    margin-right: 25px;
+}
+
+.finalsignup>div div>p{
+    color: #FFF;
+    font-size: 26px;
+    text-decoration: none;
+}
+
+footer{
+    height: 75px;
+    z-index: 100;
+    background: rgba(165, 165, 165, 0.13);
+    display: flex;
+    align-items: center;
+    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+    backdrop-filter: blur(20px);
+}
+
+footer>:nth-child(2){
+    margin-left: auto;
+    margin-right: 30px;
+    font-size: 20px;
+    color: #FFF;
+}

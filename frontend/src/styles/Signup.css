@@ -1,0 +1,148 @@
+*{
+    margin: 0;
+    padding: 0;
+}
+
+body{
+    background-image: url("/assets/bgloginsignup.png");
+    background-color: #000; 
+    background-size: cover; 
+    height: 100vh; 
+    background-position: center; 
+}
+
+.outfit{
+    font-family: "Outfit", serif;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-style: normal;
+}
+
+body>div{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+}
+
+.logo{
+    color: #FFF;
+    font-size: 40px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+    height: 35px;
+    padding: 20px 20px;
+    margin-left: 10px;
+}
+
+.logo>span{
+    color: rgba(72, 255, 0, 0.68);
+}
+
+form{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 40px;
+    margin-bottom: 15px;
+}
+
+form>input{
+    line-height: 30px;
+    font-size: 20px;
+    color: #FFF;
+    width: 333px;
+    border-radius: 5px;
+    border: 1px solid #7A7A7A;
+    background: rgba(48, 48, 48, 0.55);
+    padding: 20px 20px;
+}
+
+form>input::placeholder{
+    line-height: 30px;
+    font-size: 20px;
+}
+
+form>button{
+    margin-top: 40px;
+    border-radius: 40px;
+    border: 3px solid rgba(72, 255, 0, 0.40);
+    background: rgba(40, 86, 22, 0.75);
+    padding: 10px 100px;
+}
+
+form>button>p{
+    color: #FFF;
+    font-size: 22px;
+}
+
+.other{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
+
+.other>p{
+    color: #FFF;
+    font-size: 16px;
+}
+
+.other>p>a{
+    color: #FFF;
+    font-size: 16px;
+}
+
+.orline{
+    display: flex;
+    gap: 5px;
+    align-items: center;
+    width: 100%;
+    justify-content: center;
+}
+
+.orline>p{
+    color: #FFF;
+}
+
+.orline>div{
+    background: #FFF;
+    height: 2px;
+    width: 45%;
+}
+
+.oauth{
+    border-radius: 40px;
+    display: flex;
+    padding: 10px 45px;
+    align-items: center;
+}
+
+.oauth>img{
+    height: 38px;
+    width: 38px;
+    margin-right: 28px;
+}
+
+.oauth>p{
+    font-size: 20px;
+}
+
+.google{
+    background: #FDFDFD;
+}
+
+.google>p{
+    color: black;
+}
+
+.github{
+    border: 0.5px solid #FFF;
+    background: #000;
+}
+
+.github>p{
+    color: #FFF;
+}

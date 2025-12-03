@@ -1,54 +1,31 @@
 import express from "express";
 import {
+    handleStudentLogin,
+    registerStudent,
+    getMe
+} from "../controllers/auth/authController.js";
+import {
     googleAuth,
     googleAuthCallback,
     handleGoogleAuthCallback,
     githubAuth,
     githubAuthCallback,
-    handleGithubAuthCallback,
-    signupStudent,
-    registerStudent,
-    loginStudent
+    handleGithubAuthCallback
 } from "../controllers/authstudentController.js";
+import { verifyToken } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-// Google Authentication Routes
-router.get("/auth/google", googleAuth);
-router.get("/auth/google/callback", googleAuthCallback, handleGoogleAuthCallback);
+// Auth Routes
+router.post("/login", handleStudentLogin);
+router.post("/register", registerStudent);
+router.get("/me", verifyToken, getMe);
 
-// GitHub Authentication Routes
-router.get("/auth/github", githubAuth);
-router.get("/auth/github/callback", githubAuthCallback, handleGithubAuthCallback);
-
-//normal auth
-router.post("/auth/signup", signupStudent);
-router.post("/auth/register", registerStudent);
-router.post("/auth/login", loginStudent);
-
-router.get("/signup", (req, res) => {
-    res.render("signup.ejs");
-  });
-  
-router.get("/login", (req, res) => {
-  res.render("login.ejs");
-});
-
-router.get("/register", (req, res) => {
-  res.render("register.ejs");
-});
-
-router.get("/rolechooselogin", (req, res) => {
-  res.render("verifylogin.ejs");
-});
-
-router.get("/rolechoosesignup", (req, res) => {
-  res.render("verifysignup.ejs");
-});
-
-router.get("/pricing", (req, res) => {
-  res.render("pricing.ejs");
-});
+// OAuth Routes
+router.get("/google", googleAuth);
+router.get("/google/callback", googleAuthCallback, handleGoogleAuthCallback);
+router.get("/github", githubAuth);
+router.get("/github/callback", githubAuthCallback, handleGithubAuthCallback);
 
 export default router;
 

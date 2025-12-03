@@ -1,17 +1,11 @@
 import express from "express";
-import { adminSignup, adminLogin } from "../controllers/authadminController.js";
+import { registerAdmin, handleAdminLogin, getMe } from "../controllers/auth/authController.js";
+import { verifyToken } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-router.get("/auth/admin/signup", (req, res) => {
-  res.render("otherauthsignup.ejs", { role: "admin" });
-});
-
-router.get("/auth/admin/login", (req, res) => {
-  res.render("otherauthlogin.ejs", { role: "admin" });
-});
-
-router.post("/auth/admin/signup", adminSignup);
-router.post("/auth/admin/login", adminLogin);
+router.post("/login", handleAdminLogin);
+router.post("/register", registerAdmin);
+router.get("/me", verifyToken, getMe);
 
 export default router;
