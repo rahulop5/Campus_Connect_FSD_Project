@@ -5,7 +5,7 @@ svg
     stroke: #373737;
     backdrop-filter: blur(2px);
 }
-img
+/* img
 {
     border-radius: 40px;
     border-bottom-right-radius: 24px; 
@@ -14,7 +14,7 @@ img
     width:430px;
     height:250px;
     object-fit:stretch;
-}
+} */
 .prof-profile-page
 {
     font-family: Outfit;

@@ -19,7 +19,7 @@ body{
 .mainpage{
     color: white;
     flex-grow: 1;
-    margin-left: 75px;
+    /* margin-left: 75px; */
 }
 
 .searchques{

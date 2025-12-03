@@ -57,8 +57,8 @@ const Bellgraph = () => {
             label: 'Bell Curve',
             data: res.data.y,
             borderColor: 'rgba(75, 192, 192, 1)',
-            backgroundColor: 'rgba(75, 192, 192, 0.2)',
             borderWidth: 2,
+            fill: false,
             tension: 0.3,
           },
         ],
@@ -71,28 +71,53 @@ const Bellgraph = () => {
   return (
     <Layout>
       <div className="bellgraph-page">
-        <div className="subjects-list">
-          <h3>Your Courses</h3>
-          <ul>
-            {subjects.map((sub) => (
-              <li 
-                key={sub.courseId} 
-                onClick={() => handleSubjectClick(sub)}
-                className={selectedCourseId === sub.courseId ? 'selected' : ''}
-                style={{ cursor: 'pointer', padding: '10px', borderBottom: '1px solid #ccc', backgroundColor: selectedCourseId === sub.courseId ? '#e0f7fa' : 'transparent' }}
-              >
-                {sub.name}
-              </li>
-            ))}
-          </ul>
+        <div className="bg_subjects">
+          {subjects.map((sub) => (
+            <div 
+              key={sub.courseId} 
+              className="subject"
+              id={selectedCourseId === sub.courseId ? 'selected_subject' : ''}
+              onClick={() => handleSubjectClick(sub)}
+              style={{ cursor: 'pointer' }}
+            >
+              <p>{sub.name}</p>
+            </div>
+          ))}
         </div>
-        <div className="chart-container" style={{ marginTop: '20px' }}>
-          <h2>{currentSubjectName}</h2>
-          {chartData ? (
-            <Line options={{ responsive: true }} data={chartData} />
-          ) : (
-            <p>Loading chart...</p>
-          )}
+
+        <div className="bg_main">
+          <div className="bg_graph">
+            <p>Bell Graph Curve for <span id="currentSubject">{currentSubjectName}</span></p>
+            <div style={{ width: '800px', height: '400px' }}>
+              {chartData ? (
+                <Line 
+                  options={{ 
+                    responsive: true, 
+                    maintainAspectRatio: false,
+                    scales: {
+                      x: { title: { display: true, text: "Grade" } },
+                      y: { title: { display: true, text: "Frequency" } },
+                    }
+                  }} 
+                  data={chartData} 
+                />
+              ) : (
+                <p style={{color: 'white'}}>Loading chart...</p>
+              )}
+            </div>
+          </div>
+
+          <div className="bg_graphright">
+            <div>
+              <p>Your Grade</p>
+              <p>O</p> {/* Placeholder for userinfo/grade */}
+            </div>
+            <div className="bg_details">
+              <div><p>Allotted Credits</p><p><span>4</span></p></div>
+              <div><p>Total Hours Assigned</p><p><span>46</span>hrs</p></div>
+              <div><p>Total Enrollments</p><p><span>146</span></p></div>
+            </div>
+          </div>
         </div>
       </div>
     </Layout>

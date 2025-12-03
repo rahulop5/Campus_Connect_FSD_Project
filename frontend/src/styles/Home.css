@@ -12,7 +12,6 @@
 .home-page{
     background-color: #090909;
     height: 400vh;
-
 }
 
 .outfit{
@@ -20,48 +19,6 @@
     font-optical-sizing: auto;
     font-weight: 400;
     font-style: normal;
-}
-
-header{
-    height: 75px;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    background: rgba(165, 165, 165, 0.13);
-    display: flex;
-    align-items: center;
-    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
-    backdrop-filter: blur(20px);
-}
-
-.logo{
-    color: #FFF;
-    font-family: Kameron;
-    font-size: 30px;
-    font-style: normal;
-    font-weight: 400;
-    line-height: normal;
-    height: 35px;
-    padding: 20px 20px;
-    margin-left: 10px;
-}
-
-.logo>span{
-    color: rgba(72, 255, 0, 0.68);
-}
-
-header> :nth-child(2){
-    margin-left: auto;
-    color: #FFF;
-    font-size: 40px;
-    margin-right: 25px;
-}
-
-header> :nth-child(3) {
-    text-decoration: underline;
-    color: #FFF;
-    font-size: 20px;
-    margin-right: 25px;
 }
 
 #signup{
@@ -129,10 +86,12 @@ header> :nth-child(3) {
    margin-right: auto;
 }
 
-.features{
+
+.featuress{
     display: flex;
     flex-direction: column;
     align-items: center;
+    background-color: aqua;
     /* margin-bottom: 150px; */
     height: 810px;
     margin-top: 20px;
@@ -141,7 +100,7 @@ header> :nth-child(3) {
                 radial-gradient(50% 50% at 110% 30%, rgba(72, 255, 0, 0.50) 0%, rgba(115, 115, 115, 0.00) 70%);
 }
 
-.features>p{
+.featuress>p{
     font-size: 200px;
     color: white;
     letter-spacing: -15px;

@@ -8,9 +8,9 @@ const Layout = ({ children }) => {
   return (
     <div>
       <Header />
-      <div style={{ display: 'flex' }}>
+      <div style={{ display: 'flex', overflowX: 'hidden', marginTop: '75px' }}>
         {user && user.role === 'Student' && <Sidebar />}
-        <main style={{ flex: 1, marginLeft: user && user.role === 'Student' ? '75px' : '0' }}>
+        <main style={{ flex: 1, marginLeft: user && user.role === 'Student' ? '0px' : '0' }}>
           {children}
         </main>
       </div>

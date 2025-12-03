@@ -26,21 +26,6 @@
     height: 90vh;
 }
 
-.logo{
-    color: #FFF;
-    font-size: 40px;
-    font-style: normal;
-    font-weight: 400;
-    line-height: normal;
-    height: 35px;
-    padding: 20px 20px;
-    margin-left: 10px;
-}
-
-.logo>span{
-    color: rgba(72, 255, 0, 0.68);
-}
-
 form{
     display: flex;
     flex-direction: column;

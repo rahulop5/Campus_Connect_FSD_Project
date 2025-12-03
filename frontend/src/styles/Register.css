@@ -9,6 +9,7 @@
     background-size: cover; 
     height: 100vh; 
     background-position: center; 
+    background-repeat: no-repeat;
 }
 
 .outfit{
@@ -24,21 +25,6 @@
     align-items: center;
     justify-content: center;
     height: 100vh;
-}
-
-.logo{
-    color: #FFF;
-    font-size: 40px;
-    font-style: normal;
-    font-weight: 400;
-    line-height: normal;
-    height: 35px;
-    padding: 20px 20px;
-    margin-left: 10px;
-}
-
-.logo>span{
-    color: rgba(72, 255, 0, 0.68);
 }
 
 form{

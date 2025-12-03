@@ -45,9 +45,30 @@
     display: flex;
     align-items: center;
     margin-top: 40px;
+    gap: 30px;
 }
 
 .db_banners{
+    width: 656px;
+    height: 159px;
+    background: linear-gradient(255deg, rgba(43, 153, 0, 0.30) 0.94%, rgba(0, 0, 0, 0.15) 15.39%), url('/assets/abhisarga_banner.png') lightgray 50% / cover no-repeat, rgba(55, 55, 55, 0.50);
+    stroke-width: 1px;
+    stroke: #272727;
+    border-radius: 30px;
+    margin-right: 20px;
+}
+.db_banners>img{
+    width: 656px;
+    height: 159px;
+    background: linear-gradient(255deg, rgba(43, 153, 0, 0.30) 0.94%, rgba(0, 0, 0, 0.15) 15.39%), url('/assets/abhisarga_banner.png') lightgray 50% / cover no-repeat, rgba(55, 55, 55, 0.50);
+    stroke-width: 1px;
+    stroke: #272727;
+    border-radius: 30px;
+    margin-right: 20px;
+}
+
+
+.db_banners>img{
     width: 656px;
     height: 159px;
     background: linear-gradient(255deg, rgba(43, 153, 0, 0.30) 0.94%, rgba(0, 0, 0, 0.15) 15.39%), url('/assets/abhisarga_banner.png') lightgray 50% / cover no-repeat, rgba(55, 55, 55, 0.50);

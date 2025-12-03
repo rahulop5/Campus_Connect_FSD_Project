@@ -1,56 +1,58 @@
-*{
+* {
     margin: 0;
     padding: 0;
 }
 
-header{
+header {
     display: flex;
     align-items: center;
     height: 75px;
     backdrop-filter: blur(20px);
-    position: sticky;
+    position: fixed;
+    width: 100%;
     top: 0;
     z-index: 100;
     background: rgba(165, 165, 165, 0.13);
-    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+    /* box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25); */
 }
 
-.logo{
+.logo {
     color: #FFF;
     font-family: Kameron;
     font-size: 30px;
     font-style: normal;
     font-weight: 400;
     line-height: normal;
-    height: 35px;
+    /* height: 35px; */
     padding: 20px 20px;
     margin-left: 10px;
 }
 
-.logo>span{
+.logo>span {
     color: rgba(72, 255, 0, 0.68);
 }
 
-.notification>img{
+.notification>img {
     width: 35px;
     height: 35px;
     padding: 20px 10px;
 }
 
+/* Target the separator or profile link (2nd child) */
 header> :nth-child(2) {
     margin-left: auto;
 }
 
-.profile{
+.profile {
     display: flex;
     align-items: center;
+    margin-right: 15px;
 }
 
-.profile>img{
+.profile>img {
     width: 55px;
     height: 55px;
-    padding: 10px;
-    padding-right: 20px;
+    padding: 6px;
 }
 
 .separator {
@@ -69,7 +71,7 @@ header> :nth-child(2) {
     align-items: center;
 }
 
-#signup{
+#signup {
     border-radius: 40px;
     border: 3px solid rgba(72, 255, 0, 0.68);
     background: rgba(72, 255, 0, 0.25);
@@ -78,12 +80,13 @@ header> :nth-child(2) {
     margin-right: 25px;
 }
 
-#signup>p{
+#signup>p {
     font-size: 18px;
     color: white;
 }
 
 .logout-btn {
+    height: 40px;
     border-radius: 40px;
     border: 3px solid rgba(255, 72, 72, 0.68);
     background: rgba(255, 72, 72, 0.25);

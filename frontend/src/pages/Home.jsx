@@ -1,20 +1,10 @@
-import { useState } from 'react';
 import { Link } from 'react-router';
 import Header from '../components/Header';
 import '../styles/Home.css';
 
 const Home = () => {
-  const [activeSlide, setActiveSlide] = useState(0);
-
-  const slides = [
-    { title: "Attendance", subtitle: "Tracking Portal", img: "/assets/attendancedemo.png" },
-    { title: "Q&A", subtitle: "Forum", img: "/assets/qandademo.png" },
-    { title: "Bell Graph", subtitle: "Prediction System", img: "/assets/attendancedemo.png" }, // Placeholder img
-    { title: "Blogging", subtitle: "Platform", img: "/assets/attendancedemo.png" } // Placeholder img
-  ];
-
   return (
-    <div className="outfit home-page">
+    <div className="outfit">
       <Header />
       <div className="hero">
         <div>
@@ -28,7 +18,7 @@ const Home = () => {
         </div>
       </div>
       <hr className="herohr" />
-      <div className="features">
+      <div className="featuress">
         <p>Features</p>
         <div className="featurescontent">
           <div>
@@ -54,36 +44,18 @@ const Home = () => {
         </div>
       </div>
       <hr className="herohr" />
-      
       <div className="demos">
-        {slides.map((slide, index) => (
-          <div 
-            key={index} 
-            className={`d_attendance ${activeSlide === index ? 'active' : ''}`}
-            style={{ display: activeSlide === index ? 'flex' : 'none' }}
-          >
-            <div>
-              <p>{slide.title}</p>
-              <p>{slide.subtitle.split(' ').map((word, i) => <span key={i}>{word}<br/></span>)}</p>
-            </div>
-            <div>
-              <img src={slide.img} alt={slide.title} />
-            </div>
+        <div className="d_attendance active">
+          <div>
+            <p>Attendance</p>
+            <p>Tracking <br /> Portal</p>
           </div>
-        ))}
-
-        <div className="scroller">
-          {slides.map((_, index) => (
-            <button 
-              key={index} 
-              className="btn" 
-              id={activeSlide === index ? 'btnselect' : ''}
-              onClick={() => setActiveSlide(index)}
-            ></button>
-          ))}
+          <div>
+            <img src="/assets/attendancedemo.png" alt="" />
+          </div>
         </div>
+        {/* Add other demo slides as needed */}
       </div>
-
       <hr className="herohr" />
       <div className="finalsignup">
         <div>
