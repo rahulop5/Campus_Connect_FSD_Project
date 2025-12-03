@@ -9,6 +9,7 @@ import Profile from './pages/Profile';
 import ProfessorProfile from './pages/ProfessorProfile';
 import Attendance from './pages/Attendance';
 import Bellgraph from './pages/Bellgraph';
+import Elections from './pages/Elections';
 import ForumList from './pages/ForumList';
 import ForumDetail from './pages/ForumDetail';
 import AskQuestion from './pages/AskQuestion';
@@ -61,6 +62,11 @@ function App() {
           <Route path="/bellgraph" element={
             <RoleRoute role="Student">
               <Bellgraph />
+            </RoleRoute>
+          } />
+          <Route path="/elections" element={
+            <RoleRoute role="Student">
+              <Elections />
             </RoleRoute>
           } />
 

@@ -12,6 +12,7 @@ import studentRoutes from "./routes/studentRoutes.js";
 import qandaforumRoutes from "./routes/qandaforumRoutes.js";
 import professorRoutes from "./routes/professorRoutes.js";
 import adminRoutes from "./routes/adminRoutes.js";
+import electionRoutes from "./routes/electionRoutes.js";
 import Course from "./models/Course.js";
 import Student from "./models/Student.js";
 import multer from "multer";
@@ -49,6 +50,7 @@ app.use("/api/student", studentRoutes);
 app.use("/api/forum", qandaforumRoutes);
 app.use("/api/professor", professorRoutes);
 app.use("/api/admin", adminRoutes);
+app.use("/api/election", electionRoutes);
 app.use('/api/profile', profileRoutes);
 
 app.get("/", (req, res) => {

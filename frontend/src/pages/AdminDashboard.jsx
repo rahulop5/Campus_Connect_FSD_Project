@@ -123,6 +123,57 @@ const AdminDashboard = () => {
     }
   };
 
+  // Election Management
+  const [electionStatus, setElectionStatus] = useState(null);
+  const [nominateEmail, setNominateEmail] = useState('');
+
+  const fetchElectionStatus = async () => {
+    try {
+      const res = await api.get('/election');
+      setElectionStatus(res.data.election);
+    } catch (err) {
+      console.error("Error fetching election status", err);
+    }
+  };
+
+  useEffect(() => {
+    fetchElectionStatus();
+  }, []);
+
+  const handleStartElection = async () => {
+    if (!window.confirm("Are you sure you want to start a new election?")) return;
+    try {
+      await api.post('/election/start');
+      alert("Election started!");
+      fetchElectionStatus();
+    } catch (err) {
+      alert(err.response?.data?.message || "Error starting election");
+    }
+  };
+
+  const handleStopElection = async () => {
+    if (!window.confirm("Are you sure you want to stop the current election?")) return;
+    try {
+      await api.post('/election/stop');
+      alert("Election stopped!");
+      fetchElectionStatus();
+    } catch (err) {
+      alert(err.response?.data?.message || "Error stopping election");
+    }
+  };
+
+  const handleNominate = async (e) => {
+    e.preventDefault();
+    try {
+      await api.post('/election/nominate', { email: nominateEmail });
+      alert("Candidate nominated successfully!");
+      setNominateEmail('');
+      fetchElectionStatus();
+    } catch (err) {
+      alert(err.response?.data?.message || "Error nominating candidate");
+    }
+  };
+
   if (loading) return <Layout>Loading...</Layout>;
 
   return (
@@ -291,6 +342,41 @@ const AdminDashboard = () => {
               )}
               <button type="submit">Remove</button>
             </form>
+          </div>
+
+          {/* Election Management */}
+          <div className="course-container" style={{borderColor: '#2B9900'}}>
+            <h2>Election Management</h2>
+            <div style={{marginBottom: '20px'}}>
+              <p>Status: <span style={{color: electionStatus?.status === 'active' ? '#2B9900' : 'red', fontWeight: 'bold'}}>{electionStatus?.status === 'active' ? 'ACTIVE' : 'INACTIVE'}</span></p>
+              {electionStatus?.status === 'active' ? (
+                <button onClick={handleStopElection} style={{backgroundColor: 'red', marginTop: '10px'}}>Stop Election</button>
+              ) : (
+                <button onClick={handleStartElection} style={{marginTop: '10px'}}>Start New Election</button>
+              )}
+            </div>
+
+            {electionStatus?.status === 'active' && (
+              <>
+                <h3>Nominate Candidate</h3>
+                <form onSubmit={handleNominate}>
+                  <label>Student Email:</label>
+                  <input type="email" value={nominateEmail} onChange={e => setNominateEmail(e.target.value)} required placeholder="student@example.com"/>
+                  <button type="submit">Nominate</button>
+                </form>
+
+                <h3>Current Candidates</h3>
+                <ul className="student-list">
+                  {electionStatus.candidates.map(c => (
+                    <li key={c._id} style={{display:'flex', justifyContent:'space-between'}}>
+                      <span>{c.student.name}</span>
+                      <span style={{color:'#2B9900'}}>{c.votes} Votes</span>
+                    </li>
+                  ))}
+                  {electionStatus.candidates.length === 0 && <li className="no-items">No candidates yet</li>}
+                </ul>
+              </>
+            )}
           </div>
         </div>
         
