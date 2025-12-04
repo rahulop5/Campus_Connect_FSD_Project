@@ -1,5 +1,5 @@
-/* --- Professor Profile Styles --- */
-.prof-profile-page {
+/* --- Admin Profile Styles --- */
+.admin-profile-page {
     font-family: Outfit;
     background: url("/assets/profil.png") center/cover no-repeat fixed;
     display: flex;
@@ -9,9 +9,9 @@
     background-color: black;
 }
 
-#prof-bodbod { display: flex; }
+#admin-bodbod { display: flex; }
 
-.prof-my-profile {
+.admin-my-profile {
     width: 20px;
     color: rgba(255, 255, 255, 0.65);
     font-size: 60px;
@@ -21,15 +21,15 @@
     line-height: 0.925;
 }
 
-.prof-profile-text { margin-bottom: 20px; }
+.admin-profile-text { margin-bottom: 20px; }
 
-.prof-profile-form {
+.admin-profile-form {
     position: relative;
     width: 880px;
     height: 520px;
 }
 
-.prof-profile-bg-svg {
+.admin-profile-bg-svg {
     position: absolute;
     top: 0;
     left: 0;
@@ -38,7 +38,7 @@
 }
 
 /* --- Profile Details Section --- */
-.prof-auth-qa {
+.admin-auth-qa {
     position: absolute;
     z-index: 2;
     color: white;
@@ -49,34 +49,34 @@
     width: 330px;
 }
 
-.prof-auth-q {
+.admin-auth-q {
     color: #2B9900;
     font-size: 16px;
 }
 
-.prof-auth-a {
+.admin-auth-a {
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
 
-.prof-auth-a > div {
+.admin-auth-a > div {
     font-size: 20px;
 }
 
-#prof-second-auth .prof-auth-a > div,
-#prof-fifth-auth .prof-auth-a > div {
+#admin-second-auth .admin-auth-a > div,
+#admin-fifth-auth .admin-auth-a > div {
     padding-left: 7px;
 }
 
-.prof-edit-mark {
+.admin-edit-mark {
     height: 21px;
     width: 21px;
     position: static;
     transition: opacity 0.2s ease-in-out;
 }
 
-.prof-image-div {
+.admin-image-div {
     width: 21px;
     height: 21px;
     cursor: pointer;
@@ -85,20 +85,20 @@
     background-position: center;
 }
 
-.prof-image-div:hover {
+.admin-image-div:hover {
     background-image: url('/assets/edithover.png');
 }
 
-.prof-image-div:hover .prof-edit-mark {
+.admin-image-div:hover .admin-edit-mark {
     opacity: 0;
 }
 
-#prof-second-auth { margin-top: 90px; }
-#prof-third-auth { margin-top: 145px; }
-#prof-fourth-auth { margin-top: 195px; }
+#admin-second-auth { margin-top: 90px; }
+#admin-third-auth { margin-top: 145px; }
+#admin-fourth-auth { margin-top: 195px; }
 
 /* --- Input Field Styles --- */
-.prof-editable-input {
+.admin-editable-input {
     border: 1px solid transparent;
     background: transparent;
     font-size: 18px;
@@ -110,47 +110,14 @@
     border-radius: 4px;
 }
  
-.prof-editable-input.prof-editing {
+.admin-editable-input.admin-editing {
     border: 1px solid #18651f;
     background: transparent;
     box-shadow: 0 0 2px #aaa;
 }
 
-/* --- Professor Specifics (Courses) --- */
-#prof-l-row1 {
-    position: absolute;
-    z-index: 2;
-    color: white;
-    margin-top: 320px;
-    margin-left: 510px;
-    display: flex;
-    justify-content: space-between;
-    width: 310px;
-}
-
-.prof-rb-r2-q { color: #2B9900; font-size: 16px; }
-
-#prof-l-row2 {
-    position: absolute;
-    z-index: 2;
-    margin-top: 350px;
-    margin-left: 510px;
-    color: white;
-    display: flex;
-    flex-direction: column;
-}
-
-#prof-rb-r2-course-r1 {
-    display: flex;
-    margin-top: 10px;
-    font-size: 22px;
-    width: 310px;
-    gap: 40px;
-    flex-wrap: wrap;
-}
-
 /* --- Profile Picture Section --- */
-.prof-pfp-container {
+.admin-pfp-container {
     position: absolute;
     z-index: 0;
     width: 430px; 
@@ -163,9 +130,49 @@
     overflow: hidden;
 }
 
-#profProfilePic {
+#adminProfilePic {
     width: 100%;
     height: 100%;
     object-fit: cover;
     transition: filter 0.3s ease;
 }
+
+.admin-pfp-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.admin-pfp-container:hover .admin-pfp-overlay {
+    opacity: 1;
+}
+
+.admin-pfp-btn {
+    width: 60px;
+    height: 60px;
+    border-radius: 15px;
+    cursor: pointer;
+    background-size: 50%;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-color: rgba(40, 40, 40, 0.7);
+    transition: background-color 0.2s ease;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+#adminChangeBtn { background-image: url('/assets/edit-pfp.png'); }
+#adminDeleteBtn { background-image: url('/assets/delete-pfp.png'); }
+#adminAddBtn    { background-image: url('/assets/add-pfp.png'); }
+
+#adminChangeBtn:hover { background-image: url('/assets/edit-pfp-hover.png'); background-color: rgba(0, 0, 0, 0.8); }
+#adminDeleteBtn:hover { background-image: url('/assets/delete-pfp-hover.png'); background-color: rgba(0, 0, 0, 0.8); }
+#adminAddBtn:hover    { background-image: url('/assets/add-pfp-hover.png'); background-color: rgba(0, 0, 0, 0.8); }

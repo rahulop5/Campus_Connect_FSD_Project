@@ -1,32 +1,41 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { useSelector } from 'react-redux';
 import api from '../api/axios';
 import Layout from '../components/Layout';
-import '../styles/profileprof.css';
+import '../styles/AdminProfile.css';
 
-const ProfessorProfile = () => {
-  const [professor, setProfessor] = useState(null);
+const AdminProfile = () => {
+  const { user } = useSelector((state) => state.auth);
+  const [admin, setAdmin] = useState(null);
   const [editing, setEditing] = useState(null);
   const [formData, setFormData] = useState({});
+  const fileInputRef = useRef(null);
+  const [pfp, setPfp] = useState("/assets/pfp 1.png");
 
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const res = await api.get('/prof/profile');
-        setProfessor(res.data.professor || res.data.student); // Backend might return 'student' or 'professor' key
-        setFormData(res.data.professor || res.data.student);
+        // Assuming admin profile endpoint exists or using generic profile
+        const res = await api.get('/admin/profile').catch(() => ({ data: { admin: user } })); 
+        // Fallback to user from redux if endpoint fails or doesn't exist yet
+        const adminData = res.data?.admin || user;
+        setAdmin(adminData);
+        setFormData(adminData);
       } catch (error) {
         console.error("Error fetching profile:", error);
+        setAdmin(user);
+        setFormData(user);
       }
     };
-    fetchProfile();
-  }, []);
+    if (user) fetchProfile();
+  }, [user]);
 
   const handleEdit = (field) => {
     if (editing === field) {
-      api.post('/profile/update', { field, value: formData[field] })
+      api.post('/admin/update', { field, value: formData[field] })
         .then(() => {
           setEditing(null);
-          setProfessor(prev => ({ ...prev, [field]: formData[field] }));
+          setAdmin(prev => ({ ...prev, [field]: formData[field] }));
         })
         .catch(err => console.error("Error updating:", err));
     } else {
@@ -38,21 +47,32 @@ const ProfessorProfile = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  if (!professor) return <Layout>Loading...</Layout>;
+  const handlePfpChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            setPfp(e.target.result);
+        };
+        reader.readAsDataURL(file);
+    }
+  };
+
+  if (!admin) return <Layout>Loading...</Layout>;
 
   return (
     <Layout>
-      <div className="prof-profile-page">
-        <form id="prof-bodbod" onSubmit={(e) => e.preventDefault()}>
+      <div className="admin-profile-page">
+        <form id="admin-bodbod" onSubmit={(e) => e.preventDefault()}>
             <div>
-                <div className="prof-my-profile">M Y</div>
-                <div className="prof-my-profile prof-profile-text">P R O F I L E</div>
+                <div className="admin-my-profile">M Y</div>
+                <div className="admin-my-profile admin-profile-text">P R O F I L E</div>
             </div>
             
-            <div className='prof-profile-form'>
-                <div className="prof-auth-qa" id="prof-first-auth">
-                    <div className="prof-auth-q">Name</div>
-                    <div className="prof-auth-a">
+            <div className='admin-profile-form'>
+                <div className="admin-auth-qa" id="admin-first-auth">
+                    <div className="admin-auth-q">Name</div>
+                    <div className="admin-auth-a">
                         <div>
                             <input 
                                 type="text" 
@@ -60,13 +80,13 @@ const ProfessorProfile = () => {
                                 value={formData.name || ''} 
                                 readOnly={editing !== 'name'}
                                 onChange={handleChange}
-                                className={editing === 'name' ? 'prof-editable-input prof-editing' : 'prof-editable-input'}
+                                className={editing === 'name' ? 'admin-editable-input admin-editing' : 'admin-editable-input'}
                                 maxLength={300}
                             />
                         </div>
-                        <div className="prof-image-div">
+                        <div className="admin-image-div">
                             <img 
-                                className="prof-edit-mark" 
+                                className="admin-edit-mark" 
                                 src={editing === 'name' ? "/assets/check.png" : "/assets/edit-text 2.png"} 
                                 alt="edit name" 
                                 onClick={() => handleEdit('name')}
@@ -75,22 +95,22 @@ const ProfessorProfile = () => {
                     </div>    
                 </div>
 
-                <div className="prof-auth-qa" id="prof-second-auth">
-                    <div className="prof-auth-q">Email</div>
-                    <div className="prof-auth-a"><div>{professor.email}</div></div>    
+                <div className="admin-auth-qa" id="admin-second-auth">
+                    <div className="admin-auth-q">Email</div>
+                    <div className="admin-auth-a"><div>{admin.email}</div></div>    
                 </div>
 
-                <div className="prof-auth-qa" id="prof-third-auth">
-                    <div className="prof-auth-q">Password</div>
-                    <div className="prof-auth-a">
-                        <div><input type="text" value="••••••••••••••••••" readOnly className="prof-editable-input" /></div>
-                        <div className="prof-image-div"><img className="prof-edit-mark" src="/assets/edit-text 2.png" alt="edit password" onClick={() => alert("Please use the Change Password page")} /></div>
+                <div className="admin-auth-qa" id="admin-third-auth">
+                    <div className="admin-auth-q">Password</div>
+                    <div className="admin-auth-a">
+                        <div><input type="text" value="••••••••••••••••••" readOnly className="admin-editable-input" /></div>
+                        <div className="admin-image-div"><img className="admin-edit-mark" src="/assets/edit-text 2.png" alt="edit password" onClick={() => alert("Please use the Change Password page")} /></div>
                     </div>    
                 </div>
 
-                <div className="prof-auth-qa" id="prof-fourth-auth">
-                    <div className="prof-auth-q">Phone Number</div>
-                    <div className="prof-auth-a">
+                <div className="admin-auth-qa" id="admin-fourth-auth">
+                    <div className="admin-auth-q">Phone Number</div>
+                    <div className="admin-auth-a">
                         <div>
                             <input 
                                 type="tel" 
@@ -98,15 +118,15 @@ const ProfessorProfile = () => {
                                 value={formData.phone || ''} 
                                 readOnly={editing !== 'phone'}
                                 onChange={handleChange}
-                                className={editing === 'phone' ? 'prof-editable-input prof-editing' : 'prof-editable-input'}
+                                className={editing === 'phone' ? 'admin-editable-input admin-editing' : 'admin-editable-input'}
                                 pattern="[0-9]{10}"
                                 title="10 digit mobile number"
                                 maxLength={300}
                             />
                         </div>
-                        <div className="prof-image-div">
+                        <div className="admin-image-div">
                             <img 
-                                className="prof-edit-mark" 
+                                className="admin-edit-mark" 
                                 src={editing === 'phone' ? "/assets/check.png" : "/assets/edit-text 2.png"} 
                                 alt="edit phone" 
                                 onClick={() => handleEdit('phone')}
@@ -115,26 +135,17 @@ const ProfessorProfile = () => {
                     </div>    
                 </div>
 
-                <div id="prof-l-row1">
-                    <div className="prof-rb-r2-q">Courses Alloted</div>
-                </div>
-                <div id="prof-l-row2">
-                    <div id="prof-rb-r2-course-r1">
-                        {professor.courses && professor.courses.map((courseObj, idx) => (
-                            <div key={idx} id={`course_${courseObj.course._id}`}>
-                                {courseObj.course.name}&nbsp;&nbsp;
-                                <span className="year">UG<span id="green-color">{courseObj.course.ug || 2}</span></span>
-                            </div>
-                        ))}
+                <div className="admin-pfp-container" id="adminPfpContainer">
+                    <input type="file" id="adminPfpFileInput" accept="image/*" hidden ref={fileInputRef} onChange={handlePfpChange} />
+                    <img id="adminProfilePic" src={pfp} alt="Profile Picture" />
+                    <div className="admin-pfp-overlay">
+                        <div className="admin-pfp-btn" id="adminChangeBtn" onClick={() => fileInputRef.current.click()}></div>
+                        <div className="admin-pfp-btn" id="adminDeleteBtn" onClick={() => setPfp("/assets/pfp 1.png")}></div>
+                        <div className="admin-pfp-btn" id="adminAddBtn" onClick={() => fileInputRef.current.click()}></div>
                     </div>
                 </div>
 
-                <div className="prof-pfp-container" id="profPfpContainer">
-                    {/* Assuming professor pfp logic is similar, though not fully implemented in state yet, keeping static for now or using state if available */}
-                    <img id="profProfilePic" src="/assets/prof_pfp.jpg" alt="Profile Picture" />
-                </div>
-
-                <svg className="prof-profile-bg-svg" xmlns="http://www.w3.org/2000/svg" width="880" height="520" viewBox="0 0 880 520" fill="none">
+                <svg className="admin-profile-bg-svg" xmlns="http://www.w3.org/2000/svg" width="880" height="520" viewBox="0 0 880 520" fill="none">
                     <foreignObject x="-4" y="-4" width="888" height="528"><div xmlns="http://www.w3.org/1999/xhtml" style={{backdropFilter:'blur(2px)', clipPath:'url(#bgblur_0_646_878_clip_path)', height:'100%', width:'100%'}}></div></foreignObject><g data-figma-bg-blur-radius="4">
                     <mask id="path-1-inside-1_646_878" fill="white">
                         <path fillRule="evenodd" clipRule="evenodd" d="M880 40C880 17.9086 862.091 0 840 0H490C467.909 0 450 17.9086 450 40V230C450 252.091 432.091 270 410 270H40C17.9086 270 0 287.909 0 310V480C0 502.091 17.9086 520 40 520H840C862.091 520 880 502.091 880 480V270V40Z"/>
@@ -153,4 +164,4 @@ const ProfessorProfile = () => {
   );
 };
 
-export default ProfessorProfile;
+export default AdminProfile;

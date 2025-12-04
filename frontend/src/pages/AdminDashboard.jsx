@@ -187,7 +187,7 @@ const AdminDashboard = () => {
             {/* Course Management */}
           <div className="course-container">
             <h2>Course Management</h2>
-            <form onSubmit={handleAddCourse}>
+            <form onSubmit={handleAddCourse} id="add-course-form" >
               <label>Name of the Course:</label>
               <input type="text" value={courseForm.name} onChange={e => setCourseForm({...courseForm, name: e.target.value})} required placeholder="e.g., Operating Systems" maxLength={300}/>
               
@@ -210,7 +210,7 @@ const AdminDashboard = () => {
             </form>
 
             <h2>Remove Course</h2>
-            <form onSubmit={handleRemoveCourse}>
+            <form id="remove-course-form" onSubmit={handleRemoveCourse}>
               <select value={removeCourseId} onChange={e => setRemoveCourseId(e.target.value)} required>
                 <option value="">Select a Course</option>
                 {data.courses.map(c => <option key={c._id} value={c._id}>{c.name} (Sec {c.section})</option>)}
@@ -222,7 +222,7 @@ const AdminDashboard = () => {
           {/* Student Management */}
           <div className="student-container">
             <h2>Add New Student</h2>
-            <form onSubmit={handleAddStudent}>
+            <form id="student-form" onSubmit={handleAddStudent}>
               <label>Name:</label>
               <input type="text" value={studentForm.name} onChange={e => setStudentForm({...studentForm, name: e.target.value})} required maxLength={300}/>
               <label>Email:</label>
@@ -242,7 +242,7 @@ const AdminDashboard = () => {
           {/* Professor Management */}
           <div className="professor-container">
             <h2>Add New Professor</h2>
-            <form onSubmit={handleAddProfessor}>
+            <form id="add-professor-form" onSubmit={handleAddProfessor}>
               <label>Name:</label>
               <input type="text" value={profForm.name} onChange={e => setProfForm({...profForm, name: e.target.value})} required maxLength={300}/>
               <label>Email:</label>
@@ -255,7 +255,7 @@ const AdminDashboard = () => {
             </form>
 
             <h2>Remove Professor</h2>
-            <form onSubmit={handleRemoveProfessor}>
+            <form id="remove-professor-form" onSubmit={handleRemoveProfessor}>
               <select value={removeProfData.professor} onChange={e => setRemoveProfData({...removeProfData, professor: e.target.value})} required>
                 <option value="">Select Professor</option>
                 {data.professors.map(p => <option key={p._id} value={p._id}>{p.name}</option>)}
@@ -281,7 +281,7 @@ const AdminDashboard = () => {
             <button type="button" onClick={() => setIsProfAssignment(!isProfAssignment)} className="toggle-btn">
               Switch to {isProfAssignment ? "Student" : "Professor"} Allotment
             </button>
-            <form onSubmit={handleAssignCourse}>
+            <form onSubmit={handleAssignCourse} id="course-allotment-form">
               <select value={assignCourseData.course} onChange={e => setAssignCourseData({...assignCourseData, course: e.target.value})} required>
                 <option value="">Select Course</option>
                 {data.courses.map(c => <option key={c._id} value={c._id}>{c.name} (Sec {c.section})</option>)}
@@ -305,7 +305,7 @@ const AdminDashboard = () => {
             <button type="button" onClick={() => setIsProfRemoval(!isProfRemoval)} className="toggle-btn">
               Switch to {isProfRemoval ? "Student" : "Professor"} Removal
             </button>
-            <form onSubmit={handleRemoveCourseFrom}>
+            <form onSubmit={handleRemoveCourseFrom} id="course-removal-form">
                <select value={removeCourseFromData.course} onChange={e => setRemoveCourseFromData({...removeCourseFromData, course: e.target.value})} required>
                 <option value="">Select Course</option>
                 {data.courses.map(c => <option key={c._id} value={c._id}>{c.name} (Sec {c.section})</option>)}
