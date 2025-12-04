@@ -1,68 +1,57 @@
-/* --------------------------------------------------
-   ADMIN PROFILE PAGE — CLEAN RESPONSIVE VERSION
--------------------------------------------------- */
-
+just fcking modify this and give me a new one /* --- Admin Profile Styles --- */
 .admin-profile-page {
-    font-family: "Outfit", sans-serif;
+    font-family: Outfit;
     background: url("/assets/profil.png") center/cover no-repeat fixed;
-    min-height: 100vh;
     display: flex;
+    min-height: 100vh;
     align-items: center;
     justify-content: center;
     background-color: black;
-    padding: 20px;
 }
 
-/* Container Layout */
-#admin-bodbod {
-    display: flex;
-    align-items: flex-start;
-    gap: 40px;
-}
+#admin-bodbod { display: flex; }
 
 .admin-my-profile {
-    color: rgba(255, 255, 255, 0.7);
-    font-size: clamp(40px, 5vw, 70px);
+    width: 20px;
+    color: rgba(255, 255, 255, 0.65);
+    font-size: 60px;
+    margin-right: 25px;
+    z-index: 2;
     font-family: 'Heathergreen', sans-serif;
-    margin-right: 10px;
-    line-height: 1;
+    line-height: 0.925;
 }
 
-/* Form Wrapper */
+.admin-profile-text { margin-bottom: 20px; }
+
 .admin-profile-form {
     position: relative;
-    width: min(900px, 90vw);
-    height: auto;
+    width: 880px;
+    height: 520px;
 }
 
-/* Background SVG Overlay */
 .admin-profile-bg-svg {
     position: absolute;
-    inset: 0;
+    top: 0;
+    left: 0;
     z-index: 1;
     pointer-events: none;
 }
 
-/* --------------------------
-   PROFILE DETAILS SECTION
--------------------------- */
-
+/* --- Profile Details Section --- */
 .admin-auth-qa {
-    position: relative;
+    position: absolute;
     z-index: 2;
     color: white;
+    margin-left: 500px;
+    margin-top: 36px;
     display: flex;
     flex-direction: column;
-    gap: 40px;
-    width: 100%;
-    max-width: 350px;
-    margin-top: 30px;
+    width: 330px;
 }
 
 .admin-auth-q {
     color: #2B9900;
-    font-size: 15px;
-    margin-bottom: 5px;
+    font-size: 16px;
 }
 
 .admin-auth-a {
@@ -75,53 +64,70 @@
     font-size: 20px;
 }
 
+#admin-second-auth .admin-auth-a > div,
+#admin-fifth-auth .admin-auth-a > div {
+    padding-left: 7px;
+}
+
+.admin-edit-mark {
+    height: 21px;
+    width: 21px;
+    position: static;
+    transition: opacity 0.2s ease-in-out;
+}
+
 .admin-image-div {
-    width: 22px;
-    height: 22px;
+    width: 21px;
+    height: 21px;
     cursor: pointer;
     background-size: contain;
     background-repeat: no-repeat;
-    transition: 0.2s ease;
-    background-image: url('/assets/edit.png');
+    background-position: center;
 }
 
 .admin-image-div:hover {
     background-image: url('/assets/edithover.png');
 }
 
-/* --------------------------
-   INPUT FIELDS
--------------------------- */
+.admin-image-div:hover .admin-edit-mark {
+    opacity: 0;
+}
 
+#admin-second-auth { margin-top: 90px; }
+#admin-third-auth { margin-top: 145px; }
+#admin-fourth-auth { margin-top: 195px; }
+
+/* --- Input Field Styles --- */
 .admin-editable-input {
-    background: transparent;
     border: 1px solid transparent;
+    background: transparent;
     font-size: 18px;
+    flex: 1;
     padding: 6px;
-    width: 100%;
+    transition: all 0.3s ease;
+    font-family: Outfit;
     color: white;
     border-radius: 4px;
-    transition: 0.25s ease;
 }
-
+ 
 .admin-editable-input.admin-editing {
-    border: 1px solid #2B9900;
-    box-shadow: 0 0 4px #2B9900;
+    border: 1px solid #18651f;
+    background: transparent;
+    box-shadow: 0 0 2px #aaa;
 }
 
-/* --------------------------
-   PROFILE PICTURE SECTION
--------------------------- */
-
+/* --- Profile Picture Section --- */
 .admin-pfp-container {
-    position: relative;
-    width: min(430px, 90vw);
+    position: absolute;
+    z-index: 0;
+    width: 430px; 
     height: 240px;
-    border-radius: 35px;
+    top: 115px;
+    left: 245px;
+    transform: translate(-50%, -50%);
+    border-radius: 40px;
     border-bottom-right-radius: 24px;
     overflow: hidden;
-    z-index: 3;
-    margin-bottom: 25px;
 }
 
 #adminProfilePic {
@@ -133,12 +139,15 @@
 
 .admin-pfp-overlay {
     position: absolute;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.55);
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 18px;
+    gap: 20px;
     opacity: 0;
     transition: opacity 0.3s ease;
 }
@@ -150,47 +159,20 @@
 .admin-pfp-btn {
     width: 60px;
     height: 60px;
-    border-radius: 14px;
+    border-radius: 15px;
     cursor: pointer;
     background-size: 50%;
     background-position: center;
     background-repeat: no-repeat;
-    background-color: rgba(60, 60, 60, 0.7);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    transition: 0.25s ease;
-}
-
-.admin-pfp-btn:hover {
-    background-color: rgba(0, 0, 0, 0.85);
+    background-color: rgba(40, 40, 40, 0.7);
+    transition: background-color 0.2s ease;
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 #adminChangeBtn { background-image: url('/assets/edit-pfp.png'); }
 #adminDeleteBtn { background-image: url('/assets/delete-pfp.png'); }
 #adminAddBtn    { background-image: url('/assets/add-pfp.png'); }
 
-#adminChangeBtn:hover { background-image: url('/assets/edit-pfp-hover.png'); }
-#adminDeleteBtn:hover { background-image: url('/assets/delete-pfp-hover.png'); }
-#adminAddBtn:hover    { background-image: url('/assets/add-pfp-hover.png'); }
-
-
-/* --------------------------
-   RESPONSIVE FIX
--------------------------- */
-
-@media (max-width: 850px) {
-    #admin-bodbod {
-        flex-direction: column;
-        align-items: center;
-        text-align: center;
-    }
-
-    .admin-my-profile {
-        margin-bottom: 20px;
-    }
-
-    .admin-auth-qa {
-        margin-left: 0;
-        width: 100%;
-        align-items: center;
-    }
-}
+#adminChangeBtn:hover { background-image: url('/assets/edit-pfp-hover.png'); background-color: rgba(0, 0, 0, 0.8); }
+#adminDeleteBtn:hover { background-image: url('/assets/delete-pfp-hover.png'); background-color: rgba(0, 0, 0, 0.8); }
+#adminAddBtn:hover    { background-image: url('/assets/add-pfp-hover.png'); background-color: rgba(0, 0, 0, 0.8); }
