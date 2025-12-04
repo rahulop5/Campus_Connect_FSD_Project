@@ -33,7 +33,7 @@ const AskQuestion = () => {
         <hr className="hrhr" />
         <div className="mainpg">
           <div className="mainmain">
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit} className='ask_question_form' >
               <div className="hoho">
                 <p>Title</p>
                 <input type="text" placeholder="Title" name="title" value={formData.title} onChange={handleChange} required maxLength={300} />

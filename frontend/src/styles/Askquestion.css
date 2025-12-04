@@ -188,14 +188,14 @@
     width: 70%;
 }
 
-form{
+.ask_question_form{
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
 }
 
-form input{
+.ask_question_form input{
     border-radius: 20px;
     border: 1px solid #949494;
     background: rgba(217, 217, 217, 0.14);
@@ -208,7 +208,7 @@ form input{
 
 
 
-form input::placeholder{
+.ask_question_form input::placeholder{
     color: #FFF;
     font-size: 20px;
     opacity: 0.4;
@@ -217,7 +217,7 @@ form input::placeholder{
     line-height: normal;
 }
 
-form>div>p{
+.ask_question_form>div>p{
     color: #FFF;
     font-size: 40px;
     font-style: normal;
@@ -225,7 +225,7 @@ form>div>p{
     line-height: normal;
 }
 
-form>button{
+.ask_question_form>button{
     border-radius: 37.5px;
     border: 1px solid #2B9900;
     background: linear-gradient(94deg, rgba(43, 153, 0, 0.50) -18.4%, rgba(55, 55, 55, 0.50) 51.2%, rgba(43, 153, 0, 0.50) 122.21%);
@@ -233,7 +233,7 @@ form>button{
     margin-top: 50px;
 }
 
-form>button>p{
+.ask_question_form>button>p{
     color: #FFF;
     font-size: 35px;
     font-style: normal;

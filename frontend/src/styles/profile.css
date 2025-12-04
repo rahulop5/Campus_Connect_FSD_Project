@@ -37,13 +37,11 @@ svg {
     line-height: 0.925;
 }
 
-#my_profile1 { margin-bottom: 20px; }
+#bodbod { display: flex; }
 
-.profile-container {
-    position: relative;
-    width: 880px;
-    height: 520px;
-}
+/* --- "MY PROFILE" Text --- */
+
+#my_profile1 { margin-bottom: 20px; }
 
 /* --- Profile Details Section --- */
 .auth_qa, #rb_row1, #rb_row2, #seperator_line, #l_row1, #l_row2 {
@@ -53,8 +51,8 @@ svg {
 
 .auth_qa {
     color: white;
-    left: 500px;
-    top: 36px;
+    margin-left: 500px;
+    margin-top: 36px;
     display: flex;
     flex-direction: column;
     width: 330px;
@@ -112,15 +110,15 @@ svg {
     opacity: 0;
 }
 
-#second_auth { top: 90px; }
-#third_auth { top: 145px; }
-#fourth_auth { top: 195px; }
-#fifth_auth { top: 255px; }
+#second_auth { margin-top: 90px; }
+#third_auth { margin-top: 145px; }
+#fourth_auth { margin-top: 195px; }
+#fifth_auth { margin-top: 255px; }
 
 #rb_row1 {
     color: white;
-    top: 320px;
-    left: 510px;
+    margin-top: 320px;
+    margin-left: 510px;
     display: flex;
     justify-content: space-between;
     width: 310px;
@@ -144,8 +142,8 @@ svg {
 }
 
 #rb_row2 {
-    top: 395px;
-    left: 510px;
+    margin-top: 395px;
+    margin-left: 510px;
     color: white;
     display: flex;
     flex-direction: column;
@@ -164,8 +162,8 @@ svg {
 }
 
 #seperator_line {
-    top: 290px;
-    left: 450px;
+    margin-top: 290px;
+    margin-left: 450px;
     width: 1px;
     height: 202px;
     background: #373737;
@@ -173,8 +171,7 @@ svg {
 
 #l_row1 {
     color: white;
-    top: 320px;
-    left: 0;
+    margin-top: 320px;
     display: flex;
     justify-content: space-between;
 }
@@ -222,8 +219,7 @@ svg {
 
 #l_row2 {
     color: white;
-    top: 410px;
-    left: 0;
+    margin-top: 410px;
     display: flex;
     justify-content: space-between;
     width: 420px;

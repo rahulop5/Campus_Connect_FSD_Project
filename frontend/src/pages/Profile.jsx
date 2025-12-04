@@ -65,7 +65,7 @@ const Profile = () => {
                 <div id="my_profile2" className="my_profile">P R O F I L E</div>
             </div>
             
-            <div>
+            <div className='profile_form' >
                 <div className="auth_qa" id="first_auth">
                     <div className="auth_q">Name</div>
                     <div className="auth_a">

@@ -79,7 +79,7 @@ const Register = () => {
             </select>
         </div>
 
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} className='register_form'>
             <input type="text" placeholder="Name" name="name" value={formData.name} onChange={handleChange} required readOnly={isOAuth} maxLength={300} />
             <input type="email" placeholder="Email" name="email" value={formData.email} onChange={handleChange} required readOnly={isOAuth} maxLength={300} />
             {!isOAuth && (
