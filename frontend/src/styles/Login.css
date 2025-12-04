@@ -1,133 +1,179 @@
-*{
+/* --------------------------------------------------
+   GLOBAL RESET + SMOOTHING
+-------------------------------------------------- */
+* {
     margin: 0;
     padding: 0;
+    box-sizing: border-box;
 }
 
-.login-page{
-    background-image: url("/assets/bgloginsignup.png");
-    background-color: #000; 
-    background-size: cover; 
-    height: 100vh; 
-    background-position: center; 
+body {
+    font-family: "Outfit", sans-serif;
+    color: white;
 }
 
-.outfit{
-    font-family: "Outfit", serif;
-    font-optical-sizing: auto;
-    font-weight: 400;
-    font-style: normal;
-}
+/* --------------------------------------------------
+   LOGIN PAGE
+-------------------------------------------------- */
 
-.login-page>div{
+.login-page {
+    background: url("/assets/bgloginsignup.png") center/cover no-repeat fixed;
+    background-color: #000;
+    height: 100vh;
     display: flex;
-    flex-direction: column;
-    align-items: center;
     justify-content: center;
-    height: 90vh;
+    align-items: center;
+    padding: 20px;
 }
 
-.login_form{
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    margin-top: 67px;
-    margin-bottom: 15px;
-}
-
-.login_form>input{
-    line-height: 30px;
-    font-size: 20px;
-    color: #FFF;
-    width: 333px;
-    border-radius: 5px;
-    border: 1px solid #7A7A7A;
-    background: rgba(48, 48, 48, 0.55);
-    padding: 20px 20px;
-}
-
-.login_form>input::placeholder{
-    line-height: 30px;
-    font-size: 20px;
-}
-
-.login_form>button{
-    margin-top: 52px;
-    border-radius: 40px;
-    border: 3px solid rgba(72, 255, 0, 0.40);
-    background: rgba(40, 86, 22, 0.75);
-    padding: 10px 100px;
-}
-
-.login_form>button>p{
-    color: #FFF;
-    font-size: 22px;
-}
-
-.other{
+/* Centered Wrapper */
+.login-page > div {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 15px;
+    gap: 35px;
 }
 
-.other>p{
-    color: #FFF;
-    font-size: 16px;
-}
+/* --------------------------------------------------
+   LOGIN FORM
+-------------------------------------------------- */
 
-.other>p>a{
-    color: #FFF;
-    font-size: 16px;
-}
-
-.orline{
+.login_form {
     display: flex;
-    gap: 5px;
-    align-items: center;
+    flex-direction: column;
+    gap: 18px;
+    width: min(350px, 90vw);
+}
+
+.login_form > input {
+    font-size: 18px;
+    padding: 18px;
     width: 100%;
-    justify-content: center;
+    border-radius: 6px;
+    border: 1px solid rgba(255,255,255,0.3);
+    background: rgba(48, 48, 48, 0.6);
+    color: white;
+    transition: 0.25s ease;
 }
 
-.orline>p{
-    color: #FFF;
+.login_form > input:focus {
+    border-color: #35ff00;
+    box-shadow: 0 0 6px rgba(81, 255, 0, 0.6);
+    outline: none;
 }
 
-.orline>div{
-    background: #FFF;
-    height: 2px;
-    width: 45%;
+.login_form > input::placeholder {
+    color: rgba(255,255,255,0.6);
 }
 
-.oauth{
+/* Button */
+.login_form > button {
+    margin-top: 35px;
     border-radius: 40px;
-    display: flex;
-    padding: 10px 36px;
-    align-items: center;
+    border: 3px solid rgba(72, 255, 0, 0.4);
+    background: rgba(40, 86, 22, 0.85);
+    padding: 12px;
+    cursor: pointer;
+    transition: 0.25s ease;
 }
 
-.oauth>img{
-    height: 38px;
-    width: 38px;
-    margin-right: 28px;
+.login_form > button:hover {
+    background: rgba(72, 255, 0, 0.25);
+    border-color: #48ff00;
+    transform: translateY(-2px);
 }
 
-.oauth>p{
+.login_form > button > p {
     font-size: 20px;
+    color: white;
 }
 
-.google{
-    background: #FDFDFD;
+/* --------------------------------------------------
+   OTHER LINKS
+-------------------------------------------------- */
+
+.other {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
 }
 
-.google>p{
+.other > p {
+    font-size: 16px;
+}
+
+.other > p > a {
+    color: white;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+}
+
+/* --------------------------------------------------
+   OR DIVIDER
+-------------------------------------------------- */
+
+.orline {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: min(350px, 90vw);
+}
+
+.orline > div {
+    flex: 1;
+    height: 2px;
+    background: rgba(255,255,255,0.5);
+}
+
+/* --------------------------------------------------
+   AUTH PROVIDERS (Google/GitHub)
+-------------------------------------------------- */
+
+.oauth {
+    width: min(350px, 90vw);
+    border-radius: 40px;
+    padding: 12px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    transition: 0.25s ease;
+    justify-content: center;
+    gap: 20px;
+}
+
+.oauth:hover {
+    transform: scale(1.03);
+}
+
+.oauth > img {
+    width: 32px;
+    height: 32px;
+}
+
+/* GOOGLE */
+.google {
+    background: #ffffff;
+    border: none;
     color: black;
 }
 
-.github{
-    border: 0.5px solid #FFF;
-    background: #000;
+/* GITHUB */
+.github {
+    background: black;
+    border: 1px solid white;
 }
 
-.github>p{
-    color: #FFF;
+/* --------------------------------------------------
+   RESPONSIVE FIXES
+-------------------------------------------------- */
+
+@media (max-width: 500px) {
+    .login_form > button > p {
+        font-size: 18px;
+    }
+
+    .oauth > p {
+        font-size: 18px;
+    }
 }
