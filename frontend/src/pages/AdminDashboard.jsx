@@ -529,7 +529,8 @@ const AdminDashboard = () => {
                   const query = courseSearchQuery.toLowerCase();
                   const courseName = course.name.toLowerCase();
                   const professorName = (course.professor?.name || '').toLowerCase();
-                  return courseName.includes(query) || professorName.includes(query);
+                  const courseAcronym = getCourseAcronym(course.name).toLowerCase();
+                  return courseName.includes(query) || professorName.includes(query) || courseAcronym.includes(query);
                 })
                 .map(course => (
                 <div 
