@@ -9,6 +9,21 @@ import DatePicker from 'react-datepicker';
 import '../styles/Admindashboard.css';
 import 'react-datepicker/dist/react-datepicker.css';
 
+// Helper function to generate course acronyms
+const getCourseAcronym = (courseName = '') => {
+  const words = courseName.split(' ').filter(Boolean);
+  if (words.length <= 1) return courseName;
+
+  const stopWords = new Set([
+    'of', 'the', 'and', 'for', 'to', 'in', 'on', 'with', 'a', 'an'
+  ]);
+
+  return words
+    .filter(word => !stopWords.has(word.toLowerCase()))
+    .map(word => word[0].toUpperCase())
+    .join('');
+};
+
 const AdminDashboard = () => {
   const dispatch = useDispatch();
   const { courses, professors, students, loading } = useSelector((state) => state.admin);
@@ -21,6 +36,12 @@ const AdminDashboard = () => {
   const [addStudentModalOpen, setAddStudentModalOpen] = useState(false);
   const [addFacultyModalOpen, setAddFacultyModalOpen] = useState(false);
   const [nominateModalOpen, setNominateModalOpen] = useState(false);
+  const [editCourseModalOpen, setEditCourseModalOpen] = useState(false);
+  const [editCourseForm, setEditCourseForm] = useState({ name: '', professor: '', section: '', totalclasses: '', credits: '', _id: '' });
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [courseToDelete, setCourseToDelete] = useState(null);
+  const [hoveredIcon, setHoveredIcon] = useState({ courseId: null, type: null });
+  const [courseSearchQuery, setCourseSearchQuery] = useState('');
   
   // Notification state
   const [notification, setNotification] = useState({ message: '', type: '' }); // type: 'success' or 'error'
@@ -79,6 +100,49 @@ const AdminDashboard = () => {
     } catch (err) {
       showNotification(err.response?.data?.message || 'Error adding course', 'error');
     }
+  };
+
+  const handleEditCourse = async (e) => {
+    e.preventDefault();
+    try {
+      await api.put(`/admin/course/${editCourseForm._id}`, editCourseForm);
+      showNotification('Course updated successfully', 'success');
+      refreshData();
+      setEditCourseForm({ name: '', professor: '', section: '', totalclasses: '', credits: '', _id: '' });
+      setEditCourseModalOpen(false);
+    } catch (err) {
+      showNotification(err.response?.data?.message || 'Error updating course', 'error');
+    }
+  };
+
+  const handleDeleteCourse = async () => {
+    if (!courseToDelete) return;
+    try {
+      await api.post('/admin/remove/course', { course: courseToDelete._id, removeType: 'entire-course' });
+      showNotification('Course deleted successfully', 'success');
+      refreshData();
+      setDeleteConfirmOpen(false);
+      setCourseToDelete(null);
+    } catch (err) {
+      showNotification(err.response?.data?.message || 'Error deleting course', 'error');
+    }
+  };
+
+  const openEditModal = (course) => {
+    setEditCourseForm({
+      name: course.name,
+      professor: course.professor?._id || '',
+      section: course.section,
+      totalclasses: course.totalclasses,
+      credits: course.credits,
+      _id: course._id
+    });
+    setEditCourseModalOpen(true);
+  };
+
+  const openDeleteConfirm = (course) => {
+    setCourseToDelete(course);
+    setDeleteConfirmOpen(true);
   };
 
   const handleAddStudent = async (e) => {
@@ -277,7 +341,7 @@ const AdminDashboard = () => {
       <div className="admin-dashboard admin-dashboard-page">
         {/* Dashboard Title Row */}
         <div style={{
-          padding: '40px 48px 20px 48px',
+          padding: '40px 48px 20px 24px',
           marginBottom: '40px'
         }}>
           <div className="admin-dashboard-label" style={{
@@ -305,36 +369,39 @@ const AdminDashboard = () => {
         </div>
 
         {/* Tab Navigation Row */}
-        <div className="admin-tab-navigation" style={{
-          padding: '0 48px 8px 48px',
+        <div className="section-selector-wrapper" style={{
+          padding: '0 48px 0 24px',
           marginTop: '0',
-          marginBottom: '0',
-          borderBottom: '1px solid rgba(255, 255, 255, 0.08)'
+          marginBottom: '32px',
+          display: 'flex',
+          justifyContent: 'center'
         }}>
-          <button 
-            className={`admin-tab-btn ${activeTab === 'courses' ? 'admin-tab-active' : ''}`}
-            onClick={() => setActiveTab('courses')}
-          >
-            Courses
-          </button>
-          <button 
-            className={`admin-tab-btn ${activeTab === 'students' ? 'admin-tab-active' : ''}`}
-            onClick={() => setActiveTab('students')}
-          >
-            Students
-          </button>
-          <button 
-            className={`admin-tab-btn ${activeTab === 'faculty' ? 'admin-tab-active' : ''}`}
-            onClick={() => setActiveTab('faculty')}
-          >
-            Faculty
-          </button>
-          <button 
-            className={`admin-tab-btn ${activeTab === 'elections' ? 'admin-tab-active' : ''}`}
-            onClick={() => setActiveTab('elections')}
-          >
-            Elections
-          </button>
+          <div className="section-selector">
+            <button 
+              className={activeTab === 'courses' ? 'active' : ''}
+              onClick={() => setActiveTab('courses')}
+            >
+              Courses
+            </button>
+            <button 
+              className={activeTab === 'students' ? 'active' : ''}
+              onClick={() => setActiveTab('students')}
+            >
+              Students
+            </button>
+            <button 
+              className={activeTab === 'faculty' ? 'active' : ''}
+              onClick={() => setActiveTab('faculty')}
+            >
+              Faculty
+            </button>
+            <button 
+              className={activeTab === 'elections' ? 'active' : ''}
+              onClick={() => setActiveTab('elections')}
+            >
+              Elections
+            </button>
+          </div>
         </div>
 
         {/* Notification Toast */}
@@ -362,10 +429,52 @@ const AdminDashboard = () => {
         <div className="management-section" style={{marginTop: 0}}>
             {/* Course Management */}
             {activeTab === 'courses' && (
-          <div className="course-container" style={{maxWidth: '900px', margin: '0 auto', padding: '0 30px', marginTop: 0}}>
-            <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px'}}>
+          <div className="course-container" style={{maxWidth: '100%', margin: '0 auto', padding: '0 24px 0 48px', marginTop: '5vh'}}>
+            <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', gap: '16px'}}>
               <h2 style={{margin: 0}}>Courses</h2>
-              <button 
+              <div style={{display: 'flex', gap: '12px', alignItems: 'center', flex: 1, justifyContent: 'flex-end'}}>
+                <div style={{position: 'relative', display: 'flex', alignItems: 'center'}}>
+                  <img 
+                    src="/assets/search (5).png" 
+                    alt="Search" 
+                    style={{
+                      position: 'absolute',
+                      left: '14px',
+                      width: '18px',
+                      height: '18px',
+                      opacity: 0.6,
+                      pointerEvents: 'none'
+                    }}
+                  />
+                  <input
+                    type="text"
+                    placeholder="Search here..."
+                    value={courseSearchQuery}
+                    onChange={(e) => setCourseSearchQuery(e.target.value)}
+                    style={{
+                      padding: '12px 18px 12px 44px',
+                      borderRadius: '999px',
+                      border: '1px solid rgba(255, 255, 255, 0.2)',
+                      background: 'rgba(255, 255, 255, 0.05)',
+                      color: 'white',
+                      fontFamily: 'Outfit',
+                      fontSize: '14px',
+                      outline: 'none',
+                      width: '400px',
+                      height: '44px',
+                      transition: 'all 0.2s ease'
+                    }}
+                    onFocus={(e) => {
+                      e.target.style.border = '1px solid rgba(43, 153, 0, 0.5)';
+                      e.target.style.background = 'rgba(255, 255, 255, 0.08)';
+                    }}
+                    onBlur={(e) => {
+                      e.target.style.border = '1px solid rgba(255, 255, 255, 0.2)';
+                      e.target.style.background = 'rgba(255, 255, 255, 0.05)';
+                    }}
+                  />
+                </div>
+                <button 
                 type="button" 
                 onClick={() => setAddCourseModalOpen(true)}
                 disabled={data.professors.length === 0}
@@ -384,6 +493,7 @@ const AdminDashboard = () => {
               >
                 + Add Course
               </button>
+              </div>
             </div>
             {data.courses.length === 0 ? (
               <div style={{
@@ -408,46 +518,216 @@ const AdminDashboard = () => {
                 </div>
               </div>
             ) : (
-            <ul className="student-list" style={{paddingTop: '8px'}}>
-              {data.courses.map(course => (
-                <li 
-                  key={course._id} 
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+              gap: '28px',
+              paddingTop: '8px'
+            }}>
+              {data.courses
+                .filter(course => {
+                  const query = courseSearchQuery.toLowerCase();
+                  const courseName = course.name.toLowerCase();
+                  const professorName = (course.professor?.name || '').toLowerCase();
+                  return courseName.includes(query) || professorName.includes(query);
+                })
+                .map(course => (
+                <div 
+                  key={course._id}
+                  className="course-card"
                   style={{
-                    display: 'flex', 
-                    justifyContent: 'space-between', 
-                    alignItems: 'center',
-                    padding: '18px 0',
-                    borderBottom: '1px solid rgba(255, 255, 255, 0.08)'
+                    position: 'relative',
+                    background: 'linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02))',
+                    borderRadius: '18px',
+                    padding: '24px',
+                    paddingBottom: '72px',
+                    minHeight: '200px',
+                    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+                    transition: 'all 0.3s ease',
+                    cursor: 'default',
+                    border: '1px solid rgba(255, 255, 255, 0.08)'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-4px)';
+                    e.currentTarget.style.boxShadow = '0 16px 40px rgba(0, 0, 0, 0.35)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.1)';
                   }}
                 >
-                  <div>
-                    <div style={{fontSize: '17px', fontWeight: '600', marginBottom: '6px', color: 'rgba(255, 255, 255, 0.95)'}}>
-                      {course.name} <span style={{fontSize: '15px', fontWeight: '400', color: 'rgba(255, 255, 255, 0.5)'}}>(Section {course.section})</span>
-                    </div>
-                    <div style={{fontSize: '13px', color: 'rgba(255, 255, 255, 0.5)', fontWeight: '400'}}>
-                      Professor: {course.professor?.name || 'Unassigned'}
-                    </div>
+                  {/* Action Buttons */}
+                  <div style={{
+                    position: 'absolute',
+                    top: '14px',
+                    right: '14px',
+                    display: 'flex',
+                    gap: '8px',
+                    zIndex: 10
+                  }}>
+                    <button
+                      type="button"
+                      onClick={() => openEditModal(course)}
+                      aria-label="Edit course"
+                      style={{
+                        background: 'transparent',
+                        border: 'none',
+                        cursor: 'pointer',
+                        padding: '6px',
+                        borderRadius: '6px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        transition: 'all 0.2s ease'
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.transform = 'scale(1.15)';
+                        e.currentTarget.style.background = 'rgba(43, 153, 0, 0.1)';
+                        setHoveredIcon({ courseId: course._id, type: 'edit' });
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.transform = 'scale(1)';
+                        e.currentTarget.style.background = 'transparent';
+                        setHoveredIcon({ courseId: null, type: null });
+                      }}
+                    >
+                      <img 
+                        src={hoveredIcon.courseId === course._id && hoveredIcon.type === 'edit' 
+                          ? '/assets/edithover.png' 
+                          : '/assets/edit-text 2.png'
+                        } 
+                        alt="Edit" 
+                        style={{width: '20px', height: '20px', opacity: 0.9}} 
+                      />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => openDeleteConfirm(course)}
+                      aria-label="Delete course"
+                      style={{
+                        background: 'transparent',
+                        border: 'none',
+                        cursor: 'pointer',
+                        padding: '6px',
+                        borderRadius: '6px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        transition: 'all 0.2s ease'
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.transform = 'scale(1.15)';
+                        e.currentTarget.style.background = 'rgba(255, 68, 68, 0.1)';
+                        setHoveredIcon({ courseId: course._id, type: 'delete' });
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.transform = 'scale(1)';
+                        e.currentTarget.style.background = 'transparent';
+                        setHoveredIcon({ courseId: null, type: null });
+                      }}
+                    >
+                      <img 
+                        src={hoveredIcon.courseId === course._id && hoveredIcon.type === 'delete' 
+                          ? '/assets/delete-pfp-hover.png' 
+                          : '/assets/delete-pfp.png'
+                        } 
+                        alt="Delete" 
+                        style={{width: '20px', height: '20px', opacity: 0.9}} 
+                      />
+                    </button>
                   </div>
-                  <button
-                    type="button"
-                    className="remove-candidate-btn"
-                    onClick={async () => {
-                      if (window.confirm(`Delete course "${course.name}"?`)) {
-                        try {
-                          await api.post('/admin/remove/course', { course: course._id, removeType: 'entire-course' });
-                          showNotification('Course deleted successfully', 'success');
-                          refreshData();
-                        } catch (err) {
-                          showNotification(err.response?.data?.message || 'Error deleting course', 'error');
-                        }
-                      }
+
+                  {/* Course Content */}
+                  <div
+                    className="course-content"
+                    style={{
+                      paddingRight: '36px',
+                      maxWidth: '70%',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'flex-start'
                     }}
                   >
-                    Delete
-                  </button>
-                </li>
+                    <h3
+                      className="course-title"
+                      style={{
+                        fontSize: '46px',
+                        fontWeight: '600',
+                        letterSpacing: '0.5px',
+                        color: '#ffffff',
+                        margin: '0',
+                        lineHeight: '1.15',
+                        cursor: 'help'
+                      }}
+                      title={course.name}
+                    >
+                      {getCourseAcronym(course.name)}
+                    </h3>
+
+                    <div
+                      className="course-section"
+                      style={{
+                        marginTop: '0px',
+                        fontSize: '20px',
+                        fontWeight: '400',
+                        color: 'rgba(255, 255, 255, 0.35)',
+                        textAlign: 'left'
+                      }}
+                    >
+                      Section {course.section}
+                    </div>
+
+                    <div
+                      className="course-professor"
+                      style={{
+                        marginTop: '18px',
+                        fontSize: '15px',
+                        color: 'rgba(255, 255, 255, 0.55)',
+                        fontWeight: '500'
+                      }}
+                    >
+                      Professor: <span style={{fontWeight: '600', color: 'rgba(255, 255, 255, 0.9)'}}>{course.professor?.name || 'Unassigned'}</span>
+                    </div>
+                  </div>
+
+                  {/* Pinned Attributes */}
+                  <div className="course-attributes" style={{
+                    position: 'absolute',
+                    bottom: '20px',
+                    left: '24px',
+                    right: '24px',
+                    display: 'flex',
+                    gap: '12px',
+                    flexWrap: 'wrap'
+                  }}>
+                    <div className="course-attribute" style={{
+                      padding: '7px 14px',
+                      borderRadius: '999px',
+                      fontSize: '13px',
+                      fontWeight: '600',
+                      background: 'rgba(43, 153, 0, 0.18)',
+                      color: '#9BEF7C',
+                      border: '1px solid rgba(43, 153, 0, 0.35)',
+                      whiteSpace: 'nowrap'
+                    }}>
+                      Credits: {course.credits || 'N/A'}
+                    </div>
+                    <div className="course-attribute" style={{
+                      padding: '7px 14px',
+                      borderRadius: '999px',
+                      fontSize: '13px',
+                      fontWeight: '600',
+                      background: 'rgba(43, 153, 0, 0.18)',
+                      color: '#9BEF7C',
+                      border: '1px solid rgba(43, 153, 0, 0.35)',
+                      whiteSpace: 'nowrap'
+                    }}>
+                      Classes: {course.totalclasses || 'N/A'}
+                    </div>
+                  </div>
+                </div>
               ))}
-            </ul>
+            </div>
             )}
           </div>
             )}
@@ -1065,6 +1345,115 @@ const AdminDashboard = () => {
             </select>
           </form>
         </AdminModal>
+
+        {/* Edit Course Modal */}
+        <AdminModal
+          isOpen={editCourseModalOpen}
+          onClose={() => setEditCourseModalOpen(false)}
+          title="Edit Course"
+          actions={
+            <>
+              <button 
+                type="button" 
+                className="admin-modal-btn admin-modal-btn--secondary" 
+                onClick={() => setEditCourseModalOpen(false)}
+              >
+                Cancel
+              </button>
+              <button 
+                type="submit" 
+                form="edit-course-modal-form"
+                className="admin-modal-btn"
+              >
+                Save Changes
+              </button>
+            </>
+          }
+        >
+          <form id="edit-course-modal-form" className="admin-modal-form" onSubmit={handleEditCourse}>
+            <label>Name of the Course</label>
+            <input 
+              type="text" 
+              value={editCourseForm.name} 
+              onChange={e => setEditCourseForm({...editCourseForm, name: e.target.value})} 
+              required 
+              placeholder="e.g., Operating Systems" 
+              maxLength={300}
+            />
+            
+            <label>Professor Assigned</label>
+            <select 
+              value={editCourseForm.professor} 
+              onChange={e => setEditCourseForm({...editCourseForm, professor: e.target.value})} 
+              required
+            >
+              <option value="">Select a Professor</option>
+              {data.professors.map(p => <option key={p._id} value={p._id}>{p.name}</option>)}
+            </select>
+
+            <label>Section</label>
+            <input 
+              type="text" 
+              value={editCourseForm.section} 
+              onChange={e => setEditCourseForm({...editCourseForm, section: e.target.value})} 
+              required 
+              placeholder="e.g., 1" 
+              maxLength={300}
+            />
+
+            <label>Total No. of Classes</label>
+            <input 
+              type="number" 
+              value={editCourseForm.totalclasses} 
+              onChange={e => setEditCourseForm({...editCourseForm, totalclasses: e.target.value})} 
+              required 
+              min="1" 
+              max="300"
+            />
+
+            <label>Course's Credits</label>
+            <input 
+              type="number" 
+              value={editCourseForm.credits} 
+              onChange={e => setEditCourseForm({...editCourseForm, credits: e.target.value})} 
+              required 
+              min="1" 
+              max="300"
+            />
+          </form>
+        </AdminModal>
+
+        {/* Delete Confirmation Modal */}
+        {deleteConfirmOpen && (
+          <div className="admin-modal-overlay">
+            <div className="admin-modal">
+              <h3>Delete Course?</h3>
+              <p style={{marginTop: '12px', marginBottom: '24px', color: 'rgba(255, 255, 255, 0.7)'}}>
+                Are you sure you want to delete <strong style={{color: '#2B9900'}}>{courseToDelete?.name}</strong>? This action cannot be undone.
+              </p>
+              <div className="admin-modal-actions">
+                <button 
+                  type="button" 
+                  className="admin-modal-btn admin-modal-btn--secondary" 
+                  onClick={() => {
+                    setDeleteConfirmOpen(false);
+                    setCourseToDelete(null);
+                  }}
+                >
+                  Cancel
+                </button>
+                <button 
+                  type="button" 
+                  className="admin-modal-btn"
+                  style={{background: '#ff4444'}}
+                  onClick={handleDeleteCourse}
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </Layout>
   );
