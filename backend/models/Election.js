@@ -1,29 +1,29 @@
 import mongoose from 'mongoose';
 
 const electionSchema = new mongoose.Schema({
+  title: {
+    type: String,
+    trim: true,
+    required: true
+  },
+  description: {
+    type: String,
+    trim: true,
+    default: ''
+  },
   status: {
     type: String,
-    enum: ['active', 'inactive'],
-    default: 'inactive'
+    enum: ['active', 'ended'],
+    default: 'ended'
   },
-  candidates: [{
-    student: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Student'
-    },
-    manifesto: {
-      type: String,
-      default: ''
-    },
-    votes: {
-      type: Number,
-      default: 0
-    }
-  }],
-  voters: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Student'
-  }]
+  startTime: {
+    type: Date,
+    required: true
+  },
+  endTime: {
+    type: Date,
+    required: true
+  }
 }, { timestamps: true });
 
 export default mongoose.model('Election', electionSchema);

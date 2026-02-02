@@ -119,21 +119,19 @@ main {
 .management-section {
     display: flex;
     justify-content: flex-start;
-    gap: 20px; /* Reduced gap for tighter layout */
-    margin: 40px 0;
+    gap: 30px;
+    margin: 40px 48px;
     flex-wrap: wrap;
 }
 
 .course-container, .student-container, .professor-container, .course-allotment-container {
-    flex: 1 1 auto;
-    min-width: 300px; /* Preserved original min-width */
-    max-width: 340px;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 15px;
-    padding: 25px;
-    backdrop-filter: blur(10px);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    flex: 1 1 100%;
+    min-width: 300px;
+    max-width: 100%;
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    padding: 0;
     color: white;
     font-family: 'Outfit', sans-serif;
 }
@@ -165,15 +163,15 @@ form {
 #course-allotment-form select,
 #course-removal-form select {
     width: 100%;
-    padding: 10px;
+    padding: 12px;
     border-radius: 8px;
-    border: 1px solid #2B9900;
-    background-color: #0F0F0F;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    background-color: transparent;
     color: white;
-    margin-bottom: 10px; /* Preserved original margin */
+    margin-bottom: 10px;
     font-family: 'Outfit', sans-serif;
     box-sizing: border-box;
-    transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.1s ease;
+    transition: border-color 0.2s ease;
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
@@ -194,49 +192,43 @@ form {
 #course-allotment-form select:focus,
 #course-removal-form select:focus {
     outline: none;
-    border-color: #48FF00;
-    box-shadow: 0 0 8px rgba(72, 255, 0, 0.5);
-    transform: scale(1.02); /* Subtle zoom on focus */
+    border-color: #2B9900;
 }
 
 /* Button Styling */
 .course-container button, .student-container button, .professor-container button, .course-allotment-container button {
-    padding: 12px;
+    padding: 12px 20px;
     background-color: #2B9900;
     color: white;
     border: none;
-    border-radius: 10px;
+    border-radius: 8px;
     font-family: 'Outfit', sans-serif;
     font-weight: 600;
-    font-size: 16px;
+    font-size: 14px;
     cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.2s ease;
-    width: 100%;
-    min-height: 48px; /* Consistent button height */
+    transition: opacity 0.2s ease;
+    width: auto;
 }
 
 .course-container button:hover, .student-container button:hover, .professor-container button:hover, .course-allotment-container button:hover {
-    background-color: #237a00;
-    transform: translateY(-2px);
+    opacity: 0.85;
 }
 
 .toggle-btn {
-    padding: 10px;
+    padding: 10px 18px;
     background-color: #2B9900;
     color: white;
     border: none;
-    border-radius: 10px;
+    border-radius: 8px;
     font-family: 'Outfit', sans-serif;
     font-weight: 600;
-    font-size: 16px;
+    font-size: 14px;
     cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.2s ease;
-    min-height: 44px; /* Consistent toggle button height */
+    transition: opacity 0.2s ease;
 }
 
 .toggle-btn:hover {
-    background-color: #237a00;
-    transform: translateY(-2px);
+    opacity: 0.85;
 }
 
 /* Error Messages */
@@ -280,20 +272,48 @@ h2 {
 }
 
 .course-list li, .professor-list li, .student-list li {
-    background: rgba(255, 255, 255, 0.05);
-    padding: 15px;
-    margin: 10px 0;
-    border-radius: 10px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: transparent;
+    padding: 16px 0;
+    margin: 0;
+    border-radius: 0;
+    border: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
     color: white;
     font-family: 'Outfit', sans-serif;
     font-size: 16px;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    transition: none;
+}
+
+.candidate-list-item {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    gap: 12px;
+    align-items: center;
+}
+
+.remove-candidate-btn {
+    padding: 8px 16px;
+    border-radius: 6px;
+    border: none;
+    background: transparent;
+    color: #ff4d4d;
+    font-size: 12px;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+    font-weight: 600;
+}
+
+.remove-candidate-btn:hover:not(:disabled) {
+    opacity: 0.7;
+}
+
+.remove-candidate-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
 }
 
 .course-list li:hover, .professor-list li:hover, .student-list li:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    background: rgba(255, 255, 255, 0.02);
 }
 
 .no-items {
@@ -441,4 +461,198 @@ h2 {
 #top_row {
     margin-bottom: 10px;
     position:static;
+}
+
+/* Admin Modal Styles */
+.admin-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+    backdrop-filter: blur(4px);
+}
+
+.admin-modal {
+    background: #0f0f0f;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 12px;
+    padding: 28px;
+    width: 90%;
+    max-width: 500px;
+    color: white;
+    box-shadow: none;
+}
+
+.admin-modal h3 {
+    margin-bottom: 10px;
+    font-size: 22px;
+    color: #2B9900;
+}
+
+.admin-modal p {
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: 20px;
+}
+
+.admin-modal-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.admin-modal-form input,
+.admin-modal-form textarea,
+.admin-modal-form select {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    background-color: transparent;
+    color: white;
+    font-family: 'Outfit', sans-serif;
+    box-sizing: border-box;
+    transition: border-color 0.2s ease;
+}
+
+.admin-modal-form input:focus,
+.admin-modal-form textarea:focus,
+.admin-modal-form select:focus {
+    outline: none;
+    border-color: #2B9900;
+}
+
+.admin-datepicker {
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #2B9900;
+    background-color: #0F0F0F;
+    color: white;
+    font-family: 'Outfit', sans-serif;
+    box-sizing: border-box;
+}
+
+.react-datepicker {
+    background-color: #0F0F0F;
+    border: 1px solid #2B9900;
+    color: white;
+    font-family: 'Outfit', sans-serif;
+}
+
+.react-datepicker__header {
+    background-color: #0B0B0B;
+    border-bottom: 1px solid #2B9900;
+}
+
+.react-datepicker__current-month,
+.react-datepicker-time__header,
+.react-datepicker__day-name {
+    color: #e6e6e6;
+}
+
+.react-datepicker__day,
+.react-datepicker__time-list-item {
+    color: #d9d9d9;
+}
+
+.react-datepicker__day--selected,
+.react-datepicker__day--keyboard-selected,
+.react-datepicker__time-list-item--selected {
+    background-color: #2B9900;
+    color: white;
+}
+
+.react-datepicker__day:hover,
+.react-datepicker__time-list-item:hover {
+    background-color: rgba(43, 153, 0, 0.2);
+}
+
+.react-datepicker__triangle {
+    display: none;
+}
+
+.admin-modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.admin-modal-error {
+    color: #FF4D4D;
+    font-size: 14px;
+    background: rgba(255, 77, 77, 0.15);
+    border: 1px solid rgba(255, 77, 77, 0.4);
+    padding: 8px 10px;
+    border-radius: 8px;
+}
+
+.admin-modal-btn {
+    padding: 12px 20px;
+    background-color: #2B9900;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-family: 'Outfit', sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+}
+
+.admin-modal-btn:hover {
+    opacity: 0.85;
+}
+
+.admin-modal-btn--secondary {
+    background: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.admin-modal-btn--secondary:hover {
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.admin-helper-text {
+    margin-top: 8px;
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.6);
+}
+/* Tab Navigation Styles */
+.admin-tab-navigation {
+    display: flex;
+    gap: 10px;
+    margin: 20px 48px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 0;
+}
+
+.admin-tab-btn {
+    background: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.6);
+    font-family: 'Outfit', sans-serif;
+    font-size: 16px;
+    font-weight: 500;
+    padding: 12px 20px;
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    transition: all 0.3s ease;
+}
+
+.admin-tab-btn:hover {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.admin-tab-btn.admin-tab-active {
+    color: #2B9900;
+    border-bottom-color: #2B9900;
+    font-weight: 600;
 }

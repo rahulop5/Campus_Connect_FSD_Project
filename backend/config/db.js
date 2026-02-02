@@ -1,5 +1,7 @@
 import mongoose from 'mongoose';
 
+mongoose.set('strictPopulate', true);
+
 const connectDB = async () => {
   try {
     await mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/campusconnect');

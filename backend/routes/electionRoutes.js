@@ -13,5 +13,6 @@ router.post('/manifesto', verifyToken, checkRole(['Student']), electionControlle
 router.post('/start', verifyToken, checkRole(['Admin']), electionController.startElection);
 router.post('/stop', verifyToken, checkRole(['Admin']), electionController.stopElection);
 router.post('/nominate', verifyToken, checkRole(['Admin']), electionController.nominateCandidate);
+router.delete('/nominate/:candidateId', verifyToken, checkRole(['Admin']), electionController.removeCandidate);
 
 export default router;

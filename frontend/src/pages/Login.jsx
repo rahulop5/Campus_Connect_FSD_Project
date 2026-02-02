@@ -17,6 +17,9 @@ const Login = () => {
     e.preventDefault();
     setLocalError('');
     try {
+      console.log(email)
+      console.log(password)
+      console.log(role)
       const resultAction = await dispatch(loginUser({ email, password, role }));
       if (loginUser.fulfilled.match(resultAction)) {
         navigate('/dashboard');

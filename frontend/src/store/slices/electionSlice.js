@@ -42,8 +42,11 @@ export const updateManifesto = createAsyncThunk(
 const electionSlice = createSlice({
   name: 'election',
   initialState: {
-    electionData: null,
+    electionMeta: null,
+    electionId: null,
+    candidates: [],
     hasVoted: false,
+    votedRoles: [],
     loading: false,
     error: null,
   },
@@ -56,8 +59,22 @@ const electionSlice = createSlice({
       })
       .addCase(fetchElection.fulfilled, (state, action) => {
         state.loading = false;
-        state.electionData = action.payload.election;
+        state.electionMeta = action.payload.election || null;
+        state.electionId = action.payload.election?._id || null;
+        const candidatesSource = action.payload.candidates || action.payload.election?.candidates || [];
+        state.candidates = candidatesSource.map((candidate) => ({
+          id: candidate._id || candidate.candidateId || candidate.student?._id || '',
+          studentId: candidate.studentId || candidate.student?._id || '',
+          name: candidate.name || candidate.student?.name || '',
+          role: candidate.role || '',
+          image: candidate.profileImage || candidate.student?.pfp || '',
+          department: candidate.department || candidate.student?.branch || '',
+          year: candidate.year || (candidate.student?.ug ? `UG${candidate.student.ug}` : ''),
+          manifesto: candidate.manifesto || '',
+          votes: candidate.voteCount ?? candidate.votes ?? 0
+        }));
         state.hasVoted = action.payload.hasVoted;
+        state.votedRoles = action.payload.votedRoles || [];
       })
       .addCase(fetchElection.rejected, (state, action) => {
         state.loading = false;

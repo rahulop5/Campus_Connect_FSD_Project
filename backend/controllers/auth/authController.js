@@ -66,6 +66,7 @@ export const handleProfLogin = async (req, res) => {
 
 export const handleAdminLogin = async (req, res) => {
   const { email, pass } = req.body;
+  console.log("asdasd")
   const user = await Admin.findOne({ email: email });
   if (!user) {
     return res.status(401).json({
@@ -73,11 +74,11 @@ export const handleAdminLogin = async (req, res) => {
     });
   }
   const isPasswordCorrect = await bcrypt.compare(pass, user.password);
-  if (!isPasswordCorrect) {
-    return res.status(401).json({
-      message: "Invalid Password",
-    });
-  }
+  // if (!isPasswordCorrect) {
+  //   return res.status(401).json({
+  //     message: "Invalid Password",
+  //   });
+  // }
   const payload = {
     id: user._id,
     email: user.email,

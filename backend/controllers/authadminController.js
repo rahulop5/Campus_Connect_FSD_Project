@@ -65,6 +65,7 @@ export const adminSignup = async (req, res) => {
 // Login Function
 export const adminLogin = async (req, res) => {
   try {
+    console.log("ok");
     const { email, password } = req.body;
 
     // Find admin
