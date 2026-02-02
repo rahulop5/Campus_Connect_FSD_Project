@@ -275,39 +275,42 @@ const AdminDashboard = () => {
   return (
     <Layout>
       <div className="admin-dashboard admin-dashboard-page">
-        <div id="top_row">
-          <div id="dash_welcm_admn_div">
-            <div className="green_gradient" id="dashboard_div">Dashboard</div>
-            <div id="welcm_nd_admn_div">
-              <div className="green_gradient" id="welcome_div">Welcome back, Admin</div>
-            </div>
+        {/* Dashboard Title Row */}
+        <div style={{
+          padding: '40px 48px 20px 48px',
+          marginBottom: '40px'
+        }}>
+          <div className="admin-dashboard-label" style={{
+            fontFamily: 'Outfit',
+            fontSize: '24px',
+            width: '1vw',
+            fontWeight: 500,
+            // marginBottom: '4px',
+            color: '#2B9900',
+            letterSpacing: '0.5px'
+          }}>
+            Dashboard
+          </div>
+          <div className="admin-welcome-heading green_gradient" style={{
+            fontFamily: 'Outfit',
+            fontSize: '70px',
+            fontWeight: 600,
+            width: '60vw',
+            // lineHeight: '1.2',
+            letterSpacing: '-1px',
+            marginTop: '-10'
+          }}>
+            Welcome back, Admin
           </div>
         </div>
 
-        {/* Notification Toast */}
-        {notification.message && (
-          <div style={{
-            position: 'fixed',
-            top: '90px',
-            right: '30px',
-            background: notification.type === 'success' ? 'rgba(43, 153, 0, 0.95)' : 'rgba(255, 68, 68, 0.95)',
-            color: 'white',
-            padding: '16px 24px',
-            borderRadius: '8px',
-            fontFamily: 'Outfit',
-            fontWeight: 500,
-            fontSize: '14px',
-            zIndex: 3000,
-            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3)',
-            animation: 'slideInRight 0.3s ease',
-            maxWidth: '400px'
-          }}>
-            {notification.message}
-          </div>
-        )}
-
-        {/* Tab Navigation */}
-        <div className="admin-tab-navigation">
+        {/* Tab Navigation Row */}
+        <div className="admin-tab-navigation" style={{
+          padding: '0 48px 8px 48px',
+          marginTop: '0',
+          marginBottom: '0',
+          borderBottom: '1px solid rgba(255, 255, 255, 0.08)'
+        }}>
           <button 
             className={`admin-tab-btn ${activeTab === 'courses' ? 'admin-tab-active' : ''}`}
             onClick={() => setActiveTab('courses')}
@@ -334,11 +337,33 @@ const AdminDashboard = () => {
           </button>
         </div>
 
-        <div className="management-section">
+        {/* Notification Toast */}
+        {notification.message && (
+          <div style={{
+            position: 'fixed',
+            top: '90px',
+            right: '30px',
+            background: notification.type === 'success' ? 'rgba(43, 153, 0, 0.95)' : 'rgba(255, 68, 68, 0.95)',
+            color: 'white',
+            padding: '16px 24px',
+            borderRadius: '8px',
+            fontFamily: 'Outfit',
+            fontWeight: 500,
+            fontSize: '14px',
+            zIndex: 3000,
+            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3)',
+            animation: 'slideInRight 0.3s ease',
+            maxWidth: '400px'
+          }}>
+            {notification.message}
+          </div>
+        )}
+
+        <div className="management-section" style={{marginTop: 0}}>
             {/* Course Management */}
             {activeTab === 'courses' && (
-          <div className="course-container">
-            <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px'}}>
+          <div className="course-container" style={{maxWidth: '900px', margin: '0 auto', padding: '0 30px', marginTop: 0}}>
+            <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px'}}>
               <h2 style={{margin: 0}}>Courses</h2>
               <button 
                 type="button" 
@@ -361,21 +386,45 @@ const AdminDashboard = () => {
               </button>
             </div>
             {data.courses.length === 0 ? (
-              <div style={{padding: '40px 20px', textAlign: 'center', color: 'rgba(255, 255, 255, 0.4)'}}>
-                <div style={{fontSize: '48px', marginBottom: '16px'}}>📚</div>
-                <div style={{fontSize: '16px', marginBottom: '8px'}}>No courses yet</div>
-                <div style={{fontSize: '13px', color: 'rgba(255, 255, 255, 0.3)'}}>
-                  {data.professors.length === 0 ? 'Add faculty members first' : 'Click the button above to add your first course'}
+              <div style={{
+                textAlign: 'center', 
+                padding: '60px 20px', 
+                color: 'rgba(255, 255, 255, 0.4)'
+              }}>
+                <div style={{fontSize: '48px', marginBottom: '20px'}}>📚</div>
+                <div style={{
+                  fontSize: '16px', 
+                  fontWeight: '500', 
+                  marginBottom: '8px', 
+                  color: 'rgba(255, 255, 255, 0.65)'
+                }}>
+                  No courses yet
+                </div>
+                <div style={{fontSize: '14px', color: 'rgba(255, 255, 255, 0.4)'}}>
+                  {data.professors.length === 0 
+                    ? 'Add faculty members first, then create courses' 
+                    : 'Click "+ Add Course" above to create your first course'
+                  }
                 </div>
               </div>
             ) : (
-            <ul className="student-list">
+            <ul className="student-list" style={{paddingTop: '8px'}}>
               {data.courses.map(course => (
-                <li key={course._id} className="candidate-list-item">
+                <li 
+                  key={course._id} 
+                  style={{
+                    display: 'flex', 
+                    justifyContent: 'space-between', 
+                    alignItems: 'center',
+                    padding: '18px 0',
+                    borderBottom: '1px solid rgba(255, 255, 255, 0.08)'
+                  }}
+                >
                   <div>
-                    <strong>{course.name}</strong>
-                    <span> (Section {course.section})</span>
-                    <div style={{fontSize: '14px', color: 'rgba(255, 255, 255, 0.7)', marginTop: '4px'}}>
+                    <div style={{fontSize: '17px', fontWeight: '600', marginBottom: '6px', color: 'rgba(255, 255, 255, 0.95)'}}>
+                      {course.name} <span style={{fontSize: '15px', fontWeight: '400', color: 'rgba(255, 255, 255, 0.5)'}}>(Section {course.section})</span>
+                    </div>
+                    <div style={{fontSize: '13px', color: 'rgba(255, 255, 255, 0.5)', fontWeight: '400'}}>
                       Professor: {course.professor?.name || 'Unassigned'}
                     </div>
                   </div>
@@ -405,8 +454,8 @@ const AdminDashboard = () => {
 
           {/* Student Management */}
           {activeTab === 'students' && (
-          <div className="student-container">
-            <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px'}}>
+          <div className="student-container" style={{maxWidth: '900px', margin: '0 auto', padding: '0 30px'}}>
+            <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px'}}>
               <h2 style={{margin: 0}}>Students</h2>
               <button 
                 type="button" 
@@ -417,20 +466,26 @@ const AdminDashboard = () => {
               </button>
             </div>
             {data.students.length === 0 ? (
-              <div style={{ 
+              <div style={{
                 textAlign: 'center', 
                 padding: '60px 20px', 
-                color: 'rgba(255,255,255,0.4)',
-                fontSize: '15px'
+                color: 'rgba(255, 255, 255, 0.4)'
               }}>
-                <div style={{ fontSize: '48px', marginBottom: '16px' }}>👨‍🎓</div>
-                <div style={{ fontWeight: '500', marginBottom: '8px', color: 'rgba(255,255,255,0.6)' }}>
+                <div style={{fontSize: '48px', marginBottom: '20px'}}>👨‍🎓</div>
+                <div style={{
+                  fontSize: '16px', 
+                  fontWeight: '500', 
+                  marginBottom: '8px', 
+                  color: 'rgba(255, 255, 255, 0.65)'
+                }}>
                   No students yet
                 </div>
-                <div>Add your first student to get started</div>
+                <div style={{fontSize: '14px', color: 'rgba(255, 255, 255, 0.4)'}}>
+                  Click "+ Add Student" above to add your first student
+                </div>
               </div>
             ) : (
-            <ul className="student-list">
+            <ul className="student-list" style={{paddingTop: '8px'}}>
               {data.students.map(student => (
                 <li key={student._id} className="candidate-list-item">
                   <div>
@@ -467,8 +522,8 @@ const AdminDashboard = () => {
 
           {/* Professor Management */}
           {activeTab === 'faculty' && (
-          <div className="professor-container">
-            <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px'}}>
+          <div className="professor-container" style={{maxWidth: '900px', margin: '0 auto', padding: '0 30px'}}>
+            <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px'}}>
               <h2 style={{margin: 0}}>Faculty</h2>
               <button 
                 type="button" 
@@ -479,20 +534,26 @@ const AdminDashboard = () => {
               </button>
             </div>
             {data.professors.length === 0 ? (
-              <div style={{ 
+              <div style={{
                 textAlign: 'center', 
                 padding: '60px 20px', 
-                color: 'rgba(255,255,255,0.4)',
-                fontSize: '15px'
+                color: 'rgba(255, 255, 255, 0.4)'
               }}>
-                <div style={{ fontSize: '48px', marginBottom: '16px' }}>👨‍🏫</div>
-                <div style={{ fontWeight: '500', marginBottom: '8px', color: 'rgba(255,255,255,0.6)' }}>
+                <div style={{fontSize: '48px', marginBottom: '20px'}}>👨‍🏫</div>
+                <div style={{
+                  fontSize: '16px', 
+                  fontWeight: '500', 
+                  marginBottom: '8px', 
+                  color: 'rgba(255, 255, 255, 0.65)'
+                }}>
                   No faculty yet
                 </div>
-                <div>Add your first faculty member to get started</div>
+                <div style={{fontSize: '14px', color: 'rgba(255, 255, 255, 0.4)'}}>
+                  Click "+ Add Faculty" above to add your first faculty member
+                </div>
               </div>
             ) : (
-            <ul className="student-list">
+            <ul className="student-list" style={{paddingTop: '8px'}}>
               {data.professors.map(professor => (
                 <li key={professor._id} className="candidate-list-item">
                   <div>
@@ -1004,16 +1065,6 @@ const AdminDashboard = () => {
             </select>
           </form>
         </AdminModal>
-        
-        {/* Lists Display */}
-        <div className="lists-display">
-            <h3>Existing Courses</h3>
-            <ul>
-                {data.courses.map(c => (
-                    <li key={c._id}>{c.name} (Sec {c.section}) - Prof: {c.professor?.name || 'Unassigned'}</li>
-                ))}
-            </ul>
-        </div>
       </div>
     </Layout>
   );

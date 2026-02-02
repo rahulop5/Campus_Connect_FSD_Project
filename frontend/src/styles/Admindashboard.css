@@ -134,6 +134,7 @@ main {
     padding: 0;
     color: white;
     font-family: 'Outfit', sans-serif;
+    margin-top: 50px;
 }
 
 /* Form Styling */
@@ -165,7 +166,7 @@ form {
     width: 100%;
     padding: 12px;
     border-radius: 8px;
-    border: 1px solid rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     background-color: transparent;
     color: white;
     margin-bottom: 10px;
@@ -197,17 +198,20 @@ form {
 
 /* Button Styling */
 .course-container button, .student-container button, .professor-container button, .course-allotment-container button {
-    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 40px;
+    padding: 0 20px;
     background-color: #2B9900;
     color: white;
     border: none;
-    border-radius: 8px;
+    border-radius: 6px;
     font-family: 'Outfit', sans-serif;
     font-weight: 600;
     font-size: 14px;
     cursor: pointer;
     transition: opacity 0.2s ease;
-    width: auto;
 }
 
 .course-container button:hover, .student-container button:hover, .professor-container button:hover, .course-allotment-container button:hover {
@@ -215,11 +219,15 @@ form {
 }
 
 .toggle-btn {
-    padding: 10px 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 40px;
+    padding: 0 18px;
     background-color: #2B9900;
     color: white;
     border: none;
-    border-radius: 8px;
+    border-radius: 6px;
     font-family: 'Outfit', sans-serif;
     font-weight: 600;
     font-size: 14px;
@@ -238,10 +246,10 @@ form {
     font-size: 14px;
     text-align: center;
     margin-top: 10px;
-    padding: 8px;
-    border-radius: 5px;
-    background: rgba(255, 77, 77, 0.2);
-    border: 1px solid #FF4D4D;
+    padding: 10px 16px;
+    border-radius: 6px;
+    background: rgba(255, 77, 77, 0.15);
+    border: none;
     opacity: 0;
     transform: translateY(-10px);
     animation: slideIn 0.3s ease forwards;
@@ -273,15 +281,15 @@ h2 {
 
 .course-list li, .professor-list li, .student-list li {
     background: transparent;
-    padding: 16px 0;
+    padding: 0;
     margin: 0;
     border-radius: 0;
     border: none;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
     color: white;
     font-family: 'Outfit', sans-serif;
     font-size: 16px;
-    transition: none;
+    transition: background 0.2s ease;
+    cursor: default;
 }
 
 .candidate-list-item {
@@ -292,19 +300,24 @@ h2 {
 }
 
 .remove-candidate-btn {
-    padding: 8px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 14px;
     border-radius: 6px;
-    border: none;
+    border: 1px solid rgba(43, 153, 0, 0.3);
     background: transparent;
-    color: #ff4d4d;
-    font-size: 12px;
+    color: #2B9900;
+    font-size: 13px;
     cursor: pointer;
-    transition: opacity 0.2s ease;
-    font-weight: 600;
+    transition: all 0.2s ease;
+    font-weight: 500;
+    height: 32px;
 }
 
 .remove-candidate-btn:hover:not(:disabled) {
-    opacity: 0.7;
+    background: rgba(43, 153, 0, 0.1);
+    border-color: rgba(43, 153, 0, 0.5);
 }
 
 .remove-candidate-btn:disabled {
@@ -313,7 +326,8 @@ h2 {
 }
 
 .course-list li:hover, .professor-list li:hover, .student-list li:hover {
-    background: rgba(255, 255, 255, 0.02);
+    background: rgba(255, 255, 255, 0.03);
+    cursor: pointer;
 }
 
 .no-items {
@@ -480,7 +494,7 @@ h2 {
 
 .admin-modal {
     background: #0f0f0f;
-    border: 1px solid rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 12px;
     padding: 28px;
     width: 90%;
@@ -512,7 +526,7 @@ h2 {
     width: 100%;
     padding: 12px;
     border-radius: 8px;
-    border: 1px solid rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     background-color: transparent;
     color: white;
     font-family: 'Outfit', sans-serif;
@@ -594,11 +608,15 @@ h2 {
 }
 
 .admin-modal-btn {
-    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 40px;
+    padding: 0 20px;
     background-color: #2B9900;
     color: white;
     border: none;
-    border-radius: 8px;
+    border-radius: 6px;
     font-family: 'Outfit', sans-serif;
     font-weight: 600;
     font-size: 14px;
@@ -628,23 +646,23 @@ h2 {
 /* Tab Navigation Styles */
 .admin-tab-navigation {
     display: flex;
-    gap: 10px;
-    margin: 20px 48px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    padding-bottom: 0;
+    gap: 8px;
+    justify-content: flex-start;
+    align-items: center;
 }
 
 .admin-tab-btn {
     background: transparent;
     border: none;
-    color: rgba(255, 255, 255, 0.6);
+    color: rgba(255, 255, 255, 0.5);
     font-family: 'Outfit', sans-serif;
-    font-size: 16px;
+    font-size: 15px;
     font-weight: 500;
     padding: 12px 20px;
     cursor: pointer;
-    border-bottom: 3px solid transparent;
-    transition: all 0.3s ease;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s ease;
+    position: relative;
 }
 
 .admin-tab-btn:hover {

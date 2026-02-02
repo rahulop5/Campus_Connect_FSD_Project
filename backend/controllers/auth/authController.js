@@ -8,12 +8,26 @@ import Admin from "../../models/Admin.js";
 
 export const handleStudentLogin = async (req, res) => {
   const { email, pass } = req.body;
+  
+  if (!email || !pass) {
+    return res.status(400).json({
+      msg: "Email and password are required",
+    });
+  }
+  
   const user = await Student.findOne({ email: email });
   if (!user) {
     return res.status(401).json({
       msg: "Invalid Email",
     });
   }
+  
+  if (!user.password) {
+    return res.status(500).json({
+      msg: "User password not set",
+    });
+  }
+  
   const isPasswordCorrect = await bcrypt.compare(pass, user.password);
   if (!isPasswordCorrect) {
     return res.status(401).json({
