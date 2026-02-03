@@ -42,6 +42,11 @@ const AdminDashboard = () => {
   const [courseToDelete, setCourseToDelete] = useState(null);
   const [hoveredIcon, setHoveredIcon] = useState({ courseId: null, type: null });
   const [courseSearchQuery, setCourseSearchQuery] = useState('');
+  const [facultySearchQuery, setFacultySearchQuery] = useState('');
+  const [editFacultyModalOpen, setEditFacultyModalOpen] = useState(false);
+  const [editFacultyForm, setEditFacultyForm] = useState({ name: '', email: '', phone: '', password: '', _id: '' });
+  const [deleteFacultyConfirmOpen, setDeleteFacultyConfirmOpen] = useState(false);
+  const [facultyToDelete, setFacultyToDelete] = useState(null);
   
   // Notification state
   const [notification, setNotification] = useState({ message: '', type: '' }); // type: 'success' or 'error'
@@ -143,6 +148,50 @@ const AdminDashboard = () => {
   const openDeleteConfirm = (course) => {
     setCourseToDelete(course);
     setDeleteConfirmOpen(true);
+  };
+
+  const openEditFacultyModal = (faculty) => {
+    setEditFacultyForm({
+      name: faculty.name,
+      email: faculty.email,
+      phone: faculty.phone || '',
+      password: '',
+      _id: faculty._id
+    });
+    setEditFacultyModalOpen(true);
+  };
+
+  const openDeleteFacultyConfirm = (faculty) => {
+    setFacultyToDelete(faculty);
+    setDeleteFacultyConfirmOpen(true);
+  };
+
+  const handleEditFaculty = async () => {
+    try {
+      await api.put(`/admin/professor/${editFacultyForm._id}`, {
+        name: editFacultyForm.name,
+        email: editFacultyForm.email,
+        phone: editFacultyForm.phone,
+        ...(editFacultyForm.password && { password: editFacultyForm.password })
+      });
+      showNotification('Faculty updated successfully', 'success');
+      setEditFacultyModalOpen(false);
+      refreshData();
+    } catch (err) {
+      showNotification(err.response?.data?.message || 'Error updating faculty', 'error');
+    }
+  };
+
+  const handleDeleteFaculty = async () => {
+    try {
+      await api.delete(`/admin/professor/${facultyToDelete._id}`);
+      showNotification('Faculty deleted successfully', 'success');
+      setDeleteFacultyConfirmOpen(false);
+      setFacultyToDelete(null);
+      refreshData();
+    } catch (err) {
+      showNotification(err.response?.data?.message || 'Error deleting faculty', 'error');
+    }
   };
 
   const handleAddStudent = async (e) => {
@@ -803,16 +852,68 @@ const AdminDashboard = () => {
 
           {/* Professor Management */}
           {activeTab === 'faculty' && (
-          <div className="professor-container" style={{maxWidth: '900px', margin: '0 auto', padding: '0 30px'}}>
-            <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px'}}>
+          <div className="professor-container" style={{maxWidth: '100%', margin: '0 auto', padding: '0 24px 0 48px', marginTop: '5vh'}}>
+            <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', gap: '16px'}}>
               <h2 style={{margin: 0}}>Faculty</h2>
-              <button 
-                type="button" 
-                onClick={() => setAddFacultyModalOpen(true)}
-                style={{background: '#2B9900', color: 'white', border: 'none', padding: '10px 20px', borderRadius: '8px', cursor: 'pointer', fontFamily: 'Outfit', fontWeight: 600}}
-              >
-                + Add Faculty
-              </button>
+              <div style={{display: 'flex', gap: '12px', alignItems: 'center', flex: 1, justifyContent: 'flex-end'}}>
+                <div style={{position: 'relative', display: 'flex', alignItems: 'center'}}>
+                  <img 
+                    src="/assets/search (5).png" 
+                    alt="Search" 
+                    style={{
+                      position: 'absolute',
+                      left: '14px',
+                      width: '18px',
+                      height: '18px',
+                      opacity: 0.6,
+                      pointerEvents: 'none'
+                    }}
+                  />
+                  <input
+                    type="text"
+                    placeholder="Search here..."
+                    value={facultySearchQuery}
+                    onChange={(e) => setFacultySearchQuery(e.target.value)}
+                    style={{
+                      padding: '12px 18px 12px 44px',
+                      borderRadius: '999px',
+                      border: '1px solid rgba(255, 255, 255, 0.2)',
+                      background: 'rgba(255, 255, 255, 0.05)',
+                      color: 'white',
+                      fontFamily: 'Outfit',
+                      fontSize: '14px',
+                      outline: 'none',
+                      width: '400px',
+                      height: '44px',
+                      transition: 'all 0.2s ease'
+                    }}
+                    onFocus={(e) => {
+                      e.target.style.border = '1px solid rgba(43, 153, 0, 0.5)';
+                      e.target.style.background = 'rgba(255, 255, 255, 0.08)';
+                    }}
+                    onBlur={(e) => {
+                      e.target.style.border = '1px solid rgba(255, 255, 255, 0.2)';
+                      e.target.style.background = 'rgba(255, 255, 255, 0.05)';
+                    }}
+                  />
+                </div>
+                <button 
+                  type="button" 
+                  onClick={() => setAddFacultyModalOpen(true)}
+                  style={{
+                    background: '#2B9900', 
+                    color: 'white', 
+                    border: 'none', 
+                    padding: '10px 20px', 
+                    borderRadius: '8px', 
+                    cursor: 'pointer', 
+                    fontFamily: 'Outfit', 
+                    fontWeight: 600
+                  }}
+                >
+                  + Add Faculty
+                </button>
+              </div>
             </div>
             {data.professors.length === 0 ? (
               <div style={{
@@ -834,36 +935,181 @@ const AdminDashboard = () => {
                 </div>
               </div>
             ) : (
-            <ul className="student-list" style={{paddingTop: '8px'}}>
-              {data.professors.map(professor => (
-                <li key={professor._id} className="candidate-list-item">
-                  <div>
-                    <strong>{professor.name}</strong>
-                    <div style={{fontSize: '14px', color: 'rgba(255, 255, 255, 0.7)', marginTop: '4px'}}>
-                      <div>Email: {professor.email}</div>
-                      <div>Phone: {professor.phone}</div>
-                    </div>
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(450px, 1fr))',
+              gap: '28px',
+              paddingTop: '8px'
+            }}>
+              {data.professors
+                .filter(faculty => {
+                  const query = facultySearchQuery.toLowerCase();
+                  const facultyName = faculty.name.toLowerCase();
+                  const facultyEmail = (faculty.email || '').toLowerCase();
+                  return facultyName.includes(query) || facultyEmail.includes(query);
+                })
+                .map(faculty => (
+                <div 
+                  key={faculty._id}
+                  className="faculty-card"
+                  style={{
+                    position: 'relative',
+                    background: 'linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02))',
+                    borderRadius: '18px',
+                    padding: '20px',
+                    paddingBottom: '20px',
+                    minHeight: '140px',
+                    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+                    transition: 'all 0.3s ease',
+                    cursor: 'default',
+                    border: '1px solid rgba(255, 255, 255, 0.08)'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-4px)';
+                    e.currentTarget.style.boxShadow = '0 16px 40px rgba(0, 0, 0, 0.35)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.1)';
+                  }}
+                >
+                  {/* Action Buttons */}
+                  <div style={{
+                    position: 'absolute',
+                    top: '14px',
+                    right: '14px',
+                    display: 'flex',
+                    gap: '8px',
+                    zIndex: 10
+                  }}>
+                    <button
+                      type="button"
+                      onClick={() => openEditFacultyModal(faculty)}
+                      aria-label="Edit faculty"
+                      style={{
+                        background: 'transparent',
+                        border: 'none',
+                        cursor: 'pointer',
+                        padding: '6px',
+                        borderRadius: '6px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        transition: 'all 0.2s ease'
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.transform = 'scale(1.15)';
+                        e.currentTarget.style.background = 'rgba(43, 153, 0, 0.1)';
+                        setHoveredIcon({ courseId: faculty._id, type: 'edit' });
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.transform = 'scale(1)';
+                        e.currentTarget.style.background = 'transparent';
+                        setHoveredIcon({ courseId: null, type: null });
+                      }}
+                    >
+                      <img 
+                        src={hoveredIcon.courseId === faculty._id && hoveredIcon.type === 'edit' 
+                          ? '/assets/edithover.png' 
+                          : '/assets/edit-text 2.png'
+                        } 
+                        alt="Edit" 
+                        style={{width: '20px', height: '20px', opacity: 0.9}} 
+                      />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => openDeleteFacultyConfirm(faculty)}
+                      aria-label="Delete faculty"
+                      style={{
+                        background: 'transparent',
+                        border: 'none',
+                        cursor: 'pointer',
+                        padding: '6px',
+                        borderRadius: '6px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        transition: 'all 0.2s ease'
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.transform = 'scale(1.15)';
+                        e.currentTarget.style.background = 'rgba(255, 68, 68, 0.1)';
+                        setHoveredIcon({ courseId: faculty._id, type: 'delete' });
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.transform = 'scale(1)';
+                        e.currentTarget.style.background = 'transparent';
+                        setHoveredIcon({ courseId: null, type: null });
+                      }}
+                    >
+                      <img 
+                        src={hoveredIcon.courseId === faculty._id && hoveredIcon.type === 'delete' 
+                          ? '/assets/delete-pfp-hover.png' 
+                          : '/assets/delete-pfp.png'
+                        } 
+                        alt="Delete" 
+                        style={{width: '20px', height: '20px', opacity: 0.9}} 
+                      />
+                    </button>
                   </div>
-                  <button
-                    type="button"
-                    className="remove-candidate-btn"
-                    onClick={async () => {
-                      if (window.confirm(`Delete professor "${professor.name}"?`)) {
-                        try {
-                          await api.delete(`/admin/professor/${professor._id}`);
-                          showNotification('Faculty deleted successfully', 'success');
-                          refreshData();
-                        } catch (err) {
-                          showNotification(err.response?.data?.message || 'Error deleting faculty', 'error');
-                        }
-                      }
+
+                  {/* Faculty Card Content */}
+                  <div
+                    className="faculty-card-content"
+                    style={{
+                      display: 'flex',
+                      gap: '20px',
+                      alignItems: 'flex-end',
+                      height: '100%'
                     }}
                   >
-                    Delete
-                  </button>
-                </li>
+                    {/* Avatar */}
+                    <div
+                      className="faculty-avatar"
+                      style={{
+                        width: '96px',
+                        height: '100%',
+                        borderRadius: '14px',
+                        background: 'rgba(255,255,255,0.9)',
+                        flexShrink: 0
+                      }}
+                    />
+
+                    {/* Text */}
+                    <div
+                      className="faculty-text"
+                      style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        justifyContent: 'flex-end',
+                        paddingBottom: '4px'
+                      }}
+                    >
+                      <div
+                        style={{
+                          fontSize: '22px',
+                          fontWeight: '600',
+                          color: '#ffffff'
+                        }}
+                      >
+                        {faculty.name}
+                      </div>
+
+                      <div
+                        style={{
+                          marginTop: '4px',
+                          fontSize: '14px',
+                          color: 'rgba(255,255,255,0.55)'
+                        }}
+                      >
+                        {faculty.email}
+                      </div>
+                    </div>
+                  </div>
+                </div>
               ))}
-            </ul>
+            </div>
             )}
           </div>
             )}
@@ -1448,6 +1694,103 @@ const AdminDashboard = () => {
                   className="admin-modal-btn"
                   style={{background: '#ff4444'}}
                   onClick={handleDeleteCourse}
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Edit Faculty Modal */}
+        <AdminModal
+          isOpen={editFacultyModalOpen}
+          onClose={() => setEditFacultyModalOpen(false)}
+          title="Edit Faculty"
+          actions={
+            <>
+              <button 
+                type="button" 
+                className="admin-modal-btn admin-modal-btn--secondary" 
+                onClick={() => setEditFacultyModalOpen(false)}
+              >
+                Cancel
+              </button>
+              <button 
+                type="submit" 
+                form="edit-faculty-modal-form"
+                className="admin-modal-btn"
+              >
+                Save Changes
+              </button>
+            </>
+          }
+        >
+          <form id="edit-faculty-modal-form" className="admin-modal-form" onSubmit={(e) => {
+            e.preventDefault();
+            handleEditFaculty();
+          }}>
+            <label>Name</label>
+            <input 
+              type="text" 
+              value={editFacultyForm.name} 
+              onChange={e => setEditFacultyForm({...editFacultyForm, name: e.target.value})} 
+              required 
+              maxLength={300}
+            />
+            
+            <label>Email</label>
+            <input 
+              type="email" 
+              value={editFacultyForm.email} 
+              onChange={e => setEditFacultyForm({...editFacultyForm, email: e.target.value})} 
+              required 
+              maxLength={300}
+            />
+
+            <label>Phone</label>
+            <input 
+              type="tel" 
+              value={editFacultyForm.phone} 
+              onChange={e => setEditFacultyForm({...editFacultyForm, phone: e.target.value})} 
+              maxLength={20}
+            />
+
+            <label>Password (leave blank to keep unchanged)</label>
+            <input 
+              type="password" 
+              value={editFacultyForm.password} 
+              onChange={e => setEditFacultyForm({...editFacultyForm, password: e.target.value})} 
+              placeholder="Enter new password or leave blank"
+              maxLength={300}
+            />
+          </form>
+        </AdminModal>
+
+        {/* Delete Faculty Confirmation Modal */}
+        {deleteFacultyConfirmOpen && (
+          <div className="admin-modal-overlay">
+            <div className="admin-modal">
+              <h3>Delete Faculty?</h3>
+              <p style={{marginTop: '12px', marginBottom: '24px', color: 'rgba(255, 255, 255, 0.7)'}}>
+                Are you sure you want to delete <strong style={{color: '#2B9900'}}>{facultyToDelete?.name}</strong>? This action cannot be undone.
+              </p>
+              <div className="admin-modal-actions">
+                <button 
+                  type="button" 
+                  className="admin-modal-btn admin-modal-btn--secondary" 
+                  onClick={() => {
+                    setDeleteFacultyConfirmOpen(false);
+                    setFacultyToDelete(null);
+                  }}
+                >
+                  Cancel
+                </button>
+                <button 
+                  type="button" 
+                  className="admin-modal-btn"
+                  style={{background: '#ff4444'}}
+                  onClick={handleDeleteFaculty}
                 >
                   Delete
                 </button>
