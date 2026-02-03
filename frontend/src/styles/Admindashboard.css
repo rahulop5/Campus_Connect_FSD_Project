@@ -718,3 +718,22 @@ h2 {
     border-bottom-color: #2B9900;
     font-weight: 600;
 }
+
+/* Custom scrollbar styling for student table */
+.student-table-wrapper::-webkit-scrollbar {
+    width: 8px;
+}
+
+.student-table-wrapper::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 4px;
+}
+
+.student-table-wrapper::-webkit-scrollbar-thumb {
+    background: rgba(200, 200, 200, 0.6);
+    border-radius: 4px;
+}
+
+.student-table-wrapper::-webkit-scrollbar-thumb:hover {
+    background: rgba(200, 200, 200, 0.8);
+}

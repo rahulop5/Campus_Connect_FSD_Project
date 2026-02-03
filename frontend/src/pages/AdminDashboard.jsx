@@ -43,6 +43,7 @@ const AdminDashboard = () => {
   const [hoveredIcon, setHoveredIcon] = useState({ courseId: null, type: null });
   const [courseSearchQuery, setCourseSearchQuery] = useState('');
   const [facultySearchQuery, setFacultySearchQuery] = useState('');
+  const [studentSearchQuery, setStudentSearchQuery] = useState('');
   const [editFacultyModalOpen, setEditFacultyModalOpen] = useState(false);
   const [editFacultyForm, setEditFacultyForm] = useState({ name: '', email: '', phone: '', password: '', _id: '' });
   const [deleteFacultyConfirmOpen, setDeleteFacultyConfirmOpen] = useState(false);
@@ -701,7 +702,7 @@ const AdminDashboard = () => {
                     <h3
                       className="course-title"
                       style={{
-                        fontSize: '46px',
+                        fontSize: '32px',
                         fontWeight: '600',
                         letterSpacing: '0.5px',
                         color: '#ffffff',
@@ -718,7 +719,7 @@ const AdminDashboard = () => {
                       className="course-section"
                       style={{
                         marginTop: '0px',
-                        fontSize: '20px',
+                        fontSize: '18px',
                         fontWeight: '400',
                         color: 'rgba(255, 255, 255, 0.35)',
                         textAlign: 'left'
@@ -784,16 +785,59 @@ const AdminDashboard = () => {
 
           {/* Student Management */}
           {activeTab === 'students' && (
-          <div className="student-container" style={{maxWidth: '900px', margin: '0 auto', padding: '0 30px'}}>
-            <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px'}}>
+          <div className="student-container" style={{maxWidth: '100%', margin: '0 auto', padding: '0 24px 0 48px', marginTop: '5vh'}}>
+            <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', gap: '16px'}}>
               <h2 style={{margin: 0}}>Students</h2>
-              <button 
-                type="button" 
-                onClick={() => setAddStudentModalOpen(true)}
-                style={{background: '#2B9900', color: 'white', border: 'none', padding: '10px 20px', borderRadius: '8px', cursor: 'pointer', fontFamily: 'Outfit', fontWeight: 600}}
-              >
-                + Add Student
-              </button>
+              <div style={{display: 'flex', gap: '12px', alignItems: 'center', flex: 1, justifyContent: 'flex-end'}}>
+                <div style={{position: 'relative', display: 'flex', alignItems: 'center'}}>
+                  <img 
+                    src="/assets/search (5).png" 
+                    alt="Search" 
+                    style={{
+                      position: 'absolute',
+                      left: '14px',
+                      width: '18px',
+                      height: '18px',
+                      opacity: 0.6,
+                      pointerEvents: 'none'
+                    }}
+                  />
+                  <input
+                    type="text"
+                    placeholder="Search here..."
+                    value={studentSearchQuery}
+                    onChange={(e) => setStudentSearchQuery(e.target.value)}
+                    style={{
+                      padding: '12px 18px 12px 44px',
+                      borderRadius: '999px',
+                      border: '1px solid rgba(255, 255, 255, 0.2)',
+                      background: 'rgba(255, 255, 255, 0.05)',
+                      color: 'white',
+                      fontFamily: 'Outfit',
+                      fontSize: '14px',
+                      outline: 'none',
+                      width: '400px',
+                      height: '44px',
+                      transition: 'all 0.2s ease'
+                    }}
+                    onFocus={(e) => {
+                      e.target.style.border = '1px solid rgba(43, 153, 0, 0.5)';
+                      e.target.style.background = 'rgba(255, 255, 255, 0.08)';
+                    }}
+                    onBlur={(e) => {
+                      e.target.style.border = '1px solid rgba(255, 255, 255, 0.2)';
+                      e.target.style.background = 'rgba(255, 255, 255, 0.05)';
+                    }}
+                  />
+                </div>
+                <button 
+                  type="button" 
+                  onClick={() => setAddStudentModalOpen(true)}
+                  style={{background: '#2B9900', color: 'white', border: 'none', padding: '10px 20px', borderRadius: '8px', cursor: 'pointer', fontFamily: 'Outfit', fontWeight: 600}}
+                >
+                  + Add Student
+                </button>
+              </div>
             </div>
             {data.students.length === 0 ? (
               <div style={{
@@ -815,37 +859,258 @@ const AdminDashboard = () => {
                 </div>
               </div>
             ) : (
-            <ul className="student-list" style={{paddingTop: '8px'}}>
-              {data.students.map(student => (
-                <li key={student._id} className="candidate-list-item">
-                  <div>
-                    <strong>{student.name}</strong>
-                    <div style={{fontSize: '14px', color: 'rgba(255, 255, 255, 0.7)', marginTop: '4px'}}>
-                      <div>Email: {student.email}</div>
-                      <div>Roll Number: {student.rollnumber}</div>
-                      <div>Section: {student.section}</div>
-                    </div>
-                  </div>
-                  <button
-                    type="button"
-                    className="remove-candidate-btn"
-                    onClick={async () => {
-                      if (window.confirm(`Delete student "${student.name}"?`)) {
-                        try {
-                          await api.delete(`/admin/student/${student._id}`);
-                          showNotification('Student deleted successfully', 'success');
-                          refreshData();
-                        } catch (err) {
-                          showNotification(err.response?.data?.message || 'Error deleting student', 'error');
-                        }
-                      }
+            <div className="student-table-wrapper" style={{
+              background: 'linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02))',
+              borderRadius: '12px',
+              overflow: 'hidden',
+              maxHeight: '420px',
+              overflowY: 'auto',
+              border: '1px solid rgba(255, 255, 255, 0.08)'
+            }}>
+              <table className="student-table" style={{
+                width: '100%',
+                borderCollapse: 'collapse'
+              }}>
+                <thead>
+                  <tr>
+                    <th style={{
+                      textAlign: 'left',
+                      fontSize: '13px',
+                      fontWeight: '600',
+                      padding: '12px 16px',
+                      color: 'rgba(255, 255, 255, 0.8)',
+                      borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+                      background: 'rgba(255,255,255,0.03)',
+                      position: 'sticky',
+                      top: 0,
+                      zIndex: 1
+                    }}></th>
+                    <th style={{
+                      textAlign: 'left',
+                      fontSize: '13px',
+                      fontWeight: '600',
+                      padding: '12px 16px',
+                      color: 'rgba(255, 255, 255, 0.8)',
+                      borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+                      background: 'rgba(255,255,255,0.03)',
+                      position: 'sticky',
+                      top: 0,
+                      zIndex: 1
+                    }}>Name</th>
+                    <th style={{
+                      textAlign: 'left',
+                      fontSize: '13px',
+                      fontWeight: '600',
+                      padding: '12px 16px',
+                      color: 'rgba(255, 255, 255, 0.8)',
+                      borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+                      background: 'rgba(255,255,255,0.03)',
+                      position: 'sticky',
+                      top: 0,
+                      zIndex: 1
+                    }}>Roll No.</th>
+                    <th style={{
+                      textAlign: 'center',
+                      fontSize: '13px',
+                      fontWeight: '600',
+                      padding: '12px 16px',
+                      color: 'rgba(255, 255, 255, 0.8)',
+                      borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+                      background: 'rgba(255,255,255,0.03)',
+                      position: 'sticky',
+                      top: 0,
+                      zIndex: 1
+                    }}>Year of Study</th>
+                    <th style={{
+                      textAlign: 'left',
+                      fontSize: '13px',
+                      fontWeight: '600',
+                      padding: '12px 16px',
+                      color: 'rgba(255, 255, 255, 0.8)',
+                      borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+                      background: 'rgba(255,255,255,0.03)',
+                      position: 'sticky',
+                      top: 0,
+                      zIndex: 1
+                    }}></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {data.students
+                    .filter(student => {
+                      const query = studentSearchQuery.toLowerCase();
+                      const studentName = student.name.toLowerCase();
+                      const studentEmail = (student.email || '').toLowerCase();
+                      const rollNumber = (student.rollnumber || '').toLowerCase();
+                      return studentName.includes(query) || studentEmail.includes(query) || rollNumber.includes(query);
+                    })
+                    .map((student, index) => (
+                    <tr key={student._id} style={{
+                      transition: 'background 0.2s ease'
                     }}
-                  >
-                    Delete
-                  </button>
-                </li>
-              ))}
-            </ul>
+                    onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255, 255, 255, 0.05)'}
+                    onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
+                    >
+                      <td className="student-index" style={{
+                        padding: '14px 16px',
+                        borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+                        fontSize: '14px',
+                        color: 'rgba(255, 255, 255, 0.5)',
+                        width: '60px'
+                      }}>
+                        {index + 1}
+                      </td>
+
+                      <td className="student-name-cell" style={{
+                        padding: '14px 16px',
+                        borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+                        fontSize: '14px'
+                      }}>
+                        <div style={{display: 'flex', alignItems: 'center', gap: '12px'}}>
+                          <div className="student-avatar" style={{
+                            width: '36px',
+                            height: '36px',
+                            borderRadius: '50%',
+                            border: '2px solid rgba(255, 255, 255, 0.3)',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            flexShrink: 0,
+                            background: 'rgba(255, 255, 255, 0.9)'
+                          }}>
+                          </div>
+                          <div>
+                            <div className="student-name" style={{
+                              fontWeight: '600',
+                              fontSize: '14px',
+                              color: '#ffffff',
+                              marginBottom: '2px'
+                            }}>
+                              {student.name}
+                            </div>
+                            <div className="student-email" style={{
+                              fontSize: '12px',
+                              color: 'rgba(255, 255, 255, 0.55)'
+                            }}>
+                              {student.email}
+                            </div>
+                          </div>
+                        </div>
+                      </td>
+
+                      <td style={{
+                        padding: '14px 16px',
+                        borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+                        fontSize: '14px',
+                        color: 'rgba(255, 255, 255, 0.8)'
+                      }}>
+                        {student.rollnumber}
+                      </td>
+
+                      <td style={{
+                        padding: '14px 16px',
+                        borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+                        fontSize: '14px',
+                        color: 'rgba(255, 255, 255, 0.8)',
+                        textAlign: 'center'
+                      }}>
+                        {student.section || 'N/A'}
+                      </td>
+
+                      <td className="student-actions" style={{
+                        padding: '14px 16px',
+                        borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+                        fontSize: '14px'
+                      }}>
+                        <div style={{display: 'flex', gap: '8px', justifyContent: 'flex-end'}}>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              // Edit functionality can be added later
+                              showNotification('Edit functionality coming soon', 'success');
+                            }}
+                            style={{
+                              background: 'transparent',
+                              border: 'none',
+                              cursor: 'pointer',
+                              padding: '6px',
+                              borderRadius: '6px',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              transition: 'all 0.2s ease'
+                            }}
+                            onMouseEnter={(e) => {
+                              e.currentTarget.style.transform = 'scale(1.15)';
+                              e.currentTarget.style.background = 'rgba(43, 153, 0, 0.1)';
+                              setHoveredIcon({ courseId: student._id, type: 'edit' });
+                            }}
+                            onMouseLeave={(e) => {
+                              e.currentTarget.style.transform = 'scale(1)';
+                              e.currentTarget.style.background = 'transparent';
+                              setHoveredIcon({ courseId: null, type: null });
+                            }}
+                          >
+                            <img 
+                              src={hoveredIcon.courseId === student._id && hoveredIcon.type === 'edit' 
+                                ? '/assets/edithover.png' 
+                                : '/assets/edit-text 2.png'
+                              } 
+                              alt="Edit" 
+                              style={{width: '20px', height: '20px', opacity: 0.9}} 
+                            />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={async () => {
+                              if (window.confirm(`Delete student "${student.name}"?`)) {
+                                try {
+                                  await api.delete(`/admin/student/${student._id}`);
+                                  showNotification('Student deleted successfully', 'success');
+                                  refreshData();
+                                } catch (err) {
+                                  showNotification(err.response?.data?.message || 'Error deleting student', 'error');
+                                }
+                              }
+                            }}
+                            style={{
+                              background: 'transparent',
+                              border: 'none',
+                              cursor: 'pointer',
+                              padding: '6px',
+                              borderRadius: '6px',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              transition: 'all 0.2s ease'
+                            }}
+                            onMouseEnter={(e) => {
+                              e.currentTarget.style.transform = 'scale(1.15)';
+                              e.currentTarget.style.background = 'rgba(255, 68, 68, 0.1)';
+                              setHoveredIcon({ courseId: student._id, type: 'delete' });
+                            }}
+                            onMouseLeave={(e) => {
+                              e.currentTarget.style.transform = 'scale(1)';
+                              e.currentTarget.style.background = 'transparent';
+                              setHoveredIcon({ courseId: null, type: null });
+                            }}
+                          >
+                            <img 
+                              src={hoveredIcon.courseId === student._id && hoveredIcon.type === 'delete' 
+                                ? '/assets/delete-pfp-hover.png' 
+                                : '/assets/delete-pfp.png'
+                              } 
+                              alt="Delete" 
+                              style={{width: '20px', height: '20px', opacity: 0.9}} 
+                            />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
             )}
           </div>
             )}

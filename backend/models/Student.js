@@ -6,7 +6,7 @@ const studentSchema = new mongoose.Schema({
     password: { type: String, required: false }, // Optional for OAuth users
     isOAuth: { type: Boolean, default: false }, // Indicates if the account is OAuth-based
     phone: { type: String, required: false },
-    roll: { type: String, required: false },
+    rollnumber: { type: String, required: false },
     section: { type: String, required: false },
     branch: { type: String, required: false },
     ug: { type: String, required: false },
