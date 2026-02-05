@@ -158,6 +158,14 @@
     background: rgba(40, 86, 22, 0.75);
     padding: 8px 80px;
     cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.login_form>button:hover:not(:disabled){
+    transform: translateY(-2px);
+    border-color: rgba(72, 255, 0, 0.7);
+    background: rgba(50, 106, 28, 0.85);
+    box-shadow: 0 4px 20px rgba(72, 255, 0, 0.25);
 }
 
 .login_form>button:disabled{
@@ -224,6 +232,13 @@
 
 .google{
     background: #FDFDFD;
+    transition: all 0.3s ease;
+}
+
+.google:hover{
+    transform: translateY(-3px);
+    box-shadow: 0 5px 25px rgba(72, 255, 0, 0.3);
+    background: #FFFFFF;
 }
 
 .google>p{
@@ -233,6 +248,14 @@
 .github{
     border: 0.5px solid #FFF;
     background: #000;
+    transition: all 0.3s ease;
+}
+
+.github:hover{
+    transform: translateY(-3px);
+    box-shadow: 0 5px 25px rgba(255, 255, 255, 0.2);
+    border-color: rgba(72, 255, 0, 0.5);
+    background: rgba(10, 10, 10, 1);
 }
 
 .github>p{

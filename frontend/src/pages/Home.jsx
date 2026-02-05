@@ -1,6 +1,7 @@
 import { Link } from 'react-router';
 import { useEffect } from 'react';
 import Header from '../components/Header';
+import SplitText from '../components/SplitText';
 import '../styles/Home.css';
 
 const Home = () => {
@@ -58,7 +59,16 @@ const Home = () => {
       </div>
       <hr className="herohr" />
       <div className="featuress">
-        <p>Features</p>
+        <SplitText 
+          text="Features" 
+          className="features-heading"
+          delay={50}
+          duration={1.2}
+          ease="power3.out"
+          from={{ opacity: 0, y: 100, rotateX: -90 }}
+          to={{ opacity: 1, y: 0, rotateX: 0 }}
+          threshold={0.2}
+        />
         <div className="featurescontent">
           <div>
             <img src="/assets/qandaforum.png" alt="" />

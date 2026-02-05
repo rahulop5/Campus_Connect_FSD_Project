@@ -146,6 +146,14 @@
     background: rgba(40, 86, 22, 0.75);
     padding: 8px 80px;
     cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.register_form>button:hover:not(:disabled){
+    transform: translateY(-2px);
+    border-color: rgba(72, 255, 0, 0.7);
+    background: rgba(50, 106, 28, 0.85);
+    box-shadow: 0 4px 20px rgba(72, 255, 0, 0.25);
 }
 
 .register_form>button:disabled{
@@ -156,4 +164,87 @@
 .register_form>button>p{
     color: #FFF;
     font-size: 18px;
+}
+
+.other{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+}
+
+.other>p{
+    color: #FFF;
+    font-size: 13px;
+}
+
+.other>p>a{
+    color: #FFF;
+    font-size: 13px;
+}
+
+.orline{
+    display: flex;
+    gap: 4px;
+    align-items: center;
+    width: 100%;
+    justify-content: center;
+}
+
+.orline>p{
+    color: #FFF;
+}
+
+.orline>div{
+    background: #FFF;
+    height: 2px;
+    width: 45%;
+}
+
+.oauth{
+    border-radius: 32px;
+    display: flex;
+    padding: 8px 29px;
+    align-items: center;
+    transition: all 0.3s ease;
+}
+
+.oauth>img{
+    height: 30px;
+    width: 30px;
+    margin-right: 22px;
+}
+
+.oauth>p{
+    font-size: 16px;
+}
+
+.google{
+    background: #FDFDFD;
+}
+
+.google:hover{
+    transform: translateY(-3px);
+    box-shadow: 0 5px 25px rgba(72, 255, 0, 0.3);
+    background: #FFFFFF;
+}
+
+.google>p{
+    color: black;
+}
+
+.github{
+    border: 0.5px solid #FFF;
+    background: #000;
+}
+
+.github:hover{
+    transform: translateY(-3px);
+    box-shadow: 0 5px 25px rgba(255, 255, 255, 0.2);
+    border-color: rgba(72, 255, 0, 0.5);
+    background: rgba(10, 10, 10, 1);
+}
+
+.github>p{
+    color: #FFF;
 }

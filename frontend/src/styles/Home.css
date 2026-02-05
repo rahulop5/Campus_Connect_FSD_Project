@@ -71,6 +71,15 @@
     border: 3px solid rgba(72, 255, 0, 0.68);
     background: #285616;
     padding: 12px 30px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.hero>div button:hover{
+    transform: translateY(-3px);
+    border-color: rgba(72, 255, 0, 0.9);
+    background: #356e1c;
+    box-shadow: 0 5px 25px rgba(72, 255, 0, 0.4);
 }
 
 .hero>div button>p{
@@ -104,6 +113,16 @@
     font-size: 200px;
     color: white;
     letter-spacing: -15px;
+}
+
+.features-heading {
+    font-size: 200px;
+    color: white;
+    letter-spacing: -15px;
+}
+
+.features-heading .split-char {
+    display: inline-block;
 }
 
 .featurescontent{
@@ -293,6 +312,15 @@
     backdrop-filter: blur(15.5px);
     padding: 8px 50px;
     margin-right: 25px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.finalsignup>div div:hover{
+    transform: translateY(-3px);
+    border-color: rgba(72, 255, 0, 0.9);
+    background: rgba(72, 255, 0, 0.35);
+    box-shadow: 0 5px 30px rgba(72, 255, 0, 0.5);
 }
 
 .finalsignup>div div>p{
