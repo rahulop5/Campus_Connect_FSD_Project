@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { loginUser } from '../store/slices/authSlice';
 import { useNavigate, Link } from 'react-router';
+import Plasma from '../components/Plasma';
 import '../styles/Login.css';
 
 const Login = () => {
@@ -40,6 +41,16 @@ const Login = () => {
 
   return (
     <div className="outfit login-page">
+      <div className="plasma-background">
+        <Plasma 
+          color="#026100"
+          speed={0.5}
+          direction="forward"
+          scale={1.1}
+          opacity={0.6}
+          mouseInteractive={true}
+        />
+      </div>
       <div>
         <p className="logo">Campus<span>C</span>onnect</p>
         {(localError || authError) && (

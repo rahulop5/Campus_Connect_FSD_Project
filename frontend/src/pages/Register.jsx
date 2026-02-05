@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Link, useSearchParams } from 'react-router';
 import api from '../api/axios';
+import Plasma from '../components/Plasma';
 import '../styles/Register.css';
 
 import { useDispatch } from 'react-redux';
@@ -65,18 +66,52 @@ const Register = () => {
 
   return (
     <div className="outfit register-page">
+      <div className="plasma-background">
+        <Plasma 
+          color="#026100"
+          speed={0.5}
+          direction="forward"
+          scale={1.1}
+          opacity={0.6}
+          mouseInteractive={true}
+        />
+      </div>
       <div>
         <p className="logo">Campus<span>C</span>onnect</p>
         {error && <p style={{color: 'red', textAlign: 'center'}}>{error}</p>}
         {isOAuth && <p style={{color: '#2B9900', textAlign: 'center', marginTop: '10px'}}>Complete your registration</p>}
         
-        <div style={{textAlign: 'center', marginTop: '20px', marginBottom: '10px'}}>
-            <label style={{color: '#FFF', marginRight: '10px'}}>Register as:</label>
-            <select name="role" value={formData.role} onChange={handleChange} style={{padding: '8px 15px', borderRadius: '5px', background: 'rgba(48, 48, 48, 0.55)', color: '#FFF', border: '1px solid #7A7A7A'}}>
-              <option value="Student">Student</option>
-              <option value="Professor">Professor</option>
-              <option value="Admin">Admin</option>
-            </select>
+        <div className="role-selector">
+          <p className="role-selector__label">Register as</p>
+          <div className="role-selector__buttons">
+            <button
+              type="button"
+              className={`role-btn ${formData.role === 'Student' ? 'active' : ''}`}
+              onClick={() => setFormData({...formData, role: 'Student'})}
+              aria-pressed={formData.role === 'Student'}
+            >
+              <img src="/assets/user_student.png" alt="Student" />
+              <span>Student</span>
+            </button>
+            <button
+              type="button"
+              className={`role-btn ${formData.role === 'Professor' ? 'active' : ''}`}
+              onClick={() => setFormData({...formData, role: 'Professor'})}
+              aria-pressed={formData.role === 'Professor'}
+            >
+              <img src="/assets/user_faculty.png" alt="Faculty" />
+              <span>Faculty</span>
+            </button>
+            <button
+              type="button"
+              className={`role-btn ${formData.role === 'Admin' ? 'active' : ''}`}
+              onClick={() => setFormData({...formData, role: 'Admin'})}
+              aria-pressed={formData.role === 'Admin'}
+            >
+              <img src="/assets/user_admin.png" alt="Admin" />
+              <span>Admin</span>
+            </button>
+          </div>
         </div>
 
         <form onSubmit={handleSubmit} className='register_form'>

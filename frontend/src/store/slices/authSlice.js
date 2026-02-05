@@ -31,10 +31,15 @@ export const loginUser = createAsyncThunk(
       const res = await api.post(url, { email, pass: password });
       localStorage.setItem('token', res.data.token);
       
-      // Fetch full user data immediately after login
-      dispatch(fetchUserData());
+      // Fetch full user data immediately after login and wait for it
+      const userDataResult = await dispatch(fetchUserData());
       
-      return res.data;
+      // Return the user data if successful, otherwise throw error
+      if (fetchUserData.fulfilled.match(userDataResult)) {
+        return userDataResult.payload;
+      } else {
+        throw new Error('Failed to fetch user data');
+      }
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || 'Login failed');
     }
@@ -87,9 +92,12 @@ const authSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
-      .addCase(loginUser.fulfilled, (state) => {
-        // State update handled by dispatched fetchUserData
-        state.loading = false; 
+      .addCase(loginUser.fulfilled, (state, action) => {
+        // Set user data from loginUser payload (which contains user data from fetchUserData)
+        state.loading = false;
+        state.user = action.payload;
+        state.isAuthenticated = true;
+        state.error = null;
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.loading = false;

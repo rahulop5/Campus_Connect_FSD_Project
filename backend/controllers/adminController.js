@@ -297,3 +297,153 @@ export const adminDetails = async (req, res) => {
     // Just return admin info if needed
     res.json({ admin: req.user });
 }
+
+// Update course
+export const updateCourse = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name, professor, section, totalclasses, credits } = req.body;
+
+    const course = await Course.findById(id);
+    if (!course) {
+      return res.status(404).json({ message: "Course not found" });
+    }
+
+    // If professor is being changed, update old and new professor's courses array
+    if (professor && course.professor && course.professor.toString() !== professor) {
+      // Remove from old professor
+      await Professor.findByIdAndUpdate(
+        course.professor,
+        { $pull: { courses: { course: id } } }
+      );
+      // Add to new professor
+      await Professor.findByIdAndUpdate(
+        professor,
+        { $addToSet: { courses: { course: id } } }
+      );
+    }
+
+    // Update course fields
+    if (name) course.name = name;
+    if (professor) course.professor = professor;
+    if (section) course.section = section;
+    if (totalclasses) course.totalclasses = totalclasses;
+    if (credits) course.credits = credits;
+
+    await course.save();
+
+    res.json({ message: "Course updated successfully", course });
+  } catch (error) {
+    console.error("Error updating course:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+// Update professor
+export const updateProfessor = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name, email, phone, password } = req.body;
+
+    const professor = await Professor.findById(id);
+    if (!professor) {
+      return res.status(404).json({ message: "Professor not found" });
+    }
+
+    if (name) professor.name = name;
+    if (email) professor.email = email;
+    if (phone) professor.phone = phone;
+    if (password) {
+      const hashedPassword = await bcrypt.hash(password, 10);
+      professor.password = hashedPassword;
+    }
+
+    await professor.save();
+
+    res.json({ message: "Professor updated successfully", professor });
+  } catch (error) {
+    console.error("Error updating professor:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+// Update student
+export const updateStudent = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name, rollnumber, phone, section, courses } = req.body;
+
+    const student = await Student.findById(id);
+    if (!student) {
+      return res.status(404).json({ message: "Student not found" });
+    }
+
+    if (name) student.name = name;
+    if (rollnumber) student.rollnumber = rollnumber;
+    if (phone) student.phone = phone;
+    if (section) student.section = section;
+    
+    // Handle courses assignment
+    if (courses && Array.isArray(courses)) {
+      // courses should be an array of course IDs
+      student.courses = courses.map(courseId => ({
+        course: courseId,
+        attendance: student.courses.find(c => c.course.toString() === courseId)?.attendance || 0,
+        grade: student.courses.find(c => c.course.toString() === courseId)?.grade || 0
+      }));
+    }
+
+    await student.save();
+
+    res.json({ message: "Student updated successfully", student });
+  } catch (error) {
+    console.error("Error updating student:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+// Delete student
+export const deleteStudent = async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    const student = await Student.findByIdAndDelete(id);
+    if (!student) {
+      return res.status(404).json({ message: "Student not found" });
+    }
+
+    res.json({ message: "Student deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting student:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+// Delete professor
+export const deleteProfessor = async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    // Find courses assigned to this professor
+    const courses = await Course.find({ professor: id });
+    
+    // Remove professor reference from courses
+    await Course.updateMany(
+      { professor: id },
+      { $unset: { professor: "" } }
+    );
+
+    const professor = await Professor.findByIdAndDelete(id);
+    if (!professor) {
+      return res.status(404).json({ message: "Professor not found" });
+    }
+
+    res.json({ 
+      message: "Professor deleted successfully",
+      affectedCourses: courses.length 
+    });
+  } catch (error) {
+    console.error("Error deleting professor:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};

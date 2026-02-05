@@ -38,8 +38,21 @@ const AdminDashboard = () => {
   const [nominateModalOpen, setNominateModalOpen] = useState(false);
   const [editCourseModalOpen, setEditCourseModalOpen] = useState(false);
   const [editCourseForm, setEditCourseForm] = useState({ name: '', professor: '', section: '', totalclasses: '', credits: '', _id: '' });
+  const [editStudentModalOpen, setEditStudentModalOpen] = useState(false);
+  const [editStudentForm, setEditStudentForm] = useState({ 
+    name: '', 
+    rollnumber: '', 
+    phone: '', 
+    section: '', 
+    email: '', 
+    courses: [], 
+    _id: '' 
+  });
+  const [editStudentCourseSearch, setEditStudentCourseSearch] = useState('');
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [courseToDelete, setCourseToDelete] = useState(null);
+  const [deleteStudentConfirmOpen, setDeleteStudentConfirmOpen] = useState(false);
+  const [studentToDelete, setStudentToDelete] = useState(null);
   const [hoveredIcon, setHoveredIcon] = useState({ courseId: null, type: null });
   const [courseSearchQuery, setCourseSearchQuery] = useState('');
   const [facultySearchQuery, setFacultySearchQuery] = useState('');
@@ -151,6 +164,24 @@ const AdminDashboard = () => {
     setDeleteConfirmOpen(true);
   };
 
+  const openDeleteStudentConfirm = (student) => {
+    setStudentToDelete(student);
+    setDeleteStudentConfirmOpen(true);
+  };
+
+  const handleDeleteStudent = async () => {
+    if (!studentToDelete) return;
+    try {
+      await api.delete(`/admin/student/${studentToDelete._id}`);
+      showNotification('Student deleted successfully', 'success');
+      refreshData();
+      setDeleteStudentConfirmOpen(false);
+      setStudentToDelete(null);
+    } catch (err) {
+      showNotification(err.response?.data?.message || 'Error deleting student', 'error');
+    }
+  };
+
   const openEditFacultyModal = (faculty) => {
     setEditFacultyForm({
       name: faculty.name,
@@ -206,6 +237,50 @@ const AdminDashboard = () => {
     } catch (err) {
       showNotification(err.response?.data?.message || 'Error adding student', 'error');
     }
+  };
+
+  const openEditStudentModal = (student) => {
+    setEditStudentForm({
+      name: student.name,
+      rollnumber: student.rollnumber,
+      phone: student.phone || '',
+      section: student.section || '',
+      email: student.email,
+      courses: student.courses.map(c => c.course._id || c.course),
+      _id: student._id
+    });
+    setEditStudentModalOpen(true);
+  };
+
+  const handleEditStudent = async (e) => {
+    e.preventDefault();
+    try {
+      await api.put(`/admin/student/${editStudentForm._id}`, {
+        name: editStudentForm.name,
+        rollnumber: editStudentForm.rollnumber,
+        phone: editStudentForm.phone,
+        section: editStudentForm.section,
+        courses: editStudentForm.courses
+      });
+      showNotification('Student updated successfully', 'success');
+      setEditStudentModalOpen(false);
+      refreshData();
+    } catch (err) {
+      showNotification(err.response?.data?.message || 'Error updating student', 'error');
+    }
+  };
+
+  const handleToggleCourse = (courseId) => {
+    setEditStudentForm(prev => {
+      const courses = [...prev.courses];
+      const index = courses.indexOf(courseId);
+      if (index > -1) {
+        courses.splice(index, 1);
+      } else {
+        courses.push(courseId);
+      }
+      return { ...prev, courses };
+    });
   };
 
   const handleAddProfessor = async (e) => {
@@ -450,7 +525,8 @@ const AdminDashboard = () => {
             fontWeight: 500,
             // marginBottom: '4px',
             color: '#2B9900',
-            letterSpacing: '0.5px'
+            letterSpacing: '0.5px',
+            marginLeft: '4vw'
           }}>
             Dashboard
           </div>
@@ -461,7 +537,8 @@ const AdminDashboard = () => {
             width: '60vw',
             // lineHeight: '1.2',
             letterSpacing: '-1px',
-            marginTop: '-10'
+            marginTop: '-20',
+            marginLeft: '4vw'
           }}>
             Welcome back, Admin
           </div>
@@ -947,7 +1024,7 @@ const AdminDashboard = () => {
                       zIndex: 1
                     }}>Name</th>
                     <th style={{
-                      textAlign: 'left',
+                      textAlign: 'center',
                       fontSize: '13px',
                       fontWeight: '600',
                       padding: '12px 16px',
@@ -1051,7 +1128,8 @@ const AdminDashboard = () => {
                         padding: '14px 16px',
                         borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
                         fontSize: '14px',
-                        color: 'rgba(255, 255, 255, 0.8)'
+                        color: 'rgba(255, 255, 255, 0.8)',
+                        textAlign: 'center'
                       }}>
                         {student.rollnumber}
                       </td>
@@ -1075,8 +1153,7 @@ const AdminDashboard = () => {
                           <button
                             type="button"
                             onClick={() => {
-                              // Edit functionality can be added later
-                              showNotification('Edit functionality coming soon', 'success');
+                              openEditStudentModal(student);
                             }}
                             style={{
                               background: 'transparent',
@@ -1111,17 +1188,7 @@ const AdminDashboard = () => {
                           </button>
                           <button
                             type="button"
-                            onClick={async () => {
-                              if (window.confirm(`Delete student "${student.name}"?`)) {
-                                try {
-                                  await api.delete(`/admin/student/${student._id}`);
-                                  showNotification('Student deleted successfully', 'success');
-                                  refreshData();
-                                } catch (err) {
-                                  showNotification(err.response?.data?.message || 'Error deleting student', 'error');
-                                }
-                              }
-                            }}
+                            onClick={() => openDeleteStudentConfirm(student)}
                             style={{
                               background: 'transparent',
                               border: 'none',
@@ -2311,6 +2378,279 @@ const AdminDashboard = () => {
           </form>
         </AdminModal>
 
+        {/* Edit Student Modal */}
+        <AdminModal
+          isOpen={editStudentModalOpen}
+          onClose={() => {
+            setEditStudentModalOpen(false);
+            setEditStudentCourseSearch('');
+          }}
+          title="Edit Student"
+          className="wide"
+          actions={
+            <>
+              <button 
+                type="button" 
+                className="admin-modal-btn admin-modal-btn--secondary" 
+                onClick={() => {
+                  setEditStudentModalOpen(false);
+                  setEditStudentCourseSearch('');
+                }}
+              >
+                Cancel
+              </button>
+              <button 
+                type="submit" 
+                form="edit-student-modal-form"
+                className="admin-modal-btn"
+              >
+                Save Changes
+              </button>
+            </>
+          }
+        >
+          <form id="edit-student-modal-form" style={{marginTop: 0}} onSubmit={handleEditStudent}>
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: '1fr 1fr',
+                gap: '32px'
+              }}>
+                {/* Left Side - Student Details */}
+                <div>
+                  <label style={{marginBottom: '8px', display: 'block', fontSize: '14px', fontWeight: '500'}}>Name</label>
+                  <input 
+                    type="text" 
+                    value={editStudentForm.name} 
+                    onChange={e => setEditStudentForm({...editStudentForm, name: e.target.value})} 
+                    required 
+                    maxLength={300}
+                    style={{
+                      width: '100%',
+                      padding: '12px 16px',
+                      borderRadius: '8px',
+                      border: '1px solid rgba(255, 255, 255, 0.2)',
+                      background: 'rgba(255, 255, 255, 0.05)',
+                      color: 'white',
+                      fontFamily: 'Outfit',
+                      fontSize: '14px',
+                      marginBottom: '20px'
+                    }}
+                  />
+                  
+                  <label style={{marginBottom: '8px', display: 'block', fontSize: '14px', fontWeight: '500'}}>Email (Read Only)</label>
+                  <input 
+                    type="email" 
+                    value={editStudentForm.email} 
+                    readOnly
+                    disabled
+                    style={{
+                      width: '100%',
+                      padding: '12px 16px',
+                      borderRadius: '8px',
+                      border: '1px solid rgba(255, 255, 255, 0.1)',
+                      background: 'rgba(255, 255, 255, 0.03)',
+                      color: 'rgba(255, 255, 255, 0.6)',
+                      fontFamily: 'Outfit',
+                      fontSize: '14px',
+                      cursor: 'not-allowed',
+                      marginBottom: '20px'
+                    }}
+                  />
+
+                  <label style={{marginBottom: '8px', display: 'block', fontSize: '14px', fontWeight: '500'}}>Roll Number</label>
+                  <input 
+                    type="text" 
+                    value={editStudentForm.rollnumber} 
+                    onChange={e => setEditStudentForm({...editStudentForm, rollnumber: e.target.value})} 
+                    required 
+                    maxLength={300}
+                    style={{
+                      width: '100%',
+                      padding: '12px 16px',
+                      borderRadius: '8px',
+                      border: '1px solid rgba(255, 255, 255, 0.2)',
+                      background: 'rgba(255, 255, 255, 0.05)',
+                      color: 'white',
+                      fontFamily: 'Outfit',
+                      fontSize: '14px',
+                      marginBottom: '20px'
+                    }}
+                  />
+
+                  <label style={{marginBottom: '8px', display: 'block', fontSize: '14px', fontWeight: '500'}}>Phone</label>
+                  <input 
+                    type="tel" 
+                    value={editStudentForm.phone} 
+                    onChange={e => setEditStudentForm({...editStudentForm, phone: e.target.value})} 
+                    required 
+                    pattern="[0-9]{10}" 
+                    title="10 digit mobile number" 
+                    maxLength={300}
+                    style={{
+                      width: '100%',
+                      padding: '12px 16px',
+                      borderRadius: '8px',
+                      border: '1px solid rgba(255, 255, 255, 0.2)',
+                      background: 'rgba(255, 255, 255, 0.05)',
+                      color: 'white',
+                      fontFamily: 'Outfit',
+                      fontSize: '14px',
+                      marginBottom: '20px'
+                    }}
+                  />
+
+                  <label style={{marginBottom: '8px', display: 'block', fontSize: '14px', fontWeight: '500'}}>Section</label>
+                  <input 
+                    type="text" 
+                    value={editStudentForm.section} 
+                    onChange={e => setEditStudentForm({...editStudentForm, section: e.target.value})} 
+                    required 
+                    maxLength={300}
+                    style={{
+                      width: '100%',
+                      padding: '12px 16px',
+                      borderRadius: '8px',
+                      border: '1px solid rgba(255, 255, 255, 0.2)',
+                      background: 'rgba(255, 255, 255, 0.05)',
+                      color: 'white',
+                      fontFamily: 'Outfit',
+                      fontSize: '14px',
+                      marginBottom: '20px'
+                    }}
+                  />
+                </div>
+
+                {/* Right Side - Course Selection */}
+                <div>
+                  <label style={{marginBottom: '8px', display: 'block', fontSize: '14px', fontWeight: '500'}}>Assigned Courses</label>
+                  
+                  {/* Search Bar */}
+                  <div style={{position: 'relative', display: 'flex', alignItems: 'center', marginBottom: '12px'}}>
+                    <img 
+                      src="/assets/search (5).png" 
+                      alt="Search" 
+                      style={{
+                        position: 'absolute',
+                        left: '14px',
+                        width: '16px',
+                        height: '16px',
+                        opacity: 0.6,
+                        pointerEvents: 'none'
+                      }}
+                    />
+                    <input
+                      type="text"
+                      placeholder="Search courses..."
+                      value={editStudentCourseSearch}
+                      onChange={(e) => setEditStudentCourseSearch(e.target.value)}
+                      style={{
+                        width: '100%',
+                        padding: '10px 16px 10px 42px',
+                        borderRadius: '999px',
+                        border: '1px solid rgba(255, 255, 255, 0.2)',
+                        background: 'rgba(255, 255, 255, 0.05)',
+                        color: 'white',
+                        fontFamily: 'Outfit',
+                        fontSize: '13px',
+                        outline: 'none',
+                        transition: 'all 0.2s ease'
+                      }}
+                      onFocus={(e) => {
+                        e.target.style.border = '1px solid rgba(43, 153, 0, 0.5)';
+                        e.target.style.background = 'rgba(255, 255, 255, 0.08)';
+                      }}
+                      onBlur={(e) => {
+                        e.target.style.border = '1px solid rgba(255, 255, 255, 0.2)';
+                        e.target.style.background = 'rgba(255, 255, 255, 0.05)';
+                      }}
+                    />
+                  </div>
+
+                  <div style={{
+                    maxHeight: '420px',
+                    overflowY: 'auto',
+                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                    borderRadius: '8px',
+                    padding: '12px',
+                    background: 'rgba(255, 255, 255, 0.05)'
+                  }}>
+                    {data.courses.length === 0 ? (
+                      <div style={{color: 'rgba(255, 255, 255, 0.5)', fontSize: '14px', padding: '20px', textAlign: 'center'}}>
+                        No courses available
+                      </div>
+                    ) : (
+                      data.courses
+                        .filter(course => {
+                          const query = editStudentCourseSearch.toLowerCase();
+                          const courseName = course.name.toLowerCase();
+                          const profName = (course.professor?.name || '').toLowerCase();
+                          const section = (course.section || '').toLowerCase();
+                          return courseName.includes(query) || profName.includes(query) || section.includes(query);
+                        })
+                        .map(course => (
+                          <div 
+                            key={course._id}
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              padding: '10px',
+                              marginBottom: '8px',
+                              borderRadius: '6px',
+                              background: editStudentForm.courses.includes(course._id) 
+                                ? 'rgba(43, 153, 0, 0.15)' 
+                                : 'transparent',
+                              cursor: 'pointer',
+                              transition: 'all 0.2s ease'
+                            }}
+                            onClick={() => handleToggleCourse(course._id)}
+                            onMouseEnter={(e) => {
+                              if (!editStudentForm.courses.includes(course._id)) {
+                                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.05)';
+                              }
+                            }}
+                            onMouseLeave={(e) => {
+                              if (!editStudentForm.courses.includes(course._id)) {
+                                e.currentTarget.style.background = 'transparent';
+                              }
+                            }}
+                          >
+                            <input 
+                              type="checkbox"
+                              checked={editStudentForm.courses.includes(course._id)}
+                              onChange={() => handleToggleCourse(course._id)}
+                              style={{
+                                marginRight: '12px',
+                                width: '18px',
+                                height: '18px',
+                                cursor: 'pointer',
+                                accentColor: '#2B9900'
+                              }}
+                            />
+                            <div style={{flex: 1}}>
+                              <div style={{
+                                fontSize: '14px',
+                                fontWeight: '500',
+                                color: 'white',
+                                marginBottom: '4px'
+                              }}>
+                                {course.name}
+                              </div>
+                              <div style={{
+                                fontSize: '12px',
+                                color: 'rgba(255, 255, 255, 0.6)'
+                              }}>
+                                Section {course.section} • {course.professor?.name || 'No professor assigned'}
+                              </div>
+                            </div>
+                          </div>
+                        ))
+                    )}
+                  </div>
+                </div>
+              </div>
+            </form>
+        </AdminModal>
+
         {/* Add Faculty Modal */}
         <AdminModal
           isOpen={addFacultyModalOpen}
@@ -2513,7 +2853,7 @@ const AdminDashboard = () => {
           </form>
         </AdminModal>
 
-        {/* Delete Confirmation Modal */}
+        {/* Delete Course Confirmation Modal */}
         {deleteConfirmOpen && (
           <div className="admin-modal-overlay">
             <div className="admin-modal">
@@ -2537,6 +2877,38 @@ const AdminDashboard = () => {
                   className="admin-modal-btn"
                   style={{background: '#ff4444'}}
                   onClick={handleDeleteCourse}
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Delete Student Confirmation Modal */}
+        {deleteStudentConfirmOpen && (
+          <div className="admin-modal-overlay">
+            <div className="admin-modal">
+              <h3>Delete Student?</h3>
+              <p style={{marginTop: '12px', marginBottom: '24px', color: 'rgba(255, 255, 255, 0.7)'}}>
+                Are you sure you want to delete <strong style={{color: '#2B9900'}}>{studentToDelete?.name}</strong>? This action cannot be undone.
+              </p>
+              <div className="admin-modal-actions">
+                <button 
+                  type="button" 
+                  className="admin-modal-btn admin-modal-btn--secondary" 
+                  onClick={() => {
+                    setDeleteStudentConfirmOpen(false);
+                    setStudentToDelete(null);
+                  }}
+                >
+                  Cancel
+                </button>
+                <button 
+                  type="button" 
+                  className="admin-modal-btn"
+                  style={{background: '#ff4444'}}
+                  onClick={handleDeleteStudent}
                 >
                   Delete
                 </button>

@@ -27,39 +27,133 @@
     /* height: 100vh; */
 }
 
+.logo{
+    color: #FFF;
+    font-size: 32px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+    height: 28px;
+    padding: 16px 16px;
+    margin-left: 8px;
+    margin-bottom: 27px;
+}
+
+.logo>span{
+    color: rgba(72, 255, 0, 0.68);
+}
+
+.role-selector{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 0;
+    margin-bottom: 4px;
+    gap: 10px;
+}
+
+.role-selector__label{
+    color: #E7F7E3;
+    font-size: 13px;
+    letter-spacing: 0.24px;
+}
+
+.role-selector__buttons{
+    display: flex;
+    gap: 11px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.role-btn{
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 10px;
+    border-radius: 13px;
+    border: 2px solid rgba(43, 153, 0, 0.35);
+    background: rgba(20, 20, 20, 0.75);
+    color: #FFFFFF;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-width: 95px;
+    justify-content: center;
+}
+
+.role-btn img{
+    width: 21px;
+    height: 21px;
+    object-fit: contain;
+    filter: drop-shadow(0 0 5px rgba(72, 255, 0, 0.35));
+}
+
+.role-btn:hover{
+    border-color: rgba(72, 255, 0, 0.7);
+    background: rgba(34, 60, 24, 0.75);
+    transform: translateY(-1px);
+}
+
+.role-btn.active{
+    border-color: rgba(72, 255, 0, 0.9);
+    background: rgba(40, 86, 22, 0.85);
+    box-shadow: 0 0 0 2px rgba(72, 255, 0, 0.25) inset;
+}
+
+.role-btn:focus-visible{
+    outline: 2px solid rgba(72, 255, 0, 0.8);
+    outline-offset: 2px;
+}
+
 .register_form{
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    margin-top: 40px;
-    margin-bottom: 15px;
+    gap: 12px;
+    margin-top: 54px;
+    margin-bottom: 12px;
 }
 
 .register_form>input{
-    line-height: 30px;
-    font-size: 20px;
+    line-height: 24px;
+    font-size: 16px;
     color: #FFF;
-    width: 333px;
-    border-radius: 5px;
-    border: 1px solid #7A7A7A;
-    background: rgba(48, 48, 48, 0.55);
-    padding: 20px 20px;
+    width: 266px;
+    border-radius: 4px;
+    border: 1px solid rgba(122, 122, 122, 0.3);
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    padding: 16px 16px;
+    transition: all 0.3s ease;
+}
+
+.register_form>input:focus{
+    outline: none;
+    border-color: rgba(72, 255, 0, 0.5);
+    background: rgba(255, 255, 255, 0.12);
+    box-shadow: 0 0 20px rgba(72, 255, 0, 0.15);
 }
 
 .register_form>input::placeholder{
-    line-height: 30px;
-    font-size: 20px;
+    line-height: 24px;
+    font-size: 16px;
 }
 
 .register_form>button{
-    margin-top: 40px;
-    border-radius: 40px;
-    border: 3px solid rgba(72, 255, 0, 0.40);
+    margin-top: 42px;
+    border-radius: 32px;
+    border: 2px solid rgba(72, 255, 0, 0.40);
     background: rgba(40, 86, 22, 0.75);
-    padding: 10px 100px;
+    padding: 8px 80px;
+    cursor: pointer;
+}
+
+.register_form>button:disabled{
+    opacity: 0.6;
+    cursor: not-allowed;
 }
 
 .register_form>button>p{
     color: #FFF;
-    font-size: 22px;
+    font-size: 18px;
 }

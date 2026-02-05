@@ -9,7 +9,12 @@ import {
     removeCourse,
     removeProfessor,
     removeStudent,
-    adminDetails
+    adminDetails,
+    updateCourse,
+    updateProfessor,
+    updateStudent,
+    deleteStudent,
+    deleteProfessor
 } from "../controllers/adminController.js";
 import { verifyToken } from "../middleware/authMiddleware.js";
 
@@ -27,5 +32,14 @@ router.post("/remove/course", removeCourse);
 router.post("/remove/professor", removeProfessor);
 router.post("/remove/student", removeStudent);
 router.get("/details", adminDetails);
+
+// PUT routes for updates
+router.put("/course/:id", updateCourse);
+router.put("/professor/:id", updateProfessor);
+router.put("/student/:id", updateStudent);
+
+// DELETE routes
+router.delete("/student/:id", deleteStudent);
+router.delete("/professor/:id", deleteProfessor);
 
 export default router;

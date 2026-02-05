@@ -1,10 +1,49 @@
 import { Link } from 'react-router';
+import { useEffect } from 'react';
 import Header from '../components/Header';
 import '../styles/Home.css';
 
 const Home = () => {
+  useEffect(() => {
+    // Premium smooth scrolling with delay
+    let scrollPosition = window.scrollY;
+    let targetPosition = window.scrollY;
+    let isScrolling = false;
+
+    const smoothScroll = () => {
+      const difference = targetPosition - scrollPosition;
+      const delta = difference * 0.03; // Very slow easing for ultra-premium feel
+      
+      if (Math.abs(difference) > 0.5) {
+        scrollPosition += delta;
+        window.scrollTo(0, scrollPosition);
+        requestAnimationFrame(smoothScroll);
+      } else {
+        scrollPosition = targetPosition;
+        isScrolling = false;
+      }
+    };
+
+    const handleWheel = (e) => {
+      e.preventDefault();
+      targetPosition += e.deltaY * 0.35; // Very heavy scroll feel
+      targetPosition = Math.max(0, Math.min(targetPosition, document.documentElement.scrollHeight - window.innerHeight));
+      
+      if (!isScrolling) {
+        isScrolling = true;
+        requestAnimationFrame(smoothScroll);
+      }
+    };
+
+    window.addEventListener('wheel', handleWheel, { passive: false });
+    
+    return () => {
+      window.removeEventListener('wheel', handleWheel);
+    };
+  }, []);
+
   return (
-    <div className="outfit">
+    <div className="outfit" style={{ scrollBehavior: 'auto' }}>
       <Header />
       <div className="hero">
         <div>
