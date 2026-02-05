@@ -61,7 +61,7 @@ const AdminDashboard = () => {
   // Form States
   const [courseForm, setCourseForm] = useState({ name: '', professor: '', section: '', totalclasses: '', credits: '' });
   const [studentForm, setStudentForm] = useState({ name: '', email: '', rollnumber: '', phone: '', section: '', password: '' });
-  const [profForm, setProfForm] = useState({ name: '', email: '', phone: '', password: '' });
+  const [profForm, setProfForm] = useState({ name: '', email: '', phone: '', password: '', employeeId: '' });
   
   // Removal/Assignment States
   const [removeCourseId, setRemoveCourseId] = useState('');
@@ -214,7 +214,7 @@ const AdminDashboard = () => {
       await api.post('/admin/professor/add', profForm);
       showNotification('Faculty added successfully', 'success');
       refreshData();
-      setProfForm({ name: '', email: '', phone: '', password: '' });
+      setProfForm({ name: '', email: '', phone: '', password: '', employeeId: '' });
       setAddFacultyModalOpen(false);
     } catch (err) {
       showNotification(err.response?.data?.message || 'Error adding faculty', 'error');
@@ -1430,16 +1430,17 @@ const AdminDashboard = () => {
 
           {/* Election Management */}
           {activeTab === 'elections' && (
-          <div className="elections-container" style={{maxWidth: '100%', margin: '0 auto', padding: '0 48px', marginTop: '5vh'}}>
-            {/* Title - Keep exactly same as other sections */}
-            <h2 style={{margin: 0, marginBottom: '24px'}}>Elections</h2>
+          <div className="course-container" style={{maxWidth: '100%', padding: '0 24px 0 48px', marginTop: '5vh'}}>
+            <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', gap: '16px'}}>
+              <h2 style={{margin: 0}}>Elections</h2>
+            </div>
             
             {!electionStatus ? (
               // No election state - 2-column layout
               <div className="elections-grid" style={{
                 display: 'grid',
-                gridTemplateColumns: '380px 1fr',
-                gap: '40px',
+                gridTemplateColumns: '35% 1fr',
+                gap: '28px',
                 alignItems: 'start'
               }}>
                 {/* Left: Status Card */}
@@ -1522,8 +1523,8 @@ const AdminDashboard = () => {
               // Active/Ended election - 2-column layout
               <div className="elections-grid" style={{
                 display: 'grid',
-                gridTemplateColumns: '380px 1fr',
-                gap: '40px',
+                gridTemplateColumns: '35% 1fr',
+                gap: '28px',
                 alignItems: 'start'
               }}>
                 {/* LEFT COLUMN: Status Card */}
@@ -1802,9 +1803,10 @@ const AdminDashboard = () => {
 
                                 {/* Candidate Cards */}
                                 <div style={{
-                                  display: 'flex',
-                                  flexDirection: 'column',
-                                  gap: '12px'
+                                  display: 'grid',
+                                  gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+                                  gap: '20px',
+                                  paddingBottom: '12px'
                                 }}>
                                   {candidatesForRole.map(candidate => {
                                     const votePercentage = totalVotesForRole > 0 ? (candidate.voteCount / totalVotesForRole) * 100 : 0;
@@ -1813,109 +1815,152 @@ const AdminDashboard = () => {
                                       <div
                                         key={candidate._id}
                                         style={{
+                                          position: 'relative',
                                           background: 'linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02))',
-                                          borderRadius: '12px',
+                                          borderRadius: '18px',
                                           padding: '20px',
-                                          border: '1px solid rgba(255, 255, 255, 0.08)',
-                                          transition: 'all 0.2s ease',
-                                          position: 'relative'
+                                          paddingBottom: '60px',
+                                          minHeight: '180px',
+                                          boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+                                          transition: 'all 0.3s ease',
+                                          cursor: 'default',
+                                          border: '1px solid rgba(255, 255, 255, 0.08)'
                                         }}
                                         onMouseEnter={(e) => {
-                                          e.currentTarget.style.transform = 'translateY(-2px)';
-                                          e.currentTarget.style.boxShadow = '0 6px 16px rgba(0, 0, 0, 0.2)';
+                                          e.currentTarget.style.transform = 'translateY(-4px)';
+                                          e.currentTarget.style.boxShadow = '0 16px 40px rgba(0, 0, 0, 0.35)';
                                         }}
                                         onMouseLeave={(e) => {
                                           e.currentTarget.style.transform = 'translateY(0)';
-                                          e.currentTarget.style.boxShadow = 'none';
+                                          e.currentTarget.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.1)';
                                         }}
                                       >
-                                        <div style={{display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '16px'}}>
-                                          {/* Profile Picture */}
+                                        {/* Delete Button */}
+                                        {user?.role === 'Admin' && (
                                           <div style={{
-                                            width: '52px',
-                                            height: '52px',
-                                            borderRadius: '50%',
-                                            background: 'rgba(255, 255, 255, 0.9)',
-                                            border: '2px solid rgba(255, 255, 255, 0.3)',
-                                            flexShrink: 0
-                                          }} />
-
-                                          {/* Name and Votes */}
-                                          <div style={{flex: 1}}>
-                                            <div style={{
-                                              fontSize: '16px',
-                                              fontWeight: '600',
-                                              color: '#ffffff',
-                                              marginBottom: '4px'
-                                            }}>
-                                              {candidate.name}
-                                            </div>
-                                            <div style={{
-                                              fontSize: '14px',
-                                              fontWeight: '600',
-                                              color: '#2B9900'
-                                            }}>
-                                              {candidate.voteCount || 0} Votes
-                                            </div>
-                                          </div>
-
-                                          {/* Remove Button */}
-                                          {user?.role === 'Admin' && (
+                                            position: 'absolute',
+                                            top: '14px',
+                                            right: '14px',
+                                            display: 'flex',
+                                            gap: '8px',
+                                            zIndex: 10
+                                          }}>
                                             <button
                                               type="button"
                                               onClick={() => handleRemoveCandidate(candidate._id)}
+                                              aria-label="Delete candidate"
                                               style={{
                                                 background: 'transparent',
-                                                border: '1px solid rgba(255, 68, 68, 0.4)',
-                                                color: '#ff4444',
-                                                padding: '6px 14px',
-                                                borderRadius: '6px',
+                                                border: 'none',
                                                 cursor: 'pointer',
-                                                fontFamily: 'Outfit',
-                                                fontWeight: 600,
-                                                fontSize: '12px',
+                                                padding: '6px',
+                                                borderRadius: '6px',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
                                                 transition: 'all 0.2s ease'
                                               }}
                                               onMouseEnter={(e) => {
-                                                e.target.style.background = 'rgba(255, 68, 68, 0.15)';
-                                                e.target.style.borderColor = '#ff4444';
+                                                e.currentTarget.style.transform = 'scale(1.15)';
+                                                e.currentTarget.style.background = 'rgba(255, 68, 68, 0.1)';
+                                                setHoveredIcon({ courseId: candidate._id, type: 'delete' });
                                               }}
                                               onMouseLeave={(e) => {
-                                                e.target.style.background = 'transparent';
-                                                e.target.style.borderColor = 'rgba(255, 68, 68, 0.4)';
+                                                e.currentTarget.style.transform = 'scale(1)';
+                                                e.currentTarget.style.background = 'transparent';
+                                                setHoveredIcon({ courseId: null, type: null });
                                               }}
                                             >
-                                              Remove
+                                              <img 
+                                                src={hoveredIcon.courseId === candidate._id && hoveredIcon.type === 'delete' 
+                                                  ? '/assets/delete-pfp-hover.png' 
+                                                  : '/assets/delete-pfp.png'
+                                                } 
+                                                alt="Delete" 
+                                                style={{width: '20px', height: '20px', opacity: 0.9}} 
+                                              />
                                             </button>
-                                          )}
+                                          </div>
+                                        )}
+
+                                        {/* Profile Picture */}
+                                        <div style={{
+                                          width: '72px',
+                                          height: '72px',
+                                          borderRadius: '50%',
+                                          background: 'rgba(255, 255, 255, 0.9)',
+                                          border: '2px solid rgba(255, 255, 255, 0.3)',
+                                          marginBottom: '16px'
+                                        }} />
+
+                                        {/* Name and Vote Count Row */}
+                                        <div style={{
+                                          display: 'flex',
+                                          justifyContent: 'space-between',
+                                          alignItems: 'center',
+                                          marginBottom: '8px',
+                                          gap: '12px'
+                                        }}>
+                                          {/* Name */}
+                                          <div style={{
+                                            fontSize: '18px',
+                                            fontWeight: '600',
+                                            color: '#ffffff',
+                                            lineHeight: '1.3',
+                                            wordBreak: 'break-word',
+                                            flex: 1
+                                          }}>
+                                            {candidate.name}
+                                          </div>
+
+                                          {/* Vote Count Box */}
+                                          <div style={{
+                                            padding: '4px 10px',
+                                            borderRadius: '6px',
+                                            fontSize: '12px',
+                                            fontWeight: '600',
+                                            color: '#2B9900',
+                                            background: 'rgba(43, 153, 0, 0.15)',
+                                            border: '1px solid rgba(43, 153, 0, 0.3)',
+                                            whiteSpace: 'nowrap'
+                                          }}>
+                                            {candidate.voteCount || 0} Votes
+                                          </div>
                                         </div>
 
-                                        {/* Progress Bar */}
+                                        {/* Progress Bar - Positioned at bottom */}
                                         <div style={{
-                                          width: '100%',
-                                          height: '8px',
-                                          background: 'rgba(255, 255, 255, 0.08)',
-                                          borderRadius: '4px',
-                                          overflow: 'hidden'
+                                          position: 'absolute',
+                                          bottom: '24px',
+                                          left: '24px',
+                                          right: '24px'
                                         }}>
                                           <div style={{
-                                            width: `${votePercentage}%`,
-                                            height: '100%',
-                                            background: 'linear-gradient(90deg, #2B9900, #3db300)',
+                                            width: '100%',
+                                            height: '8px',
+                                            background: 'rgba(255, 255, 255, 0.08)',
                                             borderRadius: '4px',
-                                            transition: 'width 0.5s ease'
-                                          }} />
-                                        </div>
+                                            overflow: 'hidden'
+                                          }}>
+                                            <div style={{
+                                              width: `${votePercentage}%`,
+                                              height: '100%',
+                                              background: 'linear-gradient(90deg, #2B9900, #3db300)',
+                                              borderRadius: '4px',
+                                              transition: 'width 0.5s ease'
+                                            }} />
+                                          </div>
 
-                                        {/* Percentage Label */}
-                                        <div style={{
-                                          fontSize: '11px',
-                                          color: 'rgba(255, 255, 255, 0.5)',
-                                          marginTop: '6px',
-                                          textAlign: 'right',
-                                          fontWeight: '600'
-                                        }}>
-                                          {votePercentage.toFixed(1)}%
+                                          {/* Percentage Label */}
+                                          <div style={{
+                                            fontSize: '11px',
+                                            color: 'rgba(255, 255, 255, 0.5)',
+                                            marginTop: '6px',
+                                            textAlign: 'right',
+                                            fontWeight: '600'
+                                          }}>
+                                            {votePercentage.toFixed(1)}%
+                                          </div>
                                         </div>
                                       </div>
                                     );
@@ -2134,14 +2179,50 @@ const AdminDashboard = () => {
             />
 
             <label>Course's Credits</label>
-            <input 
-              type="number" 
-              value={courseForm.credits} 
-              onChange={e => setCourseForm({...courseForm, credits: e.target.value})} 
-              required 
-              min="1" 
-              max="300"
-            />
+            <div style={{
+              display: 'flex',
+              gap: '12px',
+              marginBottom: '20px'
+            }}>
+              {[2, 3, 4].map(credit => (
+                <button
+                  key={credit}
+                  type="button"
+                  onClick={() => setCourseForm({...courseForm, credits: credit.toString()})}
+                  style={{
+                    flex: 1,
+                    padding: '12px',
+                    borderRadius: '8px',
+                    border: courseForm.credits === credit.toString() 
+                      ? '2px solid #2B9900' 
+                      : '1px solid rgba(255, 255, 255, 0.2)',
+                    background: courseForm.credits === credit.toString()
+                      ? 'rgba(43, 153, 0, 0.2)'
+                      : 'rgba(255, 255, 255, 0.05)',
+                    color: courseForm.credits === credit.toString() ? '#2B9900' : 'white',
+                    fontFamily: 'Outfit',
+                    fontSize: '14px',
+                    fontWeight: courseForm.credits === credit.toString() ? '600' : '400',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s ease'
+                  }}
+                  onMouseEnter={(e) => {
+                    if (courseForm.credits !== credit.toString()) {
+                      e.currentTarget.style.background = 'rgba(255, 255, 255, 0.08)';
+                      e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.3)';
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (courseForm.credits !== credit.toString()) {
+                      e.currentTarget.style.background = 'rgba(255, 255, 255, 0.05)';
+                      e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.2)';
+                    }
+                  }}
+                >
+                  {credit} Credits
+                </button>
+              ))}
+            </div>
           </form>
         </AdminModal>
 
@@ -2262,6 +2343,16 @@ const AdminDashboard = () => {
               onChange={e => setProfForm({...profForm, name: e.target.value})} 
               required 
               maxLength={300}
+            />
+            
+            <label>Employee ID</label>
+            <input 
+              type="text" 
+              value={profForm.employeeId} 
+              onChange={e => setProfForm({...profForm, employeeId: e.target.value})} 
+              required 
+              maxLength={300}
+              placeholder="e.g., EMP001"
             />
             
             <label>Email</label>

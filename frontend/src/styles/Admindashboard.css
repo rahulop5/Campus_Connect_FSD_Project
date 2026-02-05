@@ -211,7 +211,7 @@ form {
     padding: 12px;
     border-radius: 8px;
     border: 1px solid rgba(255, 255, 255, 0.1);
-    background-color: transparent;
+    background-color: rgba(48, 48, 48, 0.8);
     color: white;
     margin-bottom: 10px;
     font-family: 'Outfit', sans-serif;
@@ -223,10 +223,23 @@ form {
 }
 
 #add-course-form select, #remove-course-form select, #remove-professor-form select, #course-allotment-form select, #course-removal-form select {
+    background-color: rgba(48, 48, 48, 0.8);
     background-image: url('data:image/svg+xml;utf8,<svg fill="%23FFFFFF" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>');
     background-repeat: no-repeat;
     background-position: right 10px center;
     padding-right: 30px;
+}
+
+/* Option styling for select dropdowns */
+#add-course-form select option,
+#remove-course-form select option,
+#remove-professor-form select option,
+#course-allotment-form select option,
+#course-removal-form select option,
+#add-professor-form select option,
+#student-form select option {
+    background-color: rgba(48, 48, 48, 0.95);
+    color: white;
 }
 
 #add-course-form input:focus, #add-course-form select:focus,
@@ -532,8 +545,9 @@ h2 {
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 2000;
-    backdrop-filter: blur(4px);
+    z-index: 10000;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
 }
 
 .admin-modal {
@@ -571,11 +585,27 @@ h2 {
     padding: 12px;
     border-radius: 8px;
     border: 1px solid rgba(255, 255, 255, 0.1);
-    background-color: transparent;
+    background-color: rgba(48, 48, 48, 0.8);
     color: white;
     font-family: 'Outfit', sans-serif;
     box-sizing: border-box;
     transition: border-color 0.2s ease;
+}
+
+.admin-modal-form select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-color: rgba(48, 48, 48, 0.8);
+    background-image: url('data:image/svg+xml;utf8,<svg fill="%23FFFFFF" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>');
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    padding-right: 30px;
+}
+
+.admin-modal-form select option {
+    background-color: rgba(48, 48, 48, 0.95);
+    color: white;
 }
 
 .admin-modal-form input:focus,

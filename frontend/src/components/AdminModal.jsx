@@ -1,9 +1,10 @@
+import { createPortal } from 'react-dom';
 import '../styles/Admindashboard.css';
 
 const AdminModal = ({ isOpen, onClose, title, children, actions }) => {
   if (!isOpen) return null;
 
-  return (
+  return createPortal(
     <div className="admin-modal-overlay" onClick={onClose}>
       <div className="admin-modal" onClick={(e) => e.stopPropagation()}>
         <h3>{title}</h3>
@@ -16,7 +17,8 @@ const AdminModal = ({ isOpen, onClose, title, children, actions }) => {
           </div>
         )}
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };
 
