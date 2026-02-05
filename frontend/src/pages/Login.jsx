@@ -8,6 +8,7 @@ const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [role, setRole] = useState('Student');
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { error: authError } = useSelector((state) => state.auth);
@@ -15,19 +16,25 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (isSubmitting) return; // Prevent multiple submissions
+    
+    setIsSubmitting(true);
     setLocalError('');
     try {
-      console.log(email)
-      console.log(password)
-      console.log(role)
+      console.log('Login attempt:', { email, role });
       const resultAction = await dispatch(loginUser({ email, password, role }));
       if (loginUser.fulfilled.match(resultAction)) {
+        console.log('Login successful, navigating to dashboard');
         navigate('/dashboard');
       } else {
+        console.error('Login failed:', resultAction.payload);
         setLocalError(resultAction.payload || 'Login failed');
+        setIsSubmitting(false);
       }
     } catch (err) {
+      console.error('Login error:', err);
       setLocalError('Login failed. Please check your credentials.');
+      setIsSubmitting(false);
     }
   };
 
@@ -35,15 +42,51 @@ const Login = () => {
     <div className="outfit login-page">
       <div>
         <p className="logo">Campus<span>C</span>onnect</p>
-        {(localError || authError) && <p style={{color: 'red', textAlign: 'center'}}>{localError || authError}</p>}
+        {(localError || authError) && (
+          <p style={{
+            color: '#ff4444', 
+            textAlign: 'center', 
+            background: 'rgba(255, 68, 68, 0.1)',
+            padding: '8px 16px',
+            borderRadius: '8px',
+            marginTop: '10px',
+            fontSize: '14px'
+          }}>
+            {localError || authError}
+          </p>
+        )}
         
-        <div style={{textAlign: 'center', marginTop: '20px', marginBottom: '10px'}}>
-            <label style={{color: '#FFF', marginRight: '10px'}}>Login as:</label>
-            <select value={role} onChange={(e) => setRole(e.target.value)} style={{padding: '8px 15px', borderRadius: '5px', background: 'rgba(48, 48, 48, 0.55)', color: '#FFF', border: '1px solid #7A7A7A'}}>
-                <option value="Student">Student</option>
-                <option value="Professor">Professor</option>
-                <option value="Admin">Admin</option>
-            </select>
+        <div className="role-selector">
+          <p className="role-selector__label">Login as</p>
+          <div className="role-selector__buttons">
+            <button
+              type="button"
+              className={`role-btn ${role === 'Student' ? 'active' : ''}`}
+              onClick={() => setRole('Student')}
+              aria-pressed={role === 'Student'}
+            >
+              <img src="/assets/user_student.png" alt="Student" />
+              <span>Student</span>
+            </button>
+            <button
+              type="button"
+              className={`role-btn ${role === 'Professor' ? 'active' : ''}`}
+              onClick={() => setRole('Professor')}
+              aria-pressed={role === 'Professor'}
+            >
+              <img src="/assets/user_faculty.png" alt="Faculty" />
+              <span>Faculty</span>
+            </button>
+            <button
+              type="button"
+              className={`role-btn ${role === 'Admin' ? 'active' : ''}`}
+              onClick={() => setRole('Admin')}
+              aria-pressed={role === 'Admin'}
+            >
+              <img src="/assets/user_admin.png" alt="Admin" />
+              <span>Admin</span>
+            </button>
+          </div>
         </div>
 
         <form onSubmit={handleSubmit} className='login_form' >
@@ -63,7 +106,9 @@ const Login = () => {
                 required 
                 maxLength={300}
             />
-            <button type="submit"><p>Login</p></button>
+            <button type="submit" disabled={isSubmitting}>
+              <p>{isSubmitting ? 'Logging in...' : 'Login'}</p>
+            </button>
         </form>
         <div className="other">
             <p>Not registered? <Link to="/register">Sign up</Link></p>

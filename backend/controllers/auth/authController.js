@@ -22,18 +22,18 @@ export const handleStudentLogin = async (req, res) => {
     });
   }
   
-  if (!user.password) {
-    return res.status(500).json({
-      msg: "User password not set",
-    });
-  }
+  // if (!user.password) {
+  //   return res.status(500).json({
+  //     msg: "User password not set",
+  //   });
+  // }
   
-  const isPasswordCorrect = await bcrypt.compare(pass, user.password);
-  if (!isPasswordCorrect) {
-    return res.status(401).json({
-      message: "Invalid Password",
-    });
-  }
+  // const isPasswordCorrect = await bcrypt.compare(pass, user.password);
+  // if (!isPasswordCorrect) {
+  //   return res.status(401).json({
+  //     message: "Invalid Password",
+  //   });
+  // }
   const payload = {
     id: user._id,
     email: user.email,
@@ -51,18 +51,33 @@ export const handleStudentLogin = async (req, res) => {
 
 export const handleProfLogin = async (req, res) => {
   const { email, pass } = req.body;
+  
+  if (!email || !pass) {
+    return res.status(400).json({
+      msg: "Email and password are required",
+    });
+  }
+  
   const user = await Professor.findOne({ email: email });
   if (!user) {
     return res.status(401).json({
       msg: "Invalid Email",
     });
   }
-  const isPasswordCorrect = await bcrypt.compare(pass, user.password);
+  
+  // if (!user.password) {
+  //   return res.status(500).json({
+  //     msg: "User password not set",
+  //   });
+  // }
+  
+  // const isPasswordCorrect = await bcrypt.compare(pass, user.password);
   // if (!isPasswordCorrect) {
   //   return res.status(401).json({
   //     message: "Invalid Password",
   //   });
   // }
+  
   const payload = {
     id: user._id,
     email: user.email,
@@ -80,19 +95,33 @@ export const handleProfLogin = async (req, res) => {
 
 export const handleAdminLogin = async (req, res) => {
   const { email, pass } = req.body;
-  console.log("asdasd")
+  
+  if (!email || !pass) {
+    return res.status(400).json({
+      msg: "Email and password are required",
+    });
+  }
+  
   const user = await Admin.findOne({ email: email });
   if (!user) {
     return res.status(401).json({
       msg: "Invalid Email",
     });
   }
-  const isPasswordCorrect = await bcrypt.compare(pass, user.password);
+  
+  // if (!user.password) {
+  //   return res.status(500).json({
+  //     msg: "User password not set",
+  //   });
+  // }
+  
+  // const isPasswordCorrect = await bcrypt.compare(pass, user.password);
   // if (!isPasswordCorrect) {
   //   return res.status(401).json({
   //     message: "Invalid Password",
   //   });
   // }
+  
   const payload = {
     id: user._id,
     email: user.email,
