@@ -22,7 +22,15 @@ import profileRoutes from './routes/studentRoutes.js';
 
 import morgan from "morgan"
 
+import { createStream } from "rotating-file-stream";
+import { fileURLToPath } from "url";
+import path from "path";
+
 const app=express();
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 env.config();
 connectDB();
 
@@ -43,7 +51,17 @@ app.use(express.static("public"));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
+const accessLogStream = createStream("access.log", {
+  interval: "1d",
+  path: path.join(__dirname, "logs"),
+  compress: "gzip"
+});
 app.use(morgan("dev"))
+app.use(
+  morgan("combined", {
+    stream: accessLogStream
+  })
+);
 
 // Routes
 app.use("/api/auth/student", authstudentRoutes);
