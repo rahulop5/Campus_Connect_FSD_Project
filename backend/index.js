@@ -20,6 +20,7 @@ import fs from "fs";
 import csvParser from "csv-parser";
 import profileRoutes from './routes/studentRoutes.js';
 
+import morgan from "morgan"
 
 const app=express();
 env.config();
@@ -41,6 +42,8 @@ app.use(cors()); // Allow all origins for now, or specify frontend URL
 app.use(express.static("public"));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+
+app.use(morgan("dev"))
 
 // Routes
 app.use("/api/auth/student", authstudentRoutes);

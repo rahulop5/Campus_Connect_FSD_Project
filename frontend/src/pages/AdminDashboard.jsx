@@ -287,13 +287,46 @@ const AdminDashboard = () => {
   const [startElectionForm, setStartElectionForm] = useState({
     title: '',
     description: '',
-    startTime: null,
-    endTime: null
+    startDate: null,
+    startTime: '12:00 PM',
+    endDate: null,
+    endTime: '12:00 PM'
   });
   const [startElectionError, setStartElectionError] = useState('');
+  const [countdown, setCountdown] = useState({ hours: 0, minutes: 0, seconds: 0 });
+  
   useEffect(() => {
     fetchElectionStatus();
   }, []);
+
+  // Live countdown timer
+  useEffect(() => {
+    if (!electionStatus || electionStatus.status !== 'active' || !electionStatus.endTime) {
+      return;
+    }
+
+    const updateCountdown = () => {
+      const now = new Date().getTime();
+      const end = new Date(electionStatus.endTime).getTime();
+      const distance = end - now;
+
+      if (distance < 0) {
+        setCountdown({ hours: 0, minutes: 0, seconds: 0 });
+        return;
+      }
+
+      const hours = Math.floor(distance / (1000 * 60 * 60));
+      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+      setCountdown({ hours, minutes, seconds });
+    };
+
+    updateCountdown();
+    const interval = setInterval(updateCountdown, 1000);
+
+    return () => clearInterval(interval);
+  }, [electionStatus]);
 
   const handleStartElection = () => {
     setStartConfirmOpen(true);
@@ -319,28 +352,44 @@ const AdminDashboard = () => {
       return;
     }
 
-    if (!startElectionForm.startTime || !startElectionForm.endTime) {
-      setStartElectionError('Start time and end time are required');
+    if (!startElectionForm.startDate || !startElectionForm.endDate) {
+      setStartElectionError('Start date and end date are required');
       return;
     }
 
-    const start = new Date(startElectionForm.startTime);
-    const end = new Date(startElectionForm.endTime);
-    if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime()) || end <= start) {
-      setStartElectionError('End time must be after start time');
+    // Combine date and time
+    const parseTime = (timeStr) => {
+      const [time, period] = timeStr.split(' ');
+      let [hours, minutes] = time.split(':').map(Number);
+      if (period === 'PM' && hours !== 12) hours += 12;
+      if (period === 'AM' && hours === 12) hours = 0;
+      return { hours, minutes };
+    };
+
+    const startDateTime = new Date(startElectionForm.startDate);
+    const startTimeObj = parseTime(startElectionForm.startTime);
+    startDateTime.setHours(startTimeObj.hours, startTimeObj.minutes, 0, 0);
+
+    const endDateTime = new Date(startElectionForm.endDate);
+    const endTimeObj = parseTime(startElectionForm.endTime);
+    endDateTime.setHours(endTimeObj.hours, endTimeObj.minutes, 0, 0);
+
+    if (endDateTime <= startDateTime) {
+      setStartElectionError('End date/time must be after start date/time');
       return;
     }
 
     try {
       setStartElectionError('');
       const payload = {
-        ...startElectionForm,
-        startTime: new Date(startElectionForm.startTime),
-        endTime: new Date(startElectionForm.endTime)
+        title: startElectionForm.title,
+        description: startElectionForm.description,
+        startTime: startDateTime,
+        endTime: endDateTime
       };
       await api.post('/election/start', payload);
       setStartFormOpen(false);
-      setStartElectionForm({ title: '', description: '', startTime: '', endTime: '' });
+      setStartElectionForm({ title: '', description: '', startDate: null, startTime: '12:00 PM', endDate: null, endTime: '12:00 PM' });
       fetchElectionStatus();
     } catch (err) {
       setStartElectionError(err.response?.data?.message || 'Error starting election');
@@ -1381,135 +1430,529 @@ const AdminDashboard = () => {
 
           {/* Election Management */}
           {activeTab === 'elections' && (
-          <div className="course-container">
-            <h2 style={{marginBottom: '24px', paddingBottom: '12px', borderBottom: '1px solid rgba(255, 255, 255, 0.1)'}}>Elections</h2>
+          <div className="elections-container" style={{maxWidth: '100%', margin: '0 auto', padding: '0 48px', marginTop: '5vh'}}>
+            {/* Title - Keep exactly same as other sections */}
+            <h2 style={{margin: 0, marginBottom: '24px'}}>Elections</h2>
             
-            {/* Status Section */}
-            <div style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              paddingBottom: '24px',
-              marginBottom: '24px',
-              borderBottom: '1px solid rgba(255, 255, 255, 0.08)'
-            }}>
-              <div>
-                <div style={{fontSize: '13px', color: 'rgba(255, 255, 255, 0.5)', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.5px'}}>
-                  Status
-                </div>
+            {!electionStatus ? (
+              // No election state - 2-column layout
+              <div className="elections-grid" style={{
+                display: 'grid',
+                gridTemplateColumns: '380px 1fr',
+                gap: '40px',
+                alignItems: 'start'
+              }}>
+                {/* Left: Status Card */}
                 <div style={{
-                  fontSize: '28px',
-                  fontWeight: 'bold',
-                  color: electionStatus?.status === 'active' ? '#2B9900' : '#ff4444'
+                  background: 'linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02))',
+                  borderRadius: '16px',
+                  padding: '32px',
+                  border: '1px solid rgba(255, 255, 255, 0.08)',
+                  boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  textAlign: 'center',
+                  minHeight: '400px'
                 }}>
-                  {electionStatus?.status === 'active' ? 'ACTIVE' : 'ENDED'}
-                </div>
-              </div>
-              
-              <div>
-                {electionStatus?.status === 'active' ? (
-                  <button 
-                    onClick={handleStopElection}
-                    style={{
-                      background: '#ff4444',
-                      color: 'white',
-                      border: 'none',
-                      padding: '12px 24px',
-                      borderRadius: '8px',
-                      cursor: 'pointer',
-                      fontFamily: 'Outfit',
-                      fontWeight: 600,
-                      fontSize: '14px'
-                    }}
-                  >
-                    Stop Election
-                  </button>
-                ) : (
-                  <button 
+                  <div style={{fontSize: '56px', marginBottom: '24px'}}>🗳️</div>
+                  <div style={{
+                    fontSize: '18px',
+                    fontWeight: '600',
+                    marginBottom: '12px',
+                    color: 'rgba(255, 255, 255, 0.65)'
+                  }}>
+                    No election currently running
+                  </div>
+                  <div style={{fontSize: '14px', color: 'rgba(255, 255, 255, 0.4)', marginBottom: '32px'}}>
+                    Create a new election to begin accepting nominations and votes
+                  </div>
+                  <button
                     onClick={handleStartElection}
                     style={{
                       background: '#2B9900',
                       color: 'white',
                       border: 'none',
-                      padding: '12px 24px',
+                      padding: '14px 32px',
                       borderRadius: '8px',
                       cursor: 'pointer',
                       fontFamily: 'Outfit',
                       fontWeight: 600,
-                      fontSize: '14px'
+                      fontSize: '15px',
+                      transition: 'all 0.2s ease',
+                      width: '100%',
+                      maxWidth: '220px'
                     }}
+                    onMouseEnter={(e) => e.target.style.background = '#248000'}
+                    onMouseLeave={(e) => e.target.style.background = '#2B9900'}
                   >
-                    Start New Election
-                  </button>
-                )}
-              </div>
-            </div>
-
-            {/* Candidates List */}
-            {electionStatus?.status === 'active' && (
-              <>
-                <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px'}}>
-                  <h3 style={{margin: 0, fontSize: '18px'}}>Candidates</h3>
-                  <button 
-                    type="button" 
-                    onClick={() => setNominateModalOpen(true)}
-                    style={{background: '#2B9900', color: 'white', border: 'none', padding: '10px 20px', borderRadius: '8px', cursor: 'pointer', fontFamily: 'Outfit', fontWeight: 600}}
-                  >
-                    Nominate Candidate
+                    Start Election
                   </button>
                 </div>
-                
-                {electionCandidates.length === 0 ? (
-                  <div className="no-items" style={{padding: '20px', textAlign: 'center', color: 'rgba(255, 255, 255, 0.5)'}}>
-                    No candidates yet
+
+                {/* Right: Disabled Candidates Area */}
+                <div style={{
+                  background: 'linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01))',
+                  borderRadius: '16px',
+                  padding: '32px',
+                  border: '1px solid rgba(255, 255, 255, 0.08)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  textAlign: 'center',
+                  opacity: 0.5
+                }}>
+                  <div>
+                    <div style={{fontSize: '48px', marginBottom: '16px'}}>👤</div>
+                    <div style={{
+                      fontSize: '16px',
+                      fontWeight: '500',
+                      color: 'rgba(255, 255, 255, 0.5)'
+                    }}>
+                      Candidates section
+                    </div>
+                    <div style={{fontSize: '14px', marginTop: '8px', color: 'rgba(255, 255, 255, 0.3)'}}>
+                      Available once election starts
+                    </div>
                   </div>
-                ) : (
-                  <>
-                    {electionRoles.map(role => {
-                      const candidatesForRole = electionCandidates.filter(c => c.role === role);
-                      if (candidatesForRole.length === 0) return null;
-                      
-                      return (
-                        <div key={role} style={{marginBottom: '32px'}}>
-                          <h4 style={{
-                            color: '#2B9900',
-                            fontSize: '15px',
-                            fontWeight: 600,
-                            marginBottom: '12px',
-                            paddingBottom: '0',
-                            borderBottom: 'none',
-                            textTransform: 'uppercase',
-                            letterSpacing: '0.5px'
-                          }}>
-                            {role}
-                          </h4>
-                          <ul className="student-list">
-                            {candidatesForRole.map(c => (
-                              <li key={c._id} className="candidate-list-item">
-                                <div>
-                                  <strong>{c.name}</strong>
-                                  <div style={{fontSize: '14px', color: '#2B9900', marginTop: '4px'}}>
-                                    {c.voteCount} Votes
-                                  </div>
-                                </div>
-                                {user?.role === 'Admin' && (
-                                  <button
-                                    type="button"
-                                    className="remove-candidate-btn"
-                                    onClick={() => handleRemoveCandidate(c._id)}
-                                  >
-                                    Remove
-                                  </button>
-                                )}
-                              </li>
-                            ))}
-                          </ul>
+                </div>
+              </div>
+            ) : (
+              // Active/Ended election - 2-column layout
+              <div className="elections-grid" style={{
+                display: 'grid',
+                gridTemplateColumns: '380px 1fr',
+                gap: '40px',
+                alignItems: 'start'
+              }}>
+                {/* LEFT COLUMN: Status Card */}
+                <div style={{
+                  background: 'linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02))',
+                  borderRadius: '16px',
+                  padding: '32px',
+                  border: '1px solid rgba(255, 255, 255, 0.08)',
+                  boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  height: 'fit-content',
+                  position: 'sticky',
+                  top: '20px'
+                }}>
+                  {/* Status */}
+                  <div style={{marginBottom: '24px'}}>
+                    <div style={{
+                      fontSize: '11px',
+                      color: 'rgba(255, 255, 255, 0.5)',
+                      marginBottom: '8px',
+                      textTransform: 'uppercase',
+                      letterSpacing: '1px',
+                      fontWeight: '600'
+                    }}>
+                      Election Status
+                    </div>
+                    <div style={{
+                      fontSize: '32px',
+                      fontWeight: '700',
+                      color: electionStatus?.status === 'active' ? '#2B9900' : '#ff4444',
+                      letterSpacing: '0.5px'
+                    }}>
+                      {electionStatus?.status === 'active' ? 'ACTIVE' : 'ENDED'}
+                    </div>
+                  </div>
+
+                  {/* Divider */}
+                  <div style={{
+                    height: '1px',
+                    background: 'rgba(255, 255, 255, 0.08)',
+                    marginBottom: '24px'
+                  }} />
+
+                  {/* Start Time */}
+                  <div style={{marginBottom: '20px'}}>
+                    <div style={{
+                      fontSize: '11px',
+                      color: 'rgba(255, 255, 255, 0.5)',
+                      marginBottom: '8px',
+                      textTransform: 'uppercase',
+                      letterSpacing: '1px',
+                      fontWeight: '600'
+                    }}>
+                      Started
+                    </div>
+                    <div style={{
+                      fontSize: '15px',
+                      fontWeight: '500',
+                      color: 'rgba(255, 255, 255, 0.9)',
+                      lineHeight: '1.5'
+                    }}>
+                      {electionStatus?.startTime ? new Date(electionStatus.startTime).toLocaleString('en-US', {
+                        day: 'numeric',
+                        month: 'short',
+                        year: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                      }).replace(',', ' •') : 'N/A'}
+                    </div>
+                  </div>
+
+                  {/* End Time */}
+                  <div style={{marginBottom: '24px'}}>
+                    <div style={{
+                      fontSize: '11px',
+                      color: 'rgba(255, 255, 255, 0.5)',
+                      marginBottom: '8px',
+                      textTransform: 'uppercase',
+                      letterSpacing: '1px',
+                      fontWeight: '600'
+                    }}>
+                      Ends
+                    </div>
+                    <div style={{
+                      fontSize: '15px',
+                      fontWeight: '500',
+                      color: 'rgba(255, 255, 255, 0.9)',
+                      lineHeight: '1.5'
+                    }}>
+                      {electionStatus?.endTime ? new Date(electionStatus.endTime).toLocaleString('en-US', {
+                        day: 'numeric',
+                        month: 'short',
+                        year: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                      }).replace(',', ' •') : 'N/A'}
+                    </div>
+                  </div>
+
+                  {/* Live Countdown */}
+                  {electionStatus?.status === 'active' && (
+                    <>
+                      <div style={{
+                        height: '1px',
+                        background: 'rgba(255, 255, 255, 0.08)',
+                        marginBottom: '24px'
+                      }} />
+                      <div style={{marginBottom: '32px'}}>
+                        <div style={{
+                          fontSize: '11px',
+                          color: 'rgba(255, 255, 255, 0.5)',
+                          marginBottom: '12px',
+                          textTransform: 'uppercase',
+                          letterSpacing: '1px',
+                          fontWeight: '600'
+                        }}>
+                          Time Remaining
                         </div>
-                      );
-                    })}
-                  </>
-                )}
-              </>
+                        <div style={{
+                          fontSize: '36px',
+                          fontWeight: '700',
+                          color: '#2B9900',
+                          fontFamily: 'monospace',
+                          letterSpacing: '2px',
+                          textAlign: 'center',
+                          padding: '16px',
+                          background: 'rgba(43, 153, 0, 0.08)',
+                          borderRadius: '8px',
+                          border: '1px solid rgba(43, 153, 0, 0.2)'
+                        }}>
+                          {String(countdown.hours).padStart(2, '0')}:{String(countdown.minutes).padStart(2, '0')}:{String(countdown.seconds).padStart(2, '0')}
+                        </div>
+                      </div>
+                    </>
+                  )}
+
+                  {/* Action Button at Bottom */}
+                  <div style={{marginTop: 'auto', paddingTop: '24px'}}>
+                    {electionStatus?.status === 'active' ? (
+                      <button
+                        onClick={handleStopElection}
+                        style={{
+                          background: '#ff4444',
+                          color: 'white',
+                          border: 'none',
+                          padding: '14px 24px',
+                          borderRadius: '8px',
+                          cursor: 'pointer',
+                          fontFamily: 'Outfit',
+                          fontWeight: 600,
+                          fontSize: '14px',
+                          transition: 'all 0.2s ease',
+                          width: '100%'
+                        }}
+                        onMouseEnter={(e) => e.target.style.background = '#e63939'}
+                        onMouseLeave={(e) => e.target.style.background = '#ff4444'}
+                      >
+                        Stop Election
+                      </button>
+                    ) : (
+                      <button
+                        onClick={handleStartElection}
+                        style={{
+                          background: '#2B9900',
+                          color: 'white',
+                          border: 'none',
+                          padding: '14px 24px',
+                          borderRadius: '8px',
+                          cursor: 'pointer',
+                          fontFamily: 'Outfit',
+                          fontWeight: 600,
+                          fontSize: '14px',
+                          transition: 'all 0.2s ease',
+                          width: '100%'
+                        }}
+                        onMouseEnter={(e) => e.target.style.background = '#248000'}
+                        onMouseLeave={(e) => e.target.style.background = '#2B9900'}
+                      >
+                        Start New Election
+                      </button>
+                    )}
+                  </div>
+                </div>
+
+                {/* RIGHT COLUMN: Candidates Section */}
+                <div>
+                  {electionStatus?.status === 'active' ? (
+                    <>
+                      {/* Header */}
+                      <div style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        marginBottom: '24px'
+                      }}>
+                        <h3 style={{
+                          margin: 0,
+                          fontSize: '20px',
+                          fontWeight: '600',
+                          color: 'rgba(255, 255, 255, 0.95)'
+                        }}>
+                          Candidates
+                        </h3>
+                        <button
+                          type="button"
+                          onClick={() => setNominateModalOpen(true)}
+                          style={{
+                            background: '#2B9900',
+                            color: 'white',
+                            border: 'none',
+                            padding: '10px 20px',
+                            borderRadius: '8px',
+                            cursor: 'pointer',
+                            fontFamily: 'Outfit',
+                            fontWeight: 600,
+                            transition: 'all 0.2s ease'
+                          }}
+                          onMouseEnter={(e) => e.target.style.background = '#248000'}
+                          onMouseLeave={(e) => e.target.style.background = '#2B9900'}
+                        >
+                          Nominate Candidate
+                        </button>
+                      </div>
+
+                      {electionCandidates.length === 0 ? (
+                        <div style={{
+                          textAlign: 'center',
+                          padding: '80px 20px',
+                          color: 'rgba(255, 255, 255, 0.4)',
+                          background: 'linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01))',
+                          borderRadius: '12px',
+                          border: '1px solid rgba(255, 255, 255, 0.08)'
+                        }}>
+                          <div style={{fontSize: '56px', marginBottom: '20px'}}>👤</div>
+                          <div style={{
+                            fontSize: '18px',
+                            fontWeight: '500',
+                            color: 'rgba(255, 255, 255, 0.6)',
+                            marginBottom: '8px'
+                          }}>
+                            No candidates yet
+                          </div>
+                          <div style={{fontSize: '14px', color: 'rgba(255, 255, 255, 0.4)'}}>
+                            Click "Nominate Candidate" to add candidates
+                          </div>
+                        </div>
+                      ) : (
+                        <div>
+                          {electionRoles.map(role => {
+                            const candidatesForRole = electionCandidates.filter(c => c.role === role);
+                            if (candidatesForRole.length === 0) return null;
+
+                            // Calculate total votes for this role
+                            const totalVotesForRole = candidatesForRole.reduce((sum, c) => sum + (c.voteCount || 0), 0);
+
+                            return (
+                              <div key={role} style={{marginBottom: '40px'}}>
+                                {/* Role Title */}
+                                <div style={{
+                                  fontSize: '13px',
+                                  fontWeight: '700',
+                                  color: '#2B9900',
+                                  textTransform: 'uppercase',
+                                  letterSpacing: '1.2px',
+                                  marginBottom: '4px'
+                                }}>
+                                  {role}
+                                </div>
+                                <div style={{
+                                  height: '2px',
+                                  background: 'linear-gradient(90deg, #2B9900 0%, rgba(43, 153, 0, 0.2) 100%)',
+                                  marginBottom: '16px',
+                                  width: '100%'
+                                }} />
+
+                                {/* Candidate Cards */}
+                                <div style={{
+                                  display: 'flex',
+                                  flexDirection: 'column',
+                                  gap: '12px'
+                                }}>
+                                  {candidatesForRole.map(candidate => {
+                                    const votePercentage = totalVotesForRole > 0 ? (candidate.voteCount / totalVotesForRole) * 100 : 0;
+
+                                    return (
+                                      <div
+                                        key={candidate._id}
+                                        style={{
+                                          background: 'linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02))',
+                                          borderRadius: '12px',
+                                          padding: '20px',
+                                          border: '1px solid rgba(255, 255, 255, 0.08)',
+                                          transition: 'all 0.2s ease',
+                                          position: 'relative'
+                                        }}
+                                        onMouseEnter={(e) => {
+                                          e.currentTarget.style.transform = 'translateY(-2px)';
+                                          e.currentTarget.style.boxShadow = '0 6px 16px rgba(0, 0, 0, 0.2)';
+                                        }}
+                                        onMouseLeave={(e) => {
+                                          e.currentTarget.style.transform = 'translateY(0)';
+                                          e.currentTarget.style.boxShadow = 'none';
+                                        }}
+                                      >
+                                        <div style={{display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '16px'}}>
+                                          {/* Profile Picture */}
+                                          <div style={{
+                                            width: '52px',
+                                            height: '52px',
+                                            borderRadius: '50%',
+                                            background: 'rgba(255, 255, 255, 0.9)',
+                                            border: '2px solid rgba(255, 255, 255, 0.3)',
+                                            flexShrink: 0
+                                          }} />
+
+                                          {/* Name and Votes */}
+                                          <div style={{flex: 1}}>
+                                            <div style={{
+                                              fontSize: '16px',
+                                              fontWeight: '600',
+                                              color: '#ffffff',
+                                              marginBottom: '4px'
+                                            }}>
+                                              {candidate.name}
+                                            </div>
+                                            <div style={{
+                                              fontSize: '14px',
+                                              fontWeight: '600',
+                                              color: '#2B9900'
+                                            }}>
+                                              {candidate.voteCount || 0} Votes
+                                            </div>
+                                          </div>
+
+                                          {/* Remove Button */}
+                                          {user?.role === 'Admin' && (
+                                            <button
+                                              type="button"
+                                              onClick={() => handleRemoveCandidate(candidate._id)}
+                                              style={{
+                                                background: 'transparent',
+                                                border: '1px solid rgba(255, 68, 68, 0.4)',
+                                                color: '#ff4444',
+                                                padding: '6px 14px',
+                                                borderRadius: '6px',
+                                                cursor: 'pointer',
+                                                fontFamily: 'Outfit',
+                                                fontWeight: 600,
+                                                fontSize: '12px',
+                                                transition: 'all 0.2s ease'
+                                              }}
+                                              onMouseEnter={(e) => {
+                                                e.target.style.background = 'rgba(255, 68, 68, 0.15)';
+                                                e.target.style.borderColor = '#ff4444';
+                                              }}
+                                              onMouseLeave={(e) => {
+                                                e.target.style.background = 'transparent';
+                                                e.target.style.borderColor = 'rgba(255, 68, 68, 0.4)';
+                                              }}
+                                            >
+                                              Remove
+                                            </button>
+                                          )}
+                                        </div>
+
+                                        {/* Progress Bar */}
+                                        <div style={{
+                                          width: '100%',
+                                          height: '8px',
+                                          background: 'rgba(255, 255, 255, 0.08)',
+                                          borderRadius: '4px',
+                                          overflow: 'hidden'
+                                        }}>
+                                          <div style={{
+                                            width: `${votePercentage}%`,
+                                            height: '100%',
+                                            background: 'linear-gradient(90deg, #2B9900, #3db300)',
+                                            borderRadius: '4px',
+                                            transition: 'width 0.5s ease'
+                                          }} />
+                                        </div>
+
+                                        {/* Percentage Label */}
+                                        <div style={{
+                                          fontSize: '11px',
+                                          color: 'rgba(255, 255, 255, 0.5)',
+                                          marginTop: '6px',
+                                          textAlign: 'right',
+                                          fontWeight: '600'
+                                        }}>
+                                          {votePercentage.toFixed(1)}%
+                                        </div>
+                                      </div>
+                                    );
+                                  })}
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      )}
+                    </>
+                  ) : (
+                    // Election ended - show message
+                    <div style={{
+                      textAlign: 'center',
+                      padding: '80px 20px',
+                      color: 'rgba(255, 255, 255, 0.4)',
+                      background: 'linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01))',
+                      borderRadius: '12px',
+                      border: '1px solid rgba(255, 255, 255, 0.08)'
+                    }}>
+                      <div style={{fontSize: '56px', marginBottom: '20px'}}>🏁</div>
+                      <div style={{
+                        fontSize: '18px',
+                        fontWeight: '500',
+                        color: 'rgba(255, 255, 255, 0.6)',
+                        marginBottom: '8px'
+                      }}>
+                        Election has ended
+                      </div>
+                      <div style={{fontSize: '14px', color: 'rgba(255, 255, 255, 0.4)'}}>
+                        Start a new election to view candidates
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
             )}
           </div>
             )}
@@ -1548,27 +1991,71 @@ const AdminDashboard = () => {
                   rows={4}
                   maxLength={1000}
                 />
+                
+                <label>Start Date</label>
+                <DatePicker
+                  selected={startElectionForm.startDate}
+                  onChange={(date) => setStartElectionForm({ ...startElectionForm, startDate: date })}
+                  dateFormat="yyyy-MM-dd"
+                  className="admin-datepicker"
+                  required
+                  placeholderText="Select start date"
+                />
+                
                 <label>Start Time</label>
+                <select
+                  value={startElectionForm.startTime}
+                  onChange={(e) => setStartElectionForm({ ...startElectionForm, startTime: e.target.value })}
+                  required
+                  style={{
+                    width: '100%',
+                    padding: '10px',
+                    borderRadius: '6px',
+                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                    background: 'rgba(255, 255, 255, 0.05)',
+                    color: 'white',
+                    fontFamily: 'Outfit',
+                    fontSize: '14px',
+                    outline: 'none'
+                  }}
+                >
+                  <option value="12:00 AM">12:00 AM</option>
+                  <option value="12:00 PM">12:00 PM</option>
+                  <option value="6:00 PM">6:00 PM</option>
+                </select>
+                
+                <label>End Date</label>
                 <DatePicker
-                  selected={startElectionForm.startTime}
-                  onChange={(date) => setStartElectionForm({ ...startElectionForm, startTime: date })}
-                  showTimeSelect
-                  timeIntervals={15}
-                  dateFormat="yyyy-MM-dd HH:mm"
+                  selected={startElectionForm.endDate}
+                  onChange={(date) => setStartElectionForm({ ...startElectionForm, endDate: date })}
+                  dateFormat="yyyy-MM-dd"
                   className="admin-datepicker"
                   required
+                  minDate={startElectionForm.startDate}
+                  placeholderText="Select end date"
                 />
+                
                 <label>End Time</label>
-                <DatePicker
-                  selected={startElectionForm.endTime}
-                  onChange={(date) => setStartElectionForm({ ...startElectionForm, endTime: date })}
-                  showTimeSelect
-                  timeIntervals={15}
-                  dateFormat="yyyy-MM-dd HH:mm"
-                  className="admin-datepicker"
+                <select
+                  value={startElectionForm.endTime}
+                  onChange={(e) => setStartElectionForm({ ...startElectionForm, endTime: e.target.value })}
                   required
-                  minDate={startElectionForm.startTime}
-                />
+                  style={{
+                    width: '100%',
+                    padding: '10px',
+                    borderRadius: '6px',
+                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                    background: 'rgba(255, 255, 255, 0.05)',
+                    color: 'white',
+                    fontFamily: 'Outfit',
+                    fontSize: '14px',
+                    outline: 'none'
+                  }}
+                >
+                  <option value="12:00 AM">12:00 AM</option>
+                  <option value="12:00 PM">12:00 PM</option>
+                  <option value="6:00 PM">6:00 PM</option>
+                </select>
                 {startElectionError && (
                   <div className="admin-modal-error">{startElectionError}</div>
                 )}

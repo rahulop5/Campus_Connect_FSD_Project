@@ -737,3 +737,17 @@ h2 {
 .student-table-wrapper::-webkit-scrollbar-thumb:hover {
     background: rgba(200, 200, 200, 0.8);
 }
+
+/* Elections 2-column responsive layout */
+.elections-grid {
+    display: grid;
+    grid-template-columns: 380px 1fr;
+    gap: 40px;
+    align-items: start;
+}
+
+@media (max-width: 1024px) {
+    .elections-grid {
+        grid-template-columns: 1fr !important;
+    }
+}
