@@ -45,14 +45,40 @@ const Profile = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handlePfpChange = (e) => {
+  const handlePfpChange = async (e) => {
     const file = e.target.files[0];
     if (file) {
+        // Preview the image immediately
         const reader = new FileReader();
         reader.onload = (e) => {
             setPfp(e.target.result);
         };
         reader.readAsDataURL(file);
+        
+        // Upload to backend
+        const formData = new FormData();
+        formData.append('profilePicture', file);
+        
+        try {
+            const res = await api.post('/student/upload-profile-pic', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            });
+            console.log('Profile picture uploaded:', res.data);
+        } catch (error) {
+            console.error('Error uploading profile picture:', error);
+            alert('Failed to upload profile picture');
+        }
+    }
+  };
+
+  const handleDeletePfp = async () => {
+    try {
+        await api.post('/student/delete-profile-pic');
+        setPfp("/assets/pfp 1.png");
+    } catch (error) {
+        console.error('Error deleting profile picture:', error);
     }
   };
 
@@ -206,9 +232,9 @@ const Profile = () => {
                     <input type="file" id="pfpFileInput" accept="image/*" hidden ref={fileInputRef} onChange={handlePfpChange} />
                     <img id="profilePic" src={pfp} alt="Profile Picture" />
                     <div className="pfp-overlay">
-                        <div className="pfp-btn" id="changeBtn" onClick={() => fileInputRef.current.click()}></div>
-                        <div className="pfp-btn" id="deleteBtn" onClick={() => setPfp("/assets/pfp 1.png")}></div>
-                        <div className="pfp-btn" id="addBtn" onClick={() => fileInputRef.current.click()}></div>
+                        <div className="pfp-btn" id="changeBtn" onClick={() => fileInputRef.current.click()} title="Change Picture"></div>
+                        <div className="pfp-btn" id="deleteBtn" onClick={handleDeletePfp} title="Delete Picture"></div>
+                        <div className="pfp-btn" id="addBtn" onClick={() => fileInputRef.current.click()} title="Add Picture"></div>
                     </div>
                 </div>
 

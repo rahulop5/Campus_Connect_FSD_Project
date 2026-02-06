@@ -11,6 +11,8 @@ const ForumList = () => {
   const [filtersVisible, setFiltersVisible] = useState(false);
   const [selectedSortBy, setSelectedSortBy] = useState('recent');
   const [selectedFilter, setSelectedFilter] = useState('all');
+  const [hoveredUser, setHoveredUser] = useState(null);
+  const [userDetails, setUserDetails] = useState({});
 
   useEffect(() => {
     const fetchQuestions = async () => {
@@ -28,6 +30,29 @@ const ForumList = () => {
 
   const toggleFilters = () => {
     setFiltersVisible(!filtersVisible);
+  };
+
+  const handleUserHover = async (userId) => {
+    if (!userId || userDetails[userId]) {
+      setHoveredUser(userId);
+      return;
+    }
+    
+    setHoveredUser(userId);
+    
+    try {
+      const res = await api.get(`/student/user/${userId}`);
+      setUserDetails(prev => ({
+        ...prev,
+        [userId]: res.data
+      }));
+    } catch (error) {
+      console.error("Error fetching user details:", error);
+    }
+  };
+
+  const handleUserLeave = () => {
+    setHoveredUser(null);
   };
 
   // Filter and sort questions
@@ -200,9 +225,53 @@ const ForumList = () => {
                   </div>
 
                   <div className="question-meta">
-                    <div className="question-author">
+                    <div 
+                      className="question-author"
+                      onMouseEnter={() => handleUserHover(q.asker?._id)}
+                      onMouseLeave={handleUserLeave}
+                    >
                       <img src="/assets/duck_with_A_gun 1.png" alt={q.asker?.name || "User"} />
                       <span>{q.asker?.name || "Anonymous"}</span>
+                      
+                      {hoveredUser === q.asker?._id && (
+                        <div className="user-dropdown">
+                          <div className="dropdown-header">
+                            <img src="/assets/duck_with_A_gun 1.png" alt={q.asker?.name} />
+                            <div>
+                              <h4>{q.asker?.name || "Anonymous"}</h4>
+                              <p className="user-role">{q.asker?.role || "Student"}</p>
+                            </div>
+                          </div>
+                          {userDetails[q.asker?._id] && (
+                            <div className="dropdown-body">
+                              {userDetails[q.asker._id].roll && (
+                                <div className="dropdown-item">
+                                  <span className="item-label">Roll Number:</span>
+                                  <span className="item-value">{userDetails[q.asker._id].roll}</span>
+                                </div>
+                              )}
+                              {userDetails[q.asker._id].branch && (
+                                <div className="dropdown-item">
+                                  <span className="item-label">Branch:</span>
+                                  <span className="item-value">{userDetails[q.asker._id].branch}</span>
+                                </div>
+                              )}
+                              {userDetails[q.asker._id].ug && (
+                                <div className="dropdown-item">
+                                  <span className="item-label">Year:</span>
+                                  <span className="item-value">UG{userDetails[q.asker._id].ug}</span>
+                                </div>
+                              )}
+                              {userDetails[q.asker._id].section && (
+                                <div className="dropdown-item">
+                                  <span className="item-label">Section:</span>
+                                  <span className="item-value">{userDetails[q.asker._id].section}</span>
+                                </div>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
