@@ -1,10 +1,32 @@
+import { useEffect } from 'react';
 import Layout from '../components/Layout';
+import SplitText from '../components/SplitText';
 import '../styles/pricing.css';
 
 const Pricing = () => {
+  useEffect(() => {
+    // Lock scrolling when component mounts
+    document.body.style.overflow = 'hidden';
+    
+    // Unlock scrolling when component unmounts
+    return () => {
+      document.body.style.overflow = 'auto';
+    };
+  }, []);
+
   return (
     <Layout>
       <div className="pricing-container pricing-page">
+        <SplitText 
+          text="Pricing" 
+          className="pricing-background-text"
+          delay={30}
+          duration={1.5}
+          ease="power3.out"
+          from={{ opacity: 0, y: 100, rotateX: -90 }}
+          to={{ opacity: 1, y: 0, rotateX: 0 }}
+          threshold={0.1}
+        />
         <div className="pricing-container">
           <div className="pricing-card">
             <div className="plan-name">Student Lite</div>

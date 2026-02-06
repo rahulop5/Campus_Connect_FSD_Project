@@ -2,7 +2,6 @@ import { useState, useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router';
 import api from '../api/axios';
-import Header from '../components/Header';
 import DarkVeil from '../components/DarkVeil';
 import '../styles/profile.css';
 
@@ -89,7 +88,6 @@ const Profile = () => {
       <div className="plasma-background">
         <DarkVeil hueShift={120} speed={0.5} noiseIntensity={0.8} />
       </div>
-      <Header />
       <div className="profile-page">
         <form id="bodbod" onSubmit={(e) => e.preventDefault()}>
             <div>

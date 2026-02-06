@@ -280,8 +280,8 @@ svg {
     /* NOTE: Adjust these values to perfectly match your pfp 1.png size and position */
     width: 430px; 
     height: 240px;
-    top: 33.5%;
-    left: 37.75%; /* Adjust as needed */
+    top: 28%;
+    left: 27%; /* Adjusted to move left and avoid overlap */
     transform: translate(-50%, -50%); /* Center based on position */
     /* --- */
     border-radius: 40px;

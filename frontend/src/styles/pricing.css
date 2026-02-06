@@ -4,9 +4,20 @@
 }
 
 .pricing-page {
-    background: url('/assets/pricingback.png');
+    /* background: url('/assets/pricingback.png'); */
+    background-image: url('/assets/pricing.png');
     background-size: cover;
+    background-position: center;
     height: 100vh;
+    overflow: hidden;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100vw;
+    z-index: 0;
+    transform: scale(1.1);
 }
 
 .pricing-container {
@@ -14,6 +25,35 @@
     justify-content: center;
     gap: 24px;
     padding: 50px 0;
+    position: relative;
+    z-index: 1;
+  }
+
+  .pricing-background-text {
+    position: absolute;
+    top: calc(30% - 22.5vh);
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 200px;
+    font-weight: 600;
+    color: white;
+    white-space: nowrap;
+    pointer-events: none;
+    z-index: 0;
+    letter-spacing: -15px;
+    font-family: 'Outfit', sans-serif;
+  }
+
+  .pricing-background-text .split-char {
+    display: inline-block;
+  }
+
+  .pricing-container > .pricing-container {
+    position: relative;
+    z-index: 1;
+    margin-top: 120px;
+    transform: scale(0.8);
+    transform-origin: center top;
   }
   
   .pricing-card {
@@ -134,28 +174,38 @@
   
   .get-now {
     width: 287px;
-    height: 66px;
+    height: 58px;
     flex-shrink: 0;
-    border-radius: 37.5px;
-    border: 1px solid #2B9900;
-    background: linear-gradient(94deg, rgba(43, 153, 0, 0.50) -18.4%, rgba(55, 55, 55, 0.50) 51.2%, rgba(43, 153, 0, 0.50) 122.21%);
+    border-radius: 12px;
+    border: 1px solid rgba(43, 153, 0, 0.5);
+    background: linear-gradient(135deg, rgba(43, 153, 0, 0.25) 0%, rgba(43, 153, 0, 0.1) 100%);
+    backdrop-filter: blur(10px);
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 16px rgba(43, 153, 0, 0.1);
+  }
+
+  .get-now:hover {
+    border-color: rgba(43, 153, 0, 0.8);
+    background: linear-gradient(135deg, rgba(43, 153, 0, 0.35) 0%, rgba(43, 153, 0, 0.2) 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(43, 153, 0, 0.2);
   }
   
   .get-now-text {
     display: flex;
-    width: 121px;
-    height: 45px;
+    width: auto;
+    height: auto;
     flex-direction: column;
     justify-content: center;
     font-family: Outfit, sans-serif;
-    font-size: 35px;
-    font-weight: 400;
-    line-height: 40px;
-    letter-spacing: -1.75px;
+    font-size: 24px;
+    font-weight: 500;
+    line-height: 1;
+    letter-spacing: 0.5px;
     color: #FFF;
   }
   

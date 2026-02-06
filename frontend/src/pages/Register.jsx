@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Link, useSearchParams } from 'react-router';
 import api from '../api/axios';
-import DarkVeil from '../components/DarkVeil';
+import Plasma from '../components/Plasma';
 import '../styles/Register.css';
 
 import { useDispatch } from 'react-redux';
@@ -23,6 +23,7 @@ const Register = () => {
     phone: '',
     confirm_password: ''
   });
+  const [currentPage, setCurrentPage] = useState(1);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [error, setError] = useState('');
@@ -39,6 +40,39 @@ const Register = () => {
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleNextPage = (e) => {
+    e.preventDefault();
+    
+    // Validate page 1 fields
+    if (!formData.name || !formData.email) {
+      setError('Please fill in all required fields');
+      return;
+    }
+    
+    if (!isOAuth) {
+      if (!formData.password || !formData.confirm_password) {
+        setError('Please fill in all required fields');
+        return;
+      }
+      if (formData.password !== formData.confirm_password) {
+        setError('Passwords do not match');
+        return;
+      }
+      if (formData.password.length < 6) {
+        setError('Password must be at least 6 characters');
+        return;
+      }
+    }
+    
+    setError('');
+    setCurrentPage(2);
+  };
+
+  const handlePrevPage = () => {
+    setError('');
+    setCurrentPage(1);
   };
 
   const handleSubmit = async (e) => {
@@ -67,13 +101,13 @@ const Register = () => {
   return (
     <div className="outfit register-page">
       <div className="plasma-background">
-        <DarkVeil
-          hueShift={120}
-          noiseIntensity={0}
-          scanlineIntensity={0}
+        <Plasma 
+          color="#026100"
           speed={0.5}
-          scanlineFrequency={0}
-          warpAmount={0}
+          direction="forward"
+          scale={1.1}
+          opacity={0.6}
+          mouseInteractive={true}
         />
       </div>
       <div>
@@ -87,8 +121,10 @@ const Register = () => {
             <button
               type="button"
               className={`role-btn ${formData.role === 'Student' ? 'active' : ''}`}
-              onClick={() => setFormData({...formData, role: 'Student'})}
+              onClick={() => currentPage === 1 && setFormData({...formData, role: 'Student'})}
               aria-pressed={formData.role === 'Student'}
+              disabled={currentPage === 2}
+              style={{ cursor: currentPage === 2 ? 'not-allowed' : 'pointer', opacity: currentPage === 2 ? 0.6 : 1 }}
             >
               <img src="/assets/user_student.png" alt="Student" />
               <span>Student</span>
@@ -96,8 +132,10 @@ const Register = () => {
             <button
               type="button"
               className={`role-btn ${formData.role === 'Professor' ? 'active' : ''}`}
-              onClick={() => setFormData({...formData, role: 'Professor'})}
+              onClick={() => currentPage === 1 && setFormData({...formData, role: 'Professor'})}
               aria-pressed={formData.role === 'Professor'}
+              disabled={currentPage === 2}
+              style={{ cursor: currentPage === 2 ? 'not-allowed' : 'pointer', opacity: currentPage === 2 ? 0.6 : 1 }}
             >
               <img src="/assets/user_faculty.png" alt="Faculty" />
               <span>Faculty</span>
@@ -105,8 +143,10 @@ const Register = () => {
             <button
               type="button"
               className={`role-btn ${formData.role === 'Admin' ? 'active' : ''}`}
-              onClick={() => setFormData({...formData, role: 'Admin'})}
+              onClick={() => currentPage === 1 && setFormData({...formData, role: 'Admin'})}
               aria-pressed={formData.role === 'Admin'}
+              disabled={currentPage === 2}
+              style={{ cursor: currentPage === 2 ? 'not-allowed' : 'pointer', opacity: currentPage === 2 ? 0.6 : 1 }}
             >
               <img src="/assets/user_admin.png" alt="Admin" />
               <span>Admin</span>
@@ -114,50 +154,43 @@ const Register = () => {
           </div>
         </div>
 
-        <form onSubmit={handleSubmit} className='register_form'>
-            <input type="text" placeholder="Name" name="name" value={formData.name} onChange={handleChange} required readOnly={isOAuth} maxLength={300} />
-            <input type="email" placeholder="Email" name="email" value={formData.email} onChange={handleChange} required readOnly={isOAuth} maxLength={300} />
-            {!isOAuth && (
+        <form onSubmit={currentPage === 1 ? handleNextPage : handleSubmit} className='register_form'>
+            {currentPage === 1 && (
               <>
-                <input type="password" placeholder="Password" name="password" value={formData.password} onChange={handleChange} required minLength={6} maxLength={300} />
-                <input type="password" placeholder="Confirm Password" name="confirm_password" value={formData.confirm_password} onChange={handleChange} required minLength={6} maxLength={300} />
+                <input type="text" placeholder="Name" name="name" value={formData.name} onChange={handleChange} required readOnly={isOAuth} maxLength={300} />
+                <input type="email" placeholder="Email" name="email" value={formData.email} onChange={handleChange} required readOnly={isOAuth} maxLength={300} />
+                {!isOAuth && (
+                  <>
+                    <input type="password" placeholder="Password" name="password" value={formData.password} onChange={handleChange} required minLength={6} maxLength={300} />
+                    <input type="password" placeholder="Confirm Password" name="confirm_password" value={formData.confirm_password} onChange={handleChange} required minLength={6} maxLength={300} />
+                  </>
+                )}
+                <button type="submit"><p>Next</p></button>
               </>
             )}
             
-            {formData.role === 'Student' && (
-                <>
+            {currentPage === 2 && (
+              <>
+                {formData.role === 'Student' && (
+                  <>
                     <input type="text" placeholder="Roll Number" name="roll" value={formData.roll} onChange={handleChange} required maxLength={300} />
                     <input type="text" placeholder="Section" name="section" value={formData.section} onChange={handleChange} required maxLength={300} />
-                </>
+                  </>
+                )}
+                
+                <input type="tel" placeholder="Phone Number" name="phone" value={formData.phone} onChange={handleChange} required pattern="[0-9]{10}" title="10 digit mobile number" maxLength={300} />
+                
+                <div style={{ display: 'flex', gap: '10px', width: '100%' }}>
+                  <button type="button" onClick={handlePrevPage} style={{ flex: 1 }}><p>Back</p></button>
+                  <button type="submit" style={{ flex: 1 }}><p>Register</p></button>
+                </div>
+              </>
             )}
-            
-            <input type="tel" placeholder="Phone Number" name="phone" value={formData.phone} onChange={handleChange} required pattern="[0-9]{10}" title="10 digit mobile number" maxLength={300} />
-            
-            <button type="submit"><p>Register</p></button>
         </form>
         
-        {!isOAuth && (
-          <div className="other">
-              <p>Already have an account? <Link to="/login">Login</Link></p>
-              <div className="orline">
-                  <div></div>
-                  <p>OR</p>
-                  <div></div>
-              </div>
-              <a href="http://localhost:3000/api/auth/student/google" style={{textDecoration: 'none'}}>
-                  <div className="google oauth">
-                      <img src="/assets/googlelogo.png" alt="" />
-                      <p>Continue with Google</p>
-                  </div>
-              </a>
-              <a href="http://localhost:3000/api/auth/student/github" style={{textDecoration: 'none'}}>
-                  <div className="github oauth" >
-                      <img src="/assets/githublogo.png" alt="" />
-                      <p>Continue with Github</p>
-                  </div>
-              </a>
-          </div>
-        )}
+        <div className="other">
+            <p>Already have an account? <Link to="/login">Login</Link></p>
+        </div>
       </div>
     </div>
   );

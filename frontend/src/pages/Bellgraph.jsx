@@ -1,28 +1,8 @@
 import { useState, useEffect } from 'react';
 import api from '../api/axios';
 import Layout from '../components/Layout';
-import { Line } from 'react-chartjs-2';
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend,
-} from 'chart.js';
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import '../styles/Bellgraph.css';
-
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend
-);
 
 const Bellgraph = () => {
   const [subjects, setSubjects] = useState([]);
@@ -50,25 +30,12 @@ const Bellgraph = () => {
     setCurrentSubjectName(subject.name);
     try {
       const res = await api.get(`/student/bellgraph-data/${subject.courseId}`);
-      setChartData({
-        labels: res.data.x,
-        datasets: [
-          {
-            label: 'Grade Distribution',
-            data: res.data.y,
-            borderColor: '#2B9900',
-            backgroundColor: 'rgba(43, 153, 0, 0.1)',
-            borderWidth: 3,
-            fill: true,
-            tension: 0.4,
-            pointRadius: 4,
-            pointBackgroundColor: '#2B9900',
-            pointBorderColor: '#fff',
-            pointBorderWidth: 2,
-            pointHoverRadius: 6,
-          },
-        ],
-      });
+      // Transform data for Recharts
+      const transformedData = res.data.x.map((grade, index) => ({
+        grade: grade,
+        frequency: res.data.y[index]
+      }));
+      setChartData(transformedData);
     } catch (error) {
       console.error("Error fetching graph data:", error);
     }
@@ -96,53 +63,49 @@ const Bellgraph = () => {
             <h2 className="graph-title">Grade Distribution: <span>{currentSubjectName}</span></h2>
             <div className="chart-wrapper">
               {chartData ? (
-                <Line 
-                  options={{ 
-                    responsive: true, 
-                    maintainAspectRatio: false,
-                    plugins: {
-                      legend: {
-                        display: true,
-                        labels: {
-                          color: '#fff',
-                          font: { size: 14, family: 'Outfit' }
-                        }
-                      },
-                      tooltip: {
-                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                        titleColor: '#2B9900',
-                        bodyColor: '#fff',
-                        borderColor: '#2B9900',
-                        borderWidth: 1,
-                        padding: 12,
-                        displayColors: false
-                      }
-                    },
-                    scales: {
-                      x: { 
-                        title: { 
-                          display: true, 
-                          text: "Grade",
-                          color: '#fff',
-                          font: { size: 14, family: 'Outfit' }
-                        },
-                        ticks: { color: 'rgba(255, 255, 255, 0.7)' },
-                        grid: { color: 'rgba(255, 255, 255, 0.05)' }
-                      },
-                      y: { 
-                        title: { 
-                          display: true, 
-                          text: "Frequency",
-                          color: '#fff',
-                          font: { size: 14, family: 'Outfit' }
-                        },
-                        ticks: { color: 'rgba(255, 255, 255, 0.7)' },
-                        grid: { color: 'rgba(255, 255, 255, 0.05)' }
-                      },
-                    }
-                  }} 
-                  data={chartData} 
-                />
+                <ResponsiveContainer width="100%" height="100%">
+                  <AreaChart 
+                    data={chartData}
+                    margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
+                  >
+                    <defs>
+                      <linearGradient id="colorFrequency" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#2B9900" stopOpacity={0.8}/>
+                        <stop offset="95%" stopColor="#2B9900" stopOpacity={0}/>
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255, 255, 255, 0.05)" />
+                    <XAxis 
+                      dataKey="grade" 
+                      stroke="rgba(255, 255, 255, 0.7)"
+                      tick={{ fill: 'rgba(255, 255, 255, 0.7)', fontSize: 12 }}
+                      label={{ value: 'Grade', position: 'insideBottom', offset: -5, fill: '#fff' }}
+                    />
+                    <YAxis 
+                      stroke="rgba(255, 255, 255, 0.7)"
+                      tick={{ fill: 'rgba(255, 255, 255, 0.7)', fontSize: 12 }}
+                      label={{ value: 'Frequency', angle: -90, position: 'insideLeft', fill: '#fff' }}
+                    />
+                    <Tooltip 
+                      contentStyle={{ 
+                        backgroundColor: 'rgba(0, 0, 0, 0.9)', 
+                        border: '1px solid #2B9900',
+                        borderRadius: '8px',
+                        color: '#fff'
+                      }}
+                      labelStyle={{ color: '#2B9900', fontWeight: 'bold' }}
+                      itemStyle={{ color: '#fff' }}
+                    />
+                    <Area 
+                      type="monotone" 
+                      dataKey="frequency" 
+                      stroke="#2B9900" 
+                      strokeWidth={3}
+                      fillOpacity={1} 
+                      fill="url(#colorFrequency)" 
+                    />
+                  </AreaChart>
+                </ResponsiveContainer>
               ) : (
                 <p className="loading-text">Loading chart...</p>
               )}
