@@ -25,7 +25,7 @@ const Sidebar = () => {
         </li>
         <li className="premium">
           <Link to="/elections">
-            <img src="/assets/vote-box.png" alt="" onError={(e) => e.target.src='/assets/premium.png'} /> 
+            <img src="/assets/voting-box.png" alt="" onError={(e) => e.target.src='/assets/premium.png'} /> 
             <span className="text">Elections</span>
           </Link>
         </li>

@@ -1,11 +1,14 @@
 import { useState, useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import api from '../api/axios';
 import Header from '../components/Header';
+import DarkVeil from '../components/DarkVeil';
 import '../styles/profile.css';
 
 const Profile = () => {
   const { user } = useSelector((state) => state.auth);
+  const navigate = useNavigate();
   const [student, setStudent] = useState(null);
   const [editing, setEditing] = useState(null);
   const [formData, setFormData] = useState({});
@@ -57,6 +60,9 @@ const Profile = () => {
 
   return (
     <>
+      <div className="plasma-background">
+        <DarkVeil hueShift={120} speed={0.5} noiseIntensity={0.8} />
+      </div>
       <Header />
       <div className="profile-page">
         <form id="bodbod" onSubmit={(e) => e.preventDefault()}>
@@ -100,7 +106,7 @@ const Profile = () => {
                     <div className="auth_q">Password</div>
                     <div className="auth_a">
                         <div><input type="text" value="••••••••••••••••••" readOnly className="editable-input" /></div>
-                        <div className="image_div"><img className="edit_mark" src="/assets/edit-text 2.png" alt="edit password" onClick={() => alert("Please use the Change Password page")} /></div>
+                        <div className="image_div"><img className="edit_mark" src="/assets/edit-text 2.png" alt="edit password" onClick={() => navigate('/change-password')} /></div>
                     </div>    
                 </div>
 

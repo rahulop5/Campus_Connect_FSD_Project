@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Link, useSearchParams } from 'react-router';
 import api from '../api/axios';
-import Plasma from '../components/Plasma';
+import DarkVeil from '../components/DarkVeil';
 import '../styles/Register.css';
 
 import { useDispatch } from 'react-redux';
@@ -67,13 +67,13 @@ const Register = () => {
   return (
     <div className="outfit register-page">
       <div className="plasma-background">
-        <Plasma 
-          color="#026100"
+        <DarkVeil
+          hueShift={120}
+          noiseIntensity={0}
+          scanlineIntensity={0}
           speed={0.5}
-          direction="forward"
-          scale={1.1}
-          opacity={0.6}
-          mouseInteractive={true}
+          scanlineFrequency={0}
+          warpAmount={0}
         />
       </div>
       <div>

@@ -7,6 +7,10 @@ import '../styles/Problemslvfrm.css';
 const ForumList = () => {
   const [questions, setQuestions] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filtersVisible, setFiltersVisible] = useState(false);
+  const [selectedSortBy, setSelectedSortBy] = useState('recent');
+  const [selectedFilter, setSelectedFilter] = useState('all');
 
   useEffect(() => {
     const fetchQuestions = async () => {
@@ -22,78 +26,185 @@ const ForumList = () => {
     fetchQuestions();
   }, []);
 
+  const toggleFilters = () => {
+    setFiltersVisible(!filtersVisible);
+  };
+
+  // Filter and sort questions
+  const getFilteredQuestions = () => {
+    let filtered = [...questions];
+
+    // Search filter
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase();
+      filtered = filtered.filter(q => 
+        q.heading?.toLowerCase().includes(query) || 
+        q.desc?.toLowerCase().includes(query) ||
+        q.tags?.some(tag => tag.toLowerCase().includes(query))
+      );
+    }
+
+    // Category filter
+    if (selectedFilter !== 'all') {
+      if (selectedFilter === 'answered') {
+        filtered = filtered.filter(q => q.answers && q.answers.length > 0);
+      } else if (selectedFilter === 'unanswered') {
+        filtered = filtered.filter(q => !q.answers || q.answers.length === 0);
+      }
+    }
+
+    // Sort
+    if (selectedSortBy === 'recent') {
+      filtered.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    } else if (selectedSortBy === 'votes') {
+      filtered.sort((a, b) => (b.votes || 0) - (a.votes || 0));
+    } else if (selectedSortBy === 'answers') {
+      filtered.sort((a, b) => (b.answers?.length || 0) - (a.answers?.length || 0));
+    }
+
+    return filtered;
+  };
+
+  const filteredQuestions = getFilteredQuestions();
+
   return (
     <Layout>
-      <div className="maincon forum-list-page">
-        <div className="mainpage">
-          <div className="toptop">
-            <div className="top">
-              <div className="searchques">
-                <h1 className="outfit">Trending <span>Q</span>uestions</h1>
-                <p className="outfit" id="quesCount">
-                  {loading ? "Loading questions..." : `Available Questions - ${questions.length.toLocaleString()}`}
-                </p>
-              </div>
-              <div className="askaques">
-                <Link to="/forum/ask" style={{ textDecoration: 'none' }}>
-                  <button className="outfit">Ask a Question</button>
-                </Link>
-              </div>
+      <div className="forum-page">
+        <div className="forum-container">
+          {/* Header Section */}
+          <div className="forum-header">
+            <div className="forum-title-section">
+              <h1 className="forum-title">
+                Q&A <span className="green-accent">Forum</span>
+              </h1>
+              <p className="forum-subtitle">
+                {loading ? "Loading..." : `${filteredQuestions.length} Questions`}
+              </p>
             </div>
-
-            <div className="searchquesinput">
-              <div className="input-container">
-                <div className="input">
-                  <form onSubmit={(e) => e.preventDefault()}>
-                    <div className="advsearch">
-                      <input type="text" id="searchInput" placeholder="Search a Question" />
-                      <button type="submit"><img src="/assets/search.png" alt="" /></button>
-                    </div>
-                  </form>
-                </div>
-                <div className="hidden-div">
-                  <p>Filters will go here</p>
-                </div>
-              </div>
-              <div className="filter">
-                <button><img src="/assets/filter (1).png" alt="" /></button>
-              </div>
-            </div>
+            <Link to="/forum/ask" className="ask-question-btn">
+              <span>+</span> Ask Question
+            </Link>
           </div>
 
-          <hr />
+          {/* Search and Filter Section */}
+          <div className="forum-search-section">
+            <div className={`search-filter-container ${filtersVisible ? 'filters-open' : ''}`}>
+              <div className="search-bar">
+                <svg className="search-icon" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                  <path d="M9 17A8 8 0 1 0 9 1a8 8 0 0 0 0 16zM18 18l-4.35-4.35" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+                <input
+                  type="text"
+                  placeholder="Search questions, tags..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="search-input"
+                />
+              </div>
+              
+              <div className="filter-panel">
+                <div className="filter-group">
+                  <label>Sort By</label>
+                  <div className="filter-options">
+                    <button 
+                      className={selectedSortBy === 'recent' ? 'active' : ''}
+                      onClick={() => setSelectedSortBy('recent')}
+                    >
+                      Recent
+                    </button>
+                    <button 
+                      className={selectedSortBy === 'votes' ? 'active' : ''}
+                      onClick={() => setSelectedSortBy('votes')}
+                    >
+                      Votes
+                    </button>
+                    <button 
+                      className={selectedSortBy === 'answers' ? 'active' : ''}
+                      onClick={() => setSelectedSortBy('answers')}
+                    >
+                      Answers
+                    </button>
+                  </div>
+                </div>
+                <div className="filter-group">
+                  <label>Filter By</label>
+                  <div className="filter-options">
+                    <button 
+                      className={selectedFilter === 'all' ? 'active' : ''}
+                      onClick={() => setSelectedFilter('all')}
+                    >
+                      All
+                    </button>
+                    <button 
+                      className={selectedFilter === 'answered' ? 'active' : ''}
+                      onClick={() => setSelectedFilter('answered')}
+                    >
+                      Answered
+                    </button>
+                    <button 
+                      className={selectedFilter === 'unanswered' ? 'active' : ''}
+                      onClick={() => setSelectedFilter('unanswered')}
+                    >
+                      Unanswered
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
 
-          <div className="problems" id="problemsContainer">
-            {questions.length === 0 && !loading ? (
-              <p>No questions found.</p>
+            <button className="filter-toggle-btn" onClick={toggleFilters}>
+              <img src="/assets/filter (1).png" alt="Filter" />
+            </button>
+          </div>
+
+          {/* Questions List */}
+          <div className="questions-list">
+            {loading ? (
+              <div className="loading-state">Loading questions...</div>
+            ) : filteredQuestions.length === 0 ? (
+              <div className="empty-state">
+                <svg width="64" height="64" viewBox="0 0 64 64" fill="none">
+                  <circle cx="32" cy="32" r="30" stroke="currentColor" strokeWidth="2" opacity="0.2"/>
+                  <path d="M32 20v16M32 44h.02" stroke="currentColor" strokeWidth="3" strokeLinecap="round"/>
+                </svg>
+                <p>No questions found</p>
+              </div>
             ) : (
-              questions.map((q) => (
-                <div key={q._id}>
-                  <div className="problem outfit">
-                    <div className="votes">
-                      <p className="votesCount">{q.votes} votes</p>
-                      <p className="answersCount">{q.answers.length} answers</p>
-                      <p className="viewsCount">{q.views} views</p>
+              filteredQuestions.map((q) => (
+                <div key={q._id} className="question-card">
+                  <div className="question-stats">
+                    <div className="stat-item">
+                      <span className="stat-value">{q.votes || 0}</span>
+                      <span className="stat-label">votes</span>
                     </div>
-                    <div className="main">
-                      <Link className="questionLink" to={`/forum/question/${q._id}`} style={{ textDecoration: 'none' }}>
-                        <h4 className="questionHeading">{q.heading}</h4>
-                      </Link>
-                      <p className="questionDesc">{(q.desc?.slice(0, 100) || "") + "..."}</p>
-                      <div className="tags">
-                        {(q.tags || []).map((tag, idx) => (
-                          <div key={idx}><p>{tag}</p></div>
-                        ))}
-                      </div>
-                    </div>
-                    <div className="user">
-                      <div className="useruser">
-                        <img src="/assets/duck_with_A_gun 1.png" alt="" />
-                        <p className="askerName">{q.asker?.name || "Unknown"}</p>
-                      </div>
+                    <div className="stat-item">
+                      <span className="stat-value">{q.answers?.length || 0}</span>
+                      <span className="stat-label">answers</span>
                     </div>
                   </div>
-                  <hr className="problemline" />
+
+                  <div className="question-content">
+                    <Link to={`/forum/question/${q._id}`} className="question-link">
+                      <h3 className="question-heading">{q.heading}</h3>
+                    </Link>
+                    <p className="question-description">
+                      {q.desc ? (q.desc.length > 150 ? q.desc.slice(0, 150) + '...' : q.desc) : 'No description available.'}
+                    </p>
+                    {q.tags && q.tags.length > 0 && (
+                      <div className="question-tags">
+                        {q.tags.map((tag, idx) => (
+                          <span key={idx} className="tag">{tag}</span>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="question-meta">
+                    <div className="question-author">
+                      <img src="/assets/duck_with_A_gun 1.png" alt={q.asker?.name || "User"} />
+                      <span>{q.asker?.name || "Anonymous"}</span>
+                    </div>
+                  </div>
                 </div>
               ))
             )}

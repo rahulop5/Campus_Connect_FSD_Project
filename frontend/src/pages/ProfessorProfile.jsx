@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import api from '../api/axios';
 import Layout from '../components/Layout';
 import '../styles/profileprof.css';
 
 const ProfessorProfile = () => {
+  const navigate = useNavigate();
   const [professor, setProfessor] = useState(null);
   const [editing, setEditing] = useState(null);
   const [formData, setFormData] = useState({});
@@ -84,7 +86,7 @@ const ProfessorProfile = () => {
                     <div className="prof-auth-q">Password</div>
                     <div className="prof-auth-a">
                         <div><input type="text" value="••••••••••••••••••" readOnly className="prof-editable-input" /></div>
-                        <div className="prof-image-div"><img className="prof-edit-mark" src="/assets/edit-text 2.png" alt="edit password" onClick={() => alert("Please use the Change Password page")} /></div>
+                        <div className="prof-image-div"><img className="prof-edit-mark" src="/assets/edit-text 2.png" alt="edit password" onClick={() => navigate('/change-password')} /></div>
                     </div>    
                 </div>
 

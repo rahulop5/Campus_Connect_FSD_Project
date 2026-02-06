@@ -9,6 +9,7 @@ import Home from './pages/Home';
 import Pricing from './pages/Pricing';
 import Profile from './pages/Profile';
 import ProfessorProfile from './pages/ProfessorProfile';
+import ChangePassword from './pages/ChangePassword';
 import Attendance from './pages/Attendance';
 import Bellgraph from './pages/Bellgraph';
 import Elections from './pages/Elections';
@@ -55,6 +56,12 @@ function App() {
           <Route path="/profile" element={
             <ProtectedRoute>
                 <ProfileWrapper />
+            </ProtectedRoute>
+          } />
+
+          <Route path="/change-password" element={
+            <ProtectedRoute>
+              <ChangePassword />
             </ProtectedRoute>
           } />
 

@@ -4,12 +4,19 @@
 }
 
 .register-page{
-    background-image: url("/assets/bgloginsignup.png");
-    background-color: #000; 
-    background-size: cover; 
-    /* height: 100vh;  */
-    background-position: center; 
-    background-repeat: no-repeat;
+    background-color: #000;
+    height: 100vh;
+    position: relative;
+    overflow: hidden;
+}
+
+.plasma-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
 }
 
 .outfit{
@@ -19,12 +26,14 @@
     font-style: normal;
 }
 
-.register-page>div{
+.register-page>div:not(.plasma-background){
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    /* height: 100vh; */
+    height: 100vh;
+    position: relative;
+    z-index: 1;
 }
 
 .logo{

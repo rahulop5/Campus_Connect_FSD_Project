@@ -2,6 +2,7 @@ import { Link } from 'react-router';
 import { useEffect } from 'react';
 import Header from '../components/Header';
 import SplitText from '../components/SplitText';
+import DarkVeil from '../components/DarkVeil';
 import '../styles/Home.css';
 
 const Home = () => {
@@ -107,7 +108,17 @@ const Home = () => {
       </div>
       <hr className="herohr" />
       <div className="finalsignup">
-        <div>
+        <div className="darkveil-container">
+          <DarkVeil
+            hueShift={120}
+            noiseIntensity={0}
+            scanlineIntensity={0}
+            speed={1.5}
+            scanlineFrequency={0}
+            warpAmount={0}
+          />
+        </div>
+        <div className="finalsignup-content">
           <p>Ready to get started?</p>
           <p>Create your free account now</p>
           <Link to="/register" style={{ textDecoration: 'none' }}>
