@@ -232,6 +232,9 @@ const ForumList = () => {
                     >
                       <img src="/assets/duck_with_A_gun 1.png" alt={q.asker?.name || "User"} />
                       <span>{q.asker?.name || "Anonymous"}</span>
+                      {q.asker?.role === 'Professor' && (
+                        <span className="faculty-badge">Faculty</span>
+                      )}
                       
                       {hoveredUser === q.asker?._id && (
                         <div className="user-dropdown">

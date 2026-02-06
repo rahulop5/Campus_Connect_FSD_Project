@@ -77,19 +77,24 @@ export const studentAttendance = async (req, res) => {
 
       const courses = student.courses.map((courseObj) => {
         const course = courseObj.course;
-        const percentage = courseObj.attendance ? courseObj.attendance : "0.00";
+        const percentage = courseObj.attendance ? courseObj.attendance : 0;
+        
+        // Calculate attended and total classes from percentage
+        // Assuming each course has approximately 30 total classes per semester
+        const totalClasses = courseObj.totalClasses || 30;
+        const attendedClasses = Math.round((percentage / 100) * totalClasses);
 
         let status = "";
         let color = "";
 
-        if (percentage >= 90) {
+        if (percentage >= 80) {
           status = "Good";
           color = "green";
-        } else if (percentage >= 80) {
-          status = "Average";
+        } else if (percentage >= 75) {
+          status = "At Risk";
           color = "yellow";
         } else {
-          status = "Poor";
+          status = "Critical";
           color = "red";
         }
 
@@ -98,6 +103,8 @@ export const studentAttendance = async (req, res) => {
           attendancePercentage: percentage,
           attendanceStatus: status,
           attendanceColor: color,
+          attendedClasses: attendedClasses,
+          totalClasses: totalClasses,
         };
       });
       res.json({

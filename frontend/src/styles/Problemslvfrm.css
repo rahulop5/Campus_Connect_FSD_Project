@@ -356,6 +356,18 @@
     font-weight: 500;
 }
 
+.faculty-badge {
+    padding: 4px 10px;
+    background: linear-gradient(135deg, rgba(43, 153, 0, 0.2), rgba(43, 153, 0, 0.1));
+    border: 1px solid rgba(43, 153, 0, 0.5);
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    color: #2B9900 !important;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
 /* User Dropdown */
 .user-dropdown {
     position: absolute;

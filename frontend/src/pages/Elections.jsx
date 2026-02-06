@@ -13,6 +13,8 @@ const Elections = () => {
   const [showQuoteModal, setShowQuoteModal] = useState(false);
   const [newQuote, setNewQuote] = useState('');
 
+  const isProfessor = user?.role === 'Professor';
+
   useEffect(() => {
     dispatch(fetchElection());
   }, [dispatch]);
@@ -80,7 +82,10 @@ const Elections = () => {
               {isEnded ? 'Ended' : 'Active'}
             </span>
           )}
-          {hasVoted && !isEnded && (
+          {isProfessor && (
+            <div className="view-only-indicator">View Only Mode (Faculty)</div>
+          )}
+          {hasVoted && !isEnded && !isProfessor && (
             <div className="voted-indicator">You have voted</div>
           )}
         </div>
@@ -150,7 +155,7 @@ const Elections = () => {
                   <div className="candidates-grid">
                     {roleCandidates.map((candidate) => {
                       const isMe = user.id === candidate.studentId;
-                      const actionLabel = isMe ? 'Edit My Quote' : (hasVotedForRole ? 'Voted' : 'Vote');
+                      const actionLabel = isProfessor ? 'View Only' : (isMe ? 'Edit My Quote' : (hasVotedForRole ? 'Voted' : 'Vote'));
                       return (
                         <CandidateCard
                           key={candidate.id || candidate.name}
@@ -162,7 +167,7 @@ const Elections = () => {
                           onVote={isMe ? () => openQuoteModal(candidate.manifesto) : () => handleVote(candidate.id, candidate.role)}
                           actionLabel={actionLabel}
                           isSelected={false}
-                          isDisabled={isEnded || (!isMe && hasVotedForRole)}
+                          isDisabled={isProfessor || isEnded || (!isMe && hasVotedForRole)}
                         />
                       );
                     })}

@@ -59,6 +59,18 @@
     border: 1px solid rgba(255, 255, 255, 0.12);
 }
 
+.view-only-indicator {
+    margin: 10px auto 0;
+    width: fit-content;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #FFD400;
+    background: rgba(255, 212, 0, 0.1);
+    border: 1px solid rgba(255, 212, 0, 0.3);
+}
+
 /* No Election State */
 .no-election {
     display: flex;

@@ -16,6 +16,7 @@ import Elections from './pages/Elections';
 import ForumList from './pages/ForumList';
 import ForumDetail from './pages/ForumDetail';
 import AskQuestion from './pages/AskQuestion';
+import Academics from './pages/Academics';
 import OAuthCallback from './pages/OAuthCallback';
 
 const ProtectedRoute = ({ children }) => {
@@ -79,8 +80,15 @@ function App() {
             </RoleRoute>
           } />
           <Route path="/elections" element={
-            <RoleRoute role="Student">
+            <ProtectedRoute>
               <Elections />
+            </ProtectedRoute>
+          } />
+
+          {/* Professor Routes */}
+          <Route path="/academics" element={
+            <RoleRoute role="Professor">
+              <Academics />
             </RoleRoute>
           } />
 
