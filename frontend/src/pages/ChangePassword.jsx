@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 import api from '../api/axios';
 import Header from '../components/Header';
 import DarkVeil from '../components/DarkVeil';

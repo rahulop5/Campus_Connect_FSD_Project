@@ -1,152 +1,186 @@
 * {
     margin: 0;
     padding: 0;
+    box-sizing: border-box;
 }
 
 .attendance-page {
     background-color: #090909;
-    height: 400vh;
+    min-height: 100vh;
     color: white;
-}
-
-.outfit {
     font-family: "Outfit", serif;
-    font-optical-sizing: auto;
-    font-weight: 400;
-    font-style: normal;
+    padding: 40px 48px;
 }
 
-.at_mainpage {
-    padding-top: 20px;
+.attendance-header {
+    margin-bottom: 32px;
 }
 
-.at_mainpage > p {
-    background: linear-gradient(90deg, #2B9900 0%, #949494 73.9%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    font-size: 24px;
-    font-style: normal;
+.attendance-header h1 {
+    color: #fff;
+    font-size: 32px;
     font-weight: 600;
-    line-height: normal;
-    display: inline; 
-    margin: 20px;
+    position: relative;
+    display: inline-block;
 }
 
-.at_courses{
-    border-radius: 20px;
-    margin: 20px 20px;
-    border: 2px solid rgba(255, 255, 255, 0.30);
+.attendance-header h1::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 0;
+    width: 60px;
+    height: 3px;
+    background: linear-gradient(90deg, #2B9900 0%, transparent 100%);
+}
+
+.attendance-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 24px;
+    margin-bottom: 40px;
+}
+
+.attendance-card {
+    background: rgba(255, 255, 255, 0.04);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 16px;
+    padding: 24px;
+    transition: all 0.3s ease;
+}
+
+.attendance-card:hover {
+    border-color: rgba(43, 153, 0, 0.3);
+    transform: translateY(-4px);
+    box-shadow: 0 12px 32px rgba(43, 153, 0, 0.15);
+}
+
+.card-header {
+    margin-bottom: 24px;
+}
+
+.card-header h2 {
+    font-size: 24px;
+    font-weight: 600;
+    color: #fff;
+    margin: 0;
+}
+
+.card-body {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 24px;
+}
+
+.chart-container {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.attendance-chart {
+    transform: rotate(-90deg);
+}
+
+.chart-background {
+    fill: none;
+    stroke: rgba(255, 255, 255, 0.1);
+    stroke-width: 10;
+}
+
+.chart-progress {
+    fill: none;
+    stroke-width: 10;
+    stroke-linecap: round;
+    transition: stroke-dashoffset 0.8s ease, stroke 0.3s ease;
+}
+
+.chart-label {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 20px;
 }
 
-.at_course{
-    width: 80%;
-    border-radius: 20px;
-    background: linear-gradient(209deg, rgba(43, 153, 0, 0.30) -0.03%, rgba(0, 0, 0, 0.15) 37.8%), rgba(55, 55, 55, 0.50);
-    display: flex;
-    gap: 15px;
-    padding: 30px 50px;
-    align-items: center;
-    justify-content: space-between;
+.percentage-value {
+    font-size: 32px;
+    font-weight: 700;
+    color: #fff;
 }
 
-.subject{
+.card-stats {
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: space-around;
+    gap: 16px;
 }
 
-.subject p{
-    color: #FFF;
-    font-size: 50px;
-    font-style: normal;
-    font-weight: 400;
-    line-height: normal;
+.stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
 }
 
-.details p{
-    color: #FFF;
+.stat-label {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.6);
+    font-weight: 500;
+}
+
+.stat-value {
     font-size: 18px;
-    font-style: normal;
-    font-weight: 400;
-    line-height: normal;
+    font-weight: 600;
+    color: #fff;
 }
 
-.status{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+.status-badge {
+    padding: 6px 16px;
+    border-radius: 8px;
+    border: 1px solid;
+    background: rgba(0, 0, 0, 0.3);
+    font-size: 16px;
 }
 
-.status>:nth-child(1){
-    color: #FFF;
-    font-size: 20px;
-    font-style: normal;
-    font-weight: 400;
-    line-height: normal;
+.stat-divider {
+    width: 1px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.1);
 }
 
-.status>:nth-child(2){
-    color: #FFD400;
-    font-size: 50px;
-    font-style: normal;
-    font-weight: 300;
-    line-height: normal;
+.no-data {
+    grid-column: 1 / -1;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 16px;
+    padding: 60px 40px;
+    text-align: center;
 }
 
-.percentage{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+.no-data p {
+    font-size: 18px;
+    color: rgba(255, 255, 255, 0.5);
 }
 
-.percentage>:nth-child(1){
-    color: #FFF;
-    font-size: 20px;
-    font-style: normal;
-    font-weight: 400;
-    line-height: normal;
-}
-
-.percentage>:nth-child(2){
-    color: #FFD400;
-    font-size: 50px;
-    font-style: normal;
-    font-weight: 300;
-    line-height: normal;
-}
-
-.line{
-    width: 3px;
-    height: 120px;
-    background: #505050;
-}
-
-#green{
-    color: #2B9900;
-}
-
-#red{
-    color: #980000;
-}
-
-#yellow{
-    color: #FFD400;
-}
-
-.at_ads{
-    border-radius: 15px;
-    border: 1px solid #FFF;
-    width: 95%;
-    height: 40vh;
-    background: rgba(217, 217, 217, 0.07);
-    margin: 30px 20px;
+/* Responsive Design */
+@media (max-width: 768px) {
+    .attendance-page {
+        padding: 24px 16px;
+    }
+    
+    .attendance-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .attendance-header h1 {
+        font-size: 24px;
+    }
+    
+    .card-header h2 {
+        font-size: 20px;
+    }
 }

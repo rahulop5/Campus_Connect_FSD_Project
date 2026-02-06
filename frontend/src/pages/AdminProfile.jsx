@@ -1,11 +1,13 @@
 import { useState, useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router';
 import api from '../api/axios';
 import Layout from '../components/Layout';
 import '../styles/AdminProfile.css';
 
 const AdminProfile = () => {
   const { user } = useSelector((state) => state.auth);
+  const navigate = useNavigate();
   const [admin, setAdmin] = useState(null);
   const [editing, setEditing] = useState(null);
   const [formData, setFormData] = useState({});
@@ -104,7 +106,7 @@ const AdminProfile = () => {
                     <div className="admin-auth-q">Password</div>
                     <div className="admin-auth-a">
                         <div><input type="text" value="••••••••••••••••••" readOnly className="admin-editable-input" /></div>
-                        <div className="admin-image-div"><img className="admin-edit-mark" src="/assets/edit-text 2.png" alt="edit password" onClick={() => alert("Please use the Change Password page")} /></div>
+                        <div className="admin-image-div"><img className="admin-edit-mark" src="/assets/edit-text 2.png" alt="edit password" onClick={() => navigate('/change-password')} /></div>
                     </div>    
                 </div>
 

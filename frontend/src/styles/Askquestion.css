@@ -1,203 +1,292 @@
 * {
     margin: 0;
     padding: 0;
+    box-sizing: border-box;
 }
 
 .ask-question-page {
     background-color: #090909;
-    /* height: 400vh; */
+    min-height: 100vh;
     color: white;
-}
-
-.outfit {
     font-family: "Outfit", serif;
-    font-optical-sizing: auto;
-    font-weight: 400;
-    font-style: normal;
-}
-
-.ask_mainpage {
-    padding-top: 20px;
-    margin-bottom: 100px;
+    padding: 40px 48px;
 }
 
 .welcome {
-    background: linear-gradient(90deg, #2B9900 0%, #949494 73.9%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    font-size: 24px;
-    font-style: normal;
-    font-weight: 600;
-    line-height: normal;
-    display: inline; 
-    margin: 20px;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 18px;
+    font-weight: 500;
+    margin-bottom: 8px;
 }
 
 .addq{
     color: #FFF;
-    font-size: 80px;
-    font-style: normal;
-    font-weight: 400;
-    line-height: normal;
-    margin-left: 45px;
+    font-size: 32px;
+    font-weight: 600;
+    margin-bottom: 32px;
+}
+
+.addq::after {
+    content: '';
+    display: block;
+    width: 60px;
+    height: 3px;
+    background: linear-gradient(90deg, #2B9900 0%, transparent 100%);
+    margin-top: 8px;
 }
 
 .hrhr{
-    width: 95%;
-    margin-left: auto;
-    margin-right: auto;
+    display: none;
 }
 
 .mainpg{
     display: flex;
-    gap: 50px;
-    margin-top: 50px;
-    margin-bottom: 50px;
+    gap: 24px;
 }
 
+.mainmain{
+    flex: 1;
+}
 
-
-.po_noticeboard{
-    border-radius: 9px;
-    border: 1px solid #48FF00;
-    background: rgba(217, 217, 217, 0.07);
-    box-shadow: 0px 0px 0px 0px rgba(72, 255, 0, 0.68);
+.ask_question_form{
+    background: rgba(255, 255, 255, 0.04);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 16px;
+    padding: 32px;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    margin-right: 10px;
-    margin-left: 10px;
-    padding-top: 20px;
+    gap: 24px;
 }
 
-.po_noticeboard>p{
-    font-size: 25px;
-    margin-bottom: 25px;
-}
-
-.po_noticenews{
-    width: 90%;
-    margin-bottom: 21px;
-    margin-top: 21px;
-}
-
-.po_noticenews>div{
+.hoho{
     display: flex;
-    gap: 10px;
-    margin-bottom: 15px;
-    margin-top: 15px;
+    flex-direction: column;
+    gap: 12px;
 }
 
-.po_noticenews>div>img{
-    height: 22px;
-    width: 22px;
+.hoho > p{
+    color: #fff;
+    font-size: 16px;
+    font-weight: 600;
 }
 
-.po_noticenews>div>p{
-    font-size: 12px;
+.hoho input{
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 14px 18px;
+    color: #fff;
+    font-size: 16px;
+    font-family: "Outfit", serif;
+    transition: all 0.3s ease;
 }
 
-.noticeline{
-    background-color: #48FF00;
-    height: 1px;
-    border: none;
-    width: 75%;
+.hoho input:focus{
+    outline: none;
+    border-color: rgba(43, 153, 0, 0.5);
+    background: rgba(255, 255, 255, 0.08);
 }
 
-.po_ads{
-    border-radius: 9px;
-    border: 1px solid #FFF;
-    background: rgba(217, 217, 217, 0.07);
-    box-shadow: 0px 0px 0px 0px rgba(72, 255, 0, 0.68);
-    height: 60vh;
-    margin-right: 15px;
-    margin-left: 15px;
-    margin-top: 25px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+.hoho input::placeholder{
+    color: rgba(255, 255, 255, 0.4);
 }
 
 .po_userans{
-    margin: 50px;
-    margin-left: 100px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin: 0;
     width: 100%;
 }
 
 .po_useransheading{
-    font-size: 40px;
+    display: flex;
+    align-items: center;
+}
+
+.po_useransheading p{
+    color: #fff;
+    font-size: 16px;
+    font-weight: 600;
 }
 
 .po_useranscontainer{
-    border-radius: 10px;
-    border: 1px solid #949494;
-    background: #000;
-    padding: 20px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 16px;
+    transition: all 0.3s ease;
+}
+
+.po_useranscontainer:focus-within{
+    border-color: rgba(43, 153, 0, 0.5);
 }
 
 .po_useranstools{
     display: flex;
-    gap: 10px;
+    gap: 12px;
     align-items: center;
-    margin-bottom: 15px;
+    margin-bottom: 12px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.po_useranstools>img{
-    height: 25px;
-    width: 25px;
+.po_useranstools img{
+    height: 20px;
+    width: 20px;
+    opacity: 0.6;
+    cursor: pointer;
+    transition: opacity 0.3s ease;
 }
 
-.po_useranstools>img:nth-child(3){
-    margin-left: auto;
-}
-
-.po_useranstools>img:nth-child(4){
-    margin-right: auto;
-}
-
-.po_useranstools>div{
-    padding: 10px 15px;
-    border-radius: 22px;
-    border: 1px solid #FFF;
-    background: #000;
-    box-shadow: 0px -1px 26.9px 7px rgba(148, 148, 148, 0.19) inset, 0px 0px 14.3px -1px #949494;
-}
-
-.po_useranstools>div>p{
-    font-size: 17px;
+.po_useranstools img:hover{
+    opacity: 1;
 }
 
 .po_useransbox{
-    border-radius: 8px;
-    background: rgba(217, 217, 217, 0.14);
-    box-shadow: 0px 4px 5.5px 0px rgba(0, 0, 0, 0.43) inset;
-    height: 300px;
+    background: rgba(0, 0, 0, 0.3);
     border: none;
+    border-radius: 6px;
+    min-height: 200px;
     width: 100%;
     color: white;
-    font-size: 19px;
-    padding: 10px;
+    font-size: 15px;
+    font-family: "Outfit", serif;
+    padding: 12px;
+    resize: vertical;
 }
 
 .po_useransbox:focus{
     outline: none;
 }
 
-.mainmain{
-    width: 70%;
+.po_useransbox::placeholder{
+    color: rgba(255, 255, 255, 0.3);
 }
 
-.ask_question_form{
+.ask_question_form button{
+    background: linear-gradient(135deg, rgba(43, 153, 0, 0.8) 0%, rgba(43, 153, 0, 0.6) 100%);
+    border: 1px solid rgba(43, 153, 0, 0.5);
+    border-radius: 8px;
+    padding: 14px 32px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    align-self: flex-start;
+}
+
+.ask_question_form button:hover{
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(43, 153, 0, 0.25);
+    background: linear-gradient(135deg, rgba(43, 153, 0, 0.9) 0%, rgba(43, 153, 0, 0.7) 100%);
+}
+
+.ask_question_form button p{
+    color: #fff;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.db_notice{
+    width: 320px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.po_noticeboard{
+    background: rgba(255, 255, 255, 0.04);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(43, 153, 0, 0.3);
+    border-radius: 16px;
+    padding: 24px 20px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
 }
 
-.ask_question_form input{
-    border-radius: 20px;
-    border: 1px solid #949494;
+.po_noticeboard > p{
+    color: #2B9900;
+    font-size: 22px;
+    font-weight: 600;
+    margin-bottom: 16px;
+}
+
+.po_noticenews{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.po_noticenews > div{
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.po_noticenews > div > img{
+    height: 18px;
+    width: 18px;
+    margin-top: 2px;
+    flex-shrink: 0;
+}
+
+.po_noticenews > div > p{
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 13px;
+    line-height: 1.4;
+}
+
+.noticeline{
+    background: linear-gradient(90deg, transparent, rgba(43, 153, 0, 0.5), transparent);
+    height: 1px;
+    border: none;
+    width: 100%;
+    margin: 16px 0;
+}
+
+.po_ads{
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.04);
+    border-radius: 16px;
+    padding: 40px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 200px;
+}
+
+.po_ads > p{
+    color: rgba(255, 255, 255, 0.3);
+    font-size: 16px;
+    font-weight: 500;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .mainpg{
+        flex-direction: column;
+    }
+    
+    .db_notice{
+        width: 100%;
+    }
+}
+
+@media (max-width: 768px) {
+    .ask-question-page{
+        padding: 24px 16px;
+    }
+    
+    .addq{
+        font-size: 24px;
+    }
+    
+    .ask_question_form{
+        padding: 24px;
+    }
+}
     background: rgba(217, 217, 217, 0.14);
     padding: 20px;
     color: #FFF;

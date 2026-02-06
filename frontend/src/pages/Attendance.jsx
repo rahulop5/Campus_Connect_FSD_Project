@@ -20,34 +20,91 @@ const Attendance = () => {
 
   if (!data) return <Layout>Loading...</Layout>;
 
+  const getStatusColor = (status) => {
+    if (status === 'Good') return '#2B9900';
+    if (status === 'At Risk') return '#FFD400';
+    if (status === 'Critical') return '#980000';
+    return '#FFD400';
+  };
+
   return (
     <Layout>
-      <div className="at_mainpage attendance-page">
-        <p>{data.name}'s Attendance</p>
-        <div className="at_courses" id="at_courses_container">
+      <div className="attendance-page">
+        <div className="attendance-header">
+          <h1>{data.name}'s Attendance</h1>
+        </div>
+        
+        <div className="attendance-grid">
           {data.courses && data.courses.length > 0 ? (
-            data.courses.map((course, index) => (
-              <div className="at_course" key={index}>
-                <div className="subject">
-                  <p>{course.subject}</p>
+            data.courses.map((course, index) => {
+              const statusColor = getStatusColor(course.attendanceStatus);
+              const percentage = course.attendancePercentage || 0;
+              const radius = 55;
+              const circumference = 2 * Math.PI * radius;
+              const offset = circumference * (1 - percentage / 100);
+              
+              return (
+                <div className="attendance-card" key={index}>
+                  <div className="card-header">
+                    <h2>{course.subject}</h2>
+                  </div>
+                  
+                  <div className="card-body">
+                    <div className="chart-container">
+                      <svg width="140" height="140" className="attendance-chart">
+                        <circle
+                          cx="70"
+                          cy="70"
+                          r={radius}
+                          className="chart-background"
+                        />
+                        <circle
+                          cx="70"
+                          cy="70"
+                          r={radius}
+                          className="chart-progress"
+                          style={{
+                            strokeDasharray: circumference,
+                            strokeDashoffset: offset,
+                            stroke: statusColor
+                          }}
+                        />
+                      </svg>
+                      <div className="chart-label">
+                        <span className="percentage-value">{percentage}%</span>
+                      </div>
+                    </div>
+                    
+                    <div className="card-stats">
+                      <div className="stat-item">
+                        <span className="stat-label">Status</span>
+                        <span 
+                          className="stat-value status-badge"
+                          style={{ color: statusColor, borderColor: statusColor }}
+                        >
+                          {course.attendanceStatus}
+                        </span>
+                      </div>
+                      
+                      <div className="stat-divider"></div>
+                      
+                      <div className="stat-item">
+                        <span className="stat-label">Classes</span>
+                        <span className="stat-value">
+                          {course.attendedClasses || 0} / {course.totalClasses || 0}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                <div className="line"></div>                
-                <div className="status">
-                  <p>Attendance Status</p>
-                  <p className="statusValue" id={course.attendanceColor}>{course.attendanceStatus}</p>
-                </div>
-                <div className="line"></div>
-                <div className="percentage">
-                  <p>Attendance Percentage</p>
-                  <p className="percentageValue" id={course.attendanceColor}>{course.attendancePercentage}%</p>
-                </div>
-              </div>
-            ))
+              );
+            })
           ) : (
-            <div className="at_course"><p>No courses found.</p></div>
+            <div className="no-data">
+              <p>No courses found.</p>
+            </div>
           )}
         </div>
-        <div className="at_ads"></div>
       </div>
     </Layout>
   );
