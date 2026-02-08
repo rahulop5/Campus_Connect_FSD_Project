@@ -1,6 +1,12 @@
 import Question from "../models/Question.js";
 import Student from "../models/Student.js";
 import Course from "../models/Course.js";
+import path from 'path';
+import fs from 'fs';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 export const studentDashboard = async (req, res) => {
   try {
@@ -194,3 +200,58 @@ export const changepass = async (req, res) => {
     // But keeping it as is for now, just returning message
     return res.json({ message: "Use POST /update-password to change password" });
 }
+
+export const uploadProfilePic = async (req, res) => {
+    try {
+      if (!req.file) {
+        return res.status(400).json({ message: "No file uploaded" });
+      }
+
+      const student = await Student.findOne({ email: req.user.email });
+      if (!student) return res.status(404).json({ message: "Student not found" });
+
+      // Update student's profile picture path in database
+      const profilePicPath = `/assets/profiles/${req.file.filename}`;
+      student.profilePicture = profilePicPath;
+      await student.save();
+
+      res.status(200).json({ 
+        message: "Profile picture uploaded successfully", 
+        profilePicture: profilePicPath 
+      });
+    } catch (error) {
+      console.error("Error uploading profile picture:", error);
+      res.status(500).json({ message: "Internal Server Error" });
+    }
+};
+
+export const deleteProfilePic = async (req, res) => {
+    try {
+      const student = await Student.findOne({ email: req.user.email });
+      if (!student) return res.status(404).json({ message: "Student not found" });
+
+      // Delete the file if it exists
+      if (student.profilePicture && student.profilePicture !== "") {
+        const email = req.user.email;
+        const safeEmail = email.replace(/[@.]/g, '_');
+        const profilesDir = path.join(__dirname, '../public/assets/profiles');
+        
+        // Find and delete any file that starts with the user's email
+        const files = fs.readdirSync(profilesDir);
+        files.forEach(file => {
+          if (file.startsWith(safeEmail)) {
+            fs.unlinkSync(path.join(profilesDir, file));
+          }
+        });
+      }
+
+      // Reset to default profile picture
+      student.profilePicture = "";
+      await student.save();
+
+      res.status(200).json({ message: "Profile picture deleted successfully" });
+    } catch (error) {
+      console.error("Error deleting profile picture:", error);
+      res.status(500).json({ message: "Internal Server Error" });
+    }
+};

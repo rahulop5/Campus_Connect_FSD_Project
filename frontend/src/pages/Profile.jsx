@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router';
 import api from '../api/axios';
-import DarkVeil from '../components/DarkVeil';
+import Aurora from '../components/Aurora';
 import '../styles/profile.css';
 
 const Profile = () => {
@@ -12,7 +12,7 @@ const Profile = () => {
   const [editing, setEditing] = useState(null);
   const [formData, setFormData] = useState({});
   const fileInputRef = useRef(null);
-  const [pfp, setPfp] = useState("/assets/pfp 1.png");
+  const [pfp, setPfp] = useState("");
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -20,6 +20,10 @@ const Profile = () => {
         const res = await api.get('/student/profile');
         setStudent(res.data.student);
         setFormData(res.data.student);
+        // Set profile picture from database
+        if (res.data.student.profilePicture) {
+          setPfp(`http://localhost:3000${res.data.student.profilePicture}`);
+        }
       } catch (error) {
         console.error("Error fetching profile:", error);
       }
@@ -65,9 +69,15 @@ const Profile = () => {
                 }
             });
             console.log('Profile picture uploaded:', res.data);
+            // Update with the actual path from server
+            setPfp(`http://localhost:3000${res.data.profilePicture}`);
+            // Update student state
+            setStudent(prev => ({ ...prev, profilePicture: res.data.profilePicture }));
         } catch (error) {
             console.error('Error uploading profile picture:', error);
             alert('Failed to upload profile picture');
+            // Revert to previous image on error
+            setPfp(student.profilePicture ? `http://localhost:3000${student.profilePicture}` : "");
         }
     }
   };
@@ -75,18 +85,25 @@ const Profile = () => {
   const handleDeletePfp = async () => {
     try {
         await api.post('/student/delete-profile-pic');
-        setPfp("/assets/pfp 1.png");
+        setPfp("");
+        setStudent(prev => ({ ...prev, profilePicture: "" }));
     } catch (error) {
         console.error('Error deleting profile picture:', error);
+        alert('Failed to delete profile picture');
     }
   };
 
   if (!student) return <div>Loading...</div>;
 
   return (
-    <>
+    <div style={{ width: '100vw', height: '100vh', backgroundColor: '#000', position: 'relative', overflow: 'hidden' }}>
       <div className="plasma-background">
-        <DarkVeil hueShift={120} speed={0.5} noiseIntensity={0.8} />
+        <Aurora
+          colorStops={["#38ff1a","#b9b8bc","#00700d"]}
+          blend={0.75}
+          amplitude={1.0}
+          speed={1.5}
+        />
       </div>
       <div className="profile-page">
         <form id="bodbod" onSubmit={(e) => e.preventDefault()}>
@@ -226,9 +243,9 @@ const Profile = () => {
                     </div>
                 </div>
 
-                <div className="pfp-container" id="pfpContainer">
+                <div className={`pfp-container ${!pfp || pfp === "" ? 'no-image' : ''}`} id="pfpContainer">
                     <input type="file" id="pfpFileInput" accept="image/*" hidden ref={fileInputRef} onChange={handlePfpChange} />
-                    <img id="profilePic" src={pfp} alt="Profile Picture" />
+                    {pfp && pfp !== "" && <img id="profilePic" src={pfp} alt="Profile Picture" />}
                     <div className="pfp-overlay">
                         <div className="pfp-btn" id="changeBtn" onClick={() => fileInputRef.current.click()} title="Change Picture"></div>
                         <div className="pfp-btn" id="deleteBtn" onClick={handleDeletePfp} title="Delete Picture"></div>
@@ -251,7 +268,7 @@ const Profile = () => {
             </div>
         </form>
       </div>
-    </>
+    </div>
   );
 };
 

@@ -10,6 +10,7 @@ const studentSchema = new mongoose.Schema({
     section: { type: String, required: false },
     branch: { type: String, required: false },
     ug: { type: String, required: false },
+    profilePicture: { type: String, default: "" }, // Profile picture path
     courses: [
       {
         course: { type: mongoose.Schema.Types.ObjectId, ref: "Course" },

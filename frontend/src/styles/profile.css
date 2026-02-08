@@ -15,12 +15,13 @@ svg {
 }
 
 .plasma-background {
-    position: absolute;
+    position: fixed;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
+    width: 100vw;
+    height: 100vh;
     z-index: 0;
+    pointer-events: none;
 }
 
 .profile-page {
@@ -29,7 +30,7 @@ svg {
     min-height: 100vh;
     align-items: center;
     justify-content: center;
-    background-color: #000;
+    background-color: transparent;
     position: relative;
     height: 100vh;
     overflow: hidden;
@@ -279,9 +280,9 @@ svg {
     z-index: 1;
     /* NOTE: Adjust these values to perfectly match your pfp 1.png size and position */
     width: 430px; 
-    height: 240px;
-    top: 28%;
-    left: 27%; /* Adjusted to move left and avoid overlap */
+    height: 250px;
+    top: 24%;
+    left: 28%; /* Adjusted to move left and avoid overlap */
     transform: translate(-50%, -50%); /* Center based on position */
     /* --- */
     border-radius: 40px;
