@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import api from '../api/axios';
 import Layout from '../components/Layout';
+import Beams from '../components/Beams';
 import '../styles/Attendance.css';
 
 const Attendance = () => {
@@ -30,9 +31,22 @@ const Attendance = () => {
   return (
     <Layout>
       <div className="attendance-page">
-        <div className="attendance-header">
-          <h1>{data.name}'s Attendance</h1>
+        <div className="beams-background">
+          <Beams
+            beamWidth={2.3}
+            beamHeight={16}
+            beamNumber={20}
+            lightColor="#00990a"
+            speed={2.5}
+            noiseIntensity={1}
+            scale={0.2}
+            rotation={30}
+          />
         </div>
+        <div className="attendance-content">
+          <div className="attendance-header">
+            <h1>{data.name}'s Attendance</h1>
+          </div>
         
         <div className="attendance-grid">
           {data.courses && data.courses.length > 0 ? (
@@ -50,50 +64,60 @@ const Attendance = () => {
                   </div>
                   
                   <div className="card-body">
-                    <div className="chart-container">
-                      <svg width="140" height="140" className="attendance-chart">
-                        <circle
-                          cx="70"
-                          cy="70"
-                          r={radius}
-                          className="chart-background"
-                        />
-                        <circle
-                          cx="70"
-                          cy="70"
-                          r={radius}
-                          className="chart-progress"
-                          style={{
-                            strokeDasharray: circumference,
-                            strokeDashoffset: offset,
-                            stroke: statusColor
-                          }}
-                        />
-                      </svg>
-                      <div className="chart-label">
-                        <span className="percentage-value">{percentage}%</span>
+                    <div className="attendance-main-row">
+                      <div className="chart-container" style={{ background: 'none', backdropFilter: 'none' }}>
+                        <svg 
+                          width="140" 
+                          height="140" 
+                          className="attendance-chart"
+                        >
+                          <circle
+                            cx="70"
+                            cy="70"
+                            r={radius}
+                            className="chart-background"
+                          />
+                          <circle
+                            cx="70"
+                            cy="70"
+                            r={radius}
+                            className="chart-progress"
+                            style={{
+                              strokeDasharray: circumference,
+                              strokeDashoffset: offset,
+                              stroke: '#ffffff'
+                            }}
+                          />
+                        </svg>
+                        <div className="chart-label">
+                          <span className="percentage-value">{percentage}%</span>
+                        </div>
+                      </div>
+                      
+                      <div className="attendance-square-grid-section">
+                        <div className="attendance-square-grid">
+                          {Array.from({ length: course.totalClasses || 0 }).map((_, i) => (
+                            <div
+                              key={i}
+                              className={`attendance-square ${i < (course.attendedClasses || 0) ? 'filled' : 'empty'}`}
+                            />
+                          ))}
+                        </div>
+                        
+                        <div className="classes-text">
+                          {course.attendedClasses || 0} / {course.totalClasses || 0}
+                        </div>
                       </div>
                     </div>
                     
-                    <div className="card-stats">
-                      <div className="stat-item">
-                        <span className="stat-label">Status</span>
-                        <span 
-                          className="stat-value status-badge"
-                          style={{ color: statusColor, borderColor: statusColor }}
-                        >
-                          {course.attendanceStatus}
-                        </span>
-                      </div>
-                      
-                      <div className="stat-divider"></div>
-                      
-                      <div className="stat-item">
-                        <span className="stat-label">Classes</span>
-                        <span className="stat-value">
-                          {course.attendedClasses || 0} / {course.totalClasses || 0}
-                        </span>
-                      </div>
+                    <div className="status-badge-container">
+                      <span className="status-label">Status</span>
+                      <span 
+                        className="status-badge"
+                        style={{ color: statusColor, borderColor: statusColor }}
+                      >
+                        {course.attendanceStatus}
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -104,6 +128,7 @@ const Attendance = () => {
               <p>No courses found.</p>
             </div>
           )}
+        </div>
         </div>
       </div>
     </Layout>

@@ -7,7 +7,7 @@
 }
 
 /* --- General Styles --- */
-svg {
+.profile-page svg {
     fill: rgba(31, 31, 31, 0.60);
     stroke-width: 1px;
     stroke: #373737;

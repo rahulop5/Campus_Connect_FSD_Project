@@ -10,6 +10,23 @@
     color: white;
     font-family: "Outfit", serif;
     padding: 40px 48px;
+    position: relative;
+    overflow: hidden;
+}
+
+.beams-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    pointer-events: none;
+}
+
+.attendance-content {
+    position: relative;
+    z-index: 1;
 }
 
 .attendance-header {
@@ -70,7 +87,78 @@
 .card-body {
     display: flex;
     flex-direction: column;
-    gap: 24px;
+    gap: 16px;
+}
+
+.attendance-main-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 32px;
+}
+
+.attendance-square-grid-section {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex: 1;
+    padding-top: 15px;
+}
+
+.attendance-square-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    max-width: 240px;
+}
+
+.attendance-square {
+    width: 16px;
+    height: 16px;
+    border-radius: 3px;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+}
+
+.attendance-square:hover {
+    transform: scale(1.25);
+    filter: brightness(1.1);
+}
+
+.attendance-square.filled {
+    background: rgba(255, 255, 255, 0.85);
+}
+
+.attendance-square.filled:hover {
+    background: rgba(0, 153, 10, 0.9);
+}
+
+.attendance-square.empty {
+    background: rgba(255, 255, 255, 0.12);
+}
+
+.attendance-square.empty:hover {
+    background: rgba(0, 153, 10, 0.5);
+}
+
+.classes-text {
+    font-size: 16px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.status-badge-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    margin-top: -5vh;
+    margin-left: 80%;
+}
+
+.status-label {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.6);
+    font-weight: 500;
 }
 
 .chart-container {
@@ -81,12 +169,43 @@
     width: 140px;
     height: 140px;
     margin: 0 auto;
-    background: transparent;
+    background: none !important;
+    border: none;
+    box-shadow: none;
+    backdrop-filter: none;
+    isolation: auto;
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.chart-container:hover {
+    transform: scale(1.05);
 }
 
 .attendance-chart {
     transform: rotate(-90deg);
-    background: transparent;
+    background: transparent !important;
+    background-color: transparent !important;
+    backdrop-filter: none !important;
+    filter: none !important;
+    box-shadow: none !important;
+    fill: none !important;
+    overflow: visible;
+}
+
+.chart-container svg {
+    background: transparent !important;
+    background-color: transparent !important;
+    backdrop-filter: none !important;
+    fill: none !important;
+}
+
+.attendance-chart * {
+    background: none !important;
+}
+
+.attendance-chart circle {
+    background: none !important;
 }
 
 .chart-background {
@@ -99,7 +218,11 @@
     fill: none;
     stroke-width: 10;
     stroke-linecap: round;
-    transition: stroke-dashoffset 0.8s ease, stroke 0.3s ease;
+    transition: stroke 0.4s cubic-bezier(0.4, 0, 0.2, 1), stroke-dashoffset 0.8s ease;
+}
+
+.chart-container:hover .chart-progress {
+    stroke: #00990a !important;
 }
 
 .chart-label {
@@ -120,45 +243,13 @@
     line-height: 1;
 }
 
-.card-stats {
-    display: flex;
-    align-items: center;
-    justify-content: space-around;
-    gap: 16px;
-}
-
-.stat-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-    flex: 1;
-}
-
-.stat-label {
-    font-size: 13px;
-    color: rgba(255, 255, 255, 0.6);
-    font-weight: 500;
-}
-
-.stat-value {
-    font-size: 18px;
-    font-weight: 600;
-    color: #fff;
-}
-
 .status-badge {
-    padding: 6px 16px;
+    padding: 8px 20px;
     border-radius: 8px;
     border: 1px solid;
     background: rgba(0, 0, 0, 0.3);
-    font-size: 16px;
-}
-
-.stat-divider {
-    width: 1px;
-    height: 40px;
-    background: rgba(255, 255, 255, 0.1);
+    font-size: 15px;
+    font-weight: 600;
 }
 
 .no-data {
