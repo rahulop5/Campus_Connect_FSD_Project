@@ -270,10 +270,37 @@
     margin: 0;
 }
 
-.main>p{
+.main .question-description{
     color: rgba(255, 255, 255, 0.7);
     font-size: 14px;
     line-height: 1.5;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.main .question-description p{
+    margin: 0;
+}
+
+.main .question-description b,
+.main .question-description strong{
+    font-weight: 700;
+}
+
+.main .question-description i,
+.main .question-description em{
+    font-style: italic;
+}
+
+.main .question-description h3{
+    font-size: 16px;
+    margin: 0 0 6px;
+}
+
+.main .question-description pre{
+    white-space: pre-wrap;
 }
 
 .tags{

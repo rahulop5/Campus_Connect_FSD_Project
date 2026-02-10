@@ -9,6 +9,31 @@ import '../styles/Dashboard.css';
 const StudentDashboard = () => {
   const [data, setData] = useState(null);
 
+  const sanitizeHtml = (html = '') => {
+    if (typeof window === 'undefined') return '';
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(String(html), 'text/html');
+    const allowed = new Set(['B', 'STRONG', 'I', 'EM', 'H3', 'PRE', 'CODE', 'BR', 'P', 'UL', 'OL', 'LI']);
+
+    const cleanNode = (node) => {
+      Array.from(node.children).forEach((child) => {
+        if (!allowed.has(child.tagName)) {
+          const fragment = doc.createDocumentFragment();
+          while (child.firstChild) {
+            fragment.appendChild(child.firstChild);
+          }
+          child.replaceWith(fragment);
+        } else {
+          Array.from(child.attributes).forEach((attr) => child.removeAttribute(attr.name));
+          cleanNode(child);
+        }
+      });
+    };
+
+    cleanNode(doc.body);
+    return doc.body.innerHTML;
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -106,7 +131,12 @@ const StudentDashboard = () => {
                     </div>
                     <div className="main">
                       <h4>{q.heading}</h4>
-                      <p>{q.desc.slice(0, 100)}...</p>
+                      <div
+                        className="question-description"
+                        dangerouslySetInnerHTML={{
+                          __html: q.desc ? sanitizeHtml(q.desc) : ''
+                        }}
+                      />
                       <div className="tags">
                         {q.tags.map((tag, i) => (
                           <div key={i}><p>{tag}</p></div>
