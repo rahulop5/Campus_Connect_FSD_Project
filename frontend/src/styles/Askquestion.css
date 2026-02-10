@@ -72,6 +72,7 @@
 }
 
 .hoho input{
+    width: 100%;
     background: rgba(255, 255, 255, 0.06);
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 8px;
@@ -80,6 +81,7 @@
     font-size: 16px;
     font-family: "Outfit", serif;
     transition: all 0.3s ease;
+    box-sizing: border-box;
 }
 
 .hoho input:focus{

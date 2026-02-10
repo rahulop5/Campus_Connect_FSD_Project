@@ -1,6 +1,22 @@
 import Question from "../models/Question.js";
 import Answer from "../models/Answer.js";
 
+const resolveUserId = async (req) => {
+  if (req.user?.role && req.user.role !== "Student") {
+    return null;
+  }
+
+  let userId = req.user?.id || req.user?._id;
+
+  if (!userId && req.user?.email) {
+    const Student = (await import("../models/Student.js")).default;
+    const student = await Student.findOne({ email: req.user.email });
+    if (student) userId = student._id;
+  }
+
+  return userId;
+};
+
 // GET /api/forum/questions
 export const getQuestions = async (req, res) => {
   try {
@@ -19,13 +35,16 @@ export const getQuestions = async (req, res) => {
 export const getQuestionDetails = async (req, res) => {
   try {
     const questionId = req.params.id;
-    const question = await Question.findByIdAndUpdate(
-      questionId,
-      { $inc: { views: 1 } },
-      { new: true }
-    )
-      .populate("answers")
-      .populate("asker");
+    const shouldIncrement = req.query.increment === "1";
+    const question = shouldIncrement
+      ? await Question.findByIdAndUpdate(
+          questionId,
+          { $inc: { views: 1 } },
+          { new: true }
+        )
+          .populate("answers")
+          .populate("asker")
+      : await Question.findById(questionId).populate("answers").populate("asker");
 
     if (!question) return res.status(404).json({ error: "Question not found" });
 
@@ -37,58 +56,186 @@ export const getQuestionDetails = async (req, res) => {
 };
 
 export const upvoteQuestion = async (req, res) => {
-  const questionId = req.body.id;
-  const question = await Question.findByIdAndUpdate(
-    questionId,
-    { $inc: { votes: 1 } },
-    { new: true }
-  );
-  if (question) {
-    res.json({ votes: question.votes });
-  } else {
-    res.status(404).json({ message: "Question not found" });
+  try {
+    const questionId = req.body.id;
+    const userId = await resolveUserId(req);
+
+    if (!userId) {
+      return res.status(403).json({ message: "Only students can vote" });
+    }
+
+    const question = await Question.findById(questionId);
+    if (!question) {
+      return res.status(404).json({ message: "Question not found" });
+    }
+
+    // Check if user has already voted
+    const existingVote = question.voters.find(
+      (v) => v.userId && v.userId.toString() === userId.toString()
+    );
+
+    if (existingVote) {
+      if (existingVote.voteType === 'upvote') {
+        return res.json({ votes: question.votes, userVote: 'upvote' });
+      }
+
+      const updated = await Question.findOneAndUpdate(
+        { _id: questionId, "voters.userId": userId, "voters.voteType": "downvote" },
+        { $pull: { voters: { userId } }, $inc: { votes: 1 } },
+        { new: true }
+      );
+
+      return res.json({ votes: updated?.votes ?? question.votes, userVote: null });
+    }
+
+    const updated = await Question.findOneAndUpdate(
+      { _id: questionId, "voters.userId": { $ne: userId } },
+      { $push: { voters: { userId, voteType: 'upvote' } }, $inc: { votes: 1 } },
+      { new: true }
+    );
+
+    return res.json({ votes: updated?.votes ?? question.votes, userVote: 'upvote' });
+  } catch (error) {
+    console.error("Upvote error:", error);
+    res.status(500).json({ message: "Internal Server Error" });
   }
 };
 
 export const downvoteQuestion = async (req, res) => {
-  const questionId = req.body.id;
-  const question = await Question.findByIdAndUpdate(
-    questionId,
-    { $inc: { votes: -1 } },
-    { new: true }
-  );
-  if (question) {
-    res.json({ votes: question.votes });
-  } else {
-    res.status(404).json({ message: "Question not found" });
+  try {
+    const questionId = req.body.id;
+    const userId = await resolveUserId(req);
+
+    if (!userId) {
+      return res.status(403).json({ message: "Only students can vote" });
+    }
+
+    const question = await Question.findById(questionId);
+    if (!question) {
+      return res.status(404).json({ message: "Question not found" });
+    }
+
+    // Check if user has already voted
+    const existingVote = question.voters.find(
+      (v) => v.userId && v.userId.toString() === userId.toString()
+    );
+
+    if (existingVote) {
+      if (existingVote.voteType === 'downvote') {
+        return res.json({ votes: question.votes, userVote: 'downvote' });
+      }
+
+      const updated = await Question.findOneAndUpdate(
+        { _id: questionId, "voters.userId": userId, "voters.voteType": "upvote" },
+        { $pull: { voters: { userId } }, $inc: { votes: -1 } },
+        { new: true }
+      );
+
+      return res.json({ votes: updated?.votes ?? question.votes, userVote: null });
+    }
+
+    const updated = await Question.findOneAndUpdate(
+      { _id: questionId, "voters.userId": { $ne: userId } },
+      { $push: { voters: { userId, voteType: 'downvote' } }, $inc: { votes: -1 } },
+      { new: true }
+    );
+
+    return res.json({ votes: updated?.votes ?? question.votes, userVote: 'downvote' });
+  } catch (error) {
+    console.error("Downvote error:", error);
+    res.status(500).json({ message: "Internal Server Error" });
   }
 };
 
 export const upvoteAnswer = async (req, res) => {
-  const { questionId, answerId } = req.body;
-  const answer = await Answer.findByIdAndUpdate(
-    answerId,
-    { $inc: { votes: 1 } },
-    { new: true }
-  );
-  if (answer) {
-    res.json({ votes: answer.votes });
-  } else {
-    res.status(404).json({ message: "Answer not found" });
+  try {
+    const { questionId, answerId } = req.body;
+    const userId = await resolveUserId(req);
+
+    if (!userId) {
+      return res.status(403).json({ message: "Only students can vote" });
+    }
+
+    const answer = await Answer.findById(answerId);
+    if (!answer) {
+      return res.status(404).json({ message: "Answer not found" });
+    }
+
+    // Check if user has already voted
+    const existingVote = answer.voters.find(
+      (v) => v.userId && v.userId.toString() === userId.toString()
+    );
+
+    if (existingVote) {
+      if (existingVote.voteType === 'upvote') {
+        return res.json({ votes: answer.votes, userVote: 'upvote' });
+      }
+
+      const updated = await Answer.findOneAndUpdate(
+        { _id: answerId, "voters.userId": userId, "voters.voteType": "downvote" },
+        { $pull: { voters: { userId } }, $inc: { votes: 1 } },
+        { new: true }
+      );
+
+      return res.json({ votes: updated?.votes ?? answer.votes, userVote: null });
+    }
+
+    const updated = await Answer.findOneAndUpdate(
+      { _id: answerId, "voters.userId": { $ne: userId } },
+      { $push: { voters: { userId, voteType: 'upvote' } }, $inc: { votes: 1 } },
+      { new: true }
+    );
+
+    return res.json({ votes: updated?.votes ?? answer.votes, userVote: 'upvote' });
+  } catch (error) {
+    console.error("Upvote error:", error);
+    res.status(500).json({ message: "Internal Server Error" });
   }
 };
 
 export const downvoteAnswer = async (req, res) => {
-  const { questionId, answerId } = req.body;
-  const answer = await Answer.findByIdAndUpdate(
-    answerId,
-    { $inc: { votes: -1 } },
-    { new: true }
-  );
-  if (answer) {
-    res.json({ votes: answer.votes });
-  } else {
-    res.status(404).json({ message: "Answer not found" });
+  try {
+    const { questionId, answerId } = req.body;
+    const userId = await resolveUserId(req);
+
+    if (!userId) {
+      return res.status(403).json({ message: "Only students can vote" });
+    }
+
+    const answer = await Answer.findById(answerId);
+    if (!answer) {
+      return res.status(404).json({ message: "Answer not found" });
+    }
+
+    // Check if user has already voted
+    const existingVote = answer.voters.find(
+      (v) => v.userId && v.userId.toString() === userId.toString()
+    );
+
+    if (existingVote) {
+      if (existingVote.voteType === 'downvote') {
+        return res.json({ votes: answer.votes, userVote: 'downvote' });
+      }
+
+      const updated = await Answer.findOneAndUpdate(
+        { _id: answerId, "voters.userId": userId, "voters.voteType": "upvote" },
+        { $pull: { voters: { userId } }, $inc: { votes: -1 } },
+        { new: true }
+      );
+
+      return res.json({ votes: updated?.votes ?? answer.votes, userVote: null });
+    }
+
+    const updated = await Answer.findOneAndUpdate(
+      { _id: answerId, "voters.userId": { $ne: userId } },
+      { $push: { voters: { userId, voteType: 'downvote' } }, $inc: { votes: -1 } },
+      { new: true }
+    );
+
+    return res.json({ votes: updated?.votes ?? answer.votes, userVote: 'downvote' });
+  } catch (error) {
+    console.error("Downvote error:", error);
+    res.status(500).json({ message: "Internal Server Error" });
   }
 };
 

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useParams } from 'react-router';
 import { useSelector } from 'react-redux';
 import api from '../api/axios';
@@ -12,6 +12,7 @@ const ForumDetail = () => {
   const [userVotes, setUserVotes] = useState({});
   const [answerText, setAnswerText] = useState('');
   const [loading, setLoading] = useState(true);
+  const viewRequestRef = useRef(null);
 
   const sanitizeHtml = (html = '') => {
     if (typeof window === 'undefined') return '';
@@ -38,23 +39,23 @@ const ForumDetail = () => {
     return doc.body.innerHTML;
   };
 
-  const fetchQuestion = async () => {
+  const fetchQuestion = async ({ incrementView = false } = {}) => {
     try {
-      const res = await api.get(`/forum/question/${id}`);
+      const res = await api.get(`/forum/question/${id}?increment=${incrementView ? '1' : '0'}`);
       setQuestion(res.data.question);
       
       // Build user votes map
       const votes = {};
       if (res.data.question.voters) {
         res.data.question.voters.forEach(voter => {
-          if (voter.userId === user?._id) votes[id] = voter.voteType;
+          if (String(voter.userId) === String(user?._id)) votes[id] = voter.voteType;
         });
       }
       if (res.data.question.answers) {
         res.data.question.answers.forEach(answer => {
           if (answer.voters) {
             answer.voters.forEach(voter => {
-              if (voter.userId === user?._id) votes[answer._id] = voter.voteType;
+              if (String(voter.userId) === String(user?._id)) votes[answer._id] = voter.voteType;
             });
           }
         });
@@ -68,7 +69,18 @@ const ForumDetail = () => {
   };
 
   useEffect(() => {
-    fetchQuestion();
+    if (viewRequestRef.current) {
+      clearTimeout(viewRequestRef.current);
+    }
+    viewRequestRef.current = setTimeout(() => {
+      fetchQuestion({ incrementView: true });
+    }, 0);
+
+    return () => {
+      if (viewRequestRef.current) {
+        clearTimeout(viewRequestRef.current);
+      }
+    };
   }, [id]);
 
   const handleSubmitAnswer = async () => {
@@ -76,7 +88,7 @@ const ForumDetail = () => {
     try {
       await api.post('/forum/submit-answer', { questionId: id, answerText });
       setAnswerText('');
-      fetchQuestion(); // Refresh
+      fetchQuestion(); // Refresh without incrementing views
     } catch (error) {
       console.error("Error submitting answer:", error);
       alert("Failed to submit answer");
@@ -99,10 +111,15 @@ const ForumDetail = () => {
       const res = await api.post(endpoint, body);
       
       // Update user votes
-      setUserVotes(prev => ({
-        ...prev,
-        [itemId]: type === 'up' ? 'upvote' : 'downvote'
-      }));
+      setUserVotes(prev => {
+        const next = { ...prev };
+        if (res.data.userVote) {
+          next[itemId] = res.data.userVote;
+        } else {
+          delete next[itemId];
+        }
+        return next;
+      });
       
       // Update votes count
       if (isAnswer) {

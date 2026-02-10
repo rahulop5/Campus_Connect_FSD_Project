@@ -10,6 +10,13 @@ const questionSchema = new mongoose.Schema({
   wealth: { type: Number, default: 0 },
   views: { type: Number, default: 0 },
   answers: [{ type: mongoose.Schema.Types.ObjectId, ref: "Answer" }],
+  voters: [
+    {
+      userId: { type: mongoose.Schema.Types.ObjectId, ref: "Student" },
+      voteType: { type: String, enum: ['upvote', 'downvote'] },
+      _id: false,
+    }
+  ],
 });
 
 const Question = mongoose.model("Question", questionSchema);
