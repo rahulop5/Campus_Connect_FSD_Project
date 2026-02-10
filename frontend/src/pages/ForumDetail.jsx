@@ -1,19 +1,65 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router';
+import { useSelector } from 'react-redux';
 import api from '../api/axios';
 import Layout from '../components/Layout';
 import '../styles/Problemopen.css';
 
 const ForumDetail = () => {
   const { id } = useParams();
+  const { user } = useSelector((state) => state.auth);
   const [question, setQuestion] = useState(null);
+  const [userVotes, setUserVotes] = useState({});
   const [answerText, setAnswerText] = useState('');
   const [loading, setLoading] = useState(true);
+
+  const sanitizeHtml = (html = '') => {
+    if (typeof window === 'undefined') return '';
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(String(html), 'text/html');
+    const allowed = new Set(['B', 'STRONG', 'I', 'EM', 'H3', 'PRE', 'CODE', 'BR', 'P', 'UL', 'OL', 'LI']);
+
+    const cleanNode = (node) => {
+      Array.from(node.children).forEach((child) => {
+        if (!allowed.has(child.tagName)) {
+          const fragment = doc.createDocumentFragment();
+          while (child.firstChild) {
+            fragment.appendChild(child.firstChild);
+          }
+          child.replaceWith(fragment);
+        } else {
+          Array.from(child.attributes).forEach((attr) => child.removeAttribute(attr.name));
+          cleanNode(child);
+        }
+      });
+    };
+
+    cleanNode(doc.body);
+    return doc.body.innerHTML;
+  };
 
   const fetchQuestion = async () => {
     try {
       const res = await api.get(`/forum/question/${id}`);
       setQuestion(res.data.question);
+      
+      // Build user votes map
+      const votes = {};
+      if (res.data.question.voters) {
+        res.data.question.voters.forEach(voter => {
+          if (voter.userId === user?._id) votes[id] = voter.voteType;
+        });
+      }
+      if (res.data.question.answers) {
+        res.data.question.answers.forEach(answer => {
+          if (answer.voters) {
+            answer.voters.forEach(voter => {
+              if (voter.userId === user?._id) votes[answer._id] = voter.voteType;
+            });
+          }
+        });
+      }
+      setUserVotes(votes);
       setLoading(false);
     } catch (error) {
       console.error("Error fetching question:", error);
@@ -38,6 +84,11 @@ const ForumDetail = () => {
   };
 
   const handleVote = async (type, itemId, isAnswer = false) => {
+    if (!user) {
+      alert('Please login to vote');
+      return;
+    }
+
     const endpoint = isAnswer 
       ? (type === 'up' ? '/forum/upvote-answer' : '/forum/downvote-answer')
       : (type === 'up' ? '/forum/upvote-question' : '/forum/downvote-question');
@@ -45,8 +96,25 @@ const ForumDetail = () => {
     const body = isAnswer ? { questionId: id, answerId: itemId } : { id: itemId };
 
     try {
-      await api.post(endpoint, body);
-      fetchQuestion(); // Refresh to show new vote count
+      const res = await api.post(endpoint, body);
+      
+      // Update user votes
+      setUserVotes(prev => ({
+        ...prev,
+        [itemId]: type === 'up' ? 'upvote' : 'downvote'
+      }));
+      
+      // Update votes count
+      if (isAnswer) {
+        setQuestion(prev => ({
+          ...prev,
+          answers: prev.answers.map(ans => 
+            ans._id === itemId ? { ...ans, votes: res.data.votes } : ans
+          )
+        }));
+      } else {
+        setQuestion(prev => ({ ...prev, votes: res.data.votes }));
+      }
     } catch (error) {
       console.error("Error voting:", error);
     }
@@ -80,14 +148,17 @@ const ForumDetail = () => {
           <div className="po_question">
             <div className="po_qelab">
               <div className="updownvote">
-                <div className="upvote-triangle" onClick={() => handleVote('up', question._id)}></div>
+                <div className={`upvote-triangle ${userVotes[question._id] === 'upvote' ? 'active' : ''}`} onClick={() => handleVote('up', question._id)}></div>
                 <div className="po_qnoofvotes outfit"><p>{question.votes}</p></div>
-                <div className="downvote-triangle" onClick={() => handleVote('down', question._id)}></div>
+                <div className={`downvote-triangle ${userVotes[question._id] === 'downvote' ? 'active' : ''}`} onClick={() => handleVote('down', question._id)}></div>
                 <div><img src="/assets/save.png" alt="" className="po_save" /></div>
               </div>
 
               <div className="po_qdesc outfit">
-                <div><p>{question.desc}</p></div>
+                <div
+                  className="rich-text"
+                  dangerouslySetInnerHTML={{ __html: sanitizeHtml(question.desc) }}
+                />
                 <div className="po_qtags">
                   {(question.tags || []).map((tag, idx) => (
                     <div key={idx}><p>{tag}</p></div>
@@ -111,12 +182,15 @@ const ForumDetail = () => {
                   <div key={ans._id}>
                     <div className="po_anselab">
                       <div className="ansupdownvote">
-                        <div className="upvote-triangle" onClick={() => handleVote('up', ans._id, true)}></div>
+                        <div className={`upvote-triangle ${userVotes[ans._id] === 'upvote' ? 'active' : ''}`} onClick={() => handleVote('up', ans._id, true)}></div>
                         <div className="po_qnoofvotes outfit"><p>{ans.votes}</p></div>
-                        <div className="downvote-triangle" onClick={() => handleVote('down', ans._id, true)}></div>
+                        <div className={`downvote-triangle ${userVotes[ans._id] === 'downvote' ? 'active' : ''}`} onClick={() => handleVote('down', ans._id, true)}></div>
                       </div>
                       <div className="po_ansdesc outfit">
-                        <p>{ans.desc}</p>
+                          <div
+                            className="rich-text"
+                            dangerouslySetInnerHTML={{ __html: sanitizeHtml(ans.desc) }}
+                          />
                       </div>
                     </div>
                     <hr className="hr_answer" />

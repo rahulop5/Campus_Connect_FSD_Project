@@ -243,6 +243,10 @@
     border-bottom-color: green;
 }
 
+.upvote-triangle.active {
+    border-bottom-color: #2B9900;
+}
+
 .downvote-triangle {
     width: 0;
     height: 0;
@@ -256,6 +260,10 @@
 
 .downvote-triangle:hover {
     border-top-color: red;
+}
+
+.downvote-triangle.active {
+    border-top-color: #FF4444;
 }
 
 .po_qnoofvotes{
@@ -274,6 +282,38 @@
 
 .po_qdesc p{
     font-size: 19px;
+}
+
+.rich-text {
+    line-height: 1.6;
+}
+
+.po_qdesc .rich-text,
+.po_ansdesc .rich-text {
+    color: inherit;
+}
+
+.rich-text p {
+    margin: 0 0 8px;
+}
+
+.rich-text h3 {
+    margin: 0 0 8px;
+    font-size: 22px;
+}
+
+.rich-text b,
+.rich-text strong {
+    font-weight: 700;
+}
+
+.rich-text i,
+.rich-text em {
+    font-style: italic;
+}
+
+.rich-text pre {
+    white-space: pre-wrap;
 }
 
 .po_qdesccode{

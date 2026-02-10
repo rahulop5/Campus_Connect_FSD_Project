@@ -14,6 +14,31 @@ const ForumList = () => {
   const [hoveredUser, setHoveredUser] = useState(null);
   const [userDetails, setUserDetails] = useState({});
 
+  const sanitizeHtml = (html = '') => {
+    if (typeof window === 'undefined') return '';
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(String(html), 'text/html');
+    const allowed = new Set(['B', 'STRONG', 'I', 'EM', 'H3', 'PRE', 'CODE', 'BR', 'P', 'UL', 'OL', 'LI']);
+
+    const cleanNode = (node) => {
+      Array.from(node.children).forEach((child) => {
+        if (!allowed.has(child.tagName)) {
+          const fragment = doc.createDocumentFragment();
+          while (child.firstChild) {
+            fragment.appendChild(child.firstChild);
+          }
+          child.replaceWith(fragment);
+        } else {
+          Array.from(child.attributes).forEach((attr) => child.removeAttribute(attr.name));
+          cleanNode(child);
+        }
+      });
+    };
+
+    cleanNode(doc.body);
+    return doc.body.innerHTML;
+  };
+
   useEffect(() => {
     const fetchQuestions = async () => {
       try {
@@ -212,9 +237,12 @@ const ForumList = () => {
                     <Link to={`/forum/question/${q._id}`} className="question-link">
                       <h3 className="question-heading">{q.heading}</h3>
                     </Link>
-                    <p className="question-description">
-                      {q.desc ? (q.desc.length > 150 ? q.desc.slice(0, 150) + '...' : q.desc) : 'No description available.'}
-                    </p>
+                    <div
+                      className="question-description"
+                      dangerouslySetInnerHTML={{
+                        __html: q.desc ? sanitizeHtml(q.desc) : 'No description available.'
+                      }}
+                    />
                     {q.tags && q.tags.length > 0 && (
                       <div className="question-tags">
                         {q.tags.map((tag, idx) => (
