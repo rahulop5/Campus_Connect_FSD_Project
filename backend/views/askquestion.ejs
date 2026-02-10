@@ -8,6 +8,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&family=Rubik:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
     <title>Document</title>
+    <script src="/scripts/askquestion.js" defer></script>
 </head>
 <body class="outfit">
     <%- include("header.ejs") %>
@@ -27,12 +28,15 @@
                     <div class="po_useransheading"><p>Describe your Question:</p></div>
                     <div class="po_useranscontainer">
                       <div class="po_useranstools">
-                        <img src="/assets/bold.png" alt="">
-                        <img src="/assets/italic.png" alt="">
-                        <img src="/assets/heading.png" alt="">
-                        <img src="/assets/codeansbox.png" alt="">
+                        <img src="/assets/bold.png" alt="Bold" title="Bold" data-format="bold">
+                        <img src="/assets/italic.png" alt="Italic" title="Italic" data-format="italic">
+                        <div class="heading-btn" title="Heading">
+                          <span>Heading</span>
+                        </div>
+                        <img src="/assets/codeansbox.png" alt="Code Block" title="Code Block" data-format="code">
                       </div>
-                      <textarea type="textarea" id="answer-textarea" class="po_useransbox" name="desc" required></textarea>  
+                      <div id="answer-textarea" class="po_useransbox" contenteditable="true" data-placeholder="Describe your question here..."></div>
+                      <input type="hidden" id="hidden-desc" name="desc" required>
                     </div>
                   </div>
                   <div class="hoho">

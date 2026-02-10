@@ -132,16 +132,61 @@
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.po_useranstools img{
-    height: 20px;
-    width: 20px;
-    opacity: 0.6;
+.po_useranstools .tool-btn{
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 24px;
+    width: 24px;
+    padding: 0;
+    border-radius: 4px;
+    border: 1px solid transparent;
+    background: transparent;
     cursor: pointer;
-    transition: opacity 0.3s ease;
+    transition: all 0.2s ease;
 }
 
-.po_useranstools img:hover{
+.po_useranstools .tool-btn:hover{
+    background: transparent;
+}
+
+.po_useranstools .tool-btn.active{
+    background: #fff;
+    border-color: #fff;
+}
+
+.po_useranstools .tool-icon{
+    height: 20px;
+    width: 20px;
+    opacity: 0.8;
+}
+
+.po_useranstools .tool-btn.active .tool-icon{
     opacity: 1;
+    filter: invert(1);
+}
+
+.po_useranstools .heading-btn{
+    width: auto;
+    padding: 0 10px;
+    gap: 6px;
+    margin-left: auto;
+    margin-right: auto;
+    color: #fff;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.2px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.po_useranstools .heading-btn span{
+    line-height: 1;
+}
+
+.po_useranstools .heading-icon{
+    height: 14px;
+    width: 14px;
+    opacity: 0.8;
 }
 
 .po_useransbox{
@@ -154,6 +199,7 @@
     font-size: 15px;
     font-family: "Outfit", serif;
     padding: 12px;
+    overflow-y: auto;
     resize: vertical;
 }
 
@@ -161,7 +207,8 @@
     outline: none;
 }
 
-.po_useransbox::placeholder{
+.po_useransbox:empty:before{
+    content: attr(data-placeholder);
     color: rgba(255, 255, 255, 0.3);
 }
 

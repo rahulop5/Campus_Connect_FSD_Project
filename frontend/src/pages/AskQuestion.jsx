@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { useSelector } from 'react-redux';
 import api from '../api/axios';
@@ -9,15 +9,35 @@ const AskQuestion = () => {
   const { user } = useSelector((state) => state.auth);
   const navigate = useNavigate();
   const [formData, setFormData] = useState({ title: '', desc: '', tags: '' });
+  const [formatState, setFormatState] = useState({ bold: false, italic: false });
+  const editorRef = useRef(null);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  const updateFormatState = () => {
+    setFormatState({
+      bold: document.queryCommandState('bold'),
+      italic: document.queryCommandState('italic'),
+    });
+  };
+
+  const syncDesc = () => {
+    const html = editorRef.current?.innerHTML || '';
+    setFormData((prev) => ({ ...prev, desc: html }));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const descText = editorRef.current?.textContent?.trim() || '';
+    const descHtml = editorRef.current?.innerHTML || '';
+    if (!descText) {
+      alert('Please describe your question');
+      return;
+    }
     try {
-      await api.post('/forum/ask', formData);
+      await api.post('/forum/ask', { ...formData, desc: descHtml });
       navigate('/forum/questions');
     } catch (error) {
       console.error("Error asking question:", error);
@@ -42,12 +62,75 @@ const AskQuestion = () => {
                 <div className="po_useransheading"><p>Describe your Question:</p></div>
                 <div className="po_useranscontainer">
                   <div className="po_useranstools">
-                    <img src="/assets/bold.png" alt="" />
-                    <img src="/assets/italic.png" alt="" />
-                    <img src="/assets/heading.png" alt="" />
-                    <img src="/assets/codeansbox.png" alt="" />
+                    <button
+                      type="button"
+                      className={`tool-btn ${formatState.bold ? 'active' : ''}`}
+                      onMouseDown={(e) => e.preventDefault()}
+                      onClick={() => {
+                        document.execCommand('bold');
+                        updateFormatState();
+                        editorRef.current?.focus();
+                      }}
+                      aria-label="Bold"
+                      title="Bold"
+                    >
+                      <img src="/assets/bold.png" alt="Bold" className="tool-icon" />
+                    </button>
+                    <button
+                      type="button"
+                      className={`tool-btn ${formatState.italic ? 'active' : ''}`}
+                      onMouseDown={(e) => e.preventDefault()}
+                      onClick={() => {
+                        document.execCommand('italic');
+                        updateFormatState();
+                        editorRef.current?.focus();
+                      }}
+                      aria-label="Italic"
+                      title="Italic"
+                    >
+                      <img src="/assets/italic.png" alt="Italic" className="tool-icon" />
+                    </button>
+                    <button
+                      type="button"
+                      className="tool-btn heading-btn"
+                      onMouseDown={(e) => e.preventDefault()}
+                      onClick={() => {
+                        document.execCommand('formatBlock', false, 'h3');
+                        editorRef.current?.focus();
+                      }}
+                      aria-label="Heading"
+                      title="Heading"
+                    >
+                      <span>Heading</span>
+                      <img src="/assets/heading.png" alt="" className="heading-icon" />
+                    </button>
+                    <button
+                      type="button"
+                      className="tool-btn"
+                      onMouseDown={(e) => e.preventDefault()}
+                      onClick={() => {
+                        document.execCommand('formatBlock', false, 'pre');
+                        editorRef.current?.focus();
+                      }}
+                      aria-label="Code Block"
+                      title="Code Block"
+                    >
+                      <img src="/assets/codeansbox.png" alt="Code Block" className="tool-icon" />
+                    </button>
                   </div>
-                  <textarea className="po_useransbox" name="desc" value={formData.desc} onChange={handleChange} required maxLength={300}></textarea>  
+                  <div
+                    ref={editorRef}
+                    className="po_useransbox"
+                    contentEditable
+                    suppressContentEditableWarning
+                    role="textbox"
+                    aria-multiline="true"
+                    data-placeholder="Describe your question here..."
+                    onInput={syncDesc}
+                    onKeyUp={updateFormatState}
+                    onMouseUp={updateFormatState}
+                    onFocus={updateFormatState}
+                  />
                 </div>
               </div>
               <div className="hoho">
