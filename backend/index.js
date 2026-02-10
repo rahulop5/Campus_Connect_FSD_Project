@@ -56,7 +56,7 @@ const accessLogStream = createStream("access.log", {
   path: path.join(__dirname, "logs"),
   compress: "gzip"
 });
-app.use(morgan("dev"))
+// app.use(morgan("dev")) // Console logging commented out
 app.use(
   morgan("combined", {
     stream: accessLogStream
