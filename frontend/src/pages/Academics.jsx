@@ -20,6 +20,7 @@ const Academics = () => {
       try {
         const res = await api.get('/professor/courses');
         setCourses(res.data.courses || []);
+        console.log(res.data.courses);
       } catch (error) {
         console.error("Error fetching courses:", error);
       }
@@ -144,9 +145,9 @@ const Academics = () => {
                 required
               >
                 <option value="">-- Choose a course --</option>
-                {courses.map((course) => (
+                {courses.map((course, idx) => (
                   <option key={course._id} value={course._id}>
-                    {course.courseCode} - {course.courseName}
+                    {idx + 1} - {course.name}
                   </option>
                 ))}
               </select>

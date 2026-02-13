@@ -12,7 +12,9 @@ const ForumDetail = () => {
   const [userVotes, setUserVotes] = useState({});
   const [answerText, setAnswerText] = useState('');
   const [loading, setLoading] = useState(true);
+  const [formatState, setFormatState] = useState({ bold: false, italic: false });
   const viewRequestRef = useRef(null);
+  const editorRef = useRef(null);
 
   const sanitizeHtml = (html = '') => {
     if (typeof window === 'undefined') return '';
@@ -83,10 +85,24 @@ const ForumDetail = () => {
     };
   }, [id]);
 
+  const updateFormatState = () => {
+    setFormatState({
+      bold: document.queryCommandState('bold'),
+      italic: document.queryCommandState('italic'),
+    });
+  };
+
+  const syncAnswer = () => {
+    const html = editorRef.current?.innerHTML || '';
+    setAnswerText(html);
+  };
+
   const handleSubmitAnswer = async () => {
-    if (!answerText.trim()) return alert("Please type an answer!");
+    const content = editorRef.current?.innerHTML || '';
+    if (!editorRef.current?.textContent?.trim()) return alert("Please type an answer!");
     try {
-      await api.post('/forum/submit-answer', { questionId: id, answerText });
+      await api.post('/forum/submit-answer', { questionId: id, answerText: content });
+      if (editorRef.current) editorRef.current.innerHTML = '';
       setAnswerText('');
       fetchQuestion(); // Refresh without incrementing views
     } catch (error) {
@@ -220,17 +236,72 @@ const ForumDetail = () => {
               <div className="po_useransheading"><p>Answer to the Question :</p></div>
               <div className="po_useranscontainer">
                 <div className="po_useranstools">
-                  <img src="/assets/bold.png" alt="" />
-                  <img src="/assets/italic.png" alt="" />
-                  <img src="/assets/heading.png" alt="" />
-                  <img src="/assets/codeansbox.png" alt="" />
-                  <div id="submit-answer-btn" onClick={handleSubmitAnswer} style={{cursor: 'pointer'}}><p>Submit</p></div>
+                  <button
+                    type="button"
+                    className={`tool-btn ${formatState.bold ? 'active' : ''}`}
+                    onMouseDown={(e) => e.preventDefault()}
+                    onClick={() => {
+                        document.execCommand('bold');
+                        updateFormatState();
+                        editorRef.current?.focus();
+                    }}
+                    title="Bold"
+                  >
+                    <img src="/assets/bold.png" alt="Bold" className="tool-icon" />
+                  </button>
+                  <button
+                    type="button"
+                    className={`tool-btn ${formatState.italic ? 'active' : ''}`}
+                    onMouseDown={(e) => e.preventDefault()}
+                    onClick={() => {
+                        document.execCommand('italic');
+                        updateFormatState();
+                        editorRef.current?.focus();
+                    }}
+                    title="Italic"
+                  >
+                    <img src="/assets/italic.png" alt="Italic" className="tool-icon" />
+                  </button>
+                  <button
+                      type="button"
+                      className="tool-btn heading-btn"
+                      onMouseDown={(e) => e.preventDefault()}
+                      onClick={() => {
+                        document.execCommand('formatBlock', false, 'h3');
+                        editorRef.current?.focus();
+                      }}
+                      title="Heading"
+                    >
+                      <span>Heading</span>
+                      <img src="/assets/heading.png" alt="" className="heading-icon" />
+                  </button>
+                  <button
+                      type="button"
+                      className="tool-btn"
+                      onMouseDown={(e) => e.preventDefault()}
+                      onClick={() => {
+                        document.execCommand('formatBlock', false, 'pre');
+                        editorRef.current?.focus();
+                      }}
+                      title="Code Block"
+                    >
+                      <img src="/assets/codeansbox.png" alt="Code Block" className="tool-icon" />
+                  </button>
+                  <div id="submit-answer-btn" onClick={handleSubmitAnswer} style={{cursor: 'pointer', marginLeft: 'auto'}}><p>Submit</p></div>
                 </div>
-                <textarea 
-                  className="po_useransbox" 
-                  value={answerText}
-                  onChange={(e) => setAnswerText(e.target.value)}
-                ></textarea>
+                <div
+                    ref={editorRef}
+                    className="po_useransbox"
+                    contentEditable
+                    suppressContentEditableWarning
+                    role="textbox"
+                    aria-multiline="true"
+                    data-placeholder="Type your answer here..."
+                    onInput={syncAnswer}
+                    onKeyUp={updateFormatState}
+                    onMouseUp={updateFormatState}
+                    onFocus={updateFormatState}
+                  />
               </div>
             </div>
           </div>
