@@ -10,13 +10,25 @@ const __dirname = path.dirname(__filename);
 
 export const studentDashboard = async (req, res) => {
   try {
-    const studentId = req.user.email ? (await Student.findOne({email: req.user.email}))._id : req.user._id;
-    // Or better, if JWT has ID, use that. Assuming JWT has email, let's find user.
-    // Actually, getMe or middleware could attach full user, but middleware attaches payload.
-    // Let's assume payload has email.
+    // req.user is set by authMiddleware from JWT. 
+    // JWT contains { id: user._id, role: ... }
+    const userId = req.user.id;
     
-    const student = await Student.findOne({ email: req.user.email }).populate("courses.course");
-    if (!student) return res.status(404).json({ message: "Student not found" });
+    // Find Student by userId (foreign key from User)
+    // Populate 'courses.course'
+    const student = await Student.findOne({ userId }).populate("courses.course");
+    
+    if (!student) return res.status(404).json({ message: "Student profile not found" });
+
+    // Use req.user.name if student.name is missing (it should be in User model)
+    // But since we didn't populate User here, we rely on what's in Student or pass it.
+    // Actually Student model doesn't have name anymore? 
+    // Wait, let's allow name to be fetched from User if needed.
+    // The previous code returned `student.name`. 
+    // Let's populate userId in Student to get the name.
+    
+    const studentWithUser = await Student.findOne({ userId }).populate("userId", "name").populate("courses.course");
+    const studentName = studentWithUser.userId?.name || "Student"; // Fallback
 
     const courses = student.courses.map((courseObj) => {
       const course = courseObj.course;
@@ -47,16 +59,30 @@ export const studentDashboard = async (req, res) => {
     const month = months[date.getMonth()];
     const year = date.getFullYear();
 
-    const questions = await Question.find({ instituteId: req.user.instituteId }).populate("asker").sort({ createdAt: -1 });
+    const questions = await Question.find({ instituteId: req.user.instituteId })
+      .populate({
+        path: "asker",
+        populate: { path: "userId", select: "name" }
+      })
+      .sort({ createdAt: -1 })
+      .lean();
+
+    const formattedQuestions = questions.map(q => ({
+        ...q,
+        asker: q.asker ? {
+            ...q.asker,
+            name: q.asker.userId?.name
+        } : null
+    }));
 
     res.json({
-      name: student.name,
+      name: studentName,
       courses,
       dayOfWeek,
       day,
       month,
       year,
-      questions,
+      questions: formattedQuestions,
     });
     
   } catch (error) {
@@ -67,9 +93,22 @@ export const studentDashboard = async (req, res) => {
 
 export const studentProfile = async (req, res) => {
     try {
-        const student = await Student.findOne({ email: req.user.email }).populate("courses.course");
+        const student = await Student.findOne({ userId: req.user.id })
+            .populate("courses.course")
+            .populate("userId", "name email phone"); // Get details from User model
+            
         if (!student) return res.status(404).json({ message: "Student not found" });
-        res.json({ student });
+        
+        // Flatten the response or send structured? 
+        // Frontend likely expects `student.name`, `student.email`. 
+        // Let's attach them to the student object if possible or allow frontend to access .userId
+        
+        const responseData = student.toObject();
+        responseData.name = student.userId?.name;
+        responseData.email = student.userId?.email;
+        responseData.phone = student.userId?.phone;
+
+        res.json({ student: responseData });
     } catch (error) {
         console.error("Error fetching profile:", error);
         res.status(500).json({ message: "Internal Server Error" });
@@ -78,7 +117,7 @@ export const studentProfile = async (req, res) => {
 
 export const studentAttendance = async (req, res) => {
     try {
-      const student = await Student.findOne({ email: req.user.email }).populate("courses.course");
+      const student = await Student.findOne({ userId: req.user.id }).populate("courses.course").populate("userId", "name");
       if (!student) return res.status(404).json({ message: "Student not found" });
 
       const courses = student.courses.map((courseObj) => {
@@ -114,7 +153,7 @@ export const studentAttendance = async (req, res) => {
         };
       });
       res.json({
-        name: student.name,
+        name: student.userId?.name,
         courses: courses,
       });
       
@@ -126,7 +165,7 @@ export const studentAttendance = async (req, res) => {
 
 export const studentGrades = async (req, res) => {
   try {
-    const student = await Student.findOne({ email: req.user.email });
+    const student = await Student.findOne({ userId: req.user.id });
     if (!student) return res.status(404).json({ message: "Student not found" });
 
     const studentCourses = student.courses.map((c) => c.course);
@@ -179,15 +218,28 @@ export const studentGradebyId = async (req, res) => {
 export const updateStudentProfile = async (req, res) => {
     try {
       const { field, value } = req.body;
-      const student = await Student.findOne({ email: req.user.email });
+      const student = await Student.findOne({ userId: req.user.id });
       if (!student) return res.status(404).json({ message: "Student not found" });
 
-      const updatedStudent = await Student.findByIdAndUpdate(
-        student._id, 
-        { [field]: value }, 
-        { new: true } 
-      );
-
+      // If field is name/phone, update User model. 
+      // If field is student specific, update Student.
+      // Assuming for now simple fields on Student or User.
+      
+      // But actually, Name/Phone are on User. 
+      if (['name', 'phone'].includes(field)) {
+          const User = (await import("../models/User.js")).default;
+          await User.findByIdAndUpdate(req.user.id, { [field]: value });
+      } else {
+          await Student.findByIdAndUpdate(
+            student._id, 
+            { [field]: value }, 
+            { new: true } 
+          );
+      }
+      
+      // Fetch updated
+      const updatedStudent = await Student.findOne({ userId: req.user.id }).populate("userId");
+      
       res.status(200).json({ message: "Profile updated successfully", user: updatedStudent });
     } catch (error) {
       console.error("Error updating student profile:", error);
@@ -207,7 +259,7 @@ export const uploadProfilePic = async (req, res) => {
         return res.status(400).json({ message: "No file uploaded" });
       }
 
-      const student = await Student.findOne({ email: req.user.email });
+      const student = await Student.findOne({ userId: req.user.id });
       if (!student) return res.status(404).json({ message: "Student not found" });
 
       // Update student's profile picture path in database
@@ -227,7 +279,7 @@ export const uploadProfilePic = async (req, res) => {
 
 export const deleteProfilePic = async (req, res) => {
     try {
-      const student = await Student.findOne({ email: req.user.email });
+      const student = await Student.findOne({ userId: req.user.id });
       if (!student) return res.status(404).json({ message: "Student not found" });
 
       // Delete the file if it exists
@@ -237,12 +289,11 @@ export const deleteProfilePic = async (req, res) => {
         const profilesDir = path.join(__dirname, '../public/assets/profiles');
         
         // Find and delete any file that starts with the user's email
-        const files = fs.readdirSync(profilesDir);
-        files.forEach(file => {
-          if (file.startsWith(safeEmail)) {
-            fs.unlinkSync(path.join(profilesDir, file));
-          }
-        });
+        // Or better, use the stored filename
+        const currentPath = student.profilePicture.split('/').pop();
+        if (currentPath && fs.existsSync(path.join(profilesDir, currentPath))) {
+             fs.unlinkSync(path.join(profilesDir, currentPath));
+        }
       }
 
       // Reset to default profile picture

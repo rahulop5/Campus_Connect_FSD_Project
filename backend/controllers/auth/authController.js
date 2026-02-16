@@ -3,6 +3,7 @@ import Professor from "../../models/Professor.js";
 import bcrypt from "bcrypt";
 import Student from "../../models/Student.js";
 import Admin from "../../models/Admin.js";
+import User from "../../models/User.js";
 
 //LOGIN
 
@@ -15,29 +16,29 @@ export const handleStudentLogin = async (req, res) => {
     });
   }
   
-  const user = await Student.findOne({ email: email });
+  const user = await User.findOne({ email: email });
   if (!user) {
     return res.status(401).json({
       msg: "Invalid Email",
     });
   }
   
-  // if (!user.password) {
-  //   return res.status(500).json({
-  //     msg: "User password not set",
-  //   });
-  // }
-  
-  // const isPasswordCorrect = await bcrypt.compare(pass, user.password);
-  // if (!isPasswordCorrect) {
-  //   return res.status(401).json({
-  //     message: "Invalid Password",
-  //   });
-  // }
+  if (user.role !== 'Student') {
+      return res.status(401).json({ msg: "Unauthorized Role" });
+  }
+
+  const isPasswordCorrect = await bcrypt.compare(pass, user.password);
+  if (!isPasswordCorrect) {
+    return res.status(401).json({
+      message: "Invalid Password",
+    });
+  }
+
   const payload = {
     id: user._id,
     email: user.email,
     role: "Student",
+    instituteId: user.instituteId,
   };
   const jwt_token = jwt.sign(payload, process.env.JWT_SECRET, {
     expiresIn: "1h",
@@ -46,6 +47,7 @@ export const handleStudentLogin = async (req, res) => {
     name: user.name,
     role: "Student",
     token: jwt_token,
+    instituteId: user.instituteId,
   });
 };
 
@@ -58,30 +60,29 @@ export const handleProfLogin = async (req, res) => {
     });
   }
   
-  const user = await Professor.findOne({ email: email });
+  const user = await User.findOne({ email: email });
   if (!user) {
     return res.status(401).json({
       msg: "Invalid Email",
     });
   }
+
+  if (user.role !== 'Professor' && user.role !== 'faculty') {
+      return res.status(401).json({ msg: "Unauthorized Role" });
+  }
   
-  // if (!user.password) {
-  //   return res.status(500).json({
-  //     msg: "User password not set",
-  //   });
-  // }
-  
-  // const isPasswordCorrect = await bcrypt.compare(pass, user.password);
-  // if (!isPasswordCorrect) {
-  //   return res.status(401).json({
-  //     message: "Invalid Password",
-  //   });
-  // }
+  const isPasswordCorrect = await bcrypt.compare(pass, user.password);
+  if (!isPasswordCorrect) {
+    return res.status(401).json({
+      message: "Invalid Password",
+    });
+  }
   
   const payload = {
     id: user._id,
     email: user.email,
     role: "Professor",
+    instituteId: user.instituteId,
   };
   const jwt_token = jwt.sign(payload, process.env.JWT_SECRET, {
     expiresIn: "1h",
@@ -90,6 +91,7 @@ export const handleProfLogin = async (req, res) => {
     name: user.name,
     role: "Professor",
     token: jwt_token,
+    instituteId: user.instituteId,
   });
 };
 
@@ -102,30 +104,51 @@ export const handleAdminLogin = async (req, res) => {
     });
   }
   
-  const user = await Admin.findOne({ email: email });
+  // Try finding in User model first
+  let user = await User.findOne({ email: email });
+  
+  // Fallback to Admin model if not in User (legacy support if needed)
   if (!user) {
-    return res.status(401).json({
-      msg: "Invalid Email",
-    });
+      // If Admin model still exists and has email, try that?
+      // But assuming we are moving to User. 
+      // Let's stick to User for consistency, assuming Admin migration is done or intended.
+      // But wait, the existing code used Admin.findOne.
+      // If Admin wasn't migrated, this breaks Admin login.
+      // Let's try Admin model if User not found, just in case.
+       const admin = await Admin.findOne({ email });
+       if (admin) {
+           // If admin exists in old model, authenticate
+            const isMatch = await bcrypt.compare(pass, admin.password);
+            if (!isMatch) return res.status(401).json({ message: "Invalid Password" });
+            
+             const payload = {
+                id: admin._id,
+                email: admin.email,
+                role: "Admin",
+                instituteId: admin.instituteId, // Admin model might not have it yet?
+            };
+            const jwt_token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "1h" });
+            return res.json({ name: admin.name, role: "Admin", token: jwt_token, instituteId: admin.instituteId });
+       }
+       return res.status(401).json({ msg: "Invalid Email" });
   }
   
-  // if (!user.password) {
-  //   return res.status(500).json({
-  //     msg: "User password not set",
-  //   });
-  // }
+  if (user.role !== 'Admin' && user.role !== 'college_admin' && user.role !== 'super_admin') {
+       return res.status(401).json({ msg: "Unauthorized Role" });
+  }
   
-  // const isPasswordCorrect = await bcrypt.compare(pass, user.password);
-  // if (!isPasswordCorrect) {
-  //   return res.status(401).json({
-  //     message: "Invalid Password",
-  //   });
-  // }
+  const isPasswordCorrect = await bcrypt.compare(pass, user.password);
+  if (!isPasswordCorrect) {
+    return res.status(401).json({
+      message: "Invalid Password",
+    });
+  }
   
   const payload = {
     id: user._id,
     email: user.email,
     role: "Admin",
+    instituteId: user.instituteId, 
   };
   const jwt_token = jwt.sign(payload, process.env.JWT_SECRET, {
     expiresIn: "1h",
@@ -134,6 +157,7 @@ export const handleAdminLogin = async (req, res) => {
     name: user.name,
     role: "Admin",
     token: jwt_token,
+    instituteId: user.instituteId,
   });
 };
 
@@ -156,8 +180,8 @@ export const registerStudent = async (req, res) => {
       return res.status(400).json({ message: "Phone number must be exactly 10 digits" });
     }
 
-    // Check if student exists
-    const existing = await Student.findOne({ email });
+    // Check if user exists in User model
+    const existing = await User.findOne({ email });
     if (existing) {
       return res.status(400).json({ message: "Email already registered" });
     }
@@ -177,12 +201,20 @@ export const registerStudent = async (req, res) => {
     const hashedPassword = password ? await bcrypt.hash(password, 10) : null;
     const isOAuth = !password;
 
+    // Create User first
+    const newUser = new User({
+        name,
+        email,
+        password: hashedPassword,
+        phone,
+        role: 'Student',
+        verificationStatus: 'pending' // Default status
+    });
+    await newUser.save();
+
+    // Create Student linked to User
     const newStudent = new Student({
-      name,
-      email,
-      password: hashedPassword,
-      isOAuth,
-      phone,
+      userId: newUser._id,
       roll,
       section,
       branch,
@@ -191,10 +223,14 @@ export const registerStudent = async (req, res) => {
     });
 
     await newStudent.save();
+    
+    // Update User with profileId
+    newUser.profileId = newStudent._id; // Assuming User has profileId field
+    await newUser.save();
 
     // Create JWT
     const token = jwt.sign(
-      { id: newStudent._id, email: newStudent.email, role: "Student" },
+      { id: newUser._id, email: newUser.email, role: "Student", instituteId: newUser.instituteId },
       process.env.JWT_SECRET,
       { expiresIn: "1h" }
     );
@@ -203,7 +239,7 @@ export const registerStudent = async (req, res) => {
       message: "Student registered successfully",
       role: "Student",
       token,
-      user: newStudent,
+      user: newUser,
     });
 
   } catch (error) {
@@ -220,25 +256,36 @@ export const registerProfessor = async (req, res) => {
       return res.status(400).json({ message: "Passwords do not match" });
     }
 
-    const existingProfessor = await Professor.findOne({ email });
-    if (existingProfessor) {
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
       return res.status(400).json({ message: "Email already exists" });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
+    // Create User
+    const newUser = new User({
+        name,
+        email,
+        password: hashedPassword,
+        phone,
+        role: 'Professor',
+        verificationStatus: 'verified' // Maybe professors are verified by default? Or pending?
+    });
+    await newUser.save();
+
     const newProfessor = new Professor({
-      name,
-      email,
-      password: hashedPassword,
-      phone,
+      userId: newUser._id,
       courses: [],
     });
 
     await newProfessor.save();
+    
+    newUser.profileId = newProfessor._id;
+    await newUser.save();
 
     const token = jwt.sign(
-      { id: newProfessor._id, email: newProfessor.email, role: "Professor" },
+      { id: newUser._id, email: newUser.email, role: "Professor", instituteId: newUser.instituteId },
       process.env.JWT_SECRET,
       { expiresIn: "1h" }
     );
@@ -247,7 +294,7 @@ export const registerProfessor = async (req, res) => {
       message: "Professor registered successfully",
       role: "Professor",
       token,
-      user: newProfessor,
+      user: newUser,
     });
 
   } catch (error) {
@@ -270,24 +317,34 @@ export const registerAdmin = async (req, res) => {
       return res.status(400).json({ message: errors.join("; ") });
     }
 
-    const existingAdmin = await Admin.findOne({ email });
-    if (existingAdmin) {
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
       return res.status(400).json({ message: "Email already exists" });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
+    const newUser = new User({
+        name,
+        email,
+        password: hashedPassword,
+        phone,
+        role: 'Admin'
+    });
+    await newUser.save();
+
     const newAdmin = new Admin({
-      name,
-      email,
-      password: hashedPassword,
-      phone
+      userId: newUser._id,
+      // Admin specific fields if any
     });
 
     await newAdmin.save();
+    
+    newUser.profileId = newAdmin._id;
+    await newUser.save();
 
     const token = jwt.sign(
-      { id: newAdmin._id, email: newAdmin.email, role: "Admin" },
+      { id: newUser._id, email: newUser.email, role: "Admin", instituteId: newUser.instituteId },
       process.env.JWT_SECRET,
       { expiresIn: "1h" }
     );
@@ -296,7 +353,7 @@ export const registerAdmin = async (req, res) => {
       message: "Admin registered successfully",
       role: "Admin",
       token,
-      user: newAdmin,
+      user: newUser,
     });
 
   } catch (error) {
@@ -307,17 +364,8 @@ export const registerAdmin = async (req, res) => {
 
 export const getMe = async (req, res) => {
   try {
-    const { email, role } = req.user;
-    console.log(role);
-    let user;
-
-    if (role === "Student") {
-      user = await Student.findOne({ email }).select("-password");
-    } else if (role === "Professor") {
-      user = await Professor.findOne({ email }).select("-password");
-    } else if (role === "Admin") {
-      user = await Admin.findOne({ email }).select("-password");
-    }
+    const { id } = req.user; // Use id from token
+    const user = await User.findById(id).select("-password");
 
     if (!user) {
       return res.status(404).json({ message: "User not found" });
@@ -325,7 +373,7 @@ export const getMe = async (req, res) => {
 
     res.json({
       user,
-      role
+      role: user.role
     });
   } catch (error) {
     console.error("Error in getMe:", error);

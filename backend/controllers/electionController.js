@@ -2,6 +2,7 @@ import Election from '../models/Election.js';
 import Student from '../models/Student.js';
 import Candidate from '../models/Candidate.js';
 import Vote from '../models/Vote.js';
+import User from '../models/User.js';
 
 export const ELECTION_ROLES = [
   'SDC President',
@@ -152,9 +153,17 @@ export const nominateCandidate = async (req, res) => {
       return res.status(400).json({ message: "No active election" });
     }
 
-    const student = await Student.findOne({ email });
+    // Find User first by email
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Find Student profile linked to User
+    const student = await Student.findOne({ userId: user._id });
     if (!student) {
-      return res.status(404).json({ message: "Student not found" });
+      console.log("Student profile not found for user", user._id);
+      return res.status(404).json({ message: "Student profile not found" });
     }
 
     const existingCandidate = await Candidate.findOne({
@@ -169,11 +178,11 @@ export const nominateCandidate = async (req, res) => {
     const candidate = new Candidate({
       electionId: election._id,
       studentId: student._id,
-      name: student.name,
+      name: user.name,
       role,
       department: student.branch,
       year: student.ug,
-      profileImage: student.pfp
+      profileImage: student.profilePicture
     });
 
     await candidate.save();

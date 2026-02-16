@@ -130,7 +130,7 @@ export const addStudent = async (req, res) => {
         email,
         password: hashedPassword,
         phone,
-        role: 'student',
+        role: 'Student',
         instituteId,
         verificationStatus: 'verified' // Auto-verified since admin created it
     });

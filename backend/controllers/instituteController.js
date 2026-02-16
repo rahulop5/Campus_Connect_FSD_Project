@@ -39,11 +39,22 @@ export const createInstitute = async (req, res) => {
     });
 
     // Create a new token with updated role/institute
-    // Client should handle token refresh or re-login flow, 
-    // but for now we just return the success message.
+    const token = jwt.sign(
+      { id: userId, role: 'college_admin', instituteId: newInstitute._id },
+      process.env.JWT_SECRET,
+      { expiresIn: "1h" }
+    );
     
-    res.status(201).json({ message: "Institute created successfully", institute: newInstitute });
+    res.status(201).json({ 
+        message: "Institute created successfully", 
+        institute: newInstitute,
+        token: token,
+        user: { id: userId, role: 'college_admin', instituteId: newInstitute._id, verificationStatus: 'verified' }
+    });
   } catch (error) {
+    if (error.code === 11000) {
+        return res.status(400).json({ message: "Institute code already exists" });
+    }
     res.status(500).json({ message: "Error creating institute", error: error.message });
   }
 };
@@ -112,6 +123,7 @@ export const joinInstitute = async (req, res) => {
     });
   } catch (error) {
     if (error.code === 11000) {
+      console.log(error);
         // Duplicate key error (likely roll number if we enforced unique index, which we should but seemingly haven't yet)
         return res.status(400).json({ message: "Error: Profile details might be duplicate" });
     }

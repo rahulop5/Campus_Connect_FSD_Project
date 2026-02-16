@@ -43,6 +43,7 @@ const ForumList = () => {
     const fetchQuestions = async () => {
       try {
         const res = await api.get('/forum/questions');
+        console.log(res)
         setQuestions(res.data.questions || []);
         setLoading(false);
       } catch (error) {

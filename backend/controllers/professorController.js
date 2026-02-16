@@ -4,7 +4,7 @@ import Professor from "../models/Professor.js";
 // GET /prof/dashboard
 export const professorDashboard = async (req, res) => {
   try {
-    const professor = await Professor.findOne({ email: req.user.email });
+    const professor = await Professor.findOne({ userId: req.user.id }).populate("userId", "name email phone");
     if (!professor) {
       return res.status(404).json({ message: "Professor not found" });
     }
@@ -26,9 +26,9 @@ export const professorDashboard = async (req, res) => {
 
     res.json({
       professor: {
-        name: professor.name,
-        email: professor.email,
-        phone: professor.phone
+        name: professor.userId?.name,
+        email: professor.userId?.email,
+        phone: professor.userId?.phone
       },
       courses: formattedCourses
     });
@@ -41,7 +41,7 @@ export const professorDashboard = async (req, res) => {
 // GET /api/prof/courses
 export const getProfessorCourses = async (req, res) => {
   try {
-    const professor = await Professor.findOne({ email: req.user.email });
+    const professor = await Professor.findOne({ userId: req.user.id });
     if (!professor) {
       return res.status(404).json({ message: "Professor not found" });
     }

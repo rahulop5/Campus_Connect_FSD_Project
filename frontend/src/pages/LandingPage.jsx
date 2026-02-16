@@ -37,7 +37,10 @@ const LandingPage = () => {
   const handleCreate = async (e) => {
     e.preventDefault();
     try {
-      await api.post('/institutes/create', formData);
+      const res = await api.post('/institutes/create', formData);
+      if (res.data.token) {
+          localStorage.setItem('token', res.data.token);
+      }
       dispatch(fetchUserData()); // Refresh user to get new role/instituteId
       setShowCreate(false);
     } catch (error) {
@@ -48,7 +51,10 @@ const LandingPage = () => {
   const handleJoin = async (e) => {
     e.preventDefault();
     try {
-      await api.post('/institutes/join', joinData);
+      const res = await api.post('/institutes/join', joinData);
+      if (res.data.token) {
+          localStorage.setItem('token', res.data.token);
+      }
       dispatch(fetchUserData());
       setShowJoin(false);
       alert("Join request sent! Please wait for approval.");

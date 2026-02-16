@@ -10,9 +10,9 @@ router.post('/vote', verifyToken, checkRole(['Student']), electionController.vot
 router.post('/manifesto', verifyToken, checkRole(['Student']), electionController.updateManifesto);
 
 // Admin routes
-router.post('/start', verifyToken, checkRole(['Admin']), electionController.startElection);
-router.post('/stop', verifyToken, checkRole(['Admin']), electionController.stopElection);
-router.post('/nominate', verifyToken, checkRole(['Admin']), electionController.nominateCandidate);
-router.delete('/nominate/:candidateId', verifyToken, checkRole(['Admin']), electionController.removeCandidate);
+router.post('/start', verifyToken, checkRole(['Admin', "college_admin"]), electionController.startElection);
+router.post('/stop', verifyToken, checkRole(['Admin', "college_admin"]), electionController.stopElection);
+router.post('/nominate', verifyToken, checkRole(['Admin', "college_admin"]), electionController.nominateCandidate);
+router.delete('/nominate/:candidateId', verifyToken, checkRole(['Admin', "college_admin"]), electionController.removeCandidate);
 
 export default router;

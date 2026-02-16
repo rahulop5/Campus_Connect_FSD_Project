@@ -6,24 +6,32 @@ const resolveUserId = async (req) => {
     return null;
   }
 
+  // req.user.id is the User ID
   let userId = req.user?.id || req.user?._id;
 
-  if (!userId && req.user?.email) {
-    const Student = (await import("../models/Student.js")).default;
-    const student = await Student.findOne({ email: req.user.email });
-    if (student) userId = student._id;
+  // We need the Student ID (profile ID), not the User ID, because Question.asker refs Student.
+  if (userId) {
+     const Student = (await import("../models/Student.js")).default;
+     const student = await Student.findOne({ userId });
+     if (student) return student._id;
   }
 
-  return userId;
+  return null;
 };
 
 // GET /api/forum/questions
 export const getQuestions = async (req, res) => {
   try {
     const instituteId = req.user.instituteId;
+    console.log(instituteId)
     const questions = await Question.find({ instituteId })
-      .populate("asker")
+      .populate({
+        path: "asker",
+        populate: { path: "userId", select: "name" } // Nested populate to get name from User
+      })
       .sort({ createdAt: -1 });
+
+      console.log(questions)
 
     res.json({ questions });
   } catch (error) {
@@ -38,17 +46,24 @@ export const getQuestionDetails = async (req, res) => {
     const questionId = req.params.id;
     const shouldIncrement = req.query.increment === "1";
     
-    // We can add a check here to ensure the question belongs to the user's institute
-    // But since IDs are unique, and users can't easily guess IDs of other institutes' questions (and they won't see them in feed),
-    // strict enforcement is good but maybe secondary to fixing the crash.
-    // Let's add the check if we can easily get instituteId from the question.
-    
     let query = Question.findById(questionId);
     if (shouldIncrement) {
         query = Question.findByIdAndUpdate(questionId, { $inc: { views: 1 } }, { new: true });
     }
     
-    const question = await query.populate("answers").populate("asker");
+    const question = await query
+        .populate("answers")
+        .populate({
+            path: "asker",
+            populate: { path: "userId", select: "name" }
+        })
+        .populate({
+             path: "answers",
+             populate: {
+                 path: "answerer",
+                 populate: { path: "userId", select: "name" }
+             }
+        });
 
     if (!question) return res.status(404).json({ error: "Question not found" });
 
@@ -66,25 +81,22 @@ export const getQuestionDetails = async (req, res) => {
 
 export const upvoteQuestion = async (req, res) => {
   try {
+    console.log("User", req.user)
     const questionId = req.body.id;
-    const userId = await resolveUserId(req);
-
-    if (!userId) {
+    
+    // User ID for voting logic -> Question.voters.userId refs Student
+    const studentId = await resolveUserId(req);
+    console.log("Student ID", studentId)
+    
+    if (!studentId) {
       return res.status(403).json({ message: "Only students can vote" });
     }
 
     const question = await Question.findById(questionId);
-    if (!question) {
-      return res.status(404).json({ message: "Question not found" });
-    }
-    
-    if (req.user.instituteId && question.instituteId && req.user.instituteId.toString() !== question.instituteId.toString()) {
-        return res.status(403).json({ message: "Access denied" });
-    }
-
+// ... existing code ...
     // Check if user has already voted
     const existingVote = question.voters.find(
-      (v) => v.userId && v.userId.toString() === userId.toString()
+      (v) => v.userId && v.userId.toString() === studentId.toString()
     );
 
     if (existingVote) {
@@ -93,8 +105,8 @@ export const upvoteQuestion = async (req, res) => {
       }
 
       const updated = await Question.findOneAndUpdate(
-        { _id: questionId, "voters.userId": userId, "voters.voteType": "downvote" },
-        { $pull: { voters: { userId } }, $inc: { votes: 1 } },
+        { _id: questionId, "voters.userId": studentId, "voters.voteType": "downvote" },
+        { $pull: { voters: { userId: studentId } }, $inc: { votes: 1 } },
         { new: true }
       );
 
@@ -102,8 +114,8 @@ export const upvoteQuestion = async (req, res) => {
     }
 
     const updated = await Question.findOneAndUpdate(
-      { _id: questionId, "voters.userId": { $ne: userId } },
-      { $push: { voters: { userId, voteType: 'upvote' } }, $inc: { votes: 1 } },
+      { _id: questionId, "voters.userId": { $ne: studentId } },
+      { $push: { voters: { userId: studentId, voteType: 'upvote' } }, $inc: { votes: 1 } },
       { new: true }
     );
 
@@ -117,24 +129,17 @@ export const upvoteQuestion = async (req, res) => {
 export const downvoteQuestion = async (req, res) => {
   try {
     const questionId = req.body.id;
-    const userId = await resolveUserId(req);
+    const studentId = await resolveUserId(req);
 
-    if (!userId) {
+    if (!studentId) {
       return res.status(403).json({ message: "Only students can vote" });
     }
 
     const question = await Question.findById(questionId);
-    if (!question) {
-      return res.status(404).json({ message: "Question not found" });
-    }
-    
-    if (req.user.instituteId && question.instituteId && req.user.instituteId.toString() !== question.instituteId.toString()) {
-        return res.status(403).json({ message: "Access denied" });
-    }
-
+// ... existing code ...
     // Check if user has already voted
     const existingVote = question.voters.find(
-      (v) => v.userId && v.userId.toString() === userId.toString()
+      (v) => v.userId && v.userId.toString() === studentId.toString()
     );
 
     if (existingVote) {
@@ -143,8 +148,8 @@ export const downvoteQuestion = async (req, res) => {
       }
 
       const updated = await Question.findOneAndUpdate(
-        { _id: questionId, "voters.userId": userId, "voters.voteType": "upvote" },
-        { $pull: { voters: { userId } }, $inc: { votes: -1 } },
+        { _id: questionId, "voters.userId": studentId, "voters.voteType": "upvote" },
+        { $pull: { voters: { userId: studentId } }, $inc: { votes: -1 } },
         { new: true }
       );
 
@@ -152,8 +157,8 @@ export const downvoteQuestion = async (req, res) => {
     }
 
     const updated = await Question.findOneAndUpdate(
-      { _id: questionId, "voters.userId": { $ne: userId } },
-      { $push: { voters: { userId, voteType: 'downvote' } }, $inc: { votes: -1 } },
+      { _id: questionId, "voters.userId": { $ne: studentId } },
+      { $push: { voters: { userId: studentId, voteType: 'downvote' } }, $inc: { votes: -1 } },
       { new: true }
     );
 
@@ -167,20 +172,17 @@ export const downvoteQuestion = async (req, res) => {
 export const upvoteAnswer = async (req, res) => {
   try {
     const { questionId, answerId } = req.body;
-    const userId = await resolveUserId(req);
+    const studentId = await resolveUserId(req);
 
-    if (!userId) {
+    if (!studentId) {
       return res.status(403).json({ message: "Only students can vote" });
     }
 
     const answer = await Answer.findById(answerId);
-    if (!answer) {
-      return res.status(404).json({ message: "Answer not found" });
-    }
-
+// ... existing code ...
     // Check if user has already voted
     const existingVote = answer.voters.find(
-      (v) => v.userId && v.userId.toString() === userId.toString()
+      (v) => v.userId && v.userId.toString() === studentId.toString()
     );
 
     if (existingVote) {
@@ -189,8 +191,8 @@ export const upvoteAnswer = async (req, res) => {
       }
 
       const updated = await Answer.findOneAndUpdate(
-        { _id: answerId, "voters.userId": userId, "voters.voteType": "downvote" },
-        { $pull: { voters: { userId } }, $inc: { votes: 1 } },
+        { _id: answerId, "voters.userId": studentId, "voters.voteType": "downvote" },
+        { $pull: { voters: { userId: studentId } }, $inc: { votes: 1 } },
         { new: true }
       );
 
@@ -198,8 +200,8 @@ export const upvoteAnswer = async (req, res) => {
     }
 
     const updated = await Answer.findOneAndUpdate(
-      { _id: answerId, "voters.userId": { $ne: userId } },
-      { $push: { voters: { userId, voteType: 'upvote' } }, $inc: { votes: 1 } },
+      { _id: answerId, "voters.userId": { $ne: studentId } },
+      { $push: { voters: { userId: studentId, voteType: 'upvote' } }, $inc: { votes: 1 } },
       { new: true }
     );
 
@@ -213,20 +215,17 @@ export const upvoteAnswer = async (req, res) => {
 export const downvoteAnswer = async (req, res) => {
   try {
     const { questionId, answerId } = req.body;
-    const userId = await resolveUserId(req);
+    const studentId = await resolveUserId(req);
 
-    if (!userId) {
+    if (!studentId) {
       return res.status(403).json({ message: "Only students can vote" });
     }
 
     const answer = await Answer.findById(answerId);
-    if (!answer) {
-      return res.status(404).json({ message: "Answer not found" });
-    }
-
+// ... existing code ...
     // Check if user has already voted
     const existingVote = answer.voters.find(
-      (v) => v.userId && v.userId.toString() === userId.toString()
+      (v) => v.userId && v.userId.toString() === studentId.toString()
     );
 
     if (existingVote) {
@@ -235,8 +234,8 @@ export const downvoteAnswer = async (req, res) => {
       }
 
       const updated = await Answer.findOneAndUpdate(
-        { _id: answerId, "voters.userId": userId, "voters.voteType": "upvote" },
-        { $pull: { voters: { userId } }, $inc: { votes: -1 } },
+        { _id: answerId, "voters.userId": studentId, "voters.voteType": "upvote" },
+        { $pull: { voters: { userId: studentId } }, $inc: { votes: -1 } },
         { new: true }
       );
 
@@ -244,8 +243,8 @@ export const downvoteAnswer = async (req, res) => {
     }
 
     const updated = await Answer.findOneAndUpdate(
-      { _id: answerId, "voters.userId": { $ne: userId } },
-      { $push: { voters: { userId, voteType: 'downvote' } }, $inc: { votes: -1 } },
+      { _id: answerId, "voters.userId": { $ne: studentId } },
+      { $push: { voters: { userId: studentId, voteType: 'downvote' } }, $inc: { votes: -1 } },
       { new: true }
     );
 
@@ -267,22 +266,18 @@ export const submitAnswer = async (req, res) => {
       return res.status(403).json({ message: "Access denied" });
   }
   
-  let userId = req.user._id;
-  if (!userId) {
-      // Try to find student
-      const Student = (await import("../models/Student.js")).default;
-      const student = await Student.findOne({ email: req.user.email });
-      if (student) userId = student._id;
-  }
+  // Find Student Profile
+  const Student = (await import("../models/Student.js")).default;
+  const student = await Student.findOne({ userId: req.user.id });
   
-  if (!userId) {
+  if (!student) {
        return res.status(401).json({ message: "User not found" });
   }
   
   const newAnswer = new Answer({
     desc: answerText,
     votes: 0,
-    answerer: userId,
+    answerer: student._id,
   });
 
   await newAnswer.save();
@@ -302,14 +297,11 @@ export const askQuestion = async (req, res) => {
         const tagsArray = tags.split(",").map((tag) => tag.trim());
         const instituteId = req.user.instituteId;
         
-        let userId = req.user._id;
-        if (!userId) {
-            const Student = (await import("../models/Student.js")).default;
-            const student = await Student.findOne({ email: req.user.email });
-            if (student) userId = student._id;
-        }
-
-        if (!userId) {
+        // Find Student Profile
+        const Student = (await import("../models/Student.js")).default;
+        const student = await Student.findOne({ userId: req.user.id });
+        
+        if (!student) {
             return res.status(401).json({ message: "User not found" });
         }
 
@@ -318,7 +310,7 @@ export const askQuestion = async (req, res) => {
           desc: desc,
           votes: 0,
           tags: tagsArray,
-          asker: userId,
+          asker: student._id,
           instituteId,
           wealth: 0,
           views: 0,

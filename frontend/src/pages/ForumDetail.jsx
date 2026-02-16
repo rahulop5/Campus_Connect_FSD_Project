@@ -116,6 +116,7 @@ const ForumDetail = () => {
       alert('Please login to vote');
       return;
     }
+    console.log(user)
 
     const endpoint = isAnswer 
       ? (type === 'up' ? '/forum/upvote-answer' : '/forum/downvote-answer')
