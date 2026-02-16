@@ -47,7 +47,7 @@ export const studentDashboard = async (req, res) => {
     const month = months[date.getMonth()];
     const year = date.getFullYear();
 
-    const questions = await Question.find().populate("asker").sort({ createdAt: -1 });
+    const questions = await Question.find({ instituteId: req.user.instituteId }).populate("asker").sort({ createdAt: -1 });
 
     res.json({
       name: student.name,

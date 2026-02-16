@@ -3,11 +3,18 @@ import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import { Strategy as GitHubStrategy } from "passport-github2";
 import { Strategy as JwtStrategy, ExtractJwt } from "passport-jwt";
 import env from "dotenv";
-import Student from "../models/Student.js";
+import User from "../models/User.js";
 
 env.config();
-passport.serializeUser((user, done) => done(null, user));
-passport.deserializeUser((user, done) => done(null, user));
+passport.serializeUser((user, done) => done(null, user.id));
+passport.deserializeUser(async (id, done) => {
+    try {
+        const user = await User.findById(id);
+        done(null, user);
+    } catch(err) {
+        done(err, null);
+    }
+});
 
 const secretOrKey = process.env.JWT_SECRET;
 
@@ -19,8 +26,9 @@ passport.use(
       secretOrKey,
     },
     (jwtPayload, done) => {
-      // JWT strategy logic (if needed in your app)
-      done(null, jwtPayload);
+       // Check expiration etc if needed, but passport-jwt handles basic verification
+       // We can just pass the payload
+      return done(null, jwtPayload);
     }
   )
 );
@@ -31,24 +39,28 @@ passport.use(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: "http://localhost:3000/api/auth/student/google/callback",
+      callbackURL: "/api/auth/google/callback",
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
-        // Check if the user exists in the database
-        const existingStudent = await Student.findOne({ email: profile.emails[0].value });
+        // Check if the user exists
+        let user = await User.findOne({ email: profile.emails[0].value });
 
-        if (existingStudent) {
-          // User exists -> Login case
-          console.log(existingStudent);
-          return done(null, existingStudent);
+        if (user) {
+            // User exists, log them in
+            return done(null, user);
         } else {
-          // User doesn't exist -> Signup case
-          const user = {
-            name: profile.displayName,
-            email: profile.emails[0].value,
-          };
-          return done(null, user); // Store in session for /register
+            // New user - Create basic User account
+            // They will need to select/join an institute later
+            user = new User({
+                name: profile.displayName,
+                email: profile.emails[0].value,
+                password: "", // No password for OAuth users (or set a random one)
+                role: 'user', // Default role until they join an institute
+                verificationStatus: 'none'
+            });
+            await user.save();
+            return done(null, user);
         }
       } catch (error) {
         console.error("Error during Google authentication:", error);
@@ -64,40 +76,48 @@ passport.use(
     {
       clientID: process.env.GITHUB_CLIENT_ID,
       clientSecret: process.env.GITHUB_CLIENT_SECRET,
-      callbackURL: "http://localhost:3000/api/auth/student/github/callback",
+      callbackURL: "/api/auth/github/callback",
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
         let email = null;
 
-        // Check if the email is available in the profile
         if (profile.emails && profile.emails.length > 0) {
-          email = profile.emails[0].value; // Get the first email
+          email = profile.emails[0].value;
         } else {
-          // If email is not directly available, fetch it from GitHub API
-          const response = await fetch("https://api.github.com/user/emails", {
-            headers: {
-              Authorization: `token ${accessToken}`,
-              "User-Agent": "CampusConnect",
-            },
-          });
-          const emails = await response.json();
-          email = emails.find((email) => email.primary).email;
+          try {
+              const response = await fetch("https://api.github.com/user/emails", {
+                headers: {
+                  Authorization: `token ${accessToken}`,
+                  "User-Agent": "CampusConnect",
+                },
+              });
+              const emails = await response.json();
+              const primary = emails.find((email) => email.primary);
+              email = primary ? primary.email : null;
+          } catch (e) {
+              console.error("Error fetching GitHub emails:", e);
+          }
         }
 
-        // Check if the user exists in the database
-        const existingStudent = await Student.findOne({ email });
+        if (!email) {
+            return done(new Error("No email found for GitHub user"), null);
+        }
 
-        if (existingStudent) {
-          // User exists -> Login case
-          return done(null, existingStudent);
+        let user = await User.findOne({ email });
+
+        if (user) {
+            return done(null, user);
         } else {
-          // User doesn't exist -> Signup case
-          const user = {
-            name: profile.displayName || profile.username,
-            email: email || null,
-          };
-          return done(null, user); // Store in session for /register
+            user = new User({
+                name: profile.displayName || profile.username,
+                email: email,
+                password: "",
+                role: 'user',
+                verificationStatus: 'none'
+            });
+            await user.save();
+            return done(null, user);
         }
       } catch (error) {
         console.error("Error during GitHub authentication:", error);

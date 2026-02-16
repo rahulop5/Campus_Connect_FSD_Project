@@ -8,6 +8,7 @@ const courseSchema = new mongoose.Schema({
   totalclasses: { type: Number, required: true },
   credits: { type: Number, required: true },
   professor: { type: mongoose.Schema.Types.ObjectId, ref: "Professor", required: true },
+  instituteId: { type: mongoose.Schema.Types.ObjectId, ref: "Institute", required: true },
   gradeDistribution: { type: Map, of: Number, default: {} }, 
 });
 

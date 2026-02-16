@@ -18,13 +18,14 @@ const isValidRole = (role) => ELECTION_ROLES.includes(role);
 // Get current election status
 export const getElection = async (req, res) => {
   try {
+    const instituteId = req.user.instituteId;
     // We assume there's only one election document that we toggle
     // Or we find the most recent one. For simplicity, let's find the active one or the last created.
-    let election = await Election.findOne({ status: 'active' });
+    let election = await Election.findOne({ status: 'active', instituteId });
     
     if (!election) {
       // If no active election, check if there is any election at all to show "inactive" state
-      election = await Election.findOne().sort({ createdAt: -1 });
+      election = await Election.findOne({ instituteId }).sort({ createdAt: -1 });
     }
 
     if (!election) {
@@ -67,6 +68,7 @@ export const getElection = async (req, res) => {
 export const startElection = async (req, res) => {
   try {
     const { title, description, startTime, endTime } = req.body;
+    const instituteId = req.user.instituteId;
 
     const missingFields = [];
     if (!title) missingFields.push('title');
@@ -77,7 +79,7 @@ export const startElection = async (req, res) => {
     }
 
     // End any existing active elections
-    await Election.updateMany({ status: 'active' }, { status: 'ended' });
+    await Election.updateMany({ status: 'active', instituteId }, { status: 'ended' });
 
     // Create a new election
     const newElection = new Election({
@@ -85,7 +87,8 @@ export const startElection = async (req, res) => {
       description,
       status: 'active',
       startTime,
-      endTime
+      endTime,
+      instituteId
     });
 
     await newElection.save();
@@ -99,8 +102,9 @@ export const startElection = async (req, res) => {
 // Stop election (Admin only)
 export const stopElection = async (req, res) => {
   try {
+    const instituteId = req.user.instituteId;
     // Find active election
-    const election = await Election.findOne({ status: 'active' });
+    const election = await Election.findOne({ status: 'active', instituteId });
     if (!election) {
       return res.status(400).json({ message: "No active election found to stop" });
     }

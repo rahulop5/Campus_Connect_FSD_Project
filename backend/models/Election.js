@@ -23,6 +23,11 @@ const electionSchema = new mongoose.Schema({
   endTime: {
     type: Date,
     required: true
+  },
+  instituteId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Institute',
+    required: true
   }
 }, { timestamps: true });
 

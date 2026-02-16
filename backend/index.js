@@ -63,10 +63,17 @@ app.use(
   })
 );
 
+import authRoutes from "./routes/authRoutes.js";
+import instituteRoutes from "./routes/instituteRoutes.js";
+
 // Routes
-app.use("/api/auth/student", authstudentRoutes);
-app.use("/api/auth/professor", authprofessorRoutes);
-app.use("/api/auth/admin", authadminRoutes);
+// app.use("/api/auth/student", authstudentRoutes);
+// app.use("/api/auth/professor", authprofessorRoutes);
+// app.use("/api/auth/admin", authadminRoutes);
+
+app.use("/api/auth", authRoutes); // New Unified Auth
+app.use("/api/institutes", instituteRoutes); // Institute Management
+
 app.use("/api/student", studentRoutes);
 app.use("/api/forum", qandaforumRoutes);
 app.use("/api/professor", professorRoutes);

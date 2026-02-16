@@ -29,6 +29,7 @@ const AdminDashboard = () => {
   const { courses, professors, students, loading } = useSelector((state) => state.admin);
   const { user } = useSelector((state) => state.auth);
   const data = { courses, professors, students }; // Map redux state to local variable name used in render
+  console.log(data.students)
 
   const [activeSection, setActiveSection] = useState('course'); // course, student, professor, allotment
   const [activeTab, setActiveTab] = useState('courses'); // courses, students, faculty, elections
@@ -98,6 +99,28 @@ const AdminDashboard = () => {
       setElectionCandidates([]);
     }
   };
+
+  // Requests State
+  const [requests, setRequests] = useState([]);
+
+  const fetchRequests = async () => {
+    try {
+      const res = await api.get('/institutes/pending');
+      setRequests(res.data);
+    } catch (error) {
+      console.error("Error fetching requests:", error);
+    }
+  };
+
+  const handleRequestAction = async (userId, action) => {
+    try {
+        await api.post('/institutes/verify', { userId, action });
+        showNotification(`User ${action}ed successfully`, 'success');
+        fetchRequests(); // Refresh list
+    } catch (error) {
+        showNotification(error.response?.data?.message || "Error processing request", 'error');
+    }
+  }
 
 
 
@@ -577,6 +600,12 @@ const AdminDashboard = () => {
             >
               Elections
             </button>
+            <button 
+              className={activeTab === 'requests' ? 'active' : ''}
+              onClick={() => { setActiveTab('requests'); fetchRequests(); }}
+            >
+              Requests
+            </button>
           </div>
         </div>
 
@@ -603,6 +632,65 @@ const AdminDashboard = () => {
         )}
 
         <div className="management-section" style={{marginTop: 0}}>
+            {/* Verification Requests Tab */}
+            {activeTab === 'requests' && (
+                <div style={{maxWidth: '100%', margin: '0 auto', padding: '0 24px 0 48px', marginTop: '5vh'}}>
+                    <h2 style={{ marginBottom: '24px' }}>Pending Join Requests</h2>
+                    {requests.length === 0 ? (
+                        <div style={{ textAlign: 'center', padding: '40px', color: 'rgba(255,255,255,0.5)' }}>No pending requests</div>
+                    ) : (
+                        <table style={{ width: '100%', borderCollapse: 'collapse', color: 'white' }}>
+                            <thead>
+                                <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.1)', textAlign: 'left' }}>
+                                    <th style={{ padding: '16px' }}>Name</th>
+                                    <th style={{ padding: '16px' }}>Email</th>
+                                    <th style={{ padding: '16px' }}>Role</th>
+                                    <th style={{ padding: '16px' }}>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {requests.map(req => (
+                                    <tr key={req._id} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                                        <td style={{ padding: '16px' }}>{req.name}</td>
+                                        <td style={{ padding: '16px' }}>{req.email}</td>
+                                        <td style={{ padding: '16px' }}>{req.role}</td>
+                                        <td style={{ padding: '16px' }}>
+                                            <button 
+                                                onClick={() => handleRequestAction(req._id, 'approve')}
+                                                style={{ 
+                                                    marginRight: '10px', 
+                                                    backgroundColor: '#2B9900', 
+                                                    color: 'white', 
+                                                    border: 'none', 
+                                                    padding: '8px 16px', 
+                                                    borderRadius: '4px',
+                                                    cursor: 'pointer' 
+                                                }}
+                                            >
+                                                Approve
+                                            </button>
+                                            <button 
+                                                onClick={() => handleRequestAction(req._id, 'reject')}
+                                                style={{ 
+                                                    backgroundColor: '#ff4444', 
+                                                    color: 'white', 
+                                                    border: 'none', 
+                                                    padding: '8px 16px', 
+                                                    borderRadius: '4px',
+                                                    cursor: 'pointer' 
+                                                }}
+                                            >
+                                                Reject
+                                            </button>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    )}
+                </div>
+            )}
+
             {/* Course Management */}
             {activeTab === 'courses' && (
           <div className="course-container" style={{maxWidth: '100%', margin: '0 auto', padding: '0 24px 0 48px', marginTop: '5vh'}}>
@@ -1141,7 +1229,7 @@ const AdminDashboard = () => {
                         color: 'rgba(255, 255, 255, 0.8)',
                         textAlign: 'center'
                       }}>
-                        {student.section || 'N/A'}
+                        {student.ug || 'N/A'}
                       </td>
 
                       <td className="student-actions" style={{

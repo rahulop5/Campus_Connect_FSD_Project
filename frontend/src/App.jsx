@@ -18,6 +18,8 @@ import ForumDetail from './pages/ForumDetail';
 import AskQuestion from './pages/AskQuestion';
 import Academics from './pages/Academics';
 import OAuthCallback from './pages/OAuthCallback';
+import LandingPage from './pages/LandingPage';
+import InstituteDashboard from './pages/InstituteDashboard';
 
 const ProtectedRoute = ({ children }) => {
   const { user, loading } = useSelector((state) => state.auth);
@@ -25,6 +27,18 @@ const ProtectedRoute = ({ children }) => {
   if (!user) return <Navigate to="/login" />;
   return children;
 };
+
+const InstituteRoute = ({ children }) => {
+    const { user, loading } = useSelector((state) => state.auth);
+    if (loading) return <div>Loading...</div>;
+    if (!user) return <Navigate to="/login" />;
+    
+    // If no institute or pending, go to landing
+    if (!user.instituteId || user.verificationStatus === 'pending') {
+        return <Navigate to="/landing" />;
+    }
+    return children;
+}
 
 const RoleRoute = ({ children, role }) => {
     const { user, loading } = useSelector((state) => state.auth);
@@ -48,65 +62,85 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/oauth-callback" element={<OAuthCallback />} />
           
+          {/* Landing Page for Institute Selection */}
+          <Route path="/landing" element={
+              <ProtectedRoute>
+                  <LandingPage />
+              </ProtectedRoute>
+          } />
+
+          {/* Institute Admin Dashboard */}
+           <Route path="/institute/dashboard" element={
+              <RoleRoute role="Admin">
+                  <InstituteDashboard />
+              </RoleRoute>
+          } />
+
           <Route path="/dashboard" element={
-            <ProtectedRoute>
+            <InstituteRoute>
               <Dashboard />
-            </ProtectedRoute>
+            </InstituteRoute>
           } />
 
           <Route path="/profile" element={
-            <ProtectedRoute>
+            <InstituteRoute>
                 <ProfileWrapper />
-            </ProtectedRoute>
+            </InstituteRoute>
           } />
 
           <Route path="/change-password" element={
-            <ProtectedRoute>
+            <InstituteRoute>
               <ChangePassword />
-            </ProtectedRoute>
+            </InstituteRoute>
           } />
 
           <Route path="/pricing" element={<Pricing />} />
 
           {/* Student Routes */}
           <Route path="/attendance" element={
-            <RoleRoute role="Student">
-              <Attendance />
-            </RoleRoute>
+            <InstituteRoute>
+                <RoleRoute role="Student">
+                <Attendance />
+                </RoleRoute>
+            </InstituteRoute>
           } />
           <Route path="/bellgraph" element={
-            <RoleRoute role="Student">
-              <Bellgraph />
-            </RoleRoute>
+            <InstituteRoute>
+                <RoleRoute role="Student">
+                <Bellgraph />
+                </RoleRoute>
+            </InstituteRoute>
           } />
           <Route path="/elections" element={
-            <ProtectedRoute>
+            <InstituteRoute>
               <Elections />
-            </ProtectedRoute>
+            </InstituteRoute>
           } />
 
           {/* Professor Routes */}
           <Route path="/academics" element={
-            <RoleRoute role="Professor">
-              <Academics />
-            </RoleRoute>
+            <InstituteRoute>
+                <RoleRoute role="Professor">
+                <Academics />
+                </RoleRoute>
+            </InstituteRoute>
           } />
 
           {/* Forum Routes */}
           <Route path="/forum/questions" element={
-            <ProtectedRoute>
+            <InstituteRoute>
               <ForumList />
-            </ProtectedRoute>
+            </InstituteRoute>
           } />
           <Route path="/forum/question/:id" element={
-            <ProtectedRoute>
+            <InstituteRoute>
               <ForumDetail />
-            </ProtectedRoute>
+            </InstituteRoute>
           } />
           <Route path="/forum/ask" element={
-            <ProtectedRoute>
+            <InstituteRoute>
               <AskQuestion />
-            </ProtectedRoute>
+            </InstituteRoute>
           } />
 
         </Routes>

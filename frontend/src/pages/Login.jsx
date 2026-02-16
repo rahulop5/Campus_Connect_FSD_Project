@@ -8,7 +8,6 @@ import '../styles/Login.css';
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [role, setRole] = useState('Student');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -17,18 +16,17 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (isSubmitting) return; // Prevent multiple submissions
+    if (isSubmitting) return; 
     
     setIsSubmitting(true);
     setLocalError('');
     try {
-      console.log('Login attempt:', { email, role });
-      const resultAction = await dispatch(loginUser({ email, password, role }));
+      console.log('Login attempt:', { email });
+      const resultAction = await dispatch(loginUser({ email, password }));
       if (loginUser.fulfilled.match(resultAction)) {
         console.log('Login successful, navigating to dashboard');
         navigate('/dashboard');
       } else {
-        console.error('Login failed:', resultAction.payload);
         setLocalError(resultAction.payload || 'Login failed');
         setIsSubmitting(false);
       }
@@ -66,39 +64,6 @@ const Login = () => {
             {localError || authError}
           </p>
         )}
-        
-        <div className="role-selector">
-          <p className="role-selector__label">Login as</p>
-          <div className="role-selector__buttons">
-            <button
-              type="button"
-              className={`role-btn ${role === 'Student' ? 'active' : ''}`}
-              onClick={() => setRole('Student')}
-              aria-pressed={role === 'Student'}
-            >
-              <img src="/assets/user_student.png" alt="Student" />
-              <span>Student</span>
-            </button>
-            <button
-              type="button"
-              className={`role-btn ${role === 'Professor' ? 'active' : ''}`}
-              onClick={() => setRole('Professor')}
-              aria-pressed={role === 'Professor'}
-            >
-              <img src="/assets/user_faculty.png" alt="Faculty" />
-              <span>Faculty</span>
-            </button>
-            <button
-              type="button"
-              className={`role-btn ${role === 'Admin' ? 'active' : ''}`}
-              onClick={() => setRole('Admin')}
-              aria-pressed={role === 'Admin'}
-            >
-              <img src="/assets/user_admin.png" alt="Admin" />
-              <span>Admin</span>
-            </button>
-          </div>
-        </div>
 
         <form onSubmit={handleSubmit} className='login_form' >
             <input 

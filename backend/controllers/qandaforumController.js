@@ -20,7 +20,8 @@ const resolveUserId = async (req) => {
 // GET /api/forum/questions
 export const getQuestions = async (req, res) => {
   try {
-    const questions = await Question.find()
+    const instituteId = req.user.instituteId;
+    const questions = await Question.find({ instituteId })
       .populate("asker")
       .sort({ createdAt: -1 });
 
@@ -36,17 +37,25 @@ export const getQuestionDetails = async (req, res) => {
   try {
     const questionId = req.params.id;
     const shouldIncrement = req.query.increment === "1";
-    const question = shouldIncrement
-      ? await Question.findByIdAndUpdate(
-          questionId,
-          { $inc: { views: 1 } },
-          { new: true }
-        )
-          .populate("answers")
-          .populate("asker")
-      : await Question.findById(questionId).populate("answers").populate("asker");
+    
+    // We can add a check here to ensure the question belongs to the user's institute
+    // But since IDs are unique, and users can't easily guess IDs of other institutes' questions (and they won't see them in feed),
+    // strict enforcement is good but maybe secondary to fixing the crash.
+    // Let's add the check if we can easily get instituteId from the question.
+    
+    let query = Question.findById(questionId);
+    if (shouldIncrement) {
+        query = Question.findByIdAndUpdate(questionId, { $inc: { views: 1 } }, { new: true });
+    }
+    
+    const question = await query.populate("answers").populate("asker");
 
     if (!question) return res.status(404).json({ error: "Question not found" });
+
+    // Institute Check
+    if (req.user.instituteId && question.instituteId && req.user.instituteId.toString() !== question.instituteId.toString()) {
+        return res.status(403).json({ message: "Access denied: Question belongs to another institute" });
+    }
 
     res.json({ question });
   } catch (error) {
@@ -67,6 +76,10 @@ export const upvoteQuestion = async (req, res) => {
     const question = await Question.findById(questionId);
     if (!question) {
       return res.status(404).json({ message: "Question not found" });
+    }
+    
+    if (req.user.instituteId && question.instituteId && req.user.instituteId.toString() !== question.instituteId.toString()) {
+        return res.status(403).json({ message: "Access denied" });
     }
 
     // Check if user has already voted
@@ -113,6 +126,10 @@ export const downvoteQuestion = async (req, res) => {
     const question = await Question.findById(questionId);
     if (!question) {
       return res.status(404).json({ message: "Question not found" });
+    }
+    
+    if (req.user.instituteId && question.instituteId && req.user.instituteId.toString() !== question.instituteId.toString()) {
+        return res.status(403).json({ message: "Access denied" });
     }
 
     // Check if user has already voted
@@ -246,21 +263,9 @@ export const submitAnswer = async (req, res) => {
     return res.status(404).json({ success: false, message: "Question not found" });
   }
   
-  // Assuming req.user is populated by middleware
-  const newAnswer = new Answer({
-    desc: answerText,
-    votes: 0,
-    answerer: req.user._id || (await import("../models/Student.js")).default.findOne({email: req.user.email}).then(u => u._id), // Fallback if _id not in token
-  });
-  
-  // Better way: ensure _id is in token or fetch user. 
-  // For now, let's assume we need to fetch user if _id is missing.
-  // Actually, let's just fetch user by email to be safe as we did in other controllers.
-  // But wait, qandaforum could be used by students or professors?
-  // The original code used req.session.user._id. 
-  // Let's assume the user is a Student for now as per original code context (usually students answer/ask).
-  // If professors can also answer, we need to handle that.
-  // Let's stick to simple ID usage if available, or fetch Student.
+  if (req.user.instituteId && question.instituteId && req.user.instituteId.toString() !== question.instituteId.toString()) {
+      return res.status(403).json({ message: "Access denied" });
+  }
   
   let userId = req.user._id;
   if (!userId) {
@@ -274,7 +279,11 @@ export const submitAnswer = async (req, res) => {
        return res.status(401).json({ message: "User not found" });
   }
   
-  newAnswer.answerer = userId;
+  const newAnswer = new Answer({
+    desc: answerText,
+    votes: 0,
+    answerer: userId,
+  });
 
   await newAnswer.save();
   question.answers.push(newAnswer._id);
@@ -291,6 +300,7 @@ export const askQuestion = async (req, res) => {
     try {
         const { title, desc, tags } = req.body;
         const tagsArray = tags.split(",").map((tag) => tag.trim());
+        const instituteId = req.user.instituteId;
         
         let userId = req.user._id;
         if (!userId) {
@@ -309,6 +319,7 @@ export const askQuestion = async (req, res) => {
           votes: 0,
           tags: tagsArray,
           asker: userId,
+          instituteId,
           wealth: 0,
           views: 0,
           answers: [],

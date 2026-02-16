@@ -1,6 +1,14 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import api from '../../api/axios';
 
+// Helper to map backend roles to frontend expectations
+const mapRole = (role) => {
+  if (role === 'student') return 'Student';
+  if (role === 'faculty') return 'Professor';
+  if (role === 'college_admin') return 'Admin';
+  return role;
+};
+
 // Async Thunks
 export const fetchUserData = createAsyncThunk(
   'auth/fetchUserData',
@@ -9,9 +17,9 @@ export const fetchUserData = createAsyncThunk(
       const token = localStorage.getItem('token');
       if (!token) return rejectWithValue('No token found');
       
-      const res = await api.get('/auth/student/me'); // This endpoint seems to handle all roles based on token
-      // Backend returns { role: "Student", user: {...} }
-      return { ...res.data.user, role: res.data.role };
+      const res = await api.get('/auth/me'); 
+      const mappedRole = mapRole(res.data.user.role);
+      return { ...res.data.user, role: mappedRole };
     } catch (error) {
       localStorage.removeItem('token');
       return rejectWithValue(error.response?.data?.message || 'Session expired');
@@ -21,25 +29,13 @@ export const fetchUserData = createAsyncThunk(
 
 export const loginUser = createAsyncThunk(
   'auth/loginUser',
-  async ({ email, password, role }, { rejectWithValue, dispatch }) => {
+  async ({ email, password }, { rejectWithValue, dispatch }) => {
     try {
-      let url = '';
-      if (role === 'Student') url = '/auth/student/login';
-      else if (role === 'Professor') url = '/auth/professor/login';
-      else if (role === 'Admin') url = '/auth/admin/login';
-
-      const res = await api.post(url, { email, pass: password });
+      const res = await api.post('/auth/login', { email, password });
       localStorage.setItem('token', res.data.token);
       
-      // Fetch full user data immediately after login and wait for it
-      const userDataResult = await dispatch(fetchUserData());
-      
-      // Return the user data if successful, otherwise throw error
-      if (fetchUserData.fulfilled.match(userDataResult)) {
-        return userDataResult.payload;
-      } else {
-        throw new Error('Failed to fetch user data');
-      }
+      const mappedRole = mapRole(res.data.user.role);
+      return { ...res.data.user, role: mappedRole };
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || 'Login failed');
     }
