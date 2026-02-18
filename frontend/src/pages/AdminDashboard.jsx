@@ -2321,7 +2321,6 @@ const AdminDashboard = () => {
                     style={{
                       padding: '14px 20px',
                       borderRadius: '12px',
-                      border: 'none',
                       background: othersActiveSection === 'noticeboard'
                         ? 'linear-gradient(135deg, rgba(43, 153, 0, 0.25), rgba(43, 153, 0, 0.15))'
                         : 'rgba(255, 255, 255, 0.04)',
@@ -2357,7 +2356,6 @@ const AdminDashboard = () => {
                     style={{
                       padding: '14px 20px',
                       borderRadius: '12px',
-                      border: 'none',
                       background: othersActiveSection === 'banner'
                         ? 'linear-gradient(135deg, rgba(43, 153, 0, 0.25), rgba(43, 153, 0, 0.15))'
                         : 'rgba(255, 255, 255, 0.04)',
@@ -2393,7 +2391,6 @@ const AdminDashboard = () => {
                     style={{
                       padding: '14px 20px',
                       borderRadius: '12px',
-                      border: 'none',
                       background: othersActiveSection === 'ads'
                         ? 'linear-gradient(135deg, rgba(43, 153, 0, 0.25), rgba(43, 153, 0, 0.15))'
                         : 'rgba(255, 255, 255, 0.04)',
