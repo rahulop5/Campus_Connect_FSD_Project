@@ -1,4 +1,5 @@
 import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router';
 import ProfessorDashboard from './ProfessorDashboard';
 import AdminDashboard from './AdminDashboard';
 import Layout from '../components/Layout';
@@ -8,6 +9,7 @@ import '../styles/Dashboard.css';
 
 const StudentDashboard = () => {
   const [data, setData] = useState(null);
+  const navigate = useNavigate();
 
   const sanitizeHtml = (html = '') => {
     if (typeof window === 'undefined') return '';
@@ -86,7 +88,12 @@ const StudentDashboard = () => {
                 const offset = circumference * (1 - (course.attendancePercentage || 0) / 100);
 
                 return (
-                  <div key={index} className="db_subject">
+                  <div
+                    key={index}
+                    className="db_subject"
+                    onClick={() => navigate(`/course/${course.courseId}`)}
+                    style={{ cursor: 'pointer' }}
+                  >
                     <div className="db_grade">
                       <p>{course.subject}</p>
                       <p>Predicted Grade</p>

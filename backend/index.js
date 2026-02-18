@@ -26,7 +26,7 @@ import { createStream } from "rotating-file-stream";
 import { fileURLToPath } from "url";
 import path from "path";
 
-const app=express();
+const app = express();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -65,6 +65,8 @@ app.use(
 
 import authRoutes from "./routes/authRoutes.js";
 import instituteRoutes from "./routes/instituteRoutes.js";
+import courseRoutes from "./routes/courseRoutes.js";
+import studentDetailRoutes from "./routes/studentDetailRoutes.js";
 
 // Routes
 // app.use("/api/auth/student", authstudentRoutes);
@@ -80,6 +82,8 @@ app.use("/api/professor", professorRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/election", electionRoutes);
 app.use('/api/profile', profileRoutes);
+app.use('/api/courses', courseRoutes); // Course details routes
+app.use('/api/students', studentDetailRoutes); // Student details routes
 
 app.get("/", (req, res) => {
   res.send("API is running");

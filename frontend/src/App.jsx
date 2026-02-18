@@ -20,6 +20,8 @@ import Academics from './pages/Academics';
 import OAuthCallback from './pages/OAuthCallback';
 import LandingPage from './pages/LandingPage';
 import InstituteDashboard from './pages/InstituteDashboard';
+import CourseDetails from './pages/CourseDetails';
+import StudentPreview from './pages/StudentPreview';
 
 const ProtectedRoute = ({ children }) => {
   const { user, loading } = useSelector((state) => state.auth);
@@ -29,22 +31,22 @@ const ProtectedRoute = ({ children }) => {
 };
 
 const InstituteRoute = ({ children }) => {
-    const { user, loading } = useSelector((state) => state.auth);
-    if (loading) return <div>Loading...</div>;
-    if (!user) return <Navigate to="/login" />;
-    
-    // If no institute or pending, go to landing
-    if (!user.instituteId || user.verificationStatus === 'pending') {
-        return <Navigate to="/landing" />;
-    }
-    return children;
+  const { user, loading } = useSelector((state) => state.auth);
+  if (loading) return <div>Loading...</div>;
+  if (!user) return <Navigate to="/login" />;
+
+  // If no institute or pending, go to landing
+  if (!user.instituteId || user.verificationStatus === 'pending') {
+    return <Navigate to="/landing" />;
+  }
+  return children;
 }
 
 const RoleRoute = ({ children, role }) => {
-    const { user, loading } = useSelector((state) => state.auth);
-    if (loading) return <div>Loading...</div>;
-    if (!user || user.role !== role) return <Navigate to="/dashboard" />;
-    return children;
+  const { user, loading } = useSelector((state) => state.auth);
+  if (loading) return <div>Loading...</div>;
+  if (!user || user.role !== role) return <Navigate to="/dashboard" />;
+  return children;
 }
 
 function App() {
@@ -55,104 +57,116 @@ function App() {
   }, [dispatch]);
 
   return (
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/oauth-callback" element={<OAuthCallback />} />
-          
-          {/* Landing Page for Institute Selection */}
-          <Route path="/landing" element={
-              <ProtectedRoute>
-                  <LandingPage />
-              </ProtectedRoute>
-          } />
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/oauth-callback" element={<OAuthCallback />} />
 
-          {/* Institute Admin Dashboard */}
-           <Route path="/institute/dashboard" element={
-              <RoleRoute role="Admin">
-                  <InstituteDashboard />
-              </RoleRoute>
-          } />
+        {/* Landing Page for Institute Selection */}
+        <Route path="/landing" element={
+          <ProtectedRoute>
+            <LandingPage />
+          </ProtectedRoute>
+        } />
 
-          <Route path="/dashboard" element={
-            <InstituteRoute>
-              <Dashboard />
-            </InstituteRoute>
-          } />
+        {/* Institute Admin Dashboard */}
+        <Route path="/institute/dashboard" element={
+          <RoleRoute role="Admin">
+            <InstituteDashboard />
+          </RoleRoute>
+        } />
 
-          <Route path="/profile" element={
-            <InstituteRoute>
-                <ProfileWrapper />
-            </InstituteRoute>
-          } />
+        <Route path="/dashboard" element={
+          <InstituteRoute>
+            <Dashboard />
+          </InstituteRoute>
+        } />
 
-          <Route path="/change-password" element={
-            <InstituteRoute>
-              <ChangePassword />
-            </InstituteRoute>
-          } />
+        <Route path="/profile" element={
+          <InstituteRoute>
+            <ProfileWrapper />
+          </InstituteRoute>
+        } />
 
-          <Route path="/pricing" element={<Pricing />} />
+        <Route path="/change-password" element={
+          <InstituteRoute>
+            <ChangePassword />
+          </InstituteRoute>
+        } />
 
-          {/* Student Routes */}
-          <Route path="/attendance" element={
-            <InstituteRoute>
-                <RoleRoute role="Student">
-                <Attendance />
-                </RoleRoute>
-            </InstituteRoute>
-          } />
-          <Route path="/bellgraph" element={
-            <InstituteRoute>
-                <RoleRoute role="Student">
-                <Bellgraph />
-                </RoleRoute>
-            </InstituteRoute>
-          } />
-          <Route path="/elections" element={
-            <InstituteRoute>
-              <Elections />
-            </InstituteRoute>
-          } />
+        <Route path="/pricing" element={<Pricing />} />
 
-          {/* Professor Routes */}
-          <Route path="/academics" element={
-            <InstituteRoute>
-                <RoleRoute role="Professor">
-                <Academics />
-                </RoleRoute>
-            </InstituteRoute>
-          } />
+        {/* Student Routes */}
+        <Route path="/attendance" element={
+          <InstituteRoute>
+            <RoleRoute role="Student">
+              <Attendance />
+            </RoleRoute>
+          </InstituteRoute>
+        } />
+        <Route path="/bellgraph" element={
+          <InstituteRoute>
+            <RoleRoute role="Student">
+              <Bellgraph />
+            </RoleRoute>
+          </InstituteRoute>
+        } />
+        <Route path="/elections" element={
+          <InstituteRoute>
+            <Elections />
+          </InstituteRoute>
+        } />
 
-          {/* Forum Routes */}
-          <Route path="/forum/questions" element={
-            <InstituteRoute>
-              <ForumList />
-            </InstituteRoute>
-          } />
-          <Route path="/forum/question/:id" element={
-            <InstituteRoute>
-              <ForumDetail />
-            </InstituteRoute>
-          } />
-          <Route path="/forum/ask" element={
-            <InstituteRoute>
-              <AskQuestion />
-            </InstituteRoute>
-          } />
+        {/* Professor Routes */}
+        <Route path="/academics" element={
+          <InstituteRoute>
+            <RoleRoute role="Professor">
+              <Academics />
+            </RoleRoute>
+          </InstituteRoute>
+        } />
 
-        </Routes>
-      </BrowserRouter>
+        {/* Forum Routes */}
+        <Route path="/forum/questions" element={
+          <InstituteRoute>
+            <ForumList />
+          </InstituteRoute>
+        } />
+        <Route path="/forum/question/:id" element={
+          <InstituteRoute>
+            <ForumDetail />
+          </InstituteRoute>
+        } />
+        <Route path="/forum/ask" element={
+          <InstituteRoute>
+            <AskQuestion />
+          </InstituteRoute>
+        } />
+
+        {/* Course and Student Routes */}
+        <Route path="/course/:courseId" element={
+          <InstituteRoute>
+            <CourseDetails />
+          </InstituteRoute>
+        } />
+        <Route path="/student/:studentId" element={
+          <InstituteRoute>
+            <StudentPreview />
+          </InstituteRoute>
+        } />
+
+      </Routes>
+    </BrowserRouter>
   );
 }
 
 const ProfileWrapper = () => {
-    const { user } = useSelector((state) => state.auth);
-    if (user.role === 'Student') return <Profile />;
-    if (user.role === 'Professor') return <ProfessorProfile />;
-    return <div>Profile not available for this role</div>;
+  const { user } = useSelector((state) => state.auth);
+  if (user.role === 'Student') return <Profile />;
+  if (user.role === 'Professor') return <ProfessorProfile />;
+  return <div>Profile not available for this role</div>;
 }
 
 export default App;
