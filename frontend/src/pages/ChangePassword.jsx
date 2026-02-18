@@ -1,8 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import api from '../api/axios';
-import Header from '../components/Header';
-import DarkVeil from '../components/DarkVeil';
+import Plasma from '../components/Plasma';
 import '../styles/changepassword.css';
 
 const ChangePassword = () => {
@@ -42,7 +41,7 @@ const ChangePassword = () => {
         currentPassword: formData.currentPassword,
         newPassword: formData.newPassword
       });
-      
+
       setMessage('Password changed successfully!');
       setTimeout(() => {
         navigate('/profile');
@@ -53,12 +52,20 @@ const ChangePassword = () => {
   };
 
   return (
-    <>
+    <div className="outfit change-password-page">
       <div className="plasma-background">
-        <DarkVeil hueShift={120} speed={0.5} noiseIntensity={0.8} />
+        <Plasma
+          color="#026100"
+          speed={0.5}
+          direction="forward"
+          scale={1.1}
+          opacity={0.6}
+          mouseInteractive={true}
+        />
       </div>
-      <Header />
-      <div className="change-password-page">
+
+      <div>
+        <p className="logo">Campus<span>C</span>onnect</p>
         <div className="change-password-container">
           <h1>Change Password</h1>
           <form onSubmit={handleSubmit}>
@@ -107,7 +114,7 @@ const ChangePassword = () => {
           </form>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 
