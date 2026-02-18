@@ -101,8 +101,10 @@ const LandingPage = () => {
         </div>
         <div className="landing-container">
           <p className="logo">Campus<span>C</span>onnect</p>
-          <h1>Verification Pending</h1>
-          <p style={{ textAlign: 'center', marginTop: '20px' }}>You have requested to join an institute. Please wait for the administrator to approve your request.</p>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', flex: 1, textAlign: 'center', maxWidth: '500px', marginTop: '-60px' }}>
+            <h1 style={{ fontSize: '28px', marginBottom: '20px' }}>Verification Pending</h1>
+            <p style={{ fontSize: '16px', lineHeight: '1.6', color: '#DDD' }}>You have requested to join an institute. Please wait for the administrator to approve your request.</p>
+          </div>
         </div>
       </div>
     )
