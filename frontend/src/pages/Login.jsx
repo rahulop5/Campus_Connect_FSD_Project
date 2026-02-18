@@ -16,8 +16,8 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (isSubmitting) return; 
-    
+    if (isSubmitting) return;
+
     setIsSubmitting(true);
     setLocalError('');
     try {
@@ -40,7 +40,7 @@ const Login = () => {
   return (
     <div className="outfit login-page">
       <div className="plasma-background">
-        <Plasma 
+        <Plasma
           color="#026100"
           speed={0.5}
           direction="forward"
@@ -53,8 +53,8 @@ const Login = () => {
         <p className="logo">Campus<span>C</span>onnect</p>
         {(localError || authError) && (
           <p style={{
-            color: '#ff4444', 
-            textAlign: 'center', 
+            color: '#ff4444',
+            textAlign: 'center',
             background: 'rgba(255, 68, 68, 0.1)',
             padding: '8px 16px',
             borderRadius: '8px',
@@ -66,45 +66,45 @@ const Login = () => {
         )}
 
         <form onSubmit={handleSubmit} className='login_form' >
-            <input 
-                type="email" 
-                placeholder="Email" 
-                value={email} 
-                onChange={(e) => setEmail(e.target.value)} 
-                required 
-                maxLength={300}
-            />
-            <input 
-                type="password" 
-                placeholder="Password" 
-                value={password} 
-                onChange={(e) => setPassword(e.target.value)} 
-                required 
-                maxLength={300}
-            />
-            <button type="submit" disabled={isSubmitting}>
-              <p>{isSubmitting ? 'Logging in...' : 'Login'}</p>
-            </button>
+          <input
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+            maxLength={300}
+          />
+          <input
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            maxLength={300}
+          />
+          <button type="submit" disabled={isSubmitting}>
+            <p>{isSubmitting ? 'Logging in...' : 'Login'}</p>
+          </button>
         </form>
         <div className="other">
-            <p>Not registered? <Link to="/register">Sign up</Link></p>
-            <div className="orline">
-                <div></div>
-                <p>OR</p>
-                <div></div>
+          <p>Not registered? <Link to="/register">Sign up</Link></p>
+          <div className="orline">
+            <div></div>
+            <p>OR</p>
+            <div></div>
+          </div>
+          <a href="http://localhost:3000/api/auth/google" style={{ textDecoration: 'none' }}>
+            <div className="google oauth">
+              <img src="/assets/googlelogo.png" alt="" />
+              <p>Continue with Google</p>
             </div>
-            <a href="http://localhost:3000/api/auth/student/google" style={{textDecoration: 'none'}}>
-                <div className="google oauth">
-                    <img src="/assets/googlelogo.png" alt="" />
-                    <p>Continue with Google</p>
-                </div>
-            </a>
-            <a href="http://localhost:3000/api/auth/student/github" style={{textDecoration: 'none'}}>
-                <div className="github oauth" >
-                    <img src="/assets/githublogo.png" alt="" />
-                    <p>Continue with Github</p>
-                </div>
-            </a>
+          </a>
+          <a href="http://localhost:3000/api/auth/github" style={{ textDecoration: 'none' }}>
+            <div className="github oauth" >
+              <img src="/assets/githublogo.png" alt="" />
+              <p>Continue with Github</p>
+            </div>
+          </a>
         </div>
       </div>
     </div>
