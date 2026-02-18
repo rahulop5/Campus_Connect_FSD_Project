@@ -74,6 +74,17 @@ const AdminDashboard = () => {
     setTimeout(() => setNotification({ message: '', type: '' }), 4000);
   };
 
+  // Others tab states
+  const [othersActiveSection, setOthersActiveSection] = useState('noticeboard'); // noticeboard, banner, ads
+  const [noticeboardData, setNoticeboardData] = useState([
+    { id: 1, text: '', icon: 'pin' },
+    { id: 2, text: '', icon: 'pin' },
+    { id: 3, text: '', icon: 'pin' },
+    { id: 4, text: '', icon: 'premium' },
+    { id: 5, text: '', icon: 'premium' },
+    { id: 6, text: '', icon: 'premium' }
+  ]);
+
   // Form States
   const [courseForm, setCourseForm] = useState({ name: '', professor: '', section: '', totalclasses: '', credits: '' });
   const [studentForm, setStudentForm] = useState({ name: '', email: '', rollnumber: '', phone: '', section: '', password: '' });
@@ -643,58 +654,168 @@ const AdminDashboard = () => {
           {/* Verification Requests Tab */}
           {activeTab === 'requests' && (
             <div style={{ maxWidth: '100%', margin: '0 auto', padding: '0 24px 0 48px', marginTop: '5vh' }}>
-              <h2 style={{ marginBottom: '24px' }}>Pending Join Requests</h2>
+              <h2 style={{ marginBottom: '32px' }}>Pending Join Requests</h2>
               {requests.length === 0 ? (
-                <div style={{ textAlign: 'center', padding: '40px', color: 'rgba(255,255,255,0.5)' }}>No pending requests</div>
+                <div style={{
+                  textAlign: 'center',
+                  padding: '60px 20px',
+                  color: 'rgba(255, 255, 255, 0.4)',
+                  background: 'linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01))',
+                  borderRadius: '16px',
+                  border: '1px solid rgba(255, 255, 255, 0.08)'
+                }}>
+                  <div style={{ fontSize: '56px', marginBottom: '20px' }}>📋</div>
+                  <div style={{
+                    fontSize: '18px',
+                    fontWeight: '500',
+                    color: 'rgba(255, 255, 255, 0.6)',
+                    marginBottom: '8px'
+                  }}>
+                    No pending requests
+                  </div>
+                  <div style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.4)' }}>
+                    All join requests have been processed
+                  </div>
+                </div>
               ) : (
-                <table style={{ width: '100%', borderCollapse: 'collapse', color: 'white' }}>
-                  <thead>
-                    <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.1)', textAlign: 'left' }}>
-                      <th style={{ padding: '16px' }}>Name</th>
-                      <th style={{ padding: '16px' }}>Email</th>
-                      <th style={{ padding: '16px' }}>Role</th>
-                      <th style={{ padding: '16px' }}>Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {requests.map(req => (
-                      <tr key={req._id} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-                        <td style={{ padding: '16px' }}>{req.name}</td>
-                        <td style={{ padding: '16px' }}>{req.email}</td>
-                        <td style={{ padding: '16px' }}>{req.role}</td>
-                        <td style={{ padding: '16px' }}>
-                          <button
-                            onClick={() => handleRequestAction(req._id, 'approve')}
-                            style={{
-                              marginRight: '10px',
-                              backgroundColor: '#2B9900',
-                              color: 'white',
-                              border: 'none',
-                              padding: '8px 16px',
-                              borderRadius: '4px',
-                              cursor: 'pointer'
-                            }}
-                          >
-                            Approve
-                          </button>
-                          <button
-                            onClick={() => handleRequestAction(req._id, 'reject')}
-                            style={{
-                              backgroundColor: '#ff4444',
-                              color: 'white',
-                              border: 'none',
-                              padding: '8px 16px',
-                              borderRadius: '4px',
-                              cursor: 'pointer'
-                            }}
-                          >
-                            Reject
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+                <div style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fill, minmax(420px, 1fr))',
+                  gap: '24px',
+                  paddingTop: '8px'
+                }}>
+                  {requests.map(req => (
+                    <div
+                      key={req._id}
+                      style={{
+                        position: 'relative',
+                        background: 'linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02))',
+                        borderRadius: '16px',
+                        padding: '24px',
+                        border: '1px solid rgba(255, 255, 255, 0.08)',
+                        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+                        transition: 'all 0.3s ease'
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.transform = 'translateY(-4px)';
+                        e.currentTarget.style.boxShadow = '0 8px 24px rgba(0, 0, 0, 0.25)';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.transform = 'translateY(0)';
+                        e.currentTarget.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.1)';
+                      }}
+                    >
+                      {/* User Info Section */}
+                      <div style={{ marginBottom: '20px' }}>
+                        {/* Name */}
+                        <div style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '12px',
+                          marginBottom: '12px'
+                        }}>
+                          <div style={{
+                            width: '48px',
+                            height: '48px',
+                            borderRadius: '50%',
+                            background: 'rgba(255, 255, 255, 0.9)',
+                            border: '2px solid rgba(255, 255, 255, 0.3)',
+                            flexShrink: 0
+                          }} />
+                          <div>
+                            <div style={{
+                              fontSize: '18px',
+                              fontWeight: '600',
+                              color: '#ffffff',
+                              marginBottom: '4px'
+                            }}>
+                              {req.name}
+                            </div>
+                            <div style={{
+                              fontSize: '13px',
+                              color: 'rgba(255, 255, 255, 0.55)'
+                            }}>
+                              {req.email}
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Role Badge */}
+                        <div style={{
+                          display: 'inline-block',
+                          padding: '6px 14px',
+                          borderRadius: '999px',
+                          fontSize: '13px',
+                          fontWeight: '600',
+                          background: req.role === 'Student'
+                            ? 'rgba(59, 130, 246, 0.18)'
+                            : req.role === 'Professor'
+                              ? 'rgba(168, 85, 247, 0.18)'
+                              : 'rgba(251, 191, 36, 0.18)',
+                          color: req.role === 'Student'
+                            ? '#93C5FD'
+                            : req.role === 'Professor'
+                              ? '#C4B5FD'
+                              : '#FCD34D',
+                          border: req.role === 'Student'
+                            ? '1px solid rgba(59, 130, 246, 0.35)'
+                            : req.role === 'Professor'
+                              ? '1px solid rgba(168, 85, 247, 0.35)'
+                              : '1px solid rgba(251, 191, 36, 0.35)'
+                        }}>
+                          {req.role}
+                        </div>
+                      </div>
+
+                      {/* Action Buttons */}
+                      <div style={{
+                        display: 'flex',
+                        gap: '12px'
+                      }}>
+                        <button
+                          onClick={() => handleRequestAction(req._id, 'approve')}
+                          style={{
+                            flex: 1,
+                            padding: '12px 20px',
+                            borderRadius: '8px',
+                            border: 'none',
+                            background: '#2B9900',
+                            color: 'white',
+                            fontFamily: 'Outfit',
+                            fontWeight: '600',
+                            fontSize: '14px',
+                            cursor: 'pointer',
+                            transition: 'all 0.2s ease'
+                          }}
+                          onMouseEnter={(e) => e.target.style.background = '#248000'}
+                          onMouseLeave={(e) => e.target.style.background = '#2B9900'}
+                        >
+                          ✓ Approve
+                        </button>
+                        <button
+                          onClick={() => handleRequestAction(req._id, 'reject')}
+                          style={{
+                            flex: 1,
+                            padding: '12px 20px',
+                            borderRadius: '8px',
+                            border: 'none',
+                            background: '#ff4444',
+                            color: 'white',
+                            fontFamily: 'Outfit',
+                            fontWeight: '600',
+                            fontSize: '14px',
+                            cursor: 'pointer',
+                            transition: 'all 0.2s ease'
+                          }}
+                          onMouseEnter={(e) => e.target.style.background = '#e63939'}
+                          onMouseLeave={(e) => e.target.style.background = '#ff4444'}
+                        >
+                          ✕ Reject
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               )}
             </div>
           )}
@@ -2183,225 +2304,508 @@ const AdminDashboard = () => {
             <div className="course-container" style={{ maxWidth: '100%', padding: '0 24px 0 48px', marginTop: '5vh' }}>
               <h2 style={{ marginBottom: '32px' }}>Content Management</h2>
 
+              {/* Two-column layout: Left sidebar + Right content */}
               <div style={{
                 display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))',
-                gap: '24px'
+                gridTemplateColumns: '220px 1fr',
+                gap: '32px'
               }}>
-                {/* Noticeboard Management */}
+                {/* LEFT SIDEBAR: Function Selector */}
                 <div style={{
-                  background: 'linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02))',
-                  borderRadius: '16px',
-                  padding: '28px',
-                  border: '1px solid rgba(255, 255, 255, 0.08)'
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '8px'
                 }}>
-                  <div style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '12px',
-                    marginBottom: '20px'
-                  }}>
-                    <div style={{ fontSize: '28px' }}>📋</div>
-                    <h3 style={{ margin: 0, fontSize: '20px', fontWeight: '600' }}>Noticeboard</h3>
-                  </div>
-                  <p style={{
-                    color: 'rgba(255, 255, 255, 0.6)',
-                    fontSize: '14px',
-                    marginBottom: '20px'
-                  }}>
-                    Update important notices visible to all students
-                  </p>
-                  <form onSubmit={(e) => {
-                    e.preventDefault();
-                    const formData = new FormData(e.target);
-                    const noticeText = formData.get('noticeText');
-                    // This will be implemented via backend
-                    showNotification('Noticeboard update feature coming soon!', 'success');
-                  }}>
-                    <textarea
-                      name="noticeText"
-                      placeholder="Enter notice text..."
-                      style={{
-                        width: '100%',
-                        height: '120px',
-                        padding: '12px',
-                        borderRadius: '8px',
-                        border: '1px solid rgba(255, 255, 255, 0.2)',
-                        background: 'rgba(255, 255, 255, 0.05)',
-                        color: 'white',
-                        fontFamily: 'Outfit',
-                        fontSize: '14px',
-                        resize: 'vertical',
-                        marginBottom: '16px'
-                      }}
-                      required
-                    />
-                    <button
-                      type="submit"
-                      style={{
-                        width: '100%',
-                        padding: '12px',
-                        borderRadius: '8px',
-                        border: 'none',
-                        background: '#2B9900',
-                        color: 'white',
-                        fontFamily: 'Outfit',
-                        fontWeight: '600',
-                        cursor: 'pointer',
-                        transition: 'all 0.2s ease'
-                      }}
-                      onMouseEnter={(e) => e.target.style.background = '#248000'}
-                      onMouseLeave={(e) => e.target.style.background = '#2B9900'}
-                    >
-                      Update Notice
-                    </button>
-                  </form>
+                  <button
+                    onClick={() => setOthersActiveSection('noticeboard')}
+                    style={{
+                      padding: '14px 20px',
+                      borderRadius: '12px',
+                      border: 'none',
+                      background: othersActiveSection === 'noticeboard'
+                        ? 'linear-gradient(135deg, rgba(43, 153, 0, 0.25), rgba(43, 153, 0, 0.15))'
+                        : 'rgba(255, 255, 255, 0.04)',
+                      color: othersActiveSection === 'noticeboard' ? '#9BEF7C' : 'rgba(255, 255, 255, 0.6)',
+                      fontFamily: 'Outfit',
+                      fontWeight: othersActiveSection === 'noticeboard' ? '600' : '500',
+                      fontSize: '14px',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s ease',
+                      textAlign: 'left',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '12px',
+                      border: othersActiveSection === 'noticeboard' ? '1px solid rgba(43, 153, 0, 0.4)' : '1px solid rgba(255, 255, 255, 0.08)'
+                    }}
+                    onMouseEnter={(e) => {
+                      if (othersActiveSection !== 'noticeboard') {
+                        e.target.style.background = 'rgba(255, 255, 255, 0.08)';
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (othersActiveSection !== 'noticeboard') {
+                        e.target.style.background = 'rgba(255, 255, 255, 0.04)';
+                      }
+                    }}
+                  >
+                    <span style={{ fontSize: '20px' }}>📋</span>
+                    Noticeboard
+                  </button>
+
+                  <button
+                    onClick={() => setOthersActiveSection('banner')}
+                    style={{
+                      padding: '14px 20px',
+                      borderRadius: '12px',
+                      border: 'none',
+                      background: othersActiveSection === 'banner'
+                        ? 'linear-gradient(135deg, rgba(43, 153, 0, 0.25), rgba(43, 153, 0, 0.15))'
+                        : 'rgba(255, 255, 255, 0.04)',
+                      color: othersActiveSection === 'banner' ? '#9BEF7C' : 'rgba(255, 255, 255, 0.6)',
+                      fontFamily: 'Outfit',
+                      fontWeight: othersActiveSection === 'banner' ? '600' : '500',
+                      fontSize: '14px',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s ease',
+                      textAlign: 'left',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '12px',
+                      border: othersActiveSection === 'banner' ? '1px solid rgba(43, 153, 0, 0.4)' : '1px solid rgba(255, 255, 255, 0.08)'
+                    }}
+                    onMouseEnter={(e) => {
+                      if (othersActiveSection !== 'banner') {
+                        e.target.style.background = 'rgba(255, 255, 255, 0.08)';
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (othersActiveSection !== 'banner') {
+                        e.target.style.background = 'rgba(255, 255, 255, 0.04)';
+                      }
+                    }}
+                  >
+                    <span style={{ fontSize: '20px' }}>🖼️</span>
+                    Banner Uploads
+                  </button>
+
+                  <button
+                    onClick={() => setOthersActiveSection('ads')}
+                    style={{
+                      padding: '14px 20px',
+                      borderRadius: '12px',
+                      border: 'none',
+                      background: othersActiveSection === 'ads'
+                        ? 'linear-gradient(135deg, rgba(43, 153, 0, 0.25), rgba(43, 153, 0, 0.15))'
+                        : 'rgba(255, 255, 255, 0.04)',
+                      color: othersActiveSection === 'ads' ? '#9BEF7C' : 'rgba(255, 255, 255, 0.6)',
+                      fontFamily: 'Outfit',
+                      fontWeight: othersActiveSection === 'ads' ? '600' : '500',
+                      fontSize: '14px',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s ease',
+                      textAlign: 'left',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '12px',
+                      border: othersActiveSection === 'ads' ? '1px solid rgba(43, 153, 0, 0.4)' : '1px solid rgba(255, 255, 255, 0.08)'
+                    }}
+                    onMouseEnter={(e) => {
+                      if (othersActiveSection !== 'ads') {
+                        e.target.style.background = 'rgba(255, 255, 255, 0.08)';
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (othersActiveSection !== 'ads') {
+                        e.target.style.background = 'rgba(255, 255, 255, 0.04)';
+                      }
+                    }}
+                  >
+                    <span style={{ fontSize: '20px' }}>📢</span>
+                    Advertisement Section
+                  </button>
                 </div>
 
-                {/* Banner Management */}
-                <div style={{
-                  background: 'linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02))',
-                  borderRadius: '16px',
-                  padding: '28px',
-                  border: '1px solid rgba(255, 255, 255, 0.08)'
-                }}>
-                  <div style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '12px',
-                    marginBottom: '20px'
-                  }}>
-                    <div style={{ fontSize: '28px' }}>🖼️</div>
-                    <h3 style={{ margin: 0, fontSize: '20px', fontWeight: '600' }}>Dashboard Banner</h3>
-                  </div>
-                  <p style={{
-                    color: 'rgba(255, 255, 255, 0.6)',
-                    fontSize: '14px',
-                    marginBottom: '20px'
-                  }}>
-                    Change the banner image on student dashboard
-                  </p>
-                  <form onSubmit={(e) => {
-                    e.preventDefault();
-                    showNotification('Banner update feature coming soon!', 'success');
-                  }}>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      style={{
-                        width: '100%',
-                        padding: '12px',
-                        borderRadius: '8px',
-                        border: '1px solid rgba(255, 255, 255, 0.2)',
-                        background: 'rgba(255, 255, 255, 0.05)',
-                        color: 'white',
-                        fontFamily: 'Outfit',
+                {/* RIGHT CONTENT AREA */}
+                <div>
+                  {/* NOTICEBOARD SECTION */}
+                  {othersActiveSection === 'noticeboard' && (
+                    <div style={{
+                      background: 'linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02))',
+                      borderRadius: '16px',
+                      padding: '32px',
+                      border: '1px solid rgba(255, 255, 255, 0.08)'
+                    }}>
+                      <div style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '12px',
+                        marginBottom: '8px'
+                      }}>
+                        <div style={{ fontSize: '28px' }}>📋</div>
+                        <h3 style={{ margin: 0, fontSize: '22px', fontWeight: '600' }}>Noticeboard Management</h3>
+                      </div>
+                      <p style={{
+                        color: 'rgba(255, 255, 255, 0.55)',
                         fontSize: '14px',
-                        marginBottom: '16px'
-                      }}
-                      required
-                    />
-                    <button
-                      type="submit"
-                      style={{
-                        width: '100%',
-                        padding: '12px',
-                        borderRadius: '8px',
-                        border: 'none',
-                        background: '#2B9900',
-                        color: 'white',
-                        fontFamily: 'Outfit',
-                        fontWeight: '600',
-                        cursor: 'pointer',
-                        transition: 'all 0.2s ease'
-                      }}
-                      onMouseEnter={(e) => e.target.style.background = '#248000'}
-                      onMouseLeave={(e) => e.target.style.background = '#2B9900'}
-                    >
-                      Upload Banner
-                    </button>
-                  </form>
-                </div>
+                        marginBottom: '32px'
+                      }}>
+                        Manage the 6 notices displayed on student dashboard. Each notice has a 100-character limit. Leave empty for "-" placeholder.
+                      </p>
 
-                {/* Ads Management */}
-                <div style={{
-                  background: 'linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02))',
-                  borderRadius: '16px',
-                  padding: '28px',
-                  border: '1px solid rgba(255, 255, 255, 0.08)'
-                }}>
-                  <div style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '12px',
-                    marginBottom: '20px'
-                  }}>
-                    <div style={{ fontSize: '28px' }}>📢</div>
-                    <h3 style={{ margin: 0, fontSize: '20px', fontWeight: '600' }}>Advertisement Section</h3>
-                  </div>
-                  <p style={{
-                    color: 'rgba(255, 255, 255, 0.6)',
-                    fontSize: '14px',
-                    marginBottom: '20px'
-                  }}>
-                    Upload videos, images, or GIFs for the ad section
-                  </p>
-                  <form onSubmit={(e) => {
-                    e.preventDefault();
-                    showNotification('Ad upload feature coming soon!', 'success');
-                  }}>
-                    <select
-                      style={{
-                        width: '100%',
-                        padding: '12px',
-                        borderRadius: '8px',
-                        border: '1px solid rgba(255, 255, 255, 0.2)',
-                        background: 'rgba(255, 255, 255, 0.05)',
-                        color: 'white',
-                        fontFamily: 'Outfit',
+                      <form onSubmit={async (e) => {
+                        e.preventDefault();
+                        try {
+                          // TODO: Implement backend API call
+                          // await api.post('/admin/noticeboard', { notices: noticeboardData });
+                          showNotification('Noticeboard updated successfully!', 'success');
+                        } catch (err) {
+                          showNotification(err.response?.data?.message || 'Error updating noticeboard', 'error');
+                        }
+                      }}>
+                        {/* Notice Inputs Split by Icon Type */}
+                        <div style={{ marginBottom: '32px' }}>
+                          <div style={{
+                            fontSize: '13px',
+                            fontWeight: '600',
+                            color: 'rgba(255, 255, 255, 0.7)',
+                            marginBottom: '16px',
+                            textTransform: 'uppercase',
+                            letterSpacing: '0.5px'
+                          }}>
+                            📌 Pin Notices (1-3)
+                          </div>
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                            {noticeboardData.filter(n => n.icon === 'pin').map((notice, idx) => (
+                              <div key={notice.id}>
+                                <div style={{
+                                  position: 'relative',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  gap: '12px'
+                                }}>
+                                  <div style={{
+                                    minWidth: '28px',
+                                    height: '28px',
+                                    borderRadius: '50%',
+                                    background: 'rgba(43, 153, 0, 0.15)',
+                                    border: '1px solid rgba(43, 153, 0, 0.3)',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    fontSize: '12px',
+                                    fontWeight: '700',
+                                    color: '#9BEF7C'
+                                  }}>
+                                    {idx + 1}
+                                  </div>
+                                  <input
+                                    type="text"
+                                    value={notice.text}
+                                    onChange={(e) => {
+                                      const value = e.target.value.slice(0, 100);
+                                      setNoticeboardData(prev =>
+                                        prev.map(n => n.id === notice.id ? { ...n, text: value } : n)
+                                      );
+                                    }}
+                                    placeholder="Enter notice text (max 100 chars) or leave empty for '-'"
+                                    maxLength={100}
+                                    style={{
+                                      flex: 1,
+                                      padding: '12px 16px',
+                                      borderRadius: '8px',
+                                      border: '1px solid rgba(255, 255, 255, 0.2)',
+                                      background: 'rgba(255, 255, 255, 0.05)',
+                                      color: 'white',
+                                      fontFamily: 'Outfit',
+                                      fontSize: '14px',
+                                      outline: 'none',
+                                      transition: 'all 0.2s ease'
+                                    }}
+                                    onFocus={(e) => {
+                                      e.target.style.border = '1px solid rgba(43, 153, 0, 0.5)';
+                                      e.target.style.background = 'rgba(255, 255, 255, 0.08)';
+                                    }}
+                                    onBlur={(e) => {
+                                      e.target.style.border = '1px solid rgba(255, 255, 255, 0.2)';
+                                      e.target.style.background = 'rgba(255, 255, 255, 0.05)';
+                                    }}
+                                  />
+                                  <div style={{
+                                    minWidth: '50px',
+                                    fontSize: '12px',
+                                    color: notice.text.length >= 90
+                                      ? '#ff4444'
+                                      : 'rgba(255, 255, 255, 0.4)',
+                                    fontWeight: '600',
+                                    textAlign: 'right'
+                                  }}>
+                                    {notice.text.length}/100
+                                  </div>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+
+                        <div style={{ marginBottom: '32px' }}>
+                          <div style={{
+                            fontSize: '13px',
+                            fontWeight: '600',
+                            color: 'rgba(255, 255, 255, 0.7)',
+                            marginBottom: '16px',
+                            textTransform: 'uppercase',
+                            letterSpacing: '0.5px'
+                          }}>
+                            ⭐ Premium Notices (4-6)
+                          </div>
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                            {noticeboardData.filter(n => n.icon === 'premium').map((notice, idx) => (
+                              <div key={notice.id}>
+                                <div style={{
+                                  position: 'relative',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  gap: '12px'
+                                }}>
+                                  <div style={{
+                                    minWidth: '28px',
+                                    height: '28px',
+                                    borderRadius: '50%',
+                                    background: 'rgba(43, 153, 0, 0.15)',
+                                    border: '1px solid rgba(43, 153, 0, 0.3)',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    fontSize: '12px',
+                                    fontWeight: '700',
+                                    color: '#9BEF7C'
+                                  }}>
+                                    {idx + 4}
+                                  </div>
+                                  <input
+                                    type="text"
+                                    value={notice.text}
+                                    onChange={(e) => {
+                                      const value = e.target.value.slice(0, 100);
+                                      setNoticeboardData(prev =>
+                                        prev.map(n => n.id === notice.id ? { ...n, text: value } : n)
+                                      );
+                                    }}
+                                    placeholder="Enter notice text (max 100 chars) or leave empty for '-'"
+                                    maxLength={100}
+                                    style={{
+                                      flex: 1,
+                                      padding: '12px 16px',
+                                      borderRadius: '8px',
+                                      border: '1px solid rgba(255, 255, 255, 0.2)',
+                                      background: 'rgba(255, 255, 255, 0.05)',
+                                      color: 'white',
+                                      fontFamily: 'Outfit',
+                                      fontSize: '14px',
+                                      outline: 'none',
+                                      transition: 'all 0.2s ease'
+                                    }}
+                                    onFocus={(e) => {
+                                      e.target.style.border = '1px solid rgba(43, 153, 0, 0.5)';
+                                      e.target.style.background = 'rgba(255, 255, 255, 0.08)';
+                                    }}
+                                    onBlur={(e) => {
+                                      e.target.style.border = '1px solid rgba(255, 255, 255, 0.2)';
+                                      e.target.style.background = 'rgba(255, 255, 255, 0.05)';
+                                    }}
+                                  />
+                                  <div style={{
+                                    minWidth: '50px',
+                                    fontSize: '12px',
+                                    color: notice.text.length >= 90
+                                      ? '#ff4444'
+                                      : 'rgba(255, 255, 255, 0.4)',
+                                    fontWeight: '600',
+                                    textAlign: 'right'
+                                  }}>
+                                    {notice.text.length}/100
+                                  </div>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+
+                        <button
+                          type="submit"
+                          style={{
+                            width: '100%',
+                            padding: '14px',
+                            borderRadius: '8px',
+                            border: 'none',
+                            background: '#2B9900',
+                            color: 'white',
+                            fontFamily: 'Outfit',
+                            fontWeight: '600',
+                            fontSize: '15px',
+                            cursor: 'pointer',
+                            transition: 'all 0.2s ease'
+                          }}
+                          onMouseEnter={(e) => e.target.style.background = '#248000'}
+                          onMouseLeave={(e) => e.target.style.background = '#2B9900'}
+                        >
+                          Update Noticeboard
+                        </button>
+                      </form>
+                    </div>
+                  )}
+
+                  {/* BANNER SECTION */}
+                  {othersActiveSection === 'banner' && (
+                    <div style={{
+                      background: 'linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02))',
+                      borderRadius: '16px',
+                      padding: '32px',
+                      border: '1px solid rgba(255, 255, 255, 0.08)'
+                    }}>
+                      <div style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '12px',
+                        marginBottom: '8px'
+                      }}>
+                        <div style={{ fontSize: '28px' }}>🖼️</div>
+                        <h3 style={{ margin: 0, fontSize: '22px', fontWeight: '600' }}>Dashboard Banner</h3>
+                      </div>
+                      <p style={{
+                        color: 'rgba(255, 255, 255, 0.55)',
                         fontSize: '14px',
-                        marginBottom: '12px'
-                      }}
-                    >
-                      <option value="image">Image (PNG/JPG/GIF)</option>
-                      <option value="video">Video (MP4)</option>
-                    </select>
-                    <input
-                      type="file"
-                      accept="image/*,video/mp4"
-                      style={{
-                        width: '100%',
-                        padding: '12px',
-                        borderRadius: '8px',
-                        border: '1px solid rgba(255, 255, 255, 0.2)',
-                        background: 'rgba(255, 255, 255, 0.05)',
-                        color: 'white',
-                        fontFamily: 'Outfit',
+                        marginBottom: '32px'
+                      }}>
+                        Upload a new banner image for the student dashboard
+                      </p>
+                      <form onSubmit={(e) => {
+                        e.preventDefault();
+                        showNotification('Banner update feature coming soon!', 'success');
+                      }}>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          style={{
+                            width: '100%',
+                            padding: '12px',
+                            borderRadius: '8px',
+                            border: '1px solid rgba(255, 255, 255, 0.2)',
+                            background: 'rgba(255, 255, 255, 0.05)',
+                            color: 'white',
+                            fontFamily: 'Outfit',
+                            fontSize: '14px',
+                            marginBottom: '16px'
+                          }}
+                          required
+                        />
+                        <button
+                          type="submit"
+                          style={{
+                            width: '100%',
+                            padding: '14px',
+                            borderRadius: '8px',
+                            border: 'none',
+                            background: '#2B9900',
+                            color: 'white',
+                            fontFamily: 'Outfit',
+                            fontWeight: '600',
+                            fontSize: '15px',
+                            cursor: 'pointer',
+                            transition: 'all 0.2s ease'
+                          }}
+                          onMouseEnter={(e) => e.target.style.background = '#248000'}
+                          onMouseLeave={(e) => e.target.style.background = '#2B9900'}
+                        >
+                          Upload Banner
+                        </button>
+                      </form>
+                    </div>
+                  )}
+
+                  {/* ADS SECTION */}
+                  {othersActiveSection === 'ads' && (
+                    <div style={{
+                      background: 'linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02))',
+                      borderRadius: '16px',
+                      padding: '32px',
+                      border: '1px solid rgba(255, 255, 255, 0.08)'
+                    }}>
+                      <div style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '12px',
+                        marginBottom: '8px'
+                      }}>
+                        <div style={{ fontSize: '28px' }}>📢</div>
+                        <h3 style={{ margin: 0, fontSize: '22px', fontWeight: '600' }}>Advertisement Section</h3>
+                      </div>
+                      <p style={{
+                        color: 'rgba(255, 255, 255, 0.55)',
                         fontSize: '14px',
-                        marginBottom: '16px'
-                      }}
-                      required
-                    />
-                    <button
-                      type="submit"
-                      style={{
-                        width: '100%',
-                        padding: '12px',
-                        borderRadius: '8px',
-                        border: 'none',
-                        background: '#2B9900',
-                        color: 'white',
-                        fontFamily: 'Outfit',
-                        fontWeight: '600',
-                        cursor: 'pointer',
-                        transition: 'all 0.2s ease'
-                      }}
-                      onMouseEnter={(e) => e.target.style.background = '#248000'}
-                      onMouseLeave={(e) => e.target.style.background = '#2B9900'}
-                    >
-                      Upload Ad
-                    </button>
-                  </form>
+                        marginBottom: '32px'
+                      }}>
+                        Upload videos, images, or GIFs for the advertisement section
+                      </p>
+                      <form onSubmit={(e) => {
+                        e.preventDefault();
+                        showNotification('Ad upload feature coming soon!', 'success');
+                      }}>
+                        <select
+                          style={{
+                            width: '100%',
+                            padding: '12px',
+                            borderRadius: '8px',
+                            border: '1px solid rgba(255, 255, 255, 0.2)',
+                            background: 'rgba(255, 255, 255, 0.05)',
+                            color: 'white',
+                            fontFamily: 'Outfit',
+                            fontSize: '14px',
+                            marginBottom: '12px'
+                          }}
+                        >
+                          <option value="image">Image (PNG/JPG/GIF)</option>
+                          <option value="video">Video (MP4)</option>
+                        </select>
+                        <input
+                          type="file"
+                          accept="image/*,video/mp4"
+                          style={{
+                            width: '100%',
+                            padding: '12px',
+                            borderRadius: '8px',
+                            border: '1px solid rgba(255, 255, 255, 0.2)',
+                            background: 'rgba(255, 255, 255, 0.05)',
+                            color: 'white',
+                            fontFamily: 'Outfit',
+                            fontSize: '14px',
+                            marginBottom: '16px'
+                          }}
+                          required
+                        />
+                        <button
+                          type="submit"
+                          style={{
+                            width: '100%',
+                            padding: '14px',
+                            borderRadius: '8px',
+                            border: 'none',
+                            background: '#2B9900',
+                            color: 'white',
+                            fontFamily: 'Outfit',
+                            fontWeight: '600',
+                            fontSize: '15px',
+                            cursor: 'pointer',
+                            transition: 'all 0.2s ease'
+                          }}
+                          onMouseEnter={(e) => e.target.style.background = '#248000'}
+                          onMouseLeave={(e) => e.target.style.background = '#2B9900'}
+                        >
+                          Upload Ad
+                        </button>
+                      </form>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
