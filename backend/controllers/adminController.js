@@ -69,8 +69,8 @@ export const addCourse = async (req, res) => {
     const instituteId = getInstituteId(req);
     const { name, section, totalclasses, credits, professor } = req.body;
 
-    if (!name || !section || !totalclasses || !credits || !professor) {
-        return res.status(400).json({ message: "All fields are required" });
+    if (!name || !section || !totalclasses || !credits) {
+        return res.status(400).json({ message: "Name, section, total classes and credits are required" });
     }
 
     const existingCourse = await Course.findOne({
@@ -96,11 +96,13 @@ export const addCourse = async (req, res) => {
 
     await newCourse.save();
 
-    await Professor.findByIdAndUpdate(
-      professor,
-      { $push: { courses: { course: newCourse._id } } },
-      { new: true }
-    );
+    if (professor) {
+      await Professor.findByIdAndUpdate(
+        professor,
+        { $push: { courses: { course: newCourse._id } } },
+        { new: true }
+      );
+    }
 
     res.status(201).json({ message: "Course added successfully", course: newCourse });
   } catch (error) {

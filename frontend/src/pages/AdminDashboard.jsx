@@ -870,19 +870,16 @@ const AdminDashboard = () => {
                   <button
                     type="button"
                     onClick={() => setAddCourseModalOpen(true)}
-                    disabled={data.professors.length === 0}
                     style={{
-                      background: data.professors.length === 0 ? 'rgba(43, 153, 0, 0.3)' : '#2B9900',
+                      background: '#2B9900',
                       color: 'white',
                       border: 'none',
                       padding: '10px 20px',
                       borderRadius: '8px',
-                      cursor: data.professors.length === 0 ? 'not-allowed' : 'pointer',
+                      cursor: 'pointer',
                       fontFamily: 'Outfit',
-                      fontWeight: 600,
-                      opacity: data.professors.length === 0 ? 0.5 : 1
+                      fontWeight: 600
                     }}
-                    title={data.professors.length === 0 ? 'Add faculty first to create courses' : ''}
                   >
                     + Add Course
                   </button>
@@ -2958,9 +2955,8 @@ const AdminDashboard = () => {
             <select
               value={courseForm.professor}
               onChange={e => setCourseForm({ ...courseForm, professor: e.target.value })}
-              required
             >
-              <option value="">Select a Professor</option>
+              <option value="">Select a Professor (Optional)</option>
               {data.professors.map(p => <option key={p._id} value={p._id}>{p.name}</option>)}
             </select>
 
