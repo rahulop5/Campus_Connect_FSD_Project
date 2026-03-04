@@ -63,9 +63,9 @@ const ForumList = () => {
       setHoveredUser(userId);
       return;
     }
-    
+
     setHoveredUser(userId);
-    
+
     try {
       const res = await api.get(`/student/user/${userId}`);
       setUserDetails(prev => ({
@@ -88,8 +88,8 @@ const ForumList = () => {
     // Search filter
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase();
-      filtered = filtered.filter(q => 
-        q.heading?.toLowerCase().includes(query) || 
+      filtered = filtered.filter(q =>
+        q.heading?.toLowerCase().includes(query) ||
         q.desc?.toLowerCase().includes(query) ||
         q.tags?.some(tag => tag.toLowerCase().includes(query))
       );
@@ -142,7 +142,7 @@ const ForumList = () => {
             <div className={`search-filter-container ${filtersVisible ? 'filters-open' : ''}`}>
               <div className="search-bar">
                 <svg className="search-icon" width="20" height="20" viewBox="0 0 20 20" fill="none">
-                  <path d="M9 17A8 8 0 1 0 9 1a8 8 0 0 0 0 16zM18 18l-4.35-4.35" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M9 17A8 8 0 1 0 9 1a8 8 0 0 0 0 16zM18 18l-4.35-4.35" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
                 <input
                   type="text"
@@ -152,24 +152,24 @@ const ForumList = () => {
                   className="search-input"
                 />
               </div>
-              
+
               <div className="filter-panel">
                 <div className="filter-group">
                   <label>Sort By</label>
                   <div className="filter-options">
-                    <button 
+                    <button
                       className={selectedSortBy === 'recent' ? 'active' : ''}
                       onClick={() => setSelectedSortBy('recent')}
                     >
                       Recent
                     </button>
-                    <button 
+                    <button
                       className={selectedSortBy === 'votes' ? 'active' : ''}
                       onClick={() => setSelectedSortBy('votes')}
                     >
                       Votes
                     </button>
-                    <button 
+                    <button
                       className={selectedSortBy === 'answers' ? 'active' : ''}
                       onClick={() => setSelectedSortBy('answers')}
                     >
@@ -180,19 +180,19 @@ const ForumList = () => {
                 <div className="filter-group">
                   <label>Filter By</label>
                   <div className="filter-options">
-                    <button 
+                    <button
                       className={selectedFilter === 'all' ? 'active' : ''}
                       onClick={() => setSelectedFilter('all')}
                     >
                       All
                     </button>
-                    <button 
+                    <button
                       className={selectedFilter === 'answered' ? 'active' : ''}
                       onClick={() => setSelectedFilter('answered')}
                     >
                       Answered
                     </button>
-                    <button 
+                    <button
                       className={selectedFilter === 'unanswered' ? 'active' : ''}
                       onClick={() => setSelectedFilter('unanswered')}
                     >
@@ -215,8 +215,8 @@ const ForumList = () => {
             ) : filteredQuestions.length === 0 ? (
               <div className="empty-state">
                 <svg width="64" height="64" viewBox="0 0 64 64" fill="none">
-                  <circle cx="32" cy="32" r="30" stroke="currentColor" strokeWidth="2" opacity="0.2"/>
-                  <path d="M32 20v16M32 44h.02" stroke="currentColor" strokeWidth="3" strokeLinecap="round"/>
+                  <circle cx="32" cy="32" r="30" stroke="currentColor" strokeWidth="2" opacity="0.2" />
+                  <path d="M32 20v16M32 44h.02" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
                 </svg>
                 <p>No questions found</p>
               </div>
@@ -254,23 +254,23 @@ const ForumList = () => {
                   </div>
 
                   <div className="question-meta">
-                    <div 
+                    <div
                       className="question-author"
                       onMouseEnter={() => handleUserHover(q.asker?._id)}
                       onMouseLeave={handleUserLeave}
                     >
-                      <img src="/assets/duck_with_A_gun 1.png" alt={q.asker?.name || "User"} />
-                      <span>{q.asker?.name || "Anonymous"}</span>
+                      <img src="/assets/duck_with_A_gun 1.png" alt={q.asker?.userId?.name || "User"} />
+                      <span>{q.asker?.userId?.name || "Anonymous"}</span>
                       {q.asker?.role === 'Professor' && (
                         <span className="faculty-badge">Faculty</span>
                       )}
-                      
+
                       {hoveredUser === q.asker?._id && (
                         <div className="user-dropdown">
                           <div className="dropdown-header">
-                            <img src="/assets/duck_with_A_gun 1.png" alt={q.asker?.name} />
+                            <img src="/assets/duck_with_A_gun 1.png" alt={q.asker?.userId?.name} />
                             <div>
-                              <h4>{q.asker?.name || "Anonymous"}</h4>
+                              <h4>{q.asker?.userId?.name || "Anonymous"}</h4>
                               <p className="user-role">{q.asker?.role || "Student"}</p>
                             </div>
                           </div>

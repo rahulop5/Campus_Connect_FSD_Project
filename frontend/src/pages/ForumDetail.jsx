@@ -201,7 +201,7 @@ const ForumDetail = () => {
                 <div className="po_user">
                   <div className="po_useruser">
                     <img src="/assets/duck_with_A_gun 1.png" alt="" />
-                    <p>{question.asker?.name || "Anonymous"}</p>
+                    <p>{question.asker?.userId?.name || "Anonymous"}</p>
                   </div>
                 </div>
               </div>
@@ -225,6 +225,12 @@ const ForumDetail = () => {
                           className="rich-text"
                           dangerouslySetInnerHTML={{ __html: sanitizeHtml(ans.desc) }}
                         />
+                      </div>
+                      <div className="po_user" style={{ justifyContent: 'flex-start', marginTop: '10px' }}>
+                        <div className="po_useruser">
+                          <img src="/assets/duck_with_A_gun 1.png" alt="" style={{ width: '30px', height: '30px' }} />
+                          <p>{ans.answerer?.userId?.name || "Anonymous"}</p>
+                        </div>
                       </div>
                     </div>
                     <hr className="hr_answer" />
@@ -262,31 +268,6 @@ const ForumDetail = () => {
                     title="Italic"
                   >
                     <img src="/assets/italic.png" alt="Italic" className="tool-icon" />
-                  </button>
-                  <button
-                    type="button"
-                    className="tool-btn heading-btn"
-                    onMouseDown={(e) => e.preventDefault()}
-                    onClick={() => {
-                      document.execCommand('formatBlock', false, 'h3');
-                      editorRef.current?.focus();
-                    }}
-                    title="Heading"
-                  >
-                    <span>Heading</span>
-                    <img src="/assets/heading.png" alt="" className="heading-icon" />
-                  </button>
-                  <button
-                    type="button"
-                    className="tool-btn"
-                    onMouseDown={(e) => e.preventDefault()}
-                    onClick={() => {
-                      document.execCommand('formatBlock', false, 'pre');
-                      editorRef.current?.focus();
-                    }}
-                    title="Code Block"
-                  >
-                    <img src="/assets/codeansbox.png" alt="Code Block" className="tool-icon" />
                   </button>
                   <div id="submit-answer-btn" onClick={handleSubmitAnswer} style={{ cursor: 'pointer', marginLeft: 'auto' }}><p>Submit</p></div>
                 </div>
