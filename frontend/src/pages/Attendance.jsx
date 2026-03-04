@@ -47,88 +47,91 @@ const Attendance = () => {
           <div className="attendance-header">
             <h1>{data.name}'s Attendance</h1>
           </div>
-        
-        <div className="attendance-grid">
-          {data.courses && data.courses.length > 0 ? (
-            data.courses.map((course, index) => {
-              const statusColor = getStatusColor(course.attendanceStatus);
-              const percentage = course.attendancePercentage || 0;
-              const radius = 55;
-              const circumference = 2 * Math.PI * radius;
-              const offset = circumference * (1 - percentage / 100);
-              
-              return (
-                <div className="attendance-card" key={index}>
-                  <div className="card-header">
-                    <h2>{course.subject}</h2>
-                  </div>
-                  
-                  <div className="card-body">
-                    <div className="attendance-main-row">
-                      <div className="chart-container" style={{ background: 'none', backdropFilter: 'none' }}>
-                        <svg 
-                          width="140" 
-                          height="140" 
-                          className="attendance-chart"
-                        >
-                          <circle
-                            cx="70"
-                            cy="70"
-                            r={radius}
-                            className="chart-background"
-                          />
-                          <circle
-                            cx="70"
-                            cy="70"
-                            r={radius}
-                            className="chart-progress"
-                            style={{
-                              strokeDasharray: circumference,
-                              strokeDashoffset: offset,
-                              stroke: '#ffffff'
-                            }}
-                          />
-                        </svg>
-                        <div className="chart-label">
-                          <span className="percentage-value">{percentage}%</span>
-                        </div>
-                      </div>
-                      
-                      <div className="attendance-square-grid-section">
-                        <div className="attendance-square-grid">
-                          {Array.from({ length: course.totalClasses || 0 }).map((_, i) => (
-                            <div
-                              key={i}
-                              className={`attendance-square ${i < (course.attendedClasses || 0) ? 'filled' : 'empty'}`}
+
+          <div className="attendance-grid">
+            {data.courses && data.courses.length > 0 ? (
+              data.courses.map((course, index) => {
+                const statusColor = getStatusColor(course.attendanceStatus);
+                const percentage = course.attendancePercentage || 0;
+                const radius = 55;
+                const circumference = 2 * Math.PI * radius;
+                const offset = circumference * (1 - percentage / 100);
+
+                return (
+                  <div className="attendance-card" key={index}>
+                    <div className="card-header">
+                      <h2>{course.subject}</h2>
+                      <p style={{ margin: '4px 0 0 0', fontSize: '13px', color: 'rgba(255, 255, 255, 0.7)', fontWeight: '400' }}>
+                        Prof: {course.professorName || 'Unassigned'}
+                      </p>
+                    </div>
+
+                    <div className="card-body">
+                      <div className="attendance-main-row">
+                        <div className="chart-container" style={{ background: 'none', backdropFilter: 'none' }}>
+                          <svg
+                            width="140"
+                            height="140"
+                            className="attendance-chart"
+                          >
+                            <circle
+                              cx="70"
+                              cy="70"
+                              r={radius}
+                              className="chart-background"
                             />
-                          ))}
+                            <circle
+                              cx="70"
+                              cy="70"
+                              r={radius}
+                              className="chart-progress"
+                              style={{
+                                strokeDasharray: circumference,
+                                strokeDashoffset: offset,
+                                stroke: '#ffffff'
+                              }}
+                            />
+                          </svg>
+                          <div className="chart-label">
+                            <span className="percentage-value">{percentage}%</span>
+                          </div>
                         </div>
-                        
-                        <div className="classes-text">
-                          {course.attendedClasses || 0} / {course.totalClasses || 0}
+
+                        <div className="attendance-square-grid-section">
+                          <div className="attendance-square-grid">
+                            {Array.from({ length: course.totalClasses || 0 }).map((_, i) => (
+                              <div
+                                key={i}
+                                className={`attendance-square ${i < (course.attendedClasses || 0) ? 'filled' : 'empty'}`}
+                              />
+                            ))}
+                          </div>
+
+                          <div className="classes-text">
+                            {course.attendedClasses || 0} / {course.totalClasses || 0}
+                          </div>
                         </div>
                       </div>
-                    </div>
-                    
-                    <div className="status-badge-container">
-                      <span className="status-label">Status</span>
-                      <span 
-                        className="status-badge"
-                        style={{ color: statusColor, borderColor: statusColor }}
-                      >
-                        {course.attendanceStatus}
-                      </span>
+
+                      <div className="status-badge-container">
+                        <span className="status-label">Status</span>
+                        <span
+                          className="status-badge"
+                          style={{ color: statusColor, borderColor: statusColor }}
+                        >
+                          {course.attendanceStatus}
+                        </span>
+                      </div>
                     </div>
                   </div>
-                </div>
-              );
-            })
-          ) : (
-            <div className="no-data">
-              <p>No courses found.</p>
-            </div>
-          )}
-        </div>
+                );
+              })
+            ) : (
+              <div className="no-data">
+                <p>No courses found.</p>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </Layout>

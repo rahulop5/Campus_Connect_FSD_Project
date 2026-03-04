@@ -13,11 +13,11 @@ export const studentDashboard = async (req, res) => {
     // req.user is set by authMiddleware from JWT. 
     // JWT contains { id: user._id, role: ... }
     const userId = req.user.id;
-    
+
     // Find Student by userId (foreign key from User)
     // Populate 'courses.course'
     const student = await Student.findOne({ userId }).populate("courses.course");
-    
+
     if (!student) return res.status(404).json({ message: "Student profile not found" });
 
     // Use req.user.name if student.name is missing (it should be in User model)
@@ -26,7 +26,7 @@ export const studentDashboard = async (req, res) => {
     // Wait, let's allow name to be fetched from User if needed.
     // The previous code returned `student.name`. 
     // Let's populate userId in Student to get the name.
-    
+
     const studentWithUser = await Student.findOne({ userId }).populate("userId", "name").populate("courses.course");
     const studentName = studentWithUser.userId?.name || "Student"; // Fallback
 
@@ -43,12 +43,12 @@ export const studentDashboard = async (req, res) => {
       };
     });
 
-    courses.forEach((course)=>{
-      const shortform=course.subject
+    courses.forEach((course) => {
+      const shortform = course.subject
         .split(" ")
         .map(word => word[0].toUpperCase())
         .join("");
-      course.subject=shortform;
+      course.subject = shortform;
     });
 
     const date = new Date();
@@ -68,11 +68,11 @@ export const studentDashboard = async (req, res) => {
       .lean();
 
     const formattedQuestions = questions.map(q => ({
-        ...q,
-        asker: q.asker ? {
-            ...q.asker,
-            name: q.asker.userId?.name
-        } : null
+      ...q,
+      asker: q.asker ? {
+        ...q.asker,
+        name: q.asker.userId?.name
+      } : null
     }));
 
     res.json({
@@ -84,7 +84,7 @@ export const studentDashboard = async (req, res) => {
       year,
       questions: formattedQuestions,
     });
-    
+
   } catch (error) {
     console.error("Error in student dashboard:", error);
     res.status(500).json({ message: "Internal Server Error" });
@@ -92,75 +92,87 @@ export const studentDashboard = async (req, res) => {
 };
 
 export const studentProfile = async (req, res) => {
-    try {
-        const student = await Student.findOne({ userId: req.user.id })
-            .populate("courses.course")
-            .populate("userId", "name email phone"); // Get details from User model
-            
-        if (!student) return res.status(404).json({ message: "Student not found" });
-        
-        // Flatten the response or send structured? 
-        // Frontend likely expects `student.name`, `student.email`. 
-        // Let's attach them to the student object if possible or allow frontend to access .userId
-        
-        const responseData = student.toObject();
-        responseData.name = student.userId?.name;
-        responseData.email = student.userId?.email;
-        responseData.phone = student.userId?.phone;
+  try {
+    const student = await Student.findOne({ userId: req.user.id })
+      .populate("courses.course")
+      .populate("userId", "name email phone"); // Get details from User model
 
-        res.json({ student: responseData });
-    } catch (error) {
-        console.error("Error fetching profile:", error);
-        res.status(500).json({ message: "Internal Server Error" });
-    }
+    if (!student) return res.status(404).json({ message: "Student not found" });
+
+    // Flatten the response or send structured? 
+    // Frontend likely expects `student.name`, `student.email`. 
+    // Let's attach them to the student object if possible or allow frontend to access .userId
+
+    const responseData = student.toObject();
+    responseData.name = student.userId?.name;
+    responseData.email = student.userId?.email;
+    responseData.phone = student.userId?.phone;
+
+    res.json({ student: responseData });
+  } catch (error) {
+    console.error("Error fetching profile:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
 };
 
 export const studentAttendance = async (req, res) => {
-    try {
-      const student = await Student.findOne({ userId: req.user.id }).populate("courses.course").populate("userId", "name");
-      if (!student) return res.status(404).json({ message: "Student not found" });
-
-      const courses = student.courses.map((courseObj) => {
-        const course = courseObj.course;
-        const percentage = courseObj.attendance ? courseObj.attendance : 0;
-        
-        // Calculate attended and total classes from percentage
-        // Assuming each course has approximately 30 total classes per semester
-        const totalClasses = courseObj.totalClasses || 30;
-        const attendedClasses = Math.round((percentage / 100) * totalClasses);
-
-        let status = "";
-        let color = "";
-
-        if (percentage >= 80) {
-          status = "Good";
-          color = "green";
-        } else if (percentage >= 75) {
-          status = "At Risk";
-          color = "yellow";
-        } else {
-          status = "Critical";
-          color = "red";
+  try {
+    const student = await Student.findOne({ userId: req.user.id })
+      .populate({
+        path: "courses.course",
+        populate: {
+          path: "professor",
+          populate: {
+            path: "userId",
+            select: "name"
+          }
         }
+      })
+      .populate("userId", "name");
 
-        return {
-          subject: course.name,
-          attendancePercentage: percentage,
-          attendanceStatus: status,
-          attendanceColor: color,
-          attendedClasses: attendedClasses,
-          totalClasses: totalClasses,
-        };
-      });
-      res.json({
-        name: student.userId?.name,
-        courses: courses,
-      });
-      
-    } catch (error) {
-      console.error("Error fetching attendance data:", error);
-      res.status(500).json({ message: "Internal Server Error" });
-    }
+    if (!student) return res.status(404).json({ message: "Student not found" });
+
+    const courses = student.courses.map((courseObj) => {
+      const course = courseObj.course;
+      const percentage = courseObj.attendance ? courseObj.attendance : 0;
+
+      // Calculate attended and total classes from percentage
+      const totalClasses = course.totalclasses || 30; // Use course's actual totalclasses
+      const attendedClasses = Math.round((percentage / 100) * totalClasses);
+
+      let status = "";
+      let color = "";
+
+      if (percentage >= 80) {
+        status = "Good";
+        color = "green";
+      } else if (percentage >= 75) {
+        status = "At Risk";
+        color = "yellow";
+      } else {
+        status = "Critical";
+        color = "red";
+      }
+
+      return {
+        subject: course.name,
+        professorName: course.professor?.userId?.name || 'Unassigned',
+        attendancePercentage: percentage,
+        attendanceStatus: status,
+        attendanceColor: color,
+        attendedClasses: attendedClasses,
+        totalClasses: totalClasses,
+      };
+    });
+    res.json({
+      name: student.userId?.name,
+      courses: courses,
+    });
+
+  } catch (error) {
+    console.error("Error fetching attendance data:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
 };
 
 export const studentGrades = async (req, res) => {
@@ -216,93 +228,93 @@ export const studentGradebyId = async (req, res) => {
 };
 
 export const updateStudentProfile = async (req, res) => {
-    try {
-      const { field, value } = req.body;
-      const student = await Student.findOne({ userId: req.user.id });
-      if (!student) return res.status(404).json({ message: "Student not found" });
+  try {
+    const { field, value } = req.body;
+    const student = await Student.findOne({ userId: req.user.id });
+    if (!student) return res.status(404).json({ message: "Student not found" });
 
-      // If field is name/phone, update User model. 
-      // If field is student specific, update Student.
-      // Assuming for now simple fields on Student or User.
-      
-      // But actually, Name/Phone are on User. 
-      if (['name', 'phone'].includes(field)) {
-          const User = (await import("../models/User.js")).default;
-          await User.findByIdAndUpdate(req.user.id, { [field]: value });
-      } else {
-          await Student.findByIdAndUpdate(
-            student._id, 
-            { [field]: value }, 
-            { new: true } 
-          );
-      }
-      
-      // Fetch updated
-      const updatedStudent = await Student.findOne({ userId: req.user.id }).populate("userId");
-      
-      res.status(200).json({ message: "Profile updated successfully", user: updatedStudent });
-    } catch (error) {
-      console.error("Error updating student profile:", error);
-      res.status(500).json({ message: "Internal Server Error" });
+    // If field is name/phone, update User model. 
+    // If field is student specific, update Student.
+    // Assuming for now simple fields on Student or User.
+
+    // But actually, Name/Phone are on User. 
+    if (['name', 'phone'].includes(field)) {
+      const User = (await import("../models/User.js")).default;
+      await User.findByIdAndUpdate(req.user.id, { [field]: value });
+    } else {
+      await Student.findByIdAndUpdate(
+        student._id,
+        { [field]: value },
+        { new: true }
+      );
     }
+
+    // Fetch updated
+    const updatedStudent = await Student.findOne({ userId: req.user.id }).populate("userId");
+
+    res.status(200).json({ message: "Profile updated successfully", user: updatedStudent });
+  } catch (error) {
+    console.error("Error updating student profile:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
 };
 
 export const changepass = async (req, res) => {
-    // This should probably be a POST request to update password, not GET
-    // But keeping it as is for now, just returning message
-    return res.json({ message: "Use POST /update-password to change password" });
+  // This should probably be a POST request to update password, not GET
+  // But keeping it as is for now, just returning message
+  return res.json({ message: "Use POST /update-password to change password" });
 }
 
 export const uploadProfilePic = async (req, res) => {
-    try {
-      if (!req.file) {
-        return res.status(400).json({ message: "No file uploaded" });
-      }
-
-      const student = await Student.findOne({ userId: req.user.id });
-      if (!student) return res.status(404).json({ message: "Student not found" });
-
-      // Update student's profile picture path in database
-      const profilePicPath = `/assets/profiles/${req.file.filename}`;
-      student.profilePicture = profilePicPath;
-      await student.save();
-
-      res.status(200).json({ 
-        message: "Profile picture uploaded successfully", 
-        profilePicture: profilePicPath 
-      });
-    } catch (error) {
-      console.error("Error uploading profile picture:", error);
-      res.status(500).json({ message: "Internal Server Error" });
+  try {
+    if (!req.file) {
+      return res.status(400).json({ message: "No file uploaded" });
     }
+
+    const student = await Student.findOne({ userId: req.user.id });
+    if (!student) return res.status(404).json({ message: "Student not found" });
+
+    // Update student's profile picture path in database
+    const profilePicPath = `/assets/profiles/${req.file.filename}`;
+    student.profilePicture = profilePicPath;
+    await student.save();
+
+    res.status(200).json({
+      message: "Profile picture uploaded successfully",
+      profilePicture: profilePicPath
+    });
+  } catch (error) {
+    console.error("Error uploading profile picture:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
 };
 
 export const deleteProfilePic = async (req, res) => {
-    try {
-      const student = await Student.findOne({ userId: req.user.id });
-      if (!student) return res.status(404).json({ message: "Student not found" });
+  try {
+    const student = await Student.findOne({ userId: req.user.id });
+    if (!student) return res.status(404).json({ message: "Student not found" });
 
-      // Delete the file if it exists
-      if (student.profilePicture && student.profilePicture !== "") {
-        const email = req.user.email;
-        const safeEmail = email.replace(/[@.]/g, '_');
-        const profilesDir = path.join(__dirname, '../public/assets/profiles');
-        
-        // Find and delete any file that starts with the user's email
-        // Or better, use the stored filename
-        const currentPath = student.profilePicture.split('/').pop();
-        if (currentPath && fs.existsSync(path.join(profilesDir, currentPath))) {
-             fs.unlinkSync(path.join(profilesDir, currentPath));
-        }
+    // Delete the file if it exists
+    if (student.profilePicture && student.profilePicture !== "") {
+      const email = req.user.email;
+      const safeEmail = email.replace(/[@.]/g, '_');
+      const profilesDir = path.join(__dirname, '../public/assets/profiles');
+
+      // Find and delete any file that starts with the user's email
+      // Or better, use the stored filename
+      const currentPath = student.profilePicture.split('/').pop();
+      if (currentPath && fs.existsSync(path.join(profilesDir, currentPath))) {
+        fs.unlinkSync(path.join(profilesDir, currentPath));
       }
-
-      // Reset to default profile picture
-      student.profilePicture = "";
-      await student.save();
-
-      res.status(200).json({ message: "Profile picture deleted successfully" });
-    } catch (error) {
-      console.error("Error deleting profile picture:", error);
-      res.status(500).json({ message: "Internal Server Error" });
     }
+
+    // Reset to default profile picture
+    student.profilePicture = "";
+    await student.save();
+
+    res.status(200).json({ message: "Profile picture deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting profile picture:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
 };
