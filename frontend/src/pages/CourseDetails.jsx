@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { fetchDashboardData } from '../store/slices/adminSlice';
 import api from '../api/axios';
 import Layout from '../components/Layout';
-import DarkVeil from '../components/DarkVeil';
+import Beams from '../components/Beams';
 import '../styles/CourseDetails.css';
 
 const CourseDetails = () => {
@@ -26,6 +26,7 @@ const CourseDetails = () => {
     const { students: allStudents, professors: allProfessors } = useSelector((state) => state.admin);
     const [assignStudentId, setAssignStudentId] = useState('');
     const [assignProfessorId, setAssignProfessorId] = useState('');
+    const [showStudentPicker, setShowStudentPicker] = useState(false);
 
     useEffect(() => {
         if (canEdit && (allStudents.length === 0 || allProfessors.length === 0)) {
@@ -83,6 +84,7 @@ const CourseDetails = () => {
                 student: assignStudentId
             });
             setAssignStudentId('');
+            setShowStudentPicker(false);
             await fetchCourseDetails();
         } catch (error) {
             console.error('Error adding student:', error);
@@ -134,8 +136,8 @@ const CourseDetails = () => {
     return (
         <Layout>
             <div className="course-details-page">
-                <div className="plasma-background">
-                    <DarkVeil hueShift={120} speed={0.5} noiseIntensity={0.8} />
+                <div className="beams-background">
+                    <Beams beamWidth={2.3} beamHeight={16} beamNumber={20} lightColor="#00990a" speed={2.5} noiseIntensity={1} scale={0.2} rotation={30} />
                 </div>
 
                 <div className="course-details-container">
@@ -244,38 +246,55 @@ const CourseDetails = () => {
 
                             <div className="participants-actions">
                                 {canEdit && activeTab === 'students' && (
-                                    <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-                                        <select
-                                            value={assignStudentId}
-                                            onChange={(e) => setAssignStudentId(e.target.value)}
-                                            style={{
-                                                background: 'rgba(255, 255, 255, 0.05)',
-                                                border: '1px solid rgba(255, 255, 255, 0.1)',
-                                                color: 'white',
-                                                padding: '8px 12px',
-                                                borderRadius: '8px',
-                                                outline: 'none',
-                                                cursor: 'pointer'
-                                            }}
-                                        >
-                                            <option value="" style={{ color: 'black' }}>Add Student to Course...</option>
-                                            {allStudents
-                                                // Filter out students already in the course
-                                                .filter(s => !students.some(es => es._id === s._id))
-                                                .map(student => (
-                                                    <option key={student._id} value={student._id} style={{ color: 'black' }}>
-                                                        {student.name} ({student.rollnumber})
-                                                    </option>
-                                                ))}
-                                        </select>
+                                    <div style={{ position: 'relative' }}>
                                         <button
                                             className="edit-btn"
                                             style={{ background: '#2B9900', border: 'none', padding: '8px 16px', color: 'white', borderRadius: '8px', cursor: 'pointer', fontWeight: '500' }}
-                                            onClick={handleAddStudent}
-                                            disabled={!assignStudentId}
+                                            onClick={() => { setShowStudentPicker(p => !p); setAssignStudentId(''); }}
                                         >
-                                            Add
+                                            Add Student
                                         </button>
+                                        {showStudentPicker && (
+                                            <div style={{
+                                                position: 'absolute', top: 'calc(100% + 8px)', right: 0,
+                                                background: '#111', border: '1px solid rgba(255,255,255,0.12)',
+                                                borderRadius: '10px', padding: '12px', zIndex: 100,
+                                                minWidth: '260px', boxShadow: '0 8px 32px rgba(0,0,0,0.5)'
+                                            }}>
+                                                <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: '12px', marginBottom: '8px' }}>Select a student to add</p>
+                                                <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', maxHeight: '220px', overflowY: 'auto' }}>
+                                                    {allStudents
+                                                        .filter(s => !students.some(es => es._id === s._id))
+                                                        .map(student => (
+                                                            <div
+                                                                key={student._id}
+                                                                onClick={() => setAssignStudentId(student._id)}
+                                                                style={{
+                                                                    padding: '8px 10px', borderRadius: '6px', cursor: 'pointer',
+                                                                    background: assignStudentId === student._id ? 'rgba(43,153,0,0.25)' : 'rgba(255,255,255,0.04)',
+                                                                    border: assignStudentId === student._id ? '1px solid rgba(43,153,0,0.5)' : '1px solid transparent',
+                                                                    color: 'white', fontSize: '13px'
+                                                                }}
+                                                            >
+                                                                {student.name} <span style={{ color: 'rgba(255,255,255,0.4)', fontSize: '11px' }}>({student.rollnumber})</span>
+                                                            </div>
+                                                        ))}
+                                                </div>
+                                                <button
+                                                    onClick={handleAddStudent}
+                                                    disabled={!assignStudentId}
+                                                    style={{
+                                                        marginTop: '10px', width: '100%', padding: '8px',
+                                                        background: assignStudentId ? '#2B9900' : 'rgba(255,255,255,0.07)',
+                                                        border: 'none', borderRadius: '7px', color: 'white',
+                                                        fontWeight: '600', cursor: assignStudentId ? 'pointer' : 'default',
+                                                        fontSize: '13px'
+                                                    }}
+                                                >
+                                                    Confirm Add
+                                                </button>
+                                            </div>
+                                        )}
                                     </div>
                                 )}
                                 {canEdit && (

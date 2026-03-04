@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router';
 import { useSelector } from 'react-redux';
 import api from '../api/axios';
 import Layout from '../components/Layout';
-import DarkVeil from '../components/DarkVeil';
+import Beams from '../components/Beams';
 import '../styles/StudentPreview.css';
 
 const StudentPreview = () => {
@@ -40,7 +40,7 @@ const StudentPreview = () => {
     const getGradeColor = (grade) => {
         // Handle letter grades (O, A, B, C, D, F, NA)
         if (typeof grade === 'string') {
-            switch(grade) {
+            switch (grade) {
                 case 'O': return '#2B9900';  // Outstanding - Green
                 case 'A': return '#48FF00';  // Excellent - Light Green
                 case 'B': return '#FFD700';  // Good - Yellow
@@ -97,8 +97,8 @@ const StudentPreview = () => {
     return (
         <Layout>
             <div className="student-preview-page">
-                <div className="plasma-background">
-                    <DarkVeil hueShift={120} speed={0.5} noiseIntensity={0.8} />
+                <div className="beams-background">
+                    <Beams beamWidth={2.3} beamHeight={16} beamNumber={20} lightColor="#00990a" speed={2.5} noiseIntensity={1} scale={0.2} rotation={30} />
                 </div>
 
                 <div className="student-preview-container">
