@@ -566,3 +566,119 @@ export const updateStudent = async (req, res) => {
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
+
+// GET single course by ID
+export const getCourseById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const instituteId = getInstituteId(req);
+
+    const course = await Course.findById(id)
+      .populate({
+        path: "professor",
+        populate: {
+          path: "userId",
+          select: "name email phone"
+        }
+      });
+
+    if (!course || course.instituteId.toString() !== instituteId.toString()) {
+      return res.status(404).json({ message: "Course not found" });
+    }
+
+    // Get students enrolled in this course
+    const studentsInCourse = await Student.find({
+      "courses.course": id,
+      instituteId: instituteId
+    })
+      .populate("userId", "name email phone")
+      .select("_id userId courses branch section rollnumber");
+
+    // Format course response
+    const courseData = course.toObject();
+    if (courseData.professor && courseData.professor.userId) {
+      courseData.professor.name = courseData.professor.userId.name;
+      courseData.professor.email = courseData.professor.userId.email;
+      courseData.professor.phone = courseData.professor.userId.phone;
+    }
+
+    // Format students
+    const formattedStudents = studentsInCourse.map(stud => ({
+      _id: stud._id,
+      name: stud.userId?.name,
+      email: stud.userId?.email,
+      phone: stud.userId?.phone,
+      rollnumber: stud.rollnumber,
+      section: stud.section,
+      branch: stud.branch,
+      grade: stud.courses.find(c => c.course.toString() === id)?.grade,
+      attendance: stud.courses.find(c => c.course.toString() === id)?.attendance
+    }));
+
+    // Format faculty (professor for this course)
+    const formattedFaculty = [];
+    if (courseData.professor && courseData.professor._id) {
+      formattedFaculty.push({
+        _id: courseData.professor._id,
+        name: courseData.professor.name,
+        email: courseData.professor.email,
+        phone: courseData.professor.phone
+      });
+    }
+
+    res.json({
+      course: courseData,
+      students: formattedStudents,
+      faculty: formattedFaculty
+    });
+  } catch (error) {
+    console.error("Error fetching course details:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+// GET single student by ID
+export const getStudentById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const instituteId = getInstituteId(req);
+
+    const student = await Student.findById(id)
+      .populate("userId", "name email phone")
+      .populate({
+        path: "courses.course",
+        select: "name section credits code"
+      });
+
+    if (!student || student.instituteId.toString() !== instituteId.toString()) {
+      return res.status(404).json({ message: "Student not found" });
+    }
+
+    // Format student response
+    const studentData = {
+      _id: student._id,
+      name: student.userId?.name,
+      email: student.userId?.email,
+      phone: student.userId?.phone,
+      rollnumber: student.rollnumber,
+      section: student.section,
+      branch: student.branch,
+      ug: student.ug,
+      courses: student.courses.map(c => ({
+        _id: c.course?._id,
+        courseName: c.course?.name,
+        courseCode: c.course?.code,
+        section: c.course?.section,
+        credits: c.course?.credits,
+        grade: c.grade,
+        attendance: c.attendance
+      })),
+      yearOfGraduation: student.yearOfGraduation
+    };
+
+    res.json({ student: studentData });
+  } catch (error) {
+    console.error("Error fetching student details:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};

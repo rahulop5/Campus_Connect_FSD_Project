@@ -220,13 +220,13 @@ const Academics = () => {
             <h3>CSV Format Guidelines</h3>
             <div className="guideline-section">
               <h4>For Attendance:</h4>
-              <code>Roll Number,Name,Attended,Total</code>
-              <p>Example: 21BCS001,John Doe,28,30</p>
+              <code>Roll Number,Attended</code>
+              <p>Example: S20230010001,87</p>
             </div>
             <div className="guideline-section">
               <h4>For Marks:</h4>
-              <code>Roll Number,Name,Marks,Max Marks</code>
-              <p>Example: 21BCS001,John Doe,85,100</p>
+              <code>Roll Number,Marks</code>
+              <p>Example: S20230010001,54</p>
             </div>
           </div>
         </div>

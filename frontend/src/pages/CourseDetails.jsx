@@ -36,7 +36,7 @@ const CourseDetails = () => {
 
     const fetchCourseDetails = async () => {
         try {
-            const res = await api.get(`/courses/${courseId}`);
+            const res = await api.get(`/admin/course/${courseId}`);
             setCourse(res.data.course);
             setStudents(res.data.students || []);
             setFaculty(res.data.faculty || []);
@@ -62,7 +62,7 @@ const CourseDetails = () => {
                     updatedForm.professor = assignProfessorId;
                 }
 
-                await api.put(`/courses/${courseId}`, updatedForm);
+                await api.put(`/admin/course/${courseId}`, updatedForm);
                 // Refetch to get populated fields correctly
                 await fetchCourseDetails();
                 setEditMode(false);
