@@ -5,7 +5,8 @@ const questionSchema = new mongoose.Schema({
   desc: { type: String, required: true },
   votes: { type: Number, default: 0 },
   tags: [{ type: String }],
-  asker: { type: mongoose.Schema.Types.ObjectId, ref: "Student", required: true },
+  asker: { type: mongoose.Schema.Types.ObjectId, required: true },
+  askerModel: { type: String, enum: ['Student', 'Professor'], default: 'Student' },
   instituteId: { type: mongoose.Schema.Types.ObjectId, ref: "Institute", required: true },
   createdAt: { type: Date, default: Date.now },
   wealth: { type: Number, default: 0 },
@@ -13,12 +14,24 @@ const questionSchema = new mongoose.Schema({
   answers: [{ type: mongoose.Schema.Types.ObjectId, ref: "Answer" }],
   voters: [
     {
-      userId: { type: mongoose.Schema.Types.ObjectId, ref: "Student" },
+      userId: { type: mongoose.Schema.Types.ObjectId },
+      userModel: { type: String, enum: ['Student', 'Professor'], default: 'Student' },
       voteType: { type: String, enum: ['upvote', 'downvote'] },
       _id: false,
     }
   ],
 });
+
+// Custom populate helper for voters
+questionSchema.methods.populateVoters = function() {
+  return this.populate({
+    path: 'voters.userId',
+    model: function() {
+      // This will be handled manually in the controller
+      return null;
+    }
+  });
+};
 
 const Question = mongoose.model("Question", questionSchema);
 export default Question;

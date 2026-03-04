@@ -2,38 +2,55 @@ import Question from "../models/Question.js";
 import Answer from "../models/Answer.js";
 
 const resolveUserId = async (req) => {
-  if (req.user?.role && req.user.role.toLowerCase() !== "student") {
-    return null;
-  }
+  const userId = req.user?.id || req.user?._id;
+  const userRole = req.user?.role?.toLowerCase();
 
-  // req.user.id is the User ID
-  let userId = req.user?.id || req.user?._id;
+  if (!userId) return { profileId: null, model: null };
 
-  // We need the Student ID (profile ID), not the User ID, because Question.asker refs Student.
-  if (userId) {
+  if (userRole === "student") {
     const Student = (await import("../models/Student.js")).default;
     const student = await Student.findOne({ userId });
-    if (student) return student._id;
+    if (student) return { profileId: student._id, model: 'Student' };
+  } else if (userRole === "faculty") {
+    const Professor = (await import("../models/Professor.js")).default;
+    const professor = await Professor.findOne({ userId });
+    if (professor) return { profileId: professor._id, model: 'Professor' };
   }
 
-  return null;
+  return { profileId: null, model: null };
 };
 
 // GET /api/forum/questions
 export const getQuestions = async (req, res) => {
   try {
     const instituteId = req.user.instituteId;
-    console.log(instituteId)
-    const questions = await Question.find({ instituteId })
-      .populate({
-        path: "asker",
-        populate: { path: "userId", select: "name" } // Nested populate to get name from User
-      })
-      .sort({ createdAt: -1 });
+    const questions = await Question.find({ instituteId }).sort({ createdAt: -1 });
 
-    console.log(questions)
+    const Student = (await import("../models/Student.js")).default;
+    const Professor = (await import("../models/Professor.js")).default;
 
-    res.json({ questions });
+    // Populate askers with proper user info based on askerModel
+    const populatedQuestions = [];
+    for (const question of questions) {
+      const questionObj = question.toObject();
+      const askerModel = questionObj.askerModel || 'Student';
+      
+      try {
+        if (askerModel === 'Professor') {
+          const prof = await Professor.findById(questionObj.asker).populate('userId', 'name');
+          questionObj.asker = prof?.toObject?.() || prof;
+        } else {
+          const student = await Student.findById(questionObj.asker).populate('userId', 'name');
+          questionObj.asker = student?.toObject?.() || student;
+        }
+      } catch (err) {
+        console.error("Error populating asker:", err);
+      }
+      
+      populatedQuestions.push(questionObj);
+    }
+
+    res.json({ questions: populatedQuestions });
   } catch (error) {
     console.error("Error fetching questions:", error);
     res.status(500).json({ message: "Internal Server Error" });
@@ -51,22 +68,7 @@ export const getQuestionDetails = async (req, res) => {
       query = Question.findByIdAndUpdate(questionId, { $inc: { views: 1 } }, { new: true });
     }
 
-    const question = await query
-      .populate({
-        path: "asker",
-        populate: { path: "userId", select: "name" }
-      })
-      .populate({
-        path: "answers",
-        populate: [
-          { path: "answerer", populate: { path: "userId", select: "name" } },
-          { path: "voters.userId", select: "userId" }
-        ]
-      })
-      .populate({
-        path: "voters.userId",
-        select: "userId"
-      });
+    const question = await query.populate("answers");
 
     if (!question) return res.status(404).json({ error: "Question not found" });
 
@@ -75,10 +77,62 @@ export const getQuestionDetails = async (req, res) => {
       return res.status(403).json({ message: "Access denied: Question belongs to another institute" });
     }
 
-    res.json({ question });
+    // Convert to plain object
+    const questionObj = question.toObject();
+    
+    const Student = (await import("../models/Student.js")).default;
+    const Professor = (await import("../models/Professor.js")).default;
+
+    // Populate asker based on askerModel
+    const askerModel = questionObj.askerModel || 'Student';
+    try {
+      if (askerModel === 'Professor') {
+        const prof = await Professor.findById(questionObj.asker).populate('userId', 'name');
+        questionObj.asker = prof?.toObject?.() || prof;
+      } else {
+        const student = await Student.findById(questionObj.asker).populate('userId', 'name');
+        questionObj.asker = student?.toObject?.() || student;
+      }
+    } catch (err) {
+      console.error("Error populating asker:", err);
+    }
+
+    // Process answers to populate answerer info
+    if (Array.isArray(questionObj.answers)) {
+      const processedAnswers = [];
+      
+      for (let i = 0; i < questionObj.answers.length; i++) {
+        const answer = questionObj.answers[i];
+        
+        if (!answer || !answer._id) {
+          console.warn("Skipping answer without ID at index", i);
+          continue;
+        }
+        
+        // Populate answerer based on answererModel
+        const answererModel = answer.answererModel || 'Student';
+        try {
+          if (answererModel === 'Professor') {
+            const prof = await Professor.findById(answer.answerer).populate('userId', 'name');
+            answer.answerer = prof?.toObject?.() || prof;
+          } else {
+            const student = await Student.findById(answer.answerer).populate('userId', 'name');
+            answer.answerer = student?.toObject?.() || student;
+          }
+        } catch (err) {
+          console.error(`Error populating answerer for answer ${i}:`, err);
+        }
+        
+        processedAnswers.push(answer);
+      }
+      
+      questionObj.answers = processedAnswers;
+    }
+
+    res.json({ question: questionObj });
   } catch (error) {
     console.error("Error fetching question details:", error);
-    res.status(500).json({ error: "Internal Server Error" });
+    res.status(500).json({ error: "Internal Server Error", details: error.message });
   }
 };
 
@@ -87,18 +141,17 @@ export const upvoteQuestion = async (req, res) => {
     console.log("User", req.user)
     const questionId = req.body.id;
 
-    // User ID for voting logic -> Question.voters.userId refs Student
-    const studentId = await resolveUserId(req);
+    const { profileId, model } = await resolveUserId(req);
 
-    if (!studentId) {
-      return res.status(403).json({ message: "Only students can vote" });
+    if (!profileId) {
+      return res.status(403).json({ message: "You must be logged in to vote" });
     }
 
     const question = await Question.findById(questionId);
     if (!question) return res.status(404).json({ message: "Question not found" });
 
     const existingVoteIndex = question.voters.findIndex(
-      (v) => v.userId && v.userId.toString() === studentId.toString()
+      (v) => v.userId && v.userId.toString() === profileId.toString()
     );
 
     if (existingVoteIndex !== -1) {
@@ -108,7 +161,7 @@ export const upvoteQuestion = async (req, res) => {
       if (existingVote.voteType === 'upvote') {
         const updated = await Question.findOneAndUpdate(
           { _id: questionId },
-          { $pull: { voters: { userId: studentId } }, $inc: { votes: -1 } },
+          { $pull: { voters: { userId: profileId } }, $inc: { votes: -1 } },
           { new: true }
         );
         return res.json({ votes: updated?.votes ?? question.votes, userVote: null });
@@ -117,8 +170,8 @@ export const upvoteQuestion = async (req, res) => {
       // Case 2: Currently downvoted -> switch to upvote (remove downvote, add upvote -> +2)
       if (existingVote.voteType === 'downvote') {
         const updated = await Question.findOneAndUpdate(
-          { _id: questionId, "voters.userId": studentId },
-          { $set: { "voters.$.voteType": "upvote" }, $inc: { votes: 2 } },
+          { _id: questionId, "voters.userId": profileId },
+          { $set: { "voters.$.voteType": "upvote", "voters.$.userModel": model }, $inc: { votes: 2 } },
           { new: true }
         );
         return res.json({ votes: updated?.votes ?? question.votes, userVote: 'upvote' });
@@ -128,7 +181,7 @@ export const upvoteQuestion = async (req, res) => {
     // Case 3: No existing vote -> add upvote (+1)
     const updated = await Question.findOneAndUpdate(
       { _id: questionId },
-      { $push: { voters: { userId: studentId, voteType: 'upvote' } }, $inc: { votes: 1 } },
+      { $push: { voters: { userId: profileId, userModel: model, voteType: 'upvote' } }, $inc: { votes: 1 } },
       { new: true }
     );
 
@@ -142,17 +195,17 @@ export const upvoteQuestion = async (req, res) => {
 export const downvoteQuestion = async (req, res) => {
   try {
     const questionId = req.body.id;
-    const studentId = await resolveUserId(req);
+    const { profileId, model } = await resolveUserId(req);
 
-    if (!studentId) {
-      return res.status(403).json({ message: "Only students can vote" });
+    if (!profileId) {
+      return res.status(403).json({ message: "You must be logged in to vote" });
     }
 
     const question = await Question.findById(questionId);
     if (!question) return res.status(404).json({ message: "Question not found" });
 
     const existingVoteIndex = question.voters.findIndex(
-      (v) => v.userId && v.userId.toString() === studentId.toString()
+      (v) => v.userId && v.userId.toString() === profileId.toString()
     );
 
     if (existingVoteIndex !== -1) {
@@ -162,7 +215,7 @@ export const downvoteQuestion = async (req, res) => {
       if (existingVote.voteType === 'downvote') {
         const updated = await Question.findOneAndUpdate(
           { _id: questionId },
-          { $pull: { voters: { userId: studentId } }, $inc: { votes: 1 } },
+          { $pull: { voters: { userId: profileId } }, $inc: { votes: 1 } },
           { new: true }
         );
         return res.json({ votes: updated?.votes ?? question.votes, userVote: null });
@@ -171,8 +224,8 @@ export const downvoteQuestion = async (req, res) => {
       // Case 2: Currently upvoted -> switch to downvote (remove upvote, pull downvote -> -2)
       if (existingVote.voteType === 'upvote') {
         const updated = await Question.findOneAndUpdate(
-          { _id: questionId, "voters.userId": studentId },
-          { $set: { "voters.$.voteType": "downvote" }, $inc: { votes: -2 } },
+          { _id: questionId, "voters.userId": profileId },
+          { $set: { "voters.$.voteType": "downvote", "voters.$.userModel": model }, $inc: { votes: -2 } },
           { new: true }
         );
         return res.json({ votes: updated?.votes ?? question.votes, userVote: 'downvote' });
@@ -182,7 +235,7 @@ export const downvoteQuestion = async (req, res) => {
     // Case 3: No existing vote -> add downvote (-1)
     const updated = await Question.findOneAndUpdate(
       { _id: questionId },
-      { $push: { voters: { userId: studentId, voteType: 'downvote' } }, $inc: { votes: -1 } },
+      { $push: { voters: { userId: profileId, userModel: model, voteType: 'downvote' } }, $inc: { votes: -1 } },
       { new: true }
     );
 
@@ -197,11 +250,11 @@ export const upvoteAnswer = async (req, res) => {
   try {
     const { questionId, answerId } = req.body;
     console.log("UPVOTING ANSWER:", answerId);
-    const studentId = await resolveUserId(req);
+    const { profileId, model } = await resolveUserId(req);
 
-    if (!studentId) {
-      console.log("Failed: not student");
-      return res.status(403).json({ message: "Only students can vote" });
+    if (!profileId) {
+      console.log("Failed: not logged in");
+      return res.status(403).json({ message: "You must be logged in to vote" });
     }
 
     const answer = await Answer.findById(answerId);
@@ -211,7 +264,7 @@ export const upvoteAnswer = async (req, res) => {
     }
 
     const existingVoteIndex = answer.voters.findIndex(
-      (v) => v.userId && v.userId.toString() === studentId.toString()
+      (v) => v.userId && v.userId.toString() === profileId.toString()
     );
 
     if (existingVoteIndex !== -1) {
@@ -220,7 +273,7 @@ export const upvoteAnswer = async (req, res) => {
       if (existingVote.voteType === 'upvote') {
         const updated = await Answer.findOneAndUpdate(
           { _id: answerId },
-          { $pull: { voters: { userId: studentId } }, $inc: { votes: -1 } },
+          { $pull: { voters: { userId: profileId } }, $inc: { votes: -1 } },
           { new: true }
         );
         return res.json({ votes: updated?.votes ?? answer.votes, userVote: null });
@@ -228,8 +281,8 @@ export const upvoteAnswer = async (req, res) => {
 
       if (existingVote.voteType === 'downvote') {
         const updated = await Answer.findOneAndUpdate(
-          { _id: answerId, "voters.userId": studentId },
-          { $set: { "voters.$.voteType": "upvote" }, $inc: { votes: 2 } },
+          { _id: answerId, "voters.userId": profileId },
+          { $set: { "voters.$.voteType": "upvote", "voters.$.userModel": model }, $inc: { votes: 2 } },
           { new: true }
         );
         return res.json({ votes: updated?.votes ?? answer.votes, userVote: 'upvote' });
@@ -238,7 +291,7 @@ export const upvoteAnswer = async (req, res) => {
 
     const updated = await Answer.findOneAndUpdate(
       { _id: answerId },
-      { $push: { voters: { userId: studentId, voteType: 'upvote' } }, $inc: { votes: 1 } },
+      { $push: { voters: { userId: profileId, userModel: model, voteType: 'upvote' } }, $inc: { votes: 1 } },
       { new: true }
     );
 
@@ -253,11 +306,11 @@ export const downvoteAnswer = async (req, res) => {
   try {
     const { questionId, answerId } = req.body;
     console.log("DOWNVOTING ANSWER:", answerId);
-    const studentId = await resolveUserId(req);
+    const { profileId, model } = await resolveUserId(req);
 
-    if (!studentId) {
-      console.log("Failed: not student");
-      return res.status(403).json({ message: "Only students can vote" });
+    if (!profileId) {
+      console.log("Failed: not logged in");
+      return res.status(403).json({ message: "You must be logged in to vote" });
     }
 
     const answer = await Answer.findById(answerId);
@@ -267,7 +320,7 @@ export const downvoteAnswer = async (req, res) => {
     }
 
     const existingVoteIndex = answer.voters.findIndex(
-      (v) => v.userId && v.userId.toString() === studentId.toString()
+      (v) => v.userId && v.userId.toString() === profileId.toString()
     );
 
     if (existingVoteIndex !== -1) {
@@ -276,7 +329,7 @@ export const downvoteAnswer = async (req, res) => {
       if (existingVote.voteType === 'downvote') {
         const updated = await Answer.findOneAndUpdate(
           { _id: answerId },
-          { $pull: { voters: { userId: studentId } }, $inc: { votes: 1 } },
+          { $pull: { voters: { userId: profileId } }, $inc: { votes: 1 } },
           { new: true }
         );
         return res.json({ votes: updated?.votes ?? answer.votes, userVote: null });
@@ -284,8 +337,8 @@ export const downvoteAnswer = async (req, res) => {
 
       if (existingVote.voteType === 'upvote') {
         const updated = await Answer.findOneAndUpdate(
-          { _id: answerId, "voters.userId": studentId },
-          { $set: { "voters.$.voteType": "downvote" }, $inc: { votes: -2 } },
+          { _id: answerId, "voters.userId": profileId },
+          { $set: { "voters.$.voteType": "downvote", "voters.$.userModel": model }, $inc: { votes: -2 } },
           { new: true }
         );
         return res.json({ votes: updated?.votes ?? answer.votes, userVote: 'downvote' });
@@ -294,7 +347,7 @@ export const downvoteAnswer = async (req, res) => {
 
     const updated = await Answer.findOneAndUpdate(
       { _id: answerId },
-      { $push: { voters: { userId: studentId, voteType: 'downvote' } }, $inc: { votes: -1 } },
+      { $push: { voters: { userId: profileId, userModel: model, voteType: 'downvote' } }, $inc: { votes: -1 } },
       { new: true }
     );
 
@@ -316,18 +369,37 @@ export const submitAnswer = async (req, res) => {
     return res.status(403).json({ message: "Access denied" });
   }
 
-  // Find Student Profile
-  const Student = (await import("../models/Student.js")).default;
-  const student = await Student.findOne({ userId: req.user.id });
-
-  if (!student) {
-    return res.status(401).json({ message: "User not found" });
+  const userRole = req.user?.role?.toLowerCase();
+  const userId = req.user.id || req.user._id;
+  
+  let answerer = null;
+  let answererModel = null;
+  
+  if (userRole === "student") {
+    const Student = (await import("../models/Student.js")).default;
+    const student = await Student.findOne({ userId });
+    if (!student) {
+      return res.status(401).json({ message: "User not found" });
+    }
+    answerer = student._id;
+    answererModel = 'Student';
+  } else if (userRole === "faculty") {
+    const Professor = (await import("../models/Professor.js")).default;
+    const professor = await Professor.findOne({ userId });
+    if (!professor) {
+      return res.status(401).json({ message: "User not found" });
+    }
+    answerer = professor._id;
+    answererModel = 'Professor';
+  } else {
+    return res.status(403).json({ message: "Only students and faculty can answer questions" });
   }
 
   const newAnswer = new Answer({
     desc: answerText,
     votes: 0,
-    answerer: student._id,
+    answerer: answerer,
+    answererModel: answererModel,
   });
 
   await newAnswer.save();
@@ -346,13 +418,31 @@ export const askQuestion = async (req, res) => {
     const { title, desc, tags } = req.body;
     const tagsArray = tags.split(",").map((tag) => tag.trim());
     const instituteId = req.user.instituteId;
+    const userId = req.user.id || req.user._id;
+    const userRole = req.user?.role?.toLowerCase();
 
-    // Find Student Profile
-    const Student = (await import("../models/Student.js")).default;
-    const student = await Student.findOne({ userId: req.user.id });
+    let asker = null;
+    let askerModel = null;
 
-    if (!student) {
-      return res.status(401).json({ message: "User not found" });
+    // Find Student or Professor Profile
+    if (userRole === "student") {
+      const Student = (await import("../models/Student.js")).default;
+      const student = await Student.findOne({ userId });
+      if (!student) {
+        return res.status(401).json({ message: "User not found" });
+      }
+      asker = student._id;
+      askerModel = 'Student';
+    } else if (userRole === "faculty") {
+      const Professor = (await import("../models/Professor.js")).default;
+      const professor = await Professor.findOne({ userId });
+      if (!professor) {
+        return res.status(401).json({ message: "User not found" });
+      }
+      asker = professor._id;
+      askerModel = 'Professor';
+    } else {
+      return res.status(403).json({ message: "Only students and faculty can ask questions" });
     }
 
     const newQuestion = new Question({
@@ -360,7 +450,8 @@ export const askQuestion = async (req, res) => {
       desc: desc,
       votes: 0,
       tags: tagsArray,
-      asker: student._id,
+      asker: asker,
+      askerModel: askerModel,
       instituteId,
       wealth: 0,
       views: 0,

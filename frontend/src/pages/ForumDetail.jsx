@@ -212,8 +212,8 @@ const ForumDetail = () => {
                 <p>Answers :</p>
               </div>
               <div id="answersContainer">
-                {(question.answers || []).map((ans) => (
-                  <div key={ans._id}>
+                {(question.answers || []).map((ans, index) => (
+                  <div key={ans._id || `answer-${index}`}>
                     <div className="po_anselab">
                       <div className="ansupdownvote">
                         <div className={`upvote-triangle ${userVotes[ans._id] === 'upvote' ? 'active' : ''}`} onClick={() => handleVote('up', ans._id, true)}></div>
