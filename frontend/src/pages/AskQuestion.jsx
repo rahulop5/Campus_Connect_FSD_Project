@@ -90,33 +90,6 @@ const AskQuestion = () => {
                     >
                       <img src="/assets/italic.png" alt="Italic" className="tool-icon" />
                     </button>
-                    <button
-                      type="button"
-                      className="tool-btn heading-btn"
-                      onMouseDown={(e) => e.preventDefault()}
-                      onClick={() => {
-                        document.execCommand('formatBlock', false, 'h3');
-                        editorRef.current?.focus();
-                      }}
-                      aria-label="Heading"
-                      title="Heading"
-                    >
-                      <span>Heading</span>
-                      <img src="/assets/heading.png" alt="" className="heading-icon" />
-                    </button>
-                    <button
-                      type="button"
-                      className="tool-btn"
-                      onMouseDown={(e) => e.preventDefault()}
-                      onClick={() => {
-                        document.execCommand('formatBlock', false, 'pre');
-                        editorRef.current?.focus();
-                      }}
-                      aria-label="Code Block"
-                      title="Code Block"
-                    >
-                      <img src="/assets/codeansbox.png" alt="Code Block" className="tool-icon" />
-                    </button>
                   </div>
                   <div
                     ref={editorRef}
@@ -142,7 +115,7 @@ const AskQuestion = () => {
               </button>
             </form>
           </div>
-          
+
           <div className="db_notice">
             <div className="po_noticeboard">
               <p>Notice!</p>
@@ -160,7 +133,7 @@ const AskQuestion = () => {
               </div>
             </div>
             <div className="po_ads">
-              <p>Ads Come Here</p>   
+              <p>Ads Come Here</p>
             </div>
           </div>
         </div>

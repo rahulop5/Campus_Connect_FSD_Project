@@ -63,7 +63,8 @@ router.get('/:courseId', verifyToken, async (req, res) => {
                 credits: course.credits,
                 totalclasses: course.totalclasses,
                 classeshpnd: course.classeshpnd,
-                ug: course.ug
+                ug: course.ug,
+                professor: course.professor
             },
             students: formattedStudents,
             faculty: faculty

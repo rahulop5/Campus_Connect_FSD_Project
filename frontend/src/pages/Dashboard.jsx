@@ -51,6 +51,7 @@ const StudentDashboard = () => {
   if (!data) return <Layout>Loading...</Layout>;
 
   const getGradeLetter = (predgrade) => {
+    if (predgrade === "NA") return "NA";
     if (predgrade >= 90) return "O";
     if (predgrade >= 80) return "A";
     if (predgrade >= 70) return "B";
@@ -60,7 +61,7 @@ const StudentDashboard = () => {
     return "F";
   };
 
-  const gradeOrder = ["O", "A", "B", "C", "D", "P", "F"];
+  const gradeOrder = ["O", "A", "B", "C", "D", "P", "F", "NA"];
 
   return (
     <Layout>
@@ -99,8 +100,22 @@ const StudentDashboard = () => {
                       <p>Predicted Grade</p>
                       <p>
                         {gradeOrder.map((g) => (
-                          <span key={g} style={g === gradeLetter ? { color: 'var(--accent-color)', fontWeight: 'bold' } : {}}>
-                            {g === gradeLetter ? <span>{g}</span> : g}{" "}
+                          <span
+                            key={g}
+                            style={g === gradeLetter ? {
+                              color: '#ffffff',
+                              backgroundColor: '#2B9900',
+                              fontWeight: 'bold',
+                              padding: '2px 8px',
+                              borderRadius: '4px',
+                              margin: '0 2px'
+                            } : {
+                              color: 'rgba(255, 255, 255, 0.4)',
+                              padding: '2px 8px',
+                              margin: '0 2px'
+                            }}
+                          >
+                            {g}
                           </span>
                         ))}
                       </p>

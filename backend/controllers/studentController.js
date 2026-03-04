@@ -36,6 +36,7 @@ export const studentDashboard = async (req, res) => {
       const attendancePercentage = courseObj.attendance ? courseObj.attendance : 0;
 
       return {
+        courseId: course._id,
         subject: course.name,
         attendancePercentage,
         grade: {
@@ -44,13 +45,7 @@ export const studentDashboard = async (req, res) => {
       };
     });
 
-    courses.forEach((course) => {
-      const shortform = course.subject
-        .split(" ")
-        .map(word => word[0].toUpperCase())
-        .join("");
-      course.subject = shortform;
-    });
+    // Removed acronym course name generator so that the actual course name is displayed in the student dashboard
 
     const date = new Date();
     const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
@@ -195,7 +190,7 @@ export const studentGrades = async (req, res) => {
       return res.status(404).json({ message: "No courses found" });
 
     const bellgraphSubjects = await Promise.all(courses.map(async (course) => {
-      const enrollments = await Student.countDocuments({ "courses.course": new mongoose.Types.ObjectId(course._id) });
+      const enrollments = await Student.countDocuments({ "courses.course": course._id });
       // Find the specific grade the student got for this course
       const studentCourseData = student.courses.find(c => c.course.toString() === course._id.toString());
 
