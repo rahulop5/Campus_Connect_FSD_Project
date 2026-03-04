@@ -45,19 +45,19 @@ const ForumDetail = () => {
     try {
       const res = await api.get(`/forum/question/${id}?increment=${incrementView ? '1' : '0'}`);
       setQuestion(res.data.question);
-      
+
       // Build user votes map
       const votes = {};
       if (res.data.question.voters) {
         res.data.question.voters.forEach(voter => {
-          if (String(voter.userId) === String(user?._id)) votes[id] = voter.voteType;
+          if (voter.userId && String(voter.userId.userId) === String(user?._id)) votes[id] = voter.voteType;
         });
       }
       if (res.data.question.answers) {
         res.data.question.answers.forEach(answer => {
           if (answer.voters) {
             answer.voters.forEach(voter => {
-              if (String(voter.userId) === String(user?._id)) votes[answer._id] = voter.voteType;
+              if (voter.userId && String(voter.userId.userId) === String(user?._id)) votes[answer._id] = voter.voteType;
             });
           }
         });
@@ -118,15 +118,15 @@ const ForumDetail = () => {
     }
     console.log(user)
 
-    const endpoint = isAnswer 
+    const endpoint = isAnswer
       ? (type === 'up' ? '/forum/upvote-answer' : '/forum/downvote-answer')
       : (type === 'up' ? '/forum/upvote-question' : '/forum/downvote-question');
-    
+
     const body = isAnswer ? { questionId: id, answerId: itemId } : { id: itemId };
 
     try {
       const res = await api.post(endpoint, body);
-      
+
       // Update user votes
       setUserVotes(prev => {
         const next = { ...prev };
@@ -137,12 +137,12 @@ const ForumDetail = () => {
         }
         return next;
       });
-      
+
       // Update votes count
       if (isAnswer) {
         setQuestion(prev => ({
           ...prev,
-          answers: prev.answers.map(ans => 
+          answers: prev.answers.map(ans =>
             ans._id === itemId ? { ...ans, votes: res.data.votes } : ans
           )
         }));
@@ -221,10 +221,10 @@ const ForumDetail = () => {
                         <div className={`downvote-triangle ${userVotes[ans._id] === 'downvote' ? 'active' : ''}`} onClick={() => handleVote('down', ans._id, true)}></div>
                       </div>
                       <div className="po_ansdesc outfit">
-                          <div
-                            className="rich-text"
-                            dangerouslySetInnerHTML={{ __html: sanitizeHtml(ans.desc) }}
-                          />
+                        <div
+                          className="rich-text"
+                          dangerouslySetInnerHTML={{ __html: sanitizeHtml(ans.desc) }}
+                        />
                       </div>
                     </div>
                     <hr className="hr_answer" />
@@ -242,9 +242,9 @@ const ForumDetail = () => {
                     className={`tool-btn ${formatState.bold ? 'active' : ''}`}
                     onMouseDown={(e) => e.preventDefault()}
                     onClick={() => {
-                        document.execCommand('bold');
-                        updateFormatState();
-                        editorRef.current?.focus();
+                      document.execCommand('bold');
+                      updateFormatState();
+                      editorRef.current?.focus();
                     }}
                     title="Bold"
                   >
@@ -255,54 +255,54 @@ const ForumDetail = () => {
                     className={`tool-btn ${formatState.italic ? 'active' : ''}`}
                     onMouseDown={(e) => e.preventDefault()}
                     onClick={() => {
-                        document.execCommand('italic');
-                        updateFormatState();
-                        editorRef.current?.focus();
+                      document.execCommand('italic');
+                      updateFormatState();
+                      editorRef.current?.focus();
                     }}
                     title="Italic"
                   >
                     <img src="/assets/italic.png" alt="Italic" className="tool-icon" />
                   </button>
                   <button
-                      type="button"
-                      className="tool-btn heading-btn"
-                      onMouseDown={(e) => e.preventDefault()}
-                      onClick={() => {
-                        document.execCommand('formatBlock', false, 'h3');
-                        editorRef.current?.focus();
-                      }}
-                      title="Heading"
-                    >
-                      <span>Heading</span>
-                      <img src="/assets/heading.png" alt="" className="heading-icon" />
+                    type="button"
+                    className="tool-btn heading-btn"
+                    onMouseDown={(e) => e.preventDefault()}
+                    onClick={() => {
+                      document.execCommand('formatBlock', false, 'h3');
+                      editorRef.current?.focus();
+                    }}
+                    title="Heading"
+                  >
+                    <span>Heading</span>
+                    <img src="/assets/heading.png" alt="" className="heading-icon" />
                   </button>
                   <button
-                      type="button"
-                      className="tool-btn"
-                      onMouseDown={(e) => e.preventDefault()}
-                      onClick={() => {
-                        document.execCommand('formatBlock', false, 'pre');
-                        editorRef.current?.focus();
-                      }}
-                      title="Code Block"
-                    >
-                      <img src="/assets/codeansbox.png" alt="Code Block" className="tool-icon" />
+                    type="button"
+                    className="tool-btn"
+                    onMouseDown={(e) => e.preventDefault()}
+                    onClick={() => {
+                      document.execCommand('formatBlock', false, 'pre');
+                      editorRef.current?.focus();
+                    }}
+                    title="Code Block"
+                  >
+                    <img src="/assets/codeansbox.png" alt="Code Block" className="tool-icon" />
                   </button>
-                  <div id="submit-answer-btn" onClick={handleSubmitAnswer} style={{cursor: 'pointer', marginLeft: 'auto'}}><p>Submit</p></div>
+                  <div id="submit-answer-btn" onClick={handleSubmitAnswer} style={{ cursor: 'pointer', marginLeft: 'auto' }}><p>Submit</p></div>
                 </div>
                 <div
-                    ref={editorRef}
-                    className="po_useransbox"
-                    contentEditable
-                    suppressContentEditableWarning
-                    role="textbox"
-                    aria-multiline="true"
-                    data-placeholder="Type your answer here..."
-                    onInput={syncAnswer}
-                    onKeyUp={updateFormatState}
-                    onMouseUp={updateFormatState}
-                    onFocus={updateFormatState}
-                  />
+                  ref={editorRef}
+                  className="po_useransbox"
+                  contentEditable
+                  suppressContentEditableWarning
+                  role="textbox"
+                  aria-multiline="true"
+                  data-placeholder="Type your answer here..."
+                  onInput={syncAnswer}
+                  onKeyUp={updateFormatState}
+                  onMouseUp={updateFormatState}
+                  onFocus={updateFormatState}
+                />
               </div>
             </div>
           </div>
