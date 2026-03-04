@@ -4,6 +4,7 @@ import Course from "../models/Course.js";
 import path from 'path';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
+import mongoose from 'mongoose';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -181,23 +182,39 @@ export const studentGrades = async (req, res) => {
     if (!student) return res.status(404).json({ message: "Student not found" });
 
     const studentCourses = student.courses.map((c) => c.course);
-    const courses = await Course.find({ _id: { $in: studentCourses } });
+    const courses = await Course.find({ _id: { $in: studentCourses } })
+      .populate({
+        path: 'professor',
+        populate: {
+          path: 'userId',
+          select: 'name'
+        }
+      });
 
     if (!courses || courses.length === 0)
       return res.status(404).json({ message: "No courses found" });
 
-    const bellgraphSubjects = courses.map((course) => ({
-      courseId: course._id.toString(),
-      name: course.name,
-      totalclasses: course.totalclasses,
-      credits: course.credits,
-      classescompleted: course.classeshpnd
+    const bellgraphSubjects = await Promise.all(courses.map(async (course) => {
+      const enrollments = await Student.countDocuments({ "courses.course": new mongoose.Types.ObjectId(course._id) });
+      // Find the specific grade the student got for this course
+      const studentCourseData = student.courses.find(c => c.course.toString() === course._id.toString());
+
+      return {
+        courseId: course._id.toString(),
+        name: course.name,
+        professorName: course.professor?.userId?.name || "Unassigned",
+        totalclasses: course.totalclasses,
+        credits: course.credits,
+        classescompleted: course.classeshpnd,
+        enrollments: enrollments,
+        studentGrade: studentCourseData?.grade || "N/A"
+      };
     }));
 
     res.json({
       bellgraphSubjects,
-      defaultCourseId: bellgraphSubjects[0].courseId,
-      userinfo: student.courses[0]?.grade || "N/A",
+      defaultCourseId: bellgraphSubjects.length > 0 ? bellgraphSubjects[0].courseId : null,
+      userinfo: bellgraphSubjects.length > 0 ? bellgraphSubjects[0].studentGrade : "N/A"
     });
   } catch (error) {
     console.error("Error loading grades:", error);

@@ -9,6 +9,7 @@ const Bellgraph = () => {
   const [selectedCourseId, setSelectedCourseId] = useState(null);
   const [chartData, setChartData] = useState(null);
   const [currentSubjectName, setCurrentSubjectName] = useState('');
+  const [currentSubject, setCurrentSubject] = useState(null);
 
   useEffect(() => {
     const fetchSubjects = async () => {
@@ -28,6 +29,7 @@ const Bellgraph = () => {
   const handleSubjectClick = async (subject) => {
     setSelectedCourseId(subject.courseId);
     setCurrentSubjectName(subject.name);
+    setCurrentSubject(subject);
     try {
       const res = await api.get(`/student/bellgraph-data/${subject.courseId}`);
       // Transform data for Recharts
@@ -46,8 +48,8 @@ const Bellgraph = () => {
       <div className="bellgraph-page">
         <div className="bg_subjects">
           {subjects.map((sub) => (
-            <div 
-              key={sub.courseId} 
+            <div
+              key={sub.courseId}
               className="subject"
               id={selectedCourseId === sub.courseId ? 'selected_subject' : ''}
               onClick={() => handleSubjectClick(sub)}
@@ -64,31 +66,31 @@ const Bellgraph = () => {
             <div className="chart-wrapper">
               {chartData ? (
                 <ResponsiveContainer width="100%" height="100%">
-                  <AreaChart 
+                  <AreaChart
                     data={chartData}
                     margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
                   >
                     <defs>
                       <linearGradient id="colorFrequency" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#2B9900" stopOpacity={0.8}/>
-                        <stop offset="95%" stopColor="#2B9900" stopOpacity={0}/>
+                        <stop offset="5%" stopColor="#2B9900" stopOpacity={0.8} />
+                        <stop offset="95%" stopColor="#2B9900" stopOpacity={0} />
                       </linearGradient>
                     </defs>
                     <CartesianGrid strokeDasharray="3 3" stroke="rgba(255, 255, 255, 0.05)" />
-                    <XAxis 
-                      dataKey="grade" 
+                    <XAxis
+                      dataKey="grade"
                       stroke="rgba(255, 255, 255, 0.7)"
                       tick={{ fill: 'rgba(255, 255, 255, 0.7)', fontSize: 12 }}
                       label={{ value: 'Grade', position: 'insideBottom', offset: -5, fill: '#fff' }}
                     />
-                    <YAxis 
+                    <YAxis
                       stroke="rgba(255, 255, 255, 0.7)"
                       tick={{ fill: 'rgba(255, 255, 255, 0.7)', fontSize: 12 }}
                       label={{ value: 'Frequency', angle: -90, position: 'insideLeft', fill: '#fff' }}
                     />
-                    <Tooltip 
-                      contentStyle={{ 
-                        backgroundColor: 'rgba(0, 0, 0, 0.9)', 
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: 'rgba(0, 0, 0, 0.9)',
                         border: '1px solid #2B9900',
                         borderRadius: '8px',
                         color: '#fff'
@@ -96,13 +98,13 @@ const Bellgraph = () => {
                       labelStyle={{ color: '#2B9900', fontWeight: 'bold' }}
                       itemStyle={{ color: '#fff' }}
                     />
-                    <Area 
-                      type="monotone" 
-                      dataKey="frequency" 
-                      stroke="#2B9900" 
+                    <Area
+                      type="monotone"
+                      dataKey="frequency"
+                      stroke="#2B9900"
                       strokeWidth={3}
-                      fillOpacity={1} 
-                      fill="url(#colorFrequency)" 
+                      fillOpacity={1}
+                      fill="url(#colorFrequency)"
                     />
                   </AreaChart>
                 </ResponsiveContainer>
@@ -115,12 +117,13 @@ const Bellgraph = () => {
           <div className="bg_graphright">
             <div className="grade-display">
               <p>Your Grade</p>
-              <p className="grade-value">O</p>
+              <p className="grade-value">{currentSubject?.studentGrade || "N/A"}</p>
             </div>
             <div className="bg_details">
-              <div className="detail-item"><p>Allotted Credits</p><p><span>4</span></p></div>
-              <div className="detail-item"><p>Total Hours</p><p><span>46</span>hrs</p></div>
-              <div className="detail-item"><p>Enrollments</p><p><span>146</span></p></div>
+              <div className="detail-item"><p>Professor</p><p><span>{currentSubject?.professorName || "Unassigned"}</span></p></div>
+              <div className="detail-item"><p>Allotted Credits</p><p><span>{currentSubject?.credits || 0}</span></p></div>
+              <div className="detail-item"><p>Total Hours</p><p><span>{currentSubject?.totalclasses || 0}</span>hrs</p></div>
+              <div className="detail-item"><p>Enrollments</p><p><span>{currentSubject?.enrollments || 0}</span></p></div>
             </div>
           </div>
         </div>
