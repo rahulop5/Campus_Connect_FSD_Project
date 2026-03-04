@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { fetchDashboardData } from '../store/slices/adminSlice';
 import api from '../api/axios';
 import Layout from '../components/Layout';
 import DarkVeil from '../components/DarkVeil';
@@ -21,10 +22,17 @@ const CourseDetails = () => {
 
     const allowedEditRoles = ['Admin', 'Professor', 'college_admin', 'super_admin', 'faculty'];
     const canEdit = allowedEditRoles.includes(user?.role);
+    const dispatch = useDispatch();
+    const { students: allStudents, professors: allProfessors } = useSelector((state) => state.admin);
+    const [assignStudentId, setAssignStudentId] = useState('');
+    const [assignProfessorId, setAssignProfessorId] = useState('');
 
     useEffect(() => {
+        if (canEdit && (allStudents.length === 0 || allProfessors.length === 0)) {
+            dispatch(fetchDashboardData());
+        }
         fetchCourseDetails();
-    }, [courseId]);
+    }, [courseId, canEdit, dispatch]);
 
     const fetchCourseDetails = async () => {
         try {
@@ -48,14 +56,37 @@ const CourseDetails = () => {
     const handleEdit = async () => {
         if (editMode) {
             try {
-                await api.put(`/courses/${courseId}`, editForm);
-                setCourse({ ...course, ...editForm });
+                // Determine if we need to change professor
+                const updatedForm = { ...editForm };
+                if (assignProfessorId && assignProfessorId !== course?.professor?._id) {
+                    updatedForm.professor = assignProfessorId;
+                }
+
+                await api.put(`/courses/${courseId}`, updatedForm);
+                // Refetch to get populated fields correctly
+                await fetchCourseDetails();
                 setEditMode(false);
             } catch (error) {
                 console.error('Error updating course:', error);
             }
         } else {
+            setAssignProfessorId(course?.professor?._id || '');
             setEditMode(true);
+        }
+    };
+
+    const handleAddStudent = async () => {
+        if (!assignStudentId) return;
+        try {
+            await api.post('/admin/assign/course-student', {
+                course: courseId,
+                student: assignStudentId
+            });
+            setAssignStudentId('');
+            await fetchCourseDetails();
+        } catch (error) {
+            console.error('Error adding student:', error);
+            alert(error.response?.data?.message || 'Failed to add student');
         }
     };
 
@@ -133,6 +164,26 @@ const CourseDetails = () => {
                                 <span className="stat-value">Program Elective</span>
                             </div>
                             <div className="stat-item">
+                                <span className="stat-label">Professor</span>
+                                {editMode ? (
+                                    <select
+                                        className="stat-value-edit"
+                                        style={{ background: 'rgba(255, 255, 255, 0.1)', color: 'white', border: '1px solid rgba(255, 255, 255, 0.2)', padding: '4px', borderRadius: '4px' }}
+                                        value={assignProfessorId}
+                                        onChange={(e) => setAssignProfessorId(e.target.value)}
+                                    >
+                                        <option value="">-- Select Professor --</option>
+                                        {allProfessors.map(prof => (
+                                            <option key={prof._id} value={prof._id} style={{ color: 'black' }}>
+                                                {prof.name}
+                                            </option>
+                                        ))}
+                                    </select>
+                                ) : (
+                                    <span className="stat-value">{faculty.length > 0 ? faculty[0].name : 'Unassigned'}</span>
+                                )}
+                            </div>
+                            <div className="stat-item">
                                 <span className="stat-label">Credits</span>
                                 {editMode ? (
                                     <input
@@ -177,6 +228,41 @@ const CourseDetails = () => {
                             </div>
 
                             <div className="participants-actions">
+                                {canEdit && activeTab === 'students' && (
+                                    <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                                        <select
+                                            value={assignStudentId}
+                                            onChange={(e) => setAssignStudentId(e.target.value)}
+                                            style={{
+                                                background: 'rgba(255, 255, 255, 0.05)',
+                                                border: '1px solid rgba(255, 255, 255, 0.1)',
+                                                color: 'white',
+                                                padding: '8px 12px',
+                                                borderRadius: '8px',
+                                                outline: 'none',
+                                                cursor: 'pointer'
+                                            }}
+                                        >
+                                            <option value="" style={{ color: 'black' }}>Add Student to Course...</option>
+                                            {allStudents
+                                                // Filter out students already in the course
+                                                .filter(s => !students.some(es => es._id === s._id))
+                                                .map(student => (
+                                                    <option key={student._id} value={student._id} style={{ color: 'black' }}>
+                                                        {student.name} ({student.rollnumber})
+                                                    </option>
+                                                ))}
+                                        </select>
+                                        <button
+                                            className="edit-btn"
+                                            style={{ background: '#2B9900', border: 'none', padding: '8px 16px', color: 'white', borderRadius: '8px', cursor: 'pointer', fontWeight: '500' }}
+                                            onClick={handleAddStudent}
+                                            disabled={!assignStudentId}
+                                        >
+                                            Add
+                                        </button>
+                                    </div>
+                                )}
                                 {canEdit && (
                                     <button className="edit-btn" onClick={handleEdit}>
                                         {editMode ? 'Save' : 'Edit'}
