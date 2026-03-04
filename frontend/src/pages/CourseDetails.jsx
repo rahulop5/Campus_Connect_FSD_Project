@@ -90,6 +90,21 @@ const CourseDetails = () => {
         }
     };
 
+    const handleRemoveStudent = async (studentId) => {
+        if (!window.confirm('Are you sure you want to remove this student from the course?')) return;
+        try {
+            await api.post('/admin/remove/course', {
+                course: courseId,
+                student: studentId,
+                removeType: 'student'
+            });
+            await fetchCourseDetails();
+        } catch (error) {
+            console.error('Error removing student:', error);
+            alert(error.response?.data?.message || 'Failed to remove student');
+        }
+    };
+
     const filteredData = () => {
         const data = activeTab === 'students' ? students : faculty;
         if (!searchQuery) return data;
@@ -291,15 +306,12 @@ const CourseDetails = () => {
                                         <th>#</th>
                                         <th>Name</th>
                                         <th>{activeTab === 'students' ? 'Roll No.' : 'Email'}</th>
+                                        {canEdit && activeTab === 'students' && <th>Actions</th>}
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {filteredData().map((participant, index) => (
-                                        <tr key={participant._id} onClick={() => {
-                                            if (activeTab === 'students' && (user?.role === 'Admin' || user?.role === 'Professor')) {
-                                                navigate(`/student/${participant._id}`);
-                                            }
-                                        }}>
+                                        <tr key={participant._id}>
                                             <td>{index + 1}</td>
                                             <td>
                                                 <div className="participant-info">
@@ -315,6 +327,25 @@ const CourseDetails = () => {
                                             <td className="roll-number">
                                                 {activeTab === 'students' ? participant.rollnumber : participant.email}
                                             </td>
+                                            {canEdit && activeTab === 'students' && (
+                                                <td>
+                                                    <button
+                                                        onClick={() => handleRemoveStudent(participant._id)}
+                                                        style={{
+                                                            background: 'rgba(255, 68, 68, 0.15)',
+                                                            color: '#ff4444',
+                                                            border: '1px solid rgba(255, 68, 68, 0.3)',
+                                                            padding: '6px 12px',
+                                                            borderRadius: '6px',
+                                                            cursor: 'pointer',
+                                                            fontSize: '13px',
+                                                            fontWeight: '500'
+                                                        }}
+                                                    >
+                                                        Remove
+                                                    </button>
+                                                </td>
+                                            )}
                                         </tr>
                                     ))}
                                 </tbody>
