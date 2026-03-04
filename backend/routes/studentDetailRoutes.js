@@ -12,7 +12,8 @@ router.get('/:studentId', verifyToken, async (req, res) => {
         const { studentId } = req.params;
 
         // Check if user is admin or professor
-        if (req.user.role !== 'Admin' && req.user.role !== 'Professor') {
+        const allowedRoles = ['Admin', 'Professor', 'college_admin', 'faculty', 'super_admin'];
+        if (!allowedRoles.includes(req.user.role)) {
             return res.status(403).json({ message: 'Unauthorized. Only admin and professors can view student details.' });
         }
 

@@ -15,7 +15,8 @@ const StudentPreview = () => {
     const [searchQuery, setSearchQuery] = useState('');
 
     // Only admin and professor can access this page
-    const canView = user?.role === 'Professor' || user?.role === 'Admin';
+    const allowedRoles = ['Admin', 'Professor', 'college_admin', 'faculty', 'super_admin'];
+    const canView = allowedRoles.includes(user?.role);
 
     useEffect(() => {
         if (!canView) {
