@@ -19,7 +19,8 @@ const CourseDetails = () => {
     const [editMode, setEditMode] = useState(false);
     const [editForm, setEditForm] = useState({});
 
-    const canEdit = user?.role === 'Professor' || user?.role === 'Admin';
+    const allowedEditRoles = ['Admin', 'Professor', 'college_admin', 'super_admin', 'faculty'];
+    const canEdit = allowedEditRoles.includes(user?.role);
 
     useEffect(() => {
         fetchCourseDetails();

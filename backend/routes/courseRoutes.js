@@ -14,7 +14,13 @@ router.get('/:courseId', verifyToken, async (req, res) => {
 
         // Fetch course details
         const course = await Course.findById(courseId)
-            .populate('professor', 'name email phone')
+            .populate({
+                path: 'professor',
+                populate: {
+                    path: 'userId',
+                    select: 'name email phone'
+                }
+            })
             .populate('instituteId', 'name');
 
         if (!course) {
@@ -39,7 +45,15 @@ router.get('/:courseId', verifyToken, async (req, res) => {
         }));
 
         // Get faculty (professors) teaching this course
-        const faculty = [course.professor].filter(Boolean);
+        const faculty = [];
+        if (course.professor && course.professor.userId) {
+            faculty.push({
+                _id: course.professor._id,
+                name: course.professor.userId.name || 'N/A',
+                email: course.professor.userId.email || 'N/A',
+                phone: course.professor.userId.phone || 'N/A'
+            });
+        }
 
         res.json({
             course: {
@@ -67,7 +81,8 @@ router.put('/:courseId', verifyToken, async (req, res) => {
         const { name, credits, totalclasses, section } = req.body;
 
         // Check if user is admin or professor
-        if (req.user.role !== 'Admin' && req.user.role !== 'Professor') {
+        const allowedRoles = ['Admin', 'Professor', 'college_admin', 'faculty', 'super_admin'];
+        if (!allowedRoles.includes(req.user.role)) {
             return res.status(403).json({ message: 'Unauthorized' });
         }
 
