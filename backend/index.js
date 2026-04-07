@@ -67,6 +67,7 @@ import authRoutes from "./routes/authRoutes.js";
 import instituteRoutes from "./routes/instituteRoutes.js";
 import courseRoutes from "./routes/courseRoutes.js";
 import studentDetailRoutes from "./routes/studentDetailRoutes.js";
+import paymentRoutes from "./routes/paymentRoutes.js";
 
 // Routes
 // app.use("/api/auth/student", authstudentRoutes);
@@ -84,6 +85,7 @@ app.use("/api/election", electionRoutes);
 app.use('/api/profile', profileRoutes);
 app.use('/api/courses', courseRoutes); // Course details routes
 app.use('/api/students', studentDetailRoutes); // Student details routes
+app.use('/api/payment', paymentRoutes); // Razorpay payment routes
 
 app.get("/", (req, res) => {
   res.send("API is running");
