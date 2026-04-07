@@ -25,6 +25,9 @@ import morgan from "morgan"
 import { createStream } from "rotating-file-stream";
 import { fileURLToPath } from "url";
 import path from "path";
+import swaggerUi from "swagger-ui-express";
+import swaggerSpec from "./config/swagger.js";
+
 
 const app = express();
 
@@ -50,6 +53,7 @@ app.use(cors()); // Allow all origins for now, or specify frontend URL
 app.use(express.static("public"));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 const accessLogStream = createStream("access.log", {
   interval: "1d",

@@ -30,6 +30,7 @@
     "passport-jwt": "^4.0.1",
     "razorpay": "^2.9.6",
     "rotating-file-stream": "^3.2.8",
-    "sqlite3": "^5.1.7"
+    "sqlite3": "^5.1.7",
+    "swagger-ui-express": "^5.0.1"
   }
 }
