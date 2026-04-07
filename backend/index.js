@@ -25,6 +25,9 @@ import morgan from "morgan"
 import { createStream } from "rotating-file-stream";
 import { fileURLToPath } from "url";
 import path from "path";
+import swaggerUi from "swagger-ui-express";
+import swaggerSpec from "./config/swagger.js";
+
 
 const app = express();
 
@@ -50,6 +53,7 @@ app.use(cors()); // Allow all origins for now, or specify frontend URL
 app.use(express.static("public"));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 const accessLogStream = createStream("access.log", {
   interval: "1d",
@@ -67,6 +71,7 @@ import authRoutes from "./routes/authRoutes.js";
 import instituteRoutes from "./routes/instituteRoutes.js";
 import courseRoutes from "./routes/courseRoutes.js";
 import studentDetailRoutes from "./routes/studentDetailRoutes.js";
+import paymentRoutes from "./routes/paymentRoutes.js";
 
 // Routes
 // app.use("/api/auth/student", authstudentRoutes);
@@ -84,6 +89,7 @@ app.use("/api/election", electionRoutes);
 app.use('/api/profile', profileRoutes);
 app.use('/api/courses', courseRoutes); // Course details routes
 app.use('/api/students', studentDetailRoutes); // Student details routes
+app.use('/api/payment', paymentRoutes); // Razorpay payment routes
 
 app.get("/", (req, res) => {
   res.send("API is running");

@@ -16,7 +16,21 @@ const userSchema = new mongoose.Schema({
     enum: ['pending', 'verified', 'rejected', 'none'],
     default: 'none'
   },
-  profileId: { type: mongoose.Schema.Types.ObjectId } // Reference to Student or Professor document
+  profileId: { type: mongoose.Schema.Types.ObjectId }, // Reference to Student or Professor document
+  subscription: {
+    plan: { 
+      type: String, 
+      enum: ['free', 'student_core', 'student_collective'], 
+      default: 'free' 
+    },
+    status: { 
+      type: String, 
+      enum: ['active', 'inactive'], 
+      default: 'inactive' 
+    },
+    paymentId: { type: mongoose.Schema.Types.ObjectId, ref: 'Payment' },
+    subscribedAt: { type: Date }
+  }
 });
 
 export default mongoose.model("User", userSchema);

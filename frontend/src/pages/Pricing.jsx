@@ -1,9 +1,12 @@
 import { useEffect } from 'react';
+import { useNavigate } from 'react-router';
 import Layout from '../components/Layout';
 import SplitText from '../components/SplitText';
 import '../styles/pricing.css';
 
 const Pricing = () => {
+  const navigate = useNavigate();
+
   useEffect(() => {
     // Lock scrolling when component mounts
     document.body.style.overflow = 'hidden';
@@ -13,6 +16,14 @@ const Pricing = () => {
       document.body.style.overflow = 'auto';
     };
   }, []);
+
+  const handlePlanSelect = (planId) => {
+    if (planId === 'free') {
+      navigate('/dashboard');
+    } else {
+      navigate(`/checkout/${planId}`);
+    }
+  };
 
   return (
     <Layout>
@@ -33,12 +44,12 @@ const Pricing = () => {
             <div className="plan-price free">Free</div>
             <ul className="features">
               <li><span className="green-icon icon"></span>&nbsp; &nbsp; Access to Campus<span className="green-letter">C</span>onnect</li>
-              <li><span class="green-icon icon"></span>&nbsp; &nbsp; Grade & Attendance Tracking</li>
-              <li><span class="red-icon icon"></span>&nbsp; &nbsp; No Premium Profile Features</li>
-              <li><span class="red-icon icon"></span>&nbsp; &nbsp; No Ad-Free Experience</li>
-              <li><span class="red-icon icon"></span>&nbsp; &nbsp; No Club Profile</li>
+              <li><span className="green-icon icon"></span>&nbsp; &nbsp; Grade & Attendance Tracking</li>
+              <li><span className="red-icon icon"></span>&nbsp; &nbsp; No Premium Profile Features</li>
+              <li><span className="red-icon icon"></span>&nbsp; &nbsp; No Ad-Free Experience</li>
+              <li><span className="red-icon icon"></span>&nbsp; &nbsp; No Club Profile</li>
             </ul>
-            <button className="get-now"><span className="get-now-text">Get now</span></button>
+            <button className="get-now" onClick={() => handlePlanSelect('free')}><span className="get-now-text">Get now</span></button>
           </div>
         
           <div className="pricing-card">
@@ -51,7 +62,7 @@ const Pricing = () => {
               <li><span className="green-icon"></span>&nbsp; &nbsp; Ad-Free Experience</li>
               <li><span className="red-icon"></span>&nbsp; &nbsp; No Club Profile</li>
             </ul>
-            <button className="get-now"><span className="get-now-text">Get now</span></button>
+            <button className="get-now" onClick={() => handlePlanSelect('student_core')}><span className="get-now-text">Get now</span></button>
           </div>
         
           <div className="pricing-card">
@@ -64,7 +75,7 @@ const Pricing = () => {
               <li><span className="green-icon"></span>&nbsp; &nbsp; Ad-Free Experience</li>
               <li><span className="green-icon"></span>&nbsp; &nbsp; No Club Profile</li>
             </ul>
-            <button className="get-now"><span className="get-now-text">Get now</span></button>
+            <button className="get-now" onClick={() => handlePlanSelect('student_collective')}><span className="get-now-text">Get now</span></button>
           </div>
         </div>
       </div>
