@@ -155,16 +155,28 @@ const swaggerSpec = {
                     }
                 }
             },
+
             UploadCsvRequest: {
                 type: "object",
-                required: ["csvFile"],
+                required: ["courseId", "uploadType", "csvFile"],
                 properties: {
+                    courseId: {
+                        type: "string",
+                        example: "1 - Operating Systems"
+                    },
+                    uploadType: {
+                        type: "string",
+                        example: "attendance"
+                    },
                     csvFile: {
                         type: "string",
-                        format: "binary"
+                        format: "binary",
+                        description: "CSV file"
                     }
                 }
             },
+
+
             ProfessorSubmitCsvRequest: {
                 type: "object",
                 required: ["marksheet", "courseId"],
@@ -1569,27 +1581,6 @@ const swaggerSpec = {
                 tags: ["Payment"],
                 summary: "Get current user's subscription status",
                 security: secure,
-                responses: {
-                    200: success200,
-                    400: badRequest400,
-                    401: unauthorized401,
-                    500: serverError500
-                }
-            }
-        },
-
-        "/prof/submit": {
-            post: {
-                tags: ["Professor"],
-                summary: "Direct CSV submission for marks and attendance",
-                requestBody: {
-                    required: true,
-                    content: {
-                        "multipart/form-data": {
-                            schema: { $ref: "#/components/schemas/ProfessorSubmitCsvRequest" }
-                        }
-                    }
-                },
                 responses: {
                     200: success200,
                     400: badRequest400,
