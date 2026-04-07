@@ -64,6 +64,7 @@ const swaggerSpec = {
         { name: "Institutes", description: "Institute discovery and verification" },
         { name: "Courses", description: "Course details and updates" },
         { name: "Students", description: "Student detail lookup" },
+        { name: "Payment", description: "Razorpay payment and subscription endpoints" },
         { name: "Legacy", description: "Legacy or backward compatibility routes" }
     ],
     components: {
@@ -271,6 +272,22 @@ const swaggerSpec = {
                     courseId: { type: "string" },
                     professorId: { type: "string" },
                     studentId: { type: "string" }
+                }
+            },
+            CreateOrderRequest: {
+                type: "object",
+                required: ["planId"],
+                properties: {
+                    planId: { type: "string" }
+                }
+            },
+            VerifyPaymentRequest: {
+                type: "object",
+                required: ["razorpay_order_id", "razorpay_payment_id", "razorpay_signature"],
+                properties: {
+                    razorpay_order_id: { type: "string" },
+                    razorpay_payment_id: { type: "string" },
+                    razorpay_signature: { type: "string" }
                 }
             }
         }
@@ -1496,6 +1513,62 @@ const swaggerSpec = {
                         schema: { type: "string" }
                     }
                 ],
+                responses: {
+                    200: success200,
+                    400: badRequest400,
+                    401: unauthorized401,
+                    500: serverError500
+                }
+            }
+        },
+
+        "/api/payment/create-order": {
+            post: {
+                tags: ["Payment"],
+                summary: "Create a Razorpay order for a plan",
+                security: secure,
+                requestBody: {
+                    required: true,
+                    content: {
+                        "application/json": {
+                            schema: { $ref: "#/components/schemas/CreateOrderRequest" }
+                        }
+                    }
+                },
+                responses: {
+                    200: success200,
+                    400: badRequest400,
+                    401: unauthorized401,
+                    500: serverError500
+                }
+            }
+        },
+        "/api/payment/verify": {
+            post: {
+                tags: ["Payment"],
+                summary: "Verify payment after Razorpay checkout",
+                security: secure,
+                requestBody: {
+                    required: true,
+                    content: {
+                        "application/json": {
+                            schema: { $ref: "#/components/schemas/VerifyPaymentRequest" }
+                        }
+                    }
+                },
+                responses: {
+                    200: success200,
+                    400: badRequest400,
+                    401: unauthorized401,
+                    500: serverError500
+                }
+            }
+        },
+        "/api/payment/subscription": {
+            get: {
+                tags: ["Payment"],
+                summary: "Get current user's subscription status",
+                security: secure,
                 responses: {
                     200: success200,
                     400: badRequest400,
