@@ -22,6 +22,9 @@ import LandingPage from './pages/LandingPage';
 import InstituteDashboard from './pages/InstituteDashboard';
 import CourseDetails from './pages/CourseDetails';
 import StudentPreview from './pages/StudentPreview';
+import Checkout from './pages/Checkout';
+import PaymentSuccess from './pages/PaymentSuccess';
+import PaymentFailed from './pages/PaymentFailed';
 
 const ProtectedRoute = ({ children }) => {
   const { user, loading } = useSelector((state) => state.auth);
@@ -97,6 +100,23 @@ function App() {
         } />
 
         <Route path="/pricing" element={<Pricing />} />
+
+        {/* Payment Routes */}
+        <Route path="/checkout/:planId" element={
+          <ProtectedRoute>
+            <Checkout />
+          </ProtectedRoute>
+        } />
+        <Route path="/payment/success" element={
+          <ProtectedRoute>
+            <PaymentSuccess />
+          </ProtectedRoute>
+        } />
+        <Route path="/payment/failed" element={
+          <ProtectedRoute>
+            <PaymentFailed />
+          </ProtectedRoute>
+        } />
 
         {/* Student Routes */}
         <Route path="/attendance" element={

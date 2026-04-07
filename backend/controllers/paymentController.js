@@ -35,7 +35,7 @@ export const createOrder = async (req, res) => {
     const options = {
       amount: plan.amount,
       currency: plan.currency,
-      receipt: `receipt_${userId}_${Date.now()}`,
+      receipt: `rcpt_${Date.now().toString()}`,
       notes: {
         userId,
         planId: plan.id,
