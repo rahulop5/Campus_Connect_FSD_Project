@@ -19,7 +19,7 @@ export const studentDashboard = async (req, res) => {
     // Populate 'courses.course'
     const student = await Student.findOne({ userId }).populate("courses.course");
 
-    if (!student) return res.status(404).json({ message: "Student profile not found" });
+    if (!student) return res.status(404).json({ message: "Student profile not found.Please join an institute to complete onboarding" });
 
     // Use req.user.name if student.name is missing (it should be in User model)
     // But since we didn't populate User here, we rely on what's in Student or pass it.

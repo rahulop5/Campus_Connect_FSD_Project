@@ -2,10 +2,19 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import User from "../models/User.js";
 
+const normalizeRole = (rawRole) => {
+  const role = String(rawRole || "user").trim().toLowerCase();
+  if (role === "professor") return "faculty";
+  if (role === "admin") return "college_admin";
+  const allowed = ["super_admin", "college_admin", "student", "faculty", "user"];
+  return allowed.includes(role) ? role : "user";
+};
+
 // Register User
 export const register = async (req, res) => {
   try {
-    const { name, email, password, phone } = req.body;
+    const { name, email, password, phone, role } = req.body;
+    const normalizedRole = normalizeRole(role);
     
     if (!name || !email || !password) {
       return res.status(400).json({ message: "Name, email, and password are required" });
@@ -21,7 +30,8 @@ export const register = async (req, res) => {
       name,
       email,
       password: hashedPassword,
-      phone
+      phone,
+      role: normalizedRole
     });
 
     await newUser.save();
@@ -61,8 +71,10 @@ export const login = async (req, res) => {
       return res.status(400).json({ message: "Invalid credentials" });
     }
 
+    const normalizedRole = normalizeRole(user.role);
+
     const token = jwt.sign(
-      { id: user._id, role: user.role, instituteId: user.instituteId },
+      { id: user._id, role: normalizedRole, instituteId: user.instituteId },
       process.env.JWT_SECRET,
       { expiresIn: "1h" }
     );
@@ -72,7 +84,7 @@ export const login = async (req, res) => {
       user: { 
         id: user._id, 
         name: user.name, 
-        role: user.role, 
+        role: normalizedRole, 
         instituteId: user.instituteId,
         verificationStatus: user.verificationStatus
       } 
