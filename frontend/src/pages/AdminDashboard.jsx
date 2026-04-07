@@ -3259,127 +3259,107 @@ const AdminDashboard = () => {
               <div>
                 <label style={{ marginBottom: '8px', display: 'block', fontSize: '14px', fontWeight: '500' }}>Assigned Courses</label>
 
-                {/* Search Bar */}
-                <div style={{ position: 'relative', display: 'flex', alignItems: 'center', marginBottom: '12px' }}>
-                  <img
-                    src="/assets/search (5).png"
-                    alt="Search"
-                    style={{
-                      position: 'absolute',
-                      left: '14px',
-                      width: '16px',
-                      height: '16px',
-                      opacity: 0.6,
-                      pointerEvents: 'none'
-                    }}
-                  />
-                  <input
-                    type="text"
-                    placeholder="Search courses..."
-                    value={editStudentCourseSearch}
-                    onChange={(e) => setEditStudentCourseSearch(e.target.value)}
-                    style={{
-                      width: '100%',
-                      padding: '10px 16px 10px 42px',
-                      borderRadius: '999px',
-                      border: '1px solid rgba(255, 255, 255, 0.2)',
-                      background: 'rgba(255, 255, 255, 0.05)',
-                      color: 'white',
-                      fontFamily: 'Outfit',
-                      fontSize: '13px',
-                      outline: 'none',
-                      transition: 'all 0.2s ease'
-                    }}
-                    onFocus={(e) => {
-                      e.target.style.border = '1px solid rgba(43, 153, 0, 0.5)';
-                      e.target.style.background = 'rgba(255, 255, 255, 0.08)';
-                    }}
-                    onBlur={(e) => {
-                      e.target.style.border = '1px solid rgba(255, 255, 255, 0.2)';
-                      e.target.style.background = 'rgba(255, 255, 255, 0.05)';
-                    }}
-                  />
-                </div>
-
-                <div style={{
-                  maxHeight: '420px',
-                  overflowY: 'auto',
-                  border: '1px solid rgba(255, 255, 255, 0.2)',
-                  borderRadius: '8px',
-                  padding: '12px',
-                  background: 'rgba(255, 255, 255, 0.05)'
-                }}>
-                  {data.courses.length === 0 ? (
-                    <div style={{ color: 'rgba(255, 255, 255, 0.5)', fontSize: '14px', padding: '20px', textAlign: 'center' }}>
-                      No courses available
+                <div style={{ marginBottom: '16px' }}>
+                  {editStudentForm.courses.length === 0 ? (
+                    <div style={{ color: 'rgba(255, 255, 255, 0.5)', fontSize: '14px', padding: '10px 0' }}>
+                      No courses assigned
                     </div>
                   ) : (
-                    data.courses
-                      .filter(course => {
-                        const query = editStudentCourseSearch.toLowerCase();
-                        const courseName = course.name.toLowerCase();
-                        const profName = (course.professor?.name || '').toLowerCase();
-                        const section = (course.section || '').toLowerCase();
-                        return courseName.includes(query) || profName.includes(query) || section.includes(query);
-                      })
-                      .map(course => (
+                    editStudentForm.courses.map(courseId => {
+                      const course = data.courses.find(c => c._id === courseId);
+                      if (!course) return null;
+                      return (
                         <div
                           key={course._id}
                           style={{
                             display: 'flex',
                             alignItems: 'center',
-                            padding: '10px',
+                            justifyContent: 'space-between',
+                            padding: '10px 14px',
                             marginBottom: '8px',
                             borderRadius: '6px',
-                            background: editStudentForm.courses.includes(course._id)
-                              ? 'rgba(43, 153, 0, 0.15)'
-                              : 'transparent',
-                            cursor: 'pointer',
-                            transition: 'all 0.2s ease'
-                          }}
-                          onClick={() => handleToggleCourse(course._id)}
-                          onMouseEnter={(e) => {
-                            if (!editStudentForm.courses.includes(course._id)) {
-                              e.currentTarget.style.background = 'rgba(255, 255, 255, 0.05)';
-                            }
-                          }}
-                          onMouseLeave={(e) => {
-                            if (!editStudentForm.courses.includes(course._id)) {
-                              e.currentTarget.style.background = 'transparent';
-                            }
+                            background: 'rgba(255, 255, 255, 0.05)',
+                            border: '1px solid rgba(255, 255, 255, 0.1)'
                           }}
                         >
-                          <input
-                            type="checkbox"
-                            checked={editStudentForm.courses.includes(course._id)}
-                            onChange={() => handleToggleCourse(course._id)}
-                            style={{
-                              marginRight: '12px',
-                              width: '18px',
-                              height: '18px',
-                              cursor: 'pointer',
-                              accentColor: '#2B9900'
-                            }}
-                          />
-                          <div style={{ flex: 1 }}>
-                            <div style={{
-                              fontSize: '14px',
-                              fontWeight: '500',
-                              color: 'white',
-                              marginBottom: '4px'
-                            }}>
+                          <div>
+                            <div style={{ fontSize: '14px', fontWeight: '500', color: 'white', marginBottom: '4px' }}>
                               {course.name}
                             </div>
-                            <div style={{
-                              fontSize: '12px',
-                              color: 'rgba(255, 255, 255, 0.6)'
-                            }}>
+                            <div style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.6)' }}>
                               Section {course.section} • {course.professor?.name || 'No professor assigned'}
                             </div>
                           </div>
+                          <button
+                            type="button"
+                            onClick={() => handleToggleCourse(course._id)}
+                            style={{
+                              background: 'rgba(255, 68, 68, 0.15)',
+                              color: '#ff4444',
+                              border: '1px solid rgba(255, 68, 68, 0.3)',
+                              padding: '6px 12px',
+                              borderRadius: '6px',
+                              cursor: 'pointer',
+                              fontSize: '12px',
+                              fontWeight: '500'
+                            }}
+                          >
+                            Remove
+                          </button>
                         </div>
-                      ))
+                      );
+                    })
                   )}
+                </div>
+
+                <label style={{ marginBottom: '8px', display: 'block', fontSize: '14px', fontWeight: '500' }}>Add Course</label>
+                <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                  <select
+                    value={editStudentCourseSearch}
+                    onChange={(e) => setEditStudentCourseSearch(e.target.value)}
+                    style={{
+                      flex: 1,
+                      padding: '10px',
+                      borderRadius: '8px',
+                      border: '1px solid rgba(255, 255, 255, 0.2)',
+                      background: 'rgba(255, 255, 255, 0.05)',
+                      color: 'white',
+                      fontFamily: 'Outfit',
+                      fontSize: '13px',
+                      outline: 'none'
+                    }}
+                  >
+                    <option value="" style={{ color: 'black' }}>-- Select a course to add --</option>
+                    {data.courses
+                      .filter(course => !editStudentForm.courses.includes(course._id))
+                      .map(course => (
+                        <option key={course._id} value={course._id} style={{ color: 'black' }}>
+                          {course.name} (Section {course.section})
+                        </option>
+                      ))
+                    }
+                  </select>
+                  <button
+                    type="button"
+                    disabled={!editStudentCourseSearch}
+                    onClick={() => {
+                      handleToggleCourse(editStudentCourseSearch);
+                      setEditStudentCourseSearch('');
+                    }}
+                    style={{
+                      background: '#2B9900',
+                      color: 'white',
+                      border: 'none',
+                      padding: '10px 16px',
+                      borderRadius: '8px',
+                      cursor: editStudentCourseSearch ? 'pointer' : 'not-allowed',
+                      fontSize: '13px',
+                      fontWeight: '500',
+                      opacity: editStudentCourseSearch ? 1 : 0.5
+                    }}
+                  >
+                    Add
+                  </button>
                 </div>
               </div>
             </div>

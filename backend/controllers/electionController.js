@@ -38,7 +38,7 @@ export const getElection = async (req, res) => {
     // If the user is a student, check if they have voted and which roles they've voted for
     let hasVoted = false;
     let votedRoles = [];
-    if (req.user && req.user.role === 'Student') {
+    if (req.user && req.user.role === 'student') {
       const userVotes = await Vote.find({ electionId: election._id, voterId: req.user.id });
       
       if (userVotes.length > 0) {

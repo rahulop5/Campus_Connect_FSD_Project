@@ -12,7 +12,7 @@ const studentSchema = new mongoose.Schema({
       {
         course: { type: mongoose.Schema.Types.ObjectId, ref: "Course" },
         attendance: { type: Number },
-        grade: { type: Number },
+        grade: { type: String, default: "NA" }, // Letter grades: O, A, B, C, D, F, NA
       },
     ],
   });

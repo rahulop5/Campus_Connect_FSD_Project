@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import api from '../api/axios';
 import Layout from '../components/Layout';
-import DarkVeil from '../components/DarkVeil';
+import Beams from '../components/Beams';
 import '../styles/Academics.css';
 
 const Academics = () => {
@@ -47,10 +47,10 @@ const Academics = () => {
       const csvContent = event.target.result;
       const rows = csvContent.trim().split("\n");
       if (rows.length === 0) return;
-      
+
       const headers = rows[0].split(",").map(h => h.trim());
       const data = rows.slice(1, 6).map(row => row.split(",").map(cell => cell.trim()));
-      
+
       setCsvPreview({ headers, data });
     };
     reader.readAsText(file);
@@ -65,12 +65,12 @@ const Academics = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!selectedCourseId) {
       setMessage("Please select a course.");
       return;
     }
-    
+
     if (!file) {
       setMessage("Please upload a CSV file.");
       return;
@@ -78,7 +78,7 @@ const Academics = () => {
 
     setUploading(true);
     setMessage('');
-    
+
     const formData = new FormData();
     formData.append('courseId', selectedCourseId);
     formData.append('uploadType', uploadType);
@@ -105,8 +105,17 @@ const Academics = () => {
   return (
     <Layout>
       <div className="academics-page">
-        <div className="plasma-background">
-          <DarkVeil hueShift={120} speed={0.5} noiseIntensity={0.8} />
+        <div className="beams-background">
+          <Beams
+            beamWidth={2.3}
+            beamHeight={16}
+            beamNumber={20}
+            lightColor="#00990a"
+            speed={2.5}
+            noiseIntensity={1}
+            scale={0.2}
+            rotation={30}
+          />
         </div>
 
         <div className="academics-container">
@@ -173,7 +182,7 @@ const Academics = () => {
                 )}
               </div>
               <p className="file-hint">
-                {uploadType === 'attendance' 
+                {uploadType === 'attendance'
                   ? 'CSV format: Roll Number, Name, Attended, Total'
                   : 'CSV format: Roll Number, Name, Marks, Max Marks'}
               </p>
@@ -220,13 +229,13 @@ const Academics = () => {
             <h3>CSV Format Guidelines</h3>
             <div className="guideline-section">
               <h4>For Attendance:</h4>
-              <code>Roll Number,Name,Attended,Total</code>
-              <p>Example: 21BCS001,John Doe,28,30</p>
+              <code>Roll Number,Attended</code>
+              <p>Example: S20230010001,87</p>
             </div>
             <div className="guideline-section">
               <h4>For Marks:</h4>
-              <code>Roll Number,Name,Marks,Max Marks</code>
-              <p>Example: 21BCS001,John Doe,85,100</p>
+              <code>Roll Number,Marks</code>
+              <p>Example: S20230010001,54</p>
             </div>
           </div>
         </div>

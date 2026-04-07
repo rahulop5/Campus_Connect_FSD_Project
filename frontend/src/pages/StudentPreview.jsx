@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router';
 import { useSelector } from 'react-redux';
 import api from '../api/axios';
 import Layout from '../components/Layout';
-import DarkVeil from '../components/DarkVeil';
+import Beams from '../components/Beams';
 import '../styles/StudentPreview.css';
 
 const StudentPreview = () => {
@@ -15,7 +15,8 @@ const StudentPreview = () => {
     const [searchQuery, setSearchQuery] = useState('');
 
     // Only admin and professor can access this page
-    const canView = user?.role === 'Professor' || user?.role === 'Admin';
+    const allowedRoles = ['Admin', 'Professor', 'college_admin', 'faculty', 'super_admin'];
+    const canView = allowedRoles.includes(user?.role);
 
     useEffect(() => {
         if (!canView) {
@@ -27,7 +28,7 @@ const StudentPreview = () => {
 
     const fetchStudentDetails = async () => {
         try {
-            const res = await api.get(`/students/${studentId}`);
+            const res = await api.get(`/admin/student/${studentId}`);
             setStudent(res.data.student);
             setLoading(false);
         } catch (error) {
@@ -37,6 +38,20 @@ const StudentPreview = () => {
     };
 
     const getGradeColor = (grade) => {
+        // Handle letter grades (O, A, B, C, D, F, NA)
+        if (typeof grade === 'string') {
+            switch (grade) {
+                case 'O': return '#2B9900';  // Outstanding - Green
+                case 'A': return '#48FF00';  // Excellent - Light Green
+                case 'B': return '#FFD700';  // Good - Yellow
+                case 'C': return '#FFA500';  // Average - Orange
+                case 'D': return '#FF6B6B';  // Below Average - Red
+                case 'F': return '#FF4444';  // Fail - Dark Red
+                case 'NA': return '#808080'; // Not Available - Gray
+                default: return '#808080';
+            }
+        }
+        // Handle numeric grades (legacy)
         if (grade >= 90) return '#2B9900';
         if (grade >= 75) return '#48FF00';
         if (grade >= 60) return '#FFD700';
@@ -82,8 +97,8 @@ const StudentPreview = () => {
     return (
         <Layout>
             <div className="student-preview-page">
-                <div className="plasma-background">
-                    <DarkVeil hueShift={120} speed={0.5} noiseIntensity={0.8} />
+                <div className="beams-background">
+                    <Beams beamWidth={2.3} beamHeight={16} beamNumber={20} lightColor="#00990a" speed={2.5} noiseIntensity={1} scale={0.2} rotation={30} />
                 </div>
 
                 <div className="student-preview-container">
@@ -194,12 +209,12 @@ const StudentPreview = () => {
                                                     <span
                                                         className="grade-badge"
                                                         style={{
-                                                            backgroundColor: `${getGradeColor(course.grade || 0)}20`,
-                                                            color: getGradeColor(course.grade || 0),
-                                                            border: `1px solid ${getGradeColor(course.grade || 0)}40`
+                                                            backgroundColor: `${getGradeColor(course.grade || 'NA')}20`,
+                                                            color: getGradeColor(course.grade || 'NA'),
+                                                            border: `1px solid ${getGradeColor(course.grade || 'NA')}40`
                                                         }}
                                                     >
-                                                        {course.grade ? `${course.grade}%` : 'N/A'}
+                                                        {course.grade || 'NA'}
                                                     </span>
                                                 </td>
                                                 <td>

@@ -50,17 +50,23 @@ const StudentDashboard = () => {
 
   if (!data) return <Layout>Loading...</Layout>;
 
-  const getGradeLetter = (predgrade) => {
-    if (predgrade >= 90) return "O";
-    if (predgrade >= 80) return "A";
-    if (predgrade >= 70) return "B";
-    if (predgrade >= 60) return "C";
-    if (predgrade >= 50) return "D";
-    if (predgrade >= 40) return "P";
-    return "F";
+  const getGradeLetter = (grade) => {
+    // Grade is now stored as a letter (O, A, B, C, D, F, NA) from backend
+    if (typeof grade === 'string') {
+      return grade === 'NA' ? 'NA' : grade;
+    }
+    // Fallback for numeric grades (legacy)
+    if (grade === "NA") return "NA";
+    if (grade >= 90) return "O";
+    if (grade >= 75) return "A";
+    if (grade >= 65) return "B";
+    if (grade >= 55) return "C";
+    if (grade >= 45) return "D";
+    if (grade >= 35) return "F";
+    return "NA";
   };
 
-  const gradeOrder = ["O", "A", "B", "C", "D", "P", "F"];
+  const gradeOrder = ["O", "A", "B", "C", "D", "F", "NA"];
 
   return (
     <Layout>
@@ -82,7 +88,7 @@ const StudentDashboard = () => {
 
             <div className="db_attengrade">
               {data.courses && data.courses.slice(0, 3).map((course, index) => {
-                const gradeLetter = getGradeLetter(course.grade?.predgrade || 0);
+                const gradeLetter = getGradeLetter(course.grade || 'NA');
                 const radius = 40;
                 const circumference = 2 * Math.PI * radius;
                 const offset = circumference * (1 - (course.attendancePercentage || 0) / 100);
@@ -99,8 +105,22 @@ const StudentDashboard = () => {
                       <p>Predicted Grade</p>
                       <p>
                         {gradeOrder.map((g) => (
-                          <span key={g} style={g === gradeLetter ? { color: 'var(--accent-color)', fontWeight: 'bold' } : {}}>
-                            {g === gradeLetter ? <span>{g}</span> : g}{" "}
+                          <span
+                            key={g}
+                            style={g === gradeLetter ? {
+                              color: '#ffffff',
+                              backgroundColor: '#2B9900',
+                              fontWeight: 'bold',
+                              padding: '2px 8px',
+                              borderRadius: '4px',
+                              margin: '0 2px'
+                            } : {
+                              color: 'rgba(255, 255, 255, 0.4)',
+                              padding: '2px 8px',
+                              margin: '0 2px'
+                            }}
+                          >
+                            {g}
                           </span>
                         ))}
                       </p>

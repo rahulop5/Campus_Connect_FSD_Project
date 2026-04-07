@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { fetchDashboardData } from '../store/slices/adminSlice';
 import api from '../api/axios';
 import Layout from '../components/Layout';
-import DarkVeil from '../components/DarkVeil';
+import Beams from '../components/Beams';
 import '../styles/CourseDetails.css';
 
 const CourseDetails = () => {
@@ -19,15 +20,24 @@ const CourseDetails = () => {
     const [editMode, setEditMode] = useState(false);
     const [editForm, setEditForm] = useState({});
 
-    const canEdit = user?.role === 'Professor' || user?.role === 'Admin';
+    const allowedEditRoles = ['Admin', 'Professor', 'college_admin', 'super_admin', 'faculty'];
+    const canEdit = allowedEditRoles.includes(user?.role);
+    const dispatch = useDispatch();
+    const { students: allStudents, professors: allProfessors } = useSelector((state) => state.admin);
+    const [assignStudentId, setAssignStudentId] = useState('');
+    const [assignProfessorId, setAssignProfessorId] = useState('');
+    const [showStudentPicker, setShowStudentPicker] = useState(false);
 
     useEffect(() => {
+        if (canEdit && (allStudents.length === 0 || allProfessors.length === 0)) {
+            dispatch(fetchDashboardData());
+        }
         fetchCourseDetails();
-    }, [courseId]);
+    }, [courseId, canEdit, dispatch]);
 
     const fetchCourseDetails = async () => {
         try {
-            const res = await api.get(`/courses/${courseId}`);
+            const res = await api.get(`/admin/course/${courseId}`);
             setCourse(res.data.course);
             setStudents(res.data.students || []);
             setFaculty(res.data.faculty || []);
@@ -47,14 +57,53 @@ const CourseDetails = () => {
     const handleEdit = async () => {
         if (editMode) {
             try {
-                await api.put(`/courses/${courseId}`, editForm);
-                setCourse({ ...course, ...editForm });
+                // Determine if we need to change professor
+                const updatedForm = { ...editForm };
+                if (assignProfessorId && assignProfessorId !== course?.professor?._id) {
+                    updatedForm.professor = assignProfessorId;
+                }
+
+                await api.put(`/admin/course/${courseId}`, updatedForm);
+                // Refetch to get populated fields correctly
+                await fetchCourseDetails();
                 setEditMode(false);
             } catch (error) {
                 console.error('Error updating course:', error);
             }
         } else {
+            setAssignProfessorId(course?.professor?._id || '');
             setEditMode(true);
+        }
+    };
+
+    const handleAddStudent = async () => {
+        if (!assignStudentId) return;
+        try {
+            await api.post('/admin/assign/course-student', {
+                course: courseId,
+                student: assignStudentId
+            });
+            setAssignStudentId('');
+            setShowStudentPicker(false);
+            await fetchCourseDetails();
+        } catch (error) {
+            console.error('Error adding student:', error);
+            alert(error.response?.data?.message || 'Failed to add student');
+        }
+    };
+
+    const handleRemoveStudent = async (studentId) => {
+        if (!window.confirm('Are you sure you want to remove this student from the course?')) return;
+        try {
+            await api.post('/admin/remove/course', {
+                course: courseId,
+                student: studentId,
+                removeType: 'student'
+            });
+            await fetchCourseDetails();
+        } catch (error) {
+            console.error('Error removing student:', error);
+            alert(error.response?.data?.message || 'Failed to remove student');
         }
     };
 
@@ -87,8 +136,8 @@ const CourseDetails = () => {
     return (
         <Layout>
             <div className="course-details-page">
-                <div className="plasma-background">
-                    <DarkVeil hueShift={120} speed={0.5} noiseIntensity={0.8} />
+                <div className="beams-background">
+                    <Beams beamWidth={2.3} beamHeight={16} beamNumber={20} lightColor="#00990a" speed={2.5} noiseIntensity={1} scale={0.2} rotation={30} />
                 </div>
 
                 <div className="course-details-container">
@@ -130,6 +179,26 @@ const CourseDetails = () => {
                             <div className="stat-item">
                                 <span className="stat-label">Course Type</span>
                                 <span className="stat-value">Program Elective</span>
+                            </div>
+                            <div className="stat-item">
+                                <span className="stat-label">Professor</span>
+                                {editMode ? (
+                                    <select
+                                        className="stat-value-edit"
+                                        style={{ background: 'rgba(255, 255, 255, 0.1)', color: 'white', border: '1px solid rgba(255, 255, 255, 0.2)', padding: '4px', borderRadius: '4px' }}
+                                        value={assignProfessorId}
+                                        onChange={(e) => setAssignProfessorId(e.target.value)}
+                                    >
+                                        <option value="">-- Select Professor --</option>
+                                        {allProfessors.map(prof => (
+                                            <option key={prof._id} value={prof._id} style={{ color: 'black' }}>
+                                                {prof.name}
+                                            </option>
+                                        ))}
+                                    </select>
+                                ) : (
+                                    <span className="stat-value">{faculty.length > 0 ? faculty[0].name : 'Unassigned'}</span>
+                                )}
                             </div>
                             <div className="stat-item">
                                 <span className="stat-label">Credits</span>
@@ -176,6 +245,58 @@ const CourseDetails = () => {
                             </div>
 
                             <div className="participants-actions">
+                                {canEdit && activeTab === 'students' && (
+                                    <div style={{ position: 'relative' }}>
+                                        <button
+                                            className="edit-btn"
+                                            style={{ background: '#2B9900', border: 'none', padding: '8px 16px', color: 'white', borderRadius: '8px', cursor: 'pointer', fontWeight: '500' }}
+                                            onClick={() => { setShowStudentPicker(p => !p); setAssignStudentId(''); }}
+                                        >
+                                            Add Student
+                                        </button>
+                                        {showStudentPicker && (
+                                            <div style={{
+                                                position: 'absolute', top: 'calc(100% + 8px)', right: 0,
+                                                background: '#111', border: '1px solid rgba(255,255,255,0.12)',
+                                                borderRadius: '10px', padding: '12px', zIndex: 100,
+                                                minWidth: '260px', boxShadow: '0 8px 32px rgba(0,0,0,0.5)'
+                                            }}>
+                                                <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: '12px', marginBottom: '8px' }}>Select a student to add</p>
+                                                <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', maxHeight: '220px', overflowY: 'auto' }}>
+                                                    {allStudents
+                                                        .filter(s => !students.some(es => es._id === s._id))
+                                                        .map(student => (
+                                                            <div
+                                                                key={student._id}
+                                                                onClick={() => setAssignStudentId(student._id)}
+                                                                style={{
+                                                                    padding: '8px 10px', borderRadius: '6px', cursor: 'pointer',
+                                                                    background: assignStudentId === student._id ? 'rgba(43,153,0,0.25)' : 'rgba(255,255,255,0.04)',
+                                                                    border: assignStudentId === student._id ? '1px solid rgba(43,153,0,0.5)' : '1px solid transparent',
+                                                                    color: 'white', fontSize: '13px'
+                                                                }}
+                                                            >
+                                                                {student.name} <span style={{ color: 'rgba(255,255,255,0.4)', fontSize: '11px' }}>({student.rollnumber})</span>
+                                                            </div>
+                                                        ))}
+                                                </div>
+                                                <button
+                                                    onClick={handleAddStudent}
+                                                    disabled={!assignStudentId}
+                                                    style={{
+                                                        marginTop: '10px', width: '100%', padding: '8px',
+                                                        background: assignStudentId ? '#2B9900' : 'rgba(255,255,255,0.07)',
+                                                        border: 'none', borderRadius: '7px', color: 'white',
+                                                        fontWeight: '600', cursor: assignStudentId ? 'pointer' : 'default',
+                                                        fontSize: '13px'
+                                                    }}
+                                                >
+                                                    Confirm Add
+                                                </button>
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
                                 {canEdit && (
                                     <button className="edit-btn" onClick={handleEdit}>
                                         {editMode ? 'Save' : 'Edit'}
@@ -204,15 +325,12 @@ const CourseDetails = () => {
                                         <th>#</th>
                                         <th>Name</th>
                                         <th>{activeTab === 'students' ? 'Roll No.' : 'Email'}</th>
+                                        {canEdit && activeTab === 'students' && <th>Actions</th>}
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {filteredData().map((participant, index) => (
-                                        <tr key={participant._id} onClick={() => {
-                                            if (activeTab === 'students' && (user?.role === 'Admin' || user?.role === 'Professor')) {
-                                                navigate(`/student/${participant._id}`);
-                                            }
-                                        }}>
+                                        <tr key={participant._id}>
                                             <td>{index + 1}</td>
                                             <td>
                                                 <div className="participant-info">
@@ -228,6 +346,25 @@ const CourseDetails = () => {
                                             <td className="roll-number">
                                                 {activeTab === 'students' ? participant.rollnumber : participant.email}
                                             </td>
+                                            {canEdit && activeTab === 'students' && (
+                                                <td>
+                                                    <button
+                                                        onClick={() => handleRemoveStudent(participant._id)}
+                                                        style={{
+                                                            background: 'rgba(255, 68, 68, 0.15)',
+                                                            color: '#ff4444',
+                                                            border: '1px solid rgba(255, 68, 68, 0.3)',
+                                                            padding: '6px 12px',
+                                                            borderRadius: '6px',
+                                                            cursor: 'pointer',
+                                                            fontSize: '13px',
+                                                            fontWeight: '500'
+                                                        }}
+                                                    >
+                                                        Remove
+                                                    </button>
+                                                </td>
+                                            )}
                                         </tr>
                                     ))}
                                 </tbody>

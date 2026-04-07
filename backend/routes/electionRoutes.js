@@ -6,7 +6,7 @@ const router = express.Router();
 
 // Public/Student routes
 router.get('/', verifyToken, electionController.getElection);
-router.post('/vote', verifyToken, checkRole(['Student']), electionController.vote);
+router.post('/vote', verifyToken, checkRole(['student']), electionController.vote);
 router.post('/manifesto', verifyToken, checkRole(['Student']), electionController.updateManifesto);
 
 // Admin routes

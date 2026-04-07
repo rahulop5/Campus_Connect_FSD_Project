@@ -7,7 +7,7 @@ import bcrypt from "bcryptjs";
 
 // Helper to get instituteId from request
 const getInstituteId = (req) => {
-    return req.user.instituteId;
+  return req.user.instituteId;
 }
 
 export const getDashboardData = async (req, res) => {
@@ -16,45 +16,62 @@ export const getDashboardData = async (req, res) => {
     console.log(instituteId)
     if (!instituteId) return res.status(403).json({ message: "Institute ID missing" });
 
-    const courses = await Course.find({ instituteId }).populate("professor");
+    const enrichedCourses = await Course.find({ instituteId }).populate({
+      path: "professor",
+      populate: {
+        path: "userId",
+        select: "name email phone"
+      }
+    });
+
+    const formattedCourses = enrichedCourses.map(course => {
+      const c = course.toObject();
+      if (c.professor && c.professor.userId) {
+        c.professor.name = c.professor.userId.name;
+        c.professor.email = c.professor.userId.email;
+        c.professor.phone = c.professor.userId.phone;
+      }
+      return c;
+    });
+
     const professors = await Professor.find({ instituteId }).populate({ path: "courses.course", select: "name section" });
     const students = await Student.find({ instituteId }).populate({ path: "courses.course", select: "name section" });
 
     // We also need names/emails from the User model for students and professors
     // Since Student/Professor models don't store name/email anymore, we need to populate 'userId'
-    
+
     // However, the current frontend expects a flat structure. Let's populate userId and flatten it.
-    
+
     const enrichedProfessors = await Professor.find({ instituteId })
-        .populate("userId", "name email phone")
-        .populate({ path: "courses.course", select: "name section" });
+      .populate("userId", "name email phone")
+      .populate({ path: "courses.course", select: "name section" });
 
     const formattedProfessors = enrichedProfessors.map(prof => ({
-        _id: prof._id,
-        name: prof.userId?.name,
-        email: prof.userId?.email,
-        phone: prof.userId?.phone,
-        courses: prof.courses
+      _id: prof._id,
+      name: prof.userId?.name,
+      email: prof.userId?.email,
+      phone: prof.userId?.phone,
+      courses: prof.courses
     }));
 
     const enrichedStudents = await Student.find({ instituteId })
-        .populate("userId", "name email phone")
-        .populate({ path: "courses.course", select: "name section" });
+      .populate("userId", "name email phone")
+      .populate({ path: "courses.course", select: "name section" });
 
     const formattedStudents = enrichedStudents.map(stud => ({
-        _id: stud._id,
-        name: stud.userId?.name,
-        email: stud.userId?.email,
-        phone: stud.userId?.phone,
-        rollnumber: stud.rollnumber,
-        section: stud.section,
-        courses: stud.courses,
-        ug: stud.ug,
-        branch: stud.branch
+      _id: stud._id,
+      name: stud.userId?.name,
+      email: stud.userId?.email,
+      phone: stud.userId?.phone,
+      rollnumber: stud.rollnumber,
+      section: stud.section,
+      courses: stud.courses,
+      ug: stud.ug,
+      branch: stud.branch
     }));
 
     res.json({
-      courses,
+      courses: formattedCourses,
       professors: formattedProfessors,
       students: formattedStudents
     });
@@ -70,7 +87,7 @@ export const addCourse = async (req, res) => {
     const { name, section, totalclasses, credits, professor } = req.body;
 
     if (!name || !section || !totalclasses || !credits) {
-        return res.status(400).json({ message: "Name, section, total classes and credits are required" });
+      return res.status(400).json({ message: "Name, section, total classes and credits are required" });
     }
 
     const existingCourse = await Course.findOne({
@@ -128,13 +145,13 @@ export const addStudent = async (req, res) => {
 
     // 1. Create User
     const newUser = new User({
-        name,
-        email,
-        password: hashedPassword,
-        phone,
-        role: 'Student',
-        instituteId,
-        verificationStatus: 'verified' // Auto-verified since admin created it
+      name,
+      email,
+      password: hashedPassword,
+      phone,
+      role: 'Student',
+      instituteId,
+      verificationStatus: 'verified' // Auto-verified since admin created it
     });
     await newUser.save();
 
@@ -154,11 +171,11 @@ export const addStudent = async (req, res) => {
         studentData.ug = (currentYear - year).toString();
       }
       const branchCode = rollnumber.charAt(7);
-      if(branchCode === "1") studentData.branch = "CSE";
-      else if(branchCode === "2") studentData.branch = "ECE";
-      else if(branchCode === "3") studentData.branch = "AIDS";
+      if (branchCode === "1") studentData.branch = "CSE";
+      else if (branchCode === "2") studentData.branch = "ECE";
+      else if (branchCode === "3") studentData.branch = "AIDS";
       else studentData.branch = "Unknown";
-    } catch (err) {}
+    } catch (err) { }
 
     // 3. Create Student
     const newStudent = new Student(studentData);
@@ -187,13 +204,13 @@ export const addProfessor = async (req, res) => {
 
     // 1. Create User
     const newUser = new User({
-        name,
-        email,
-        password: hashedPassword,
-        phone,
-        role: 'faculty',
-        instituteId,
-        verificationStatus: 'verified'
+      name,
+      email,
+      password: hashedPassword,
+      phone,
+      role: 'faculty',
+      instituteId,
+      verificationStatus: 'verified'
     });
     await newUser.save();
 
@@ -219,7 +236,7 @@ export const addProfessor = async (req, res) => {
 export const assignCourseToProfessor = async (req, res) => {
   try {
     const { course, professor } = req.body;
-    
+
     // Verify existence
     const courseDoc = await Course.findById(course);
     const profDoc = await Professor.findById(professor);
@@ -268,136 +285,136 @@ export const assignCourseToStudent = async (req, res) => {
 };
 
 export const removeCourse = async (req, res) => {
-    try {
-        const { course, removeType, professor, student, unassign_action, new_professor } = req.body;
+  try {
+    const { course, removeType, professor, student, unassign_action, new_professor } = req.body;
 
-        if (removeType === 'entire-course') {
-             await Professor.updateMany(
-              { "courses.course": course },
-              { $pull: { courses: { course } } }
-            );
-            await Student.updateMany(
-              { "courses.course": course },
-              { $pull: { courses: { course } } }
-            );
-            await Course.deleteOne({ _id: course });
-            return res.json({ message: "Course deleted entirely" });
-        }
-
-        if (removeType === 'professor') {
-             await Professor.findByIdAndUpdate(
-                professor,
-                { $pull: { courses: { course } } }
-              );
-              
-              const courseDoc = await Course.findById(course);
-              if (courseDoc && courseDoc.professor.toString() === professor) {
-                  if (unassign_action === 'remove') {
-                      await Student.updateMany(
-                        { "courses.course": course },
-                        { $pull: { courses: { course } } }
-                      );
-                      await Course.deleteOne({ _id: course });
-                  } else if (unassign_action === 'reassign') {
-                      courseDoc.professor = new_professor;
-                      await courseDoc.save();
-                      await Professor.findByIdAndUpdate(
-                        new_professor,
-                        { $addToSet: { courses: { course } } }
-                      );
-                  }
-              }
-              return res.json({ message: "Course removed from professor" });
-        }
-
-        if (removeType === 'student') {
-            await Student.findByIdAndUpdate(
-                student,
-                { $pull: { courses: { course } } }
-            );
-            return res.json({ message: "Course removed from student" });
-        }
-
-        res.status(400).json({ message: "Invalid removeType" });
-
-    } catch (error) {
-        console.error("Error removing course:", error);
-        res.status(500).json({ message: "Internal Server Error" });
+    if (removeType === 'entire-course') {
+      await Professor.updateMany(
+        { "courses.course": course },
+        { $pull: { courses: { course } } }
+      );
+      await Student.updateMany(
+        { "courses.course": course },
+        { $pull: { courses: { course } } }
+      );
+      await Course.deleteOne({ _id: course });
+      return res.json({ message: "Course deleted entirely" });
     }
+
+    if (removeType === 'professor') {
+      await Professor.findByIdAndUpdate(
+        professor,
+        { $pull: { courses: { course } } }
+      );
+
+      const courseDoc = await Course.findById(course);
+      if (courseDoc && courseDoc.professor.toString() === professor) {
+        if (unassign_action === 'remove') {
+          await Student.updateMany(
+            { "courses.course": course },
+            { $pull: { courses: { course } } }
+          );
+          await Course.deleteOne({ _id: course });
+        } else if (unassign_action === 'reassign') {
+          courseDoc.professor = new_professor;
+          await courseDoc.save();
+          await Professor.findByIdAndUpdate(
+            new_professor,
+            { $addToSet: { courses: { course } } }
+          );
+        }
+      }
+      return res.json({ message: "Course removed from professor" });
+    }
+
+    if (removeType === 'student') {
+      await Student.findByIdAndUpdate(
+        student,
+        { $pull: { courses: { course } } }
+      );
+      return res.json({ message: "Course removed from student" });
+    }
+
+    res.status(400).json({ message: "Invalid removeType" });
+
+  } catch (error) {
+    console.error("Error removing course:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
 };
 
 export const removeProfessor = async (req, res) => {
-    try {
-        const { professor, course_action, new_professor } = req.body;
-        
-        const professorCourses = await Course.find({ professor });
-        
-        if (course_action === 'remove') {
-            for (const course of professorCourses) {
-                await Student.updateMany(
-                    { "courses.course": course._id },
-                    { $pull: { courses: { course: course._id } } }
-                );
-                await Course.deleteOne({ _id: course._id });
-            }
-        } else if (course_action === 'reassign') {
-             for (const course of professorCourses) {
-                course.professor = new_professor;
-                await course.save();
-                await Professor.findByIdAndUpdate(
-                    new_professor,
-                    { $addToSet: { courses: { course: course._id } } }
-                );
-            }
-        }
+  try {
+    const { professor, course_action, new_professor } = req.body;
 
-        // Must also delete the User document
-        const profDoc = await Professor.findById(professor);
-        if (profDoc) {
-            await User.findByIdAndDelete(profDoc.userId);
-            await Professor.deleteOne({ _id: professor });
-        }
-        
-        res.json({ message: "Professor removed" });
-    } catch (error) {
-        console.error("Error removing professor:", error);
-        res.status(500).json({ message: "Internal Server Error" });
+    const professorCourses = await Course.find({ professor });
+
+    if (course_action === 'remove') {
+      for (const course of professorCourses) {
+        await Student.updateMany(
+          { "courses.course": course._id },
+          { $pull: { courses: { course: course._id } } }
+        );
+        await Course.deleteOne({ _id: course._id });
+      }
+    } else if (course_action === 'reassign') {
+      for (const course of professorCourses) {
+        course.professor = new_professor;
+        await course.save();
+        await Professor.findByIdAndUpdate(
+          new_professor,
+          { $addToSet: { courses: { course: course._id } } }
+        );
+      }
     }
+
+    // Must also delete the User document
+    const profDoc = await Professor.findById(professor);
+    if (profDoc) {
+      await User.findByIdAndDelete(profDoc.userId);
+      await Professor.deleteOne({ _id: professor });
+    }
+
+    res.json({ message: "Professor removed" });
+  } catch (error) {
+    console.error("Error removing professor:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
 };
 
 export const removeStudent = async (req, res) => {
-    try {
-        // We might be receiving email or ID. Let's support ID which is safer
-        // But the frontend might be sending email for now.
-        // Wait, frontend sends delete via ID in `handleDeleteStudent`.
-        // The old controller method `deleteStudent` used ID.
-        // `removeStudent` in old controller used email.
-        // Let's stick to the route definition.
-        
-        // Checking route definition (not visible here but assuming standard)
-        // Let's implement generic remove by ID if possible, or support email
-        
-        const { email } = req.body;
-        if (email) {
-             const user = await User.findOne({ email });
-             if (user) {
-                 await Student.deleteOne({ userId: user._id });
-                 await User.deleteOne({ _id: user._id });
-             }
-        }
-        
-        res.json({ message: "Student removed" });
-    } catch (error) {
-        console.error("Error removing student:", error);
-        res.status(500).json({ message: "Internal Server Error" });
+  try {
+    // We might be receiving email or ID. Let's support ID which is safer
+    // But the frontend might be sending email for now.
+    // Wait, frontend sends delete via ID in `handleDeleteStudent`.
+    // The old controller method `deleteStudent` used ID.
+    // `removeStudent` in old controller used email.
+    // Let's stick to the route definition.
+
+    // Checking route definition (not visible here but assuming standard)
+    // Let's implement generic remove by ID if possible, or support email
+
+    const { email } = req.body;
+    if (email) {
+      const user = await User.findOne({ email });
+      if (user) {
+        await Student.deleteOne({ userId: user._id });
+        await User.deleteOne({ _id: user._id });
+      }
     }
+
+    res.json({ message: "Student removed" });
+  } catch (error) {
+    console.error("Error removing student:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
 };
 
 // Also keep the RESTful delete by ID
 export const deleteStudent = async (req, res) => {
   try {
     const { id } = req.params;
-    
+
     const student = await Student.findById(id);
     if (!student) return res.status(404).json({ message: "Student not found" });
 
@@ -413,36 +430,36 @@ export const deleteStudent = async (req, res) => {
 };
 
 export const deleteProfessor = async (req, res) => {
-    // Same logic as removeProfessor but via params
-     try {
-        const { id } = req.params;
-        
-        const courses = await Course.find({ professor: id });
-        
-        // Remove professor reference
-        await Course.updateMany(
-          { professor: id },
-          { $unset: { professor: "" } }
-        );
+  // Same logic as removeProfessor but via params
+  try {
+    const { id } = req.params;
 
-        const professor = await Professor.findById(id);
-        if (professor) {
-            await User.findByIdAndDelete(professor.userId);
-            await Professor.findByIdAndDelete(id);
-        }
+    const courses = await Course.find({ professor: id });
 
-        res.json({ 
-          message: "Professor deleted successfully",
-          affectedCourses: courses.length 
-        });
-      } catch (error) {
-        console.error("Error deleting professor:", error);
-        res.status(500).json({ message: "Internal Server Error" });
-      }
+    // Remove professor reference
+    await Course.updateMany(
+      { professor: id },
+      { $unset: { professor: "" } }
+    );
+
+    const professor = await Professor.findById(id);
+    if (professor) {
+      await User.findByIdAndDelete(professor.userId);
+      await Professor.findByIdAndDelete(id);
+    }
+
+    res.json({
+      message: "Professor deleted successfully",
+      affectedCourses: courses.length
+    });
+  } catch (error) {
+    console.error("Error deleting professor:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
 }
 
 export const adminDetails = async (req, res) => {
-    res.json({ admin: req.user });
+  res.json({ admin: req.user });
 }
 
 // Update course
@@ -506,7 +523,7 @@ export const updateProfessor = async (req, res) => {
     // The Professor model mainly stores userId and courses, so usually no direct field updates unless specific prof fields exist.
     // However, if we added name/phone to Professor model in previous steps (which we didn't, we just removed them), 
     // we should resort to updating the User model which we just did.
-    
+
     res.json({ message: "Professor updated successfully", professor });
   } catch (error) {
     console.error("Error updating professor:", error);
@@ -532,7 +549,7 @@ export const updateStudent = async (req, res) => {
 
     if (rollnumber) student.rollnumber = rollnumber;
     if (section) student.section = section;
-    
+
     if (courses && Array.isArray(courses)) {
       student.courses = courses.map(courseId => ({
         course: courseId,
@@ -546,6 +563,122 @@ export const updateStudent = async (req, res) => {
     res.json({ message: "Student updated successfully", student });
   } catch (error) {
     console.error("Error updating student:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+// GET single course by ID
+export const getCourseById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const instituteId = getInstituteId(req);
+
+    const course = await Course.findById(id)
+      .populate({
+        path: "professor",
+        populate: {
+          path: "userId",
+          select: "name email phone"
+        }
+      });
+
+    if (!course || course.instituteId.toString() !== instituteId.toString()) {
+      return res.status(404).json({ message: "Course not found" });
+    }
+
+    // Get students enrolled in this course
+    const studentsInCourse = await Student.find({
+      "courses.course": id,
+      instituteId: instituteId
+    })
+      .populate("userId", "name email phone")
+      .select("_id userId courses branch section rollnumber");
+
+    // Format course response
+    const courseData = course.toObject();
+    if (courseData.professor && courseData.professor.userId) {
+      courseData.professor.name = courseData.professor.userId.name;
+      courseData.professor.email = courseData.professor.userId.email;
+      courseData.professor.phone = courseData.professor.userId.phone;
+    }
+
+    // Format students
+    const formattedStudents = studentsInCourse.map(stud => ({
+      _id: stud._id,
+      name: stud.userId?.name,
+      email: stud.userId?.email,
+      phone: stud.userId?.phone,
+      rollnumber: stud.rollnumber,
+      section: stud.section,
+      branch: stud.branch,
+      grade: stud.courses.find(c => c.course.toString() === id)?.grade,
+      attendance: stud.courses.find(c => c.course.toString() === id)?.attendance
+    }));
+
+    // Format faculty (professor for this course)
+    const formattedFaculty = [];
+    if (courseData.professor && courseData.professor._id) {
+      formattedFaculty.push({
+        _id: courseData.professor._id,
+        name: courseData.professor.name,
+        email: courseData.professor.email,
+        phone: courseData.professor.phone
+      });
+    }
+
+    res.json({
+      course: courseData,
+      students: formattedStudents,
+      faculty: formattedFaculty
+    });
+  } catch (error) {
+    console.error("Error fetching course details:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+// GET single student by ID
+export const getStudentById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const instituteId = getInstituteId(req);
+
+    const student = await Student.findById(id)
+      .populate("userId", "name email phone")
+      .populate({
+        path: "courses.course",
+        select: "name section credits code"
+      });
+
+    if (!student || student.instituteId.toString() !== instituteId.toString()) {
+      return res.status(404).json({ message: "Student not found" });
+    }
+
+    // Format student response
+    const studentData = {
+      _id: student._id,
+      name: student.userId?.name,
+      email: student.userId?.email,
+      phone: student.userId?.phone,
+      rollnumber: student.rollnumber,
+      section: student.section,
+      branch: student.branch,
+      ug: student.ug,
+      courses: student.courses.map(c => ({
+        _id: c.course?._id,
+        courseName: c.course?.name,
+        courseCode: c.course?.code,
+        section: c.course?.section,
+        credits: c.course?.credits,
+        grade: c.grade,
+        attendance: c.attendance
+      })),
+      yearOfGraduation: student.yearOfGraduation
+    };
+
+    res.json({ student: studentData });
+  } catch (error) {
+    console.error("Error fetching student details:", error);
     res.status(500).json({ message: "Internal Server Error" });
   }
 };

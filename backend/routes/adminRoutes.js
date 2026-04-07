@@ -14,7 +14,9 @@ import {
     updateProfessor,
     updateStudent,
     deleteStudent,
-    deleteProfessor
+    deleteProfessor,
+    getCourseById,
+    getStudentById
 } from "../controllers/adminController.js";
 import { verifyToken } from "../middleware/authMiddleware.js";
 
@@ -32,6 +34,10 @@ router.post("/remove/course", removeCourse);
 router.post("/remove/professor", removeProfessor);
 router.post("/remove/student", removeStudent);
 router.get("/details", adminDetails);
+
+// GET routes for individual resources
+router.get("/course/:id", getCourseById);
+router.get("/student/:id", getStudentById);
 
 // PUT routes for updates
 router.put("/course/:id", updateCourse);
