@@ -78,7 +78,7 @@ const ProfessorDashboard = () => {
     formData.append('marksheet', file);
 
     try {
-      const response = await fetch('http://localhost:3000/prof/submit', {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000'}/prof/submit`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`

@@ -60,7 +60,14 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.use(cors()); // Allow all origins for now, or specify frontend URL
+app.use(cors({
+  origin: [
+    'http://localhost:5173',                              // Local Vite dev
+    'http://localhost:3000',                               // Local backend
+    process.env.FRONTEND_URL || 'http://localhost:5173'    // Production (Vercel)
+  ].filter(Boolean),
+  credentials: true
+}));
 app.use(express.static("public"));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());

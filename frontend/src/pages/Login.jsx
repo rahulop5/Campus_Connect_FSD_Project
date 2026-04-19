@@ -93,13 +93,13 @@ const Login = () => {
             <p>OR</p>
             <div></div>
           </div>
-          <a href="http://localhost:3000/api/auth/google" style={{ textDecoration: 'none' }}>
+          <a href={`${import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000'}/api/auth/google`} style={{ textDecoration: 'none' }}>
             <div className="google oauth">
               <img src="/assets/googlelogo.png" alt="" />
               <p>Continue with Google</p>
             </div>
           </a>
-          <a href="http://localhost:3000/api/auth/github" style={{ textDecoration: 'none' }}>
+          <a href={`${import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000'}/api/auth/github`} style={{ textDecoration: 'none' }}>
             <div className="github oauth" >
               <img src="/assets/githublogo.png" alt="" />
               <p>Continue with Github</p>

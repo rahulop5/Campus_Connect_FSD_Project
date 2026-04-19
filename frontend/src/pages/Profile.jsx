@@ -22,7 +22,7 @@ const Profile = () => {
         setFormData(res.data.student);
         // Set profile picture from database
         if (res.data.student.profilePicture) {
-          setPfp(`http://localhost:3000${res.data.student.profilePicture}`);
+          setPfp(`${import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000'}${res.data.student.profilePicture}`);
         }
       } catch (error) {
         console.error("Error fetching profile:", error);
@@ -70,14 +70,14 @@ const Profile = () => {
             });
             console.log('Profile picture uploaded:', res.data);
             // Update with the actual path from server
-            setPfp(`http://localhost:3000${res.data.profilePicture}`);
+            setPfp(`${import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000'}${res.data.profilePicture}`);
             // Update student state
             setStudent(prev => ({ ...prev, profilePicture: res.data.profilePicture }));
         } catch (error) {
             console.error('Error uploading profile picture:', error);
             alert('Failed to upload profile picture');
             // Revert to previous image on error
-            setPfp(student.profilePicture ? `http://localhost:3000${student.profilePicture}` : "");
+            setPfp(student.profilePicture ? `${import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000'}${student.profilePicture}` : "");
         }
     }
   };
