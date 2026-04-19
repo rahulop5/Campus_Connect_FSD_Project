@@ -43,10 +43,10 @@ const ProfessorDashboard = () => {
       const csvContent = event.target.result;
       const rows = csvContent.trim().split("\n");
       if (rows.length === 0) return;
-      
+
       const headers = rows[0].split(",").map(h => h.trim());
       const data = rows.slice(1, 6).map(row => row.split(",").map(cell => cell.trim())); // Preview first 5 rows
-      
+
       setCsvPreview({ headers, data });
     };
     reader.readAsText(file);
@@ -60,19 +60,19 @@ const ProfessorDashboard = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!selectedCourseId) {
       alert("Please select a course.");
       return;
     }
-    
+
     if (!file) {
       alert("Please upload a marksheet file.");
       return;
     }
 
     setUploading(true);
-    
+
     const formData = new FormData();
     formData.append('courseId', selectedCourseId);
     formData.append('marksheet', file);
@@ -107,8 +107,8 @@ const ProfessorDashboard = () => {
       <div className="dashboard-wrapper prof-dashboard-page">
         <p className="dashboard-title">Dashboard</p>
 
-        <h1>hello</h1>
-        
+        <h1>Yash</h1>
+
         <div className="welcome-text">
           <p>
             <span className="gradient-text">Welcome back,</span><br />
@@ -116,7 +116,7 @@ const ProfessorDashboard = () => {
             <span className="prof-bold"> {user?.name || 'Professor'} </span>
           </p>
         </div>
-        
+
         <form id="marksUploadForm" onSubmit={handleSubmit} className="marks-upload-form">
           <div className="courses-selection-container">
             <p className="assigned-courses-title">Assigned Courses:</p>
@@ -124,10 +124,10 @@ const ProfessorDashboard = () => {
               {courses.length > 0 ? (
                 courses.map(course => (
                   <label key={course.id} className="course-box-label">
-                    <input 
-                      type="radio" 
-                      name="courseId" 
-                      value={course.id} 
+                    <input
+                      type="radio"
+                      name="courseId"
+                      value={course.id}
                       className="hidden-radio"
                       onChange={() => setSelectedCourseId(course.id)}
                       checked={selectedCourseId === course.id}
@@ -167,9 +167,9 @@ const ProfessorDashboard = () => {
                           <div className="file-uploaded-icon"></div>
                           <div className="file-display">
                             <p className="file-name" title={file.name}>{file.name}</p>
-                            <button 
-                              type="button" 
-                              className="remove-file-btn" 
+                            <button
+                              type="button"
+                              className="remove-file-btn"
                               onClick={(e) => { e.preventDefault(); removeFile(); }}
                             >
                               ✕
@@ -189,7 +189,7 @@ const ProfessorDashboard = () => {
                     </div>
                   </label>
                 </div>
-                
+
                 {csvPreview && (
                   <div id="csvPreviewContainer" className="csv-preview-container" style={{ display: 'flex' }}>
                     <p className="preview-title">File Preview (first 5 rows)</p>
