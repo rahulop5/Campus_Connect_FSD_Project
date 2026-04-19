@@ -2,7 +2,6 @@
  * Student Controller Unit Tests
  * Tests: dashboard data, attendance calculation, profile management
  */
-import { jest } from '@jest/globals';
 
 // ─── Tests (Pure Logic) ─────────────────────────────────────────
 describe('Student Controller Logic', () => {

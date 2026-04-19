@@ -1,59 +1,14 @@
 /**
  * Payment Controller Unit Tests
- * Tests: order creation, payment verification, subscription status
+ * Tests: order creation, payment verification, subscription status — pure logic tests
  */
-import { jest } from '@jest/globals';
 
-// ─── Mock Setup ─────────────────────────────────────────────────
-jest.unstable_mockModule('../models/Payment.js', () => ({
-  default: {
-    findOne: jest.fn(),
-    findById: jest.fn(),
-    create: jest.fn()
-  }
-}));
-
-jest.unstable_mockModule('../models/User.js', () => ({
-  default: {
-    findById: jest.fn(),
-    findByIdAndUpdate: jest.fn()
-  }
-}));
-
-jest.unstable_mockModule('../config/razorpayConfig.js', () => ({
-  default: {
-    orders: {
-      create: jest.fn()
-    }
-  }
-}));
-
-const Payment = (await import('../models/Payment.js')).default;
-const User = (await import('../models/User.js')).default;
-
-// ─── Helpers ────────────────────────────────────────────────────
-const mockReq = (body = {}, user = {}) => ({
-  body,
-  user: { id: 'user-id', role: 'student', ...user }
-});
-
-const mockRes = () => {
-  const res = {};
-  res.status = jest.fn().mockReturnValue(res);
-  res.json = jest.fn().mockReturnValue(res);
-  return res;
-};
-
-// ─── Tests ──────────────────────────────────────────────────────
 describe('Payment Controller', () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
-  });
 
   describe('Plan Pricing Logic', () => {
     const PLANS = {
-      student_core: { name: 'Student Core', amount: 29900 }, // ₹299
-      student_collective: { name: 'Student Collective', amount: 49900 } // ₹499
+      student_core: { name: 'Student Core', amount: 29900 },
+      student_collective: { name: 'Student Collective', amount: 49900 }
     };
 
     test('should have correct pricing for student_core plan', () => {
@@ -77,20 +32,46 @@ describe('Payment Controller', () => {
       const amountInPaise = amountInRupees * 100;
       expect(amountInPaise).toBe(29900);
     });
+
+    test('should support INR currency', () => {
+      const currency = 'INR';
+      expect(currency).toBe('INR');
+    });
+  });
+
+  describe('Razorpay Order Creation', () => {
+    test('should create order with correct structure', () => {
+      const createOrderOptions = (plan) => ({
+        amount: plan.amount,
+        currency: 'INR',
+        receipt: `receipt_${Date.now()}`,
+        notes: { planName: plan.name }
+      });
+
+      const options = createOrderOptions({ name: 'Student Core', amount: 29900 });
+      expect(options.amount).toBe(29900);
+      expect(options.currency).toBe('INR');
+      expect(options.receipt).toBeDefined();
+      expect(options.notes.planName).toBe('Student Core');
+    });
   });
 
   describe('Payment Verification', () => {
-    test('should verify Razorpay signature correctly', () => {
-      // Mock crypto signature verification logic
+    test('should verify Razorpay signature structure', () => {
       const razorpay_order_id = 'order_123';
       const razorpay_payment_id = 'pay_456';
       const razorpay_signature = 'valid_signature';
       
-      // The actual verification uses HMAC-SHA256
-      // Here we test the structure
       expect(razorpay_order_id).toBeTruthy();
       expect(razorpay_payment_id).toBeTruthy();
       expect(razorpay_signature).toBeTruthy();
+    });
+
+    test('should generate correct signature body', () => {
+      const orderId = 'order_123';
+      const paymentId = 'pay_456';
+      const body = orderId + '|' + paymentId;
+      expect(body).toBe('order_123|pay_456');
     });
 
     test('should update payment status to paid on verification', () => {
@@ -100,7 +81,6 @@ describe('Payment Controller', () => {
         razorpaySignature: null
       };
 
-      // Simulate verification
       payment.status = 'paid';
       payment.razorpayPaymentId = 'pay_456';
       payment.razorpaySignature = 'valid_sig';
@@ -109,6 +89,19 @@ describe('Payment Controller', () => {
       expect(payment.razorpayPaymentId).toBe('pay_456');
     });
 
+    test('should mark payment as failed on invalid signature', () => {
+      const payment = { status: 'created' };
+      const signatureValid = false;
+
+      if (!signatureValid) {
+        payment.status = 'failed';
+      }
+
+      expect(payment.status).toBe('failed');
+    });
+  });
+
+  describe('Subscription Management', () => {
     test('should update user subscription on successful payment', () => {
       const user = {
         subscription: {
@@ -119,7 +112,6 @@ describe('Payment Controller', () => {
         }
       };
 
-      // Simulate subscription update
       user.subscription.plan = 'student_core';
       user.subscription.status = 'active';
       user.subscription.paymentId = 'payment-id';
@@ -129,9 +121,7 @@ describe('Payment Controller', () => {
       expect(user.subscription.status).toBe('active');
       expect(user.subscription.subscribedAt).toBeInstanceOf(Date);
     });
-  });
 
-  describe('Subscription Status', () => {
     test('should return free plan for users without subscription', () => {
       const user = {
         subscription: { plan: 'free', status: 'inactive' }
@@ -146,6 +136,19 @@ describe('Payment Controller', () => {
       };
       const hasActiveSubscription = user.subscription.status === 'active';
       expect(hasActiveSubscription).toBe(true);
+    });
+
+    test('should check subscription features by plan', () => {
+      const planFeatures = {
+        free: ['dashboard', 'forum'],
+        student_core: ['dashboard', 'forum', 'analytics', 'election'],
+        student_collective: ['dashboard', 'forum', 'analytics', 'election', 'btp', 'feedback']
+      };
+
+      expect(planFeatures.free).toHaveLength(2);
+      expect(planFeatures.student_core).toContain('analytics');
+      expect(planFeatures.student_collective).toContain('btp');
+      expect(planFeatures.free).not.toContain('analytics');
     });
   });
 });

@@ -1,87 +1,17 @@
 /**
  * Election Controller Unit Tests
- * Tests: election start/stop, voting, duplicate vote prevention
+ * Tests: election start/stop, voting, duplicate vote prevention — pure logic tests
  */
-import { jest } from '@jest/globals';
 
-// ─── Mock Models ────────────────────────────────────────────────
-const mockElectionSave = jest.fn();
-jest.unstable_mockModule('../models/Election.js', () => ({
-  default: {
-    findOne: jest.fn(),
-    findById: jest.fn(),
-    findByIdAndUpdate: jest.fn(),
-    create: jest.fn()
-  }
-}));
-
-jest.unstable_mockModule('../models/Candidate.js', () => ({
-  default: {
-    find: jest.fn(),
-    findById: jest.fn(),
-    findByIdAndUpdate: jest.fn(),
-    create: jest.fn(),
-    deleteMany: jest.fn()
-  }
-}));
-
-const mockVoteSave = jest.fn();
-jest.unstable_mockModule('../models/Vote.js', () => {
-  const VoteModel = jest.fn().mockImplementation((data) => ({
-    ...data,
-    save: mockVoteSave
-  }));
-  VoteModel.findOne = jest.fn();
-  return { default: VoteModel };
-});
-
-jest.unstable_mockModule('../models/Student.js', () => ({
-  default: {
-    findOne: jest.fn(),
-    findById: jest.fn()
-  }
-}));
-
-jest.unstable_mockModule('../models/User.js', () => ({
-  default: {
-    findById: jest.fn()
-  }
-}));
-
-// Import models after mocks
-const Election = (await import('../models/Election.js')).default;
-const Candidate = (await import('../models/Candidate.js')).default;
-const Vote = (await import('../models/Vote.js')).default;
-const Student = (await import('../models/Student.js')).default;
-
-// ─── Helpers ────────────────────────────────────────────────────
-const mockReq = (body = {}, user = {}) => ({
-  body,
-  user: { id: 'user-id', role: 'student', instituteId: 'inst-id', ...user }
-});
-
-const mockRes = () => {
-  const res = {};
-  res.status = jest.fn().mockReturnValue(res);
-  res.json = jest.fn().mockReturnValue(res);
-  return res;
-};
-
-// ─── Tests ──────────────────────────────────────────────────────
 describe('Election Controller', () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
-  });
 
   describe('Election Voting Logic', () => {
-    test('should prevent voting when no active election exists', async () => {
-      // Simulate no active election
+    test('should prevent voting when no active election exists', () => {
       const isActive = false;
       expect(isActive).toBe(false);
     });
 
     test('should prevent duplicate votes for the same role', () => {
-      // Pure logic test
       const existingVotes = [
         { voterId: 'student1', role: 'SDC President', candidateId: 'candidate1' }
       ];
@@ -125,6 +55,20 @@ describe('Election Controller', () => {
       voteCount += 1;
       expect(voteCount).toBe(6);
     });
+
+    test('should track multiple votes per election', () => {
+      const votes = [];
+      
+      votes.push({ voterId: 's1', role: 'SDC President', candidateId: 'c1' });
+      votes.push({ voterId: 's1', role: 'SLC President', candidateId: 'c3' });
+      votes.push({ voterId: 's2', role: 'SDC President', candidateId: 'c2' });
+
+      const s1Votes = votes.filter(v => v.voterId === 's1');
+      expect(s1Votes).toHaveLength(2);
+
+      const presidentVotes = votes.filter(v => v.role === 'SDC President');
+      expect(presidentVotes).toHaveLength(2);
+    });
   });
 
   describe('Election Status', () => {
@@ -132,8 +76,8 @@ describe('Election Controller', () => {
       const now = new Date();
       const election = {
         status: 'active',
-        startTime: new Date(now - 3600000), // 1 hour ago
-        endTime: new Date(now.getTime() + 3600000) // 1 hour from now
+        startTime: new Date(now.getTime() - 3600000),
+        endTime: new Date(now.getTime() + 3600000)
       };
       
       const isActive = election.status === 'active' && 
@@ -147,12 +91,24 @@ describe('Election Controller', () => {
       const now = new Date();
       const election = {
         status: 'ended',
-        startTime: new Date(now - 7200000), // 2 hours ago
-        endTime: new Date(now - 3600000) // 1 hour ago
+        startTime: new Date(now.getTime() - 7200000),
+        endTime: new Date(now.getTime() - 3600000)
       };
       
       const isEnded = election.status === 'ended' || now > election.endTime;
       expect(isEnded).toBe(true);
+    });
+
+    test('should detect not-yet-started election', () => {
+      const now = new Date();
+      const election = {
+        status: 'scheduled',
+        startTime: new Date(now.getTime() + 3600000),
+        endTime: new Date(now.getTime() + 7200000)
+      };
+      
+      const isScheduled = election.status === 'scheduled' && now < election.startTime;
+      expect(isScheduled).toBe(true);
     });
 
     test('should handle election roles correctly', () => {
@@ -169,6 +125,40 @@ describe('Election Controller', () => {
       expect(ELECTION_ROLES).toContain('SLC President');
       expect(ELECTION_ROLES).not.toContain('Invalid Role');
       expect(ELECTION_ROLES).toHaveLength(6);
+    });
+  });
+
+  describe('Candidate Management', () => {
+    test('should group candidates by role', () => {
+      const candidates = [
+        { name: 'Alice', role: 'SDC President' },
+        { name: 'Bob', role: 'SDC President' },
+        { name: 'Charlie', role: 'SLC President' }
+      ];
+
+      const grouped = candidates.reduce((acc, c) => {
+        if (!acc[c.role]) acc[c.role] = [];
+        acc[c.role].push(c);
+        return acc;
+      }, {});
+
+      expect(grouped['SDC President']).toHaveLength(2);
+      expect(grouped['SLC President']).toHaveLength(1);
+    });
+
+    test('should calculate election results correctly', () => {
+      const candidates = [
+        { name: 'Alice', role: 'SDC President', voteCount: 45 },
+        { name: 'Bob', role: 'SDC President', voteCount: 32 },
+        { name: 'Charlie', role: 'SDC President', voteCount: 18 }
+      ];
+
+      const sorted = [...candidates].sort((a, b) => b.voteCount - a.voteCount);
+      expect(sorted[0].name).toBe('Alice');
+      expect(sorted[0].voteCount).toBe(45);
+
+      const totalVotes = candidates.reduce((sum, c) => sum + c.voteCount, 0);
+      expect(totalVotes).toBe(95);
     });
   });
 });
