@@ -1,11 +1,12 @@
 import express from 'express';
 import * as electionController from '../controllers/electionController.js';
 import { verifyToken, checkRole } from '../middleware/authMiddleware.js';
+import { cacheMiddleware, CacheKeys } from '../middleware/cacheMiddleware.js';
 
 const router = express.Router();
 
-// Public/Student routes
-router.get('/', verifyToken, electionController.getElection);
+// Public/Student routes with Redis caching
+router.get('/', verifyToken, cacheMiddleware(CacheKeys.election, 60), electionController.getElection);
 router.post('/vote', verifyToken, checkRole(['student']), electionController.vote);
 router.post('/manifesto', verifyToken, checkRole(['Student']), electionController.updateManifesto);
 

@@ -12,4 +12,11 @@ const courseSchema = new mongoose.Schema({
   gradeDistribution: { type: Map, of: Number, default: {} }, 
 });
 
+// Optimize: filter courses by institute, section, and year
+courseSchema.index({ instituteId: 1, section: 1, ug: 1 });
+// Optimize: find courses taught by a professor
+courseSchema.index({ professor: 1 });
+// Optimize: course name lookups
+courseSchema.index({ name: 1, instituteId: 1 });
+
 export default mongoose.model("Course", courseSchema);

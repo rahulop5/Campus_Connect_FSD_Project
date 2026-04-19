@@ -33,4 +33,11 @@ const userSchema = new mongoose.Schema({
   }
 });
 
+// Optimize: admin dashboard filters users by role within an institute
+userSchema.index({ role: 1, instituteId: 1 });
+// Optimize: pending verification lookups
+userSchema.index({ verificationStatus: 1, instituteId: 1 });
+// Optimize: subscription status queries
+userSchema.index({ 'subscription.status': 1 });
+
 export default mongoose.model("User", userSchema);

@@ -19,5 +19,11 @@ const studentSchema = new mongoose.Schema({
 
 // Ensure roll number is unique per institute
 studentSchema.index({ instituteId: 1, rollnumber: 1 }, { unique: true });
+// Optimize: fast user→student lookups (used in dashboard, profile, etc.)
+studentSchema.index({ userId: 1 });
+// Optimize: find all students enrolled in a specific course
+studentSchema.index({ 'courses.course': 1 });
+// Optimize: filter students by institute
+studentSchema.index({ instituteId: 1 });
 
 export default mongoose.model("Student", studentSchema);

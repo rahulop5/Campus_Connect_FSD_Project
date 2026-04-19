@@ -16,5 +16,10 @@ const answerSchema = new mongoose.Schema({
   ],
 });
 
+// Optimize: find answers by a specific user
+answerSchema.index({ answerer: 1 });
+// Optimize: sort answers by date
+answerSchema.index({ createdAt: -1 });
+
 const Answer = mongoose.model("Answer", answerSchema);
 export default Answer;

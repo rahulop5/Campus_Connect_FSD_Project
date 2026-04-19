@@ -5,6 +5,7 @@ import path from 'path';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
 import mongoose from 'mongoose';
+import { invalidateCache } from '../config/redisClient.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -264,6 +265,9 @@ export const updateStudentProfile = async (req, res) => {
     // Fetch updated
     const updatedStudent = await Student.findOne({ userId: req.user.id }).populate("userId");
 
+    // Invalidate cached student data
+    await invalidateCache(`student:*:${req.user.id}`);
+
     res.status(200).json({ message: "Profile updated successfully", user: updatedStudent });
   } catch (error) {
     console.error("Error updating student profile:", error);
@@ -290,6 +294,9 @@ export const uploadProfilePic = async (req, res) => {
     const profilePicPath = `/assets/profiles/${req.file.filename}`;
     student.profilePicture = profilePicPath;
     await student.save();
+
+    // Invalidate cached student data
+    await invalidateCache(`student:*:${req.user.id}`);
 
     res.status(200).json({
       message: "Profile picture uploaded successfully",
@@ -323,6 +330,9 @@ export const deleteProfilePic = async (req, res) => {
     // Reset to default profile picture
     student.profilePicture = "";
     await student.save();
+
+    // Invalidate cached student data
+    await invalidateCache(`student:*:${req.user.id}`);
 
     res.status(200).json({ message: "Profile picture deleted successfully" });
   } catch (error) {

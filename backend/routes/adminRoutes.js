@@ -19,12 +19,14 @@ import {
     getStudentById
 } from "../controllers/adminController.js";
 import { verifyToken } from "../middleware/authMiddleware.js";
+import { cacheMiddleware, CacheKeys } from "../middleware/cacheMiddleware.js";
 
 const router = express.Router();
 
 router.use(verifyToken);
 
-router.get("/dashboard", getDashboardData);
+// GET routes with Redis caching
+router.get("/dashboard", cacheMiddleware(CacheKeys.adminDashboard, 180), getDashboardData);
 router.post("/course/add", addCourse);
 router.post("/student/add", addStudent);
 router.post("/professor/add", addProfessor);

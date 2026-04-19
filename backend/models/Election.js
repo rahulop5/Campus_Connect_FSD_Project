@@ -31,4 +31,7 @@ const electionSchema = new mongoose.Schema({
   }
 }, { timestamps: true });
 
+// Optimize: find active elections within an institute
+electionSchema.index({ instituteId: 1, status: 1 });
+
 export default mongoose.model('Election', electionSchema);

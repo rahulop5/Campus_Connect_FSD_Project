@@ -56,4 +56,9 @@ const candidateSchema = new mongoose.Schema({
   }
 }, { timestamps: true });
 
+// Optimize: list candidates for an election grouped by role
+candidateSchema.index({ electionId: 1, role: 1 });
+// Optimize: find candidate by student
+candidateSchema.index({ studentId: 1 });
+
 export default mongoose.model('Candidate', candidateSchema);

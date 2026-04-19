@@ -1,5 +1,7 @@
 import Question from "../models/Question.js";
 import Answer from "../models/Answer.js";
+import { invalidateCache } from '../config/redisClient.js';
+import { indexQuestion } from '../config/elasticClient.js';
 
 const resolveUserId = async (req) => {
   const userId = req.user?.id || req.user?._id;
@@ -405,6 +407,10 @@ export const submitAnswer = async (req, res) => {
   await newAnswer.save();
   question.answers.push(newAnswer._id);
   await question.save();
+
+  // Invalidate forum cache
+  await invalidateCache('forum:*');
+
   res.json({
     success: true,
     questionId: question._id,
@@ -458,6 +464,11 @@ export const askQuestion = async (req, res) => {
       answers: [],
     });
     await newQuestion.save();
+
+    // Invalidate forum cache and index in Elasticsearch
+    await invalidateCache('forum:*');
+    await indexQuestion(newQuestion);
+
     res.status(201).json({ message: "Question asked successfully", question: newQuestion });
   } catch (error) {
     console.error("Error asking question:", error);

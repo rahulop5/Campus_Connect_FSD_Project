@@ -28,6 +28,17 @@ import path from "path";
 import swaggerUi from "swagger-ui-express";
 import swaggerSpec from "./config/swagger.js";
 
+// GraphQL
+import { ApolloServer } from '@apollo/server';
+import { expressMiddleware } from '@apollo/server/express4';
+import { typeDefs } from './graphql/schema.js';
+import { resolvers } from './graphql/resolvers.js';
+import jwt from 'jsonwebtoken';
+
+// Redis & Elasticsearch (initialized on import)
+import './config/redisClient.js';
+import './config/elasticClient.js';
+
 
 const app = express();
 
@@ -72,6 +83,7 @@ import instituteRoutes from "./routes/instituteRoutes.js";
 import courseRoutes from "./routes/courseRoutes.js";
 import studentDetailRoutes from "./routes/studentDetailRoutes.js";
 import paymentRoutes from "./routes/paymentRoutes.js";
+import searchRoutes from "./routes/searchRoutes.js";
 
 // Routes
 // app.use("/api/auth/student", authstudentRoutes);
@@ -90,10 +102,38 @@ app.use('/api/profile', profileRoutes);
 app.use('/api/courses', courseRoutes); // Course details routes
 app.use('/api/students', studentDetailRoutes); // Student details routes
 app.use('/api/payment', paymentRoutes); // Razorpay payment routes
+app.use('/api/search', searchRoutes); // Elasticsearch-powered search
 
 app.get("/", (req, res) => {
   res.send("API is running");
 });
+
+// ─── GraphQL Setup ─────────────────────────────────────────────
+const apolloServer = new ApolloServer({
+  typeDefs,
+  resolvers,
+  introspection: true, // Enable introspection for documentation
+});
+
+await apolloServer.start();
+
+app.use('/graphql', expressMiddleware(apolloServer, {
+  context: async ({ req }) => {
+    // Extract JWT token from Authorization header
+    const token = req.headers.authorization?.split(' ')[1];
+    if (token) {
+      try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        return { user: decoded };
+      } catch (err) {
+        return { user: null };
+      }
+    }
+    return { user: null };
+  }
+}));
+
+console.log('🚀 GraphQL endpoint available at /graphql');
 
 const courses = [
   {

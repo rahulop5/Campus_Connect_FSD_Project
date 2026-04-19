@@ -4,11 +4,12 @@ import Course from '../models/Course.js';
 import Student from '../models/Student.js';
 import Professor from '../models/Professor.js';
 import User from '../models/User.js';
+import { cacheMiddleware, CacheKeys } from '../middleware/cacheMiddleware.js';
 
 const router = express.Router();
 
-// Get course details with students and faculty
-router.get('/:courseId', verifyToken, async (req, res) => {
+// Get course details with students and faculty (cached 10 min)
+router.get('/:courseId', verifyToken, cacheMiddleware(CacheKeys.courseDetail, 600), async (req, res) => {
     try {
         const { courseId } = req.params;
 

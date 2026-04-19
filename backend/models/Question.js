@@ -33,5 +33,12 @@ questionSchema.methods.populateVoters = function() {
   });
 };
 
+// Optimize: forum listing sorted by newest first within an institute
+questionSchema.index({ instituteId: 1, createdAt: -1 });
+// Optimize: full-text search on question content
+questionSchema.index({ heading: 'text', desc: 'text', tags: 'text' });
+// Optimize: find questions by asker
+questionSchema.index({ asker: 1 });
+
 const Question = mongoose.model("Question", questionSchema);
 export default Question;

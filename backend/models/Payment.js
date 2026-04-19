@@ -44,4 +44,9 @@ const paymentSchema = new mongoose.Schema({
   }
 });
 
+// Optimize: find payments by user and status
+paymentSchema.index({ userId: 1, status: 1 });
+// Optimize: payment verification by Razorpay order ID
+paymentSchema.index({ razorpayOrderId: 1 });
+
 export default mongoose.model("Payment", paymentSchema);
