@@ -107,8 +107,6 @@ const ProfessorDashboard = () => {
       <div className="dashboard-wrapper prof-dashboard-page">
         <p className="dashboard-title">Dashboard</p>
 
-        <h1>Yash</h1>
-
         <div className="welcome-text">
           <p>
             <span className="gradient-text">Welcome back,</span><br />
