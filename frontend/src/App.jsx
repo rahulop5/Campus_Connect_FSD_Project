@@ -74,8 +74,6 @@ function App() {
           </ProtectedRoute>
         } />
 
-        <h1>hello</h1>
-
         {/* Institute Admin Dashboard */}
         <Route path="/institute/dashboard" element={
           <RoleRoute role="Admin">

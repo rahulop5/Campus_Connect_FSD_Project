@@ -66,6 +66,8 @@ export default function ProfessorDashboard() {
     <div className="dashboard-wrapper">
       <p className="dashboard-title">Dashboard</p>
 
+      <h1>hello</h1>
+
       <div className="welcome-text">
         <p>
           <span className="gradient-text">Welcome back,</span>
