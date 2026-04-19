@@ -33,7 +33,7 @@ const ProtectedRoute = ({ children }) => {
   return children;
 };
 
-const InstituteRoute = ({ children }) => {
+const  InstituteRoute = ({ children }) => {
   const { user, loading } = useSelector((state) => state.auth);
   if (loading) return <div>Loading...</div>;
   if (!user) return <Navigate to="/login" />;

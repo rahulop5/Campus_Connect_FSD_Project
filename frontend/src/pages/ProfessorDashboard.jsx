@@ -106,6 +106,8 @@ const ProfessorDashboard = () => {
     <Layout>
       <div className="dashboard-wrapper prof-dashboard-page">
         <p className="dashboard-title">Dashboard</p>
+
+        <h1>hello</h1>
         
         <div className="welcome-text">
           <p>
