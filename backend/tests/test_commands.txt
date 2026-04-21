@@ -1,0 +1,14 @@
+# Commands for testing the Auth logic failure and fix
+# Make sure to run these commands from the 'backend' directory
+
+# 1. Break the authentication logic intentionally
+node tests/break_auth.js
+
+# 2. Run the tests to see them fail
+npm run test -- tests/auth.test.js
+
+# 3. Fix the authentication logic back to normal
+node tests/fix_auth.js
+
+# 4. Run the tests again to see them pass
+npm run test -- tests/auth.test.js
