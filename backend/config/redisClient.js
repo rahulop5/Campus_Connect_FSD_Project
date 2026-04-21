@@ -8,15 +8,21 @@ let isRedisConnected = false;
  * If Redis is unavailable, the app continues without caching.
  */
 const initRedis = () => {
+  const host = process.env.REDIS_HOST || 'localhost';
+  const port = parseInt(process.env.REDIS_PORT) || 6379;
+  const hasPassword = !!process.env.REDIS_PASSWORD;
+
+  console.log(`[Redis] Attempting connection to ${host}:${port} (password: ${hasPassword ? 'yes' : 'no'})...`);
+
   try {
     redisClient = new Redis({
-      host: process.env.REDIS_HOST || 'localhost',
-      port: parseInt(process.env.REDIS_PORT) || 6379,
+      host,
+      port,
       password: process.env.REDIS_PASSWORD || undefined,
       maxRetriesPerRequest: 3,
       retryStrategy(times) {
         if (times > 3) {
-          console.warn('[Redis] Max retries reached. Running without cache.');
+          console.warn('[Redis] ❌ Max retries reached. Running WITHOUT cache.');
           return null; // Stop retrying
         }
         return Math.min(times * 200, 2000);
@@ -26,12 +32,13 @@ const initRedis = () => {
 
     redisClient.on('connect', () => {
       isRedisConnected = true;
-      console.log('[Redis] Connected successfully');
+      console.log(`[Redis] ✅ Connected successfully to ${host}:${port}`);
+      console.log('[Redis] Caching is ACTIVE — cache HIT/MISS logs will appear below');
     });
 
     redisClient.on('error', (err) => {
       isRedisConnected = false;
-      console.warn('[Redis] Connection error:', err.message);
+      console.warn('[Redis] ❌ Connection error:', err.message);
     });
 
     redisClient.on('close', () => {
@@ -41,11 +48,11 @@ const initRedis = () => {
 
     // Attempt connection
     redisClient.connect().catch(() => {
-      console.warn('[Redis] Initial connection failed. Running without cache.');
+      console.warn('[Redis] ❌ Initial connection failed. Running WITHOUT cache.');
     });
 
   } catch (error) {
-    console.warn('[Redis] Initialization failed:', error.message);
+    console.warn('[Redis] ❌ Initialization failed:', error.message);
   }
 };
 

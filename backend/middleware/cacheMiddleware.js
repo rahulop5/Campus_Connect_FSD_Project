@@ -1,43 +1,56 @@
-import { getCache, setCache } from '../config/redisClient.js';
+import { getCache, setCache, isConnected } from '../config/redisClient.js';
 
 /**
  * Cache middleware factory.
  * Checks Redis for cached response before hitting the controller.
+ * Logs every cache HIT / MISS with timing to the console (visible in Render logs).
  * 
  * @param {Function} keyGenerator - Function that takes (req) and returns cache key string
  * @param {number} ttl - Time to live in seconds
  * @returns {Function} Express middleware
- * 
- * Usage:
- *   router.get('/dashboard', cacheMiddleware((req) => `student:dashboard:${req.user.id}`, 300), controller);
  */
 export const cacheMiddleware = (keyGenerator, ttl = 300) => {
   return async (req, res, next) => {
+    const startTime = Date.now();
     try {
       const key = keyGenerator(req);
+
+      // If Redis isn't connected, skip cache entirely
+      if (!isConnected()) {
+        console.log(`[Cache] SKIP  | ${req.method} ${req.originalUrl} | Redis not connected — going direct to DB`);
+        res.set('X-Cache', 'SKIP');
+        return next();
+      }
+
       const cachedData = await getCache(key);
+      const cacheCheckTime = Date.now() - startTime;
       
       if (cachedData) {
-        // Add header to indicate cache hit
+        // Cache HIT — serve from Redis
         res.set('X-Cache', 'HIT');
         res.set('X-Cache-Key', key);
+        console.log(`[Cache] ✅ HIT  | ${req.method} ${req.originalUrl} | key: ${key} | ${cacheCheckTime}ms`);
         return res.json(cachedData);
       }
 
-      // Cache miss — intercept res.json to cache the response
+      // Cache MISS — intercept res.json to cache the response and log timing
+      console.log(`[Cache] ❌ MISS | ${req.method} ${req.originalUrl} | key: ${key} | cache-check: ${cacheCheckTime}ms`);
       res.set('X-Cache', 'MISS');
       const originalJson = res.json.bind(res);
       res.json = (data) => {
+        const totalTime = Date.now() - startTime;
         // Only cache successful responses
         if (res.statusCode >= 200 && res.statusCode < 300) {
-          setCache(key, data, ttl).catch(() => {}); // Fire-and-forget
+          setCache(key, data, ttl).catch(() => {});
+          console.log(`[Cache] 💾 SET  | ${req.method} ${req.originalUrl} | key: ${key} | TTL: ${ttl}s | total: ${totalTime}ms`);
         }
         return originalJson(data);
       };
 
       next();
     } catch (error) {
-      // On any cache error, just proceed without caching
+      const elapsed = Date.now() - startTime;
+      console.warn(`[Cache] ⚠️ ERR  | ${req.method} ${req.originalUrl} | ${error.message} | ${elapsed}ms`);
       next();
     }
   };
