@@ -2,6 +2,7 @@
  * Auth Middleware Unit Tests
  * Tests: verifyToken, checkRole — pure logic tests
  */
+import { jest } from '@jest/globals';
 
 // ─── Helpers ────────────────────────────────────────────────────
 const mockReq = (headers = {}, user = null) => ({

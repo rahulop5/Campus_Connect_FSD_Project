@@ -1,0 +1,205 @@
+(node:23332) ExperimentalWarning: VM Modules is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+PASS tests/admin.test.js
+  Admin Controller Logic
+    Dashboard Data Aggregation
+      √ should count total students correctly (2 ms)
+      √ should count total courses correctly
+      √ should count total professors correctly
+      √ should aggregate dashboard data correctly (1 ms)
+    Course CRUD Logic
+      √ should validate required course fields (1 ms)
+      √ should update course fields correctly (1 ms)
+      √ should not allow negative credits
+      √ should not allow zero total classes (1 ms)
+    Student Management
+      √ should validate student email format (1 ms)
+      √ should detect duplicate roll numbers
+      √ should validate student required fields
+    Professor Management
+      √ should validate professor required fields (1 ms)
+    Course Assignment Logic
+      √ should detect already-assigned course to professor (1 ms)
+      √ should correctly enroll student in new course (1 ms)
+      √ should prevent duplicate course enrollment
+    Remove Operations
+      √ should remove course from professor (1 ms)
+      √ should remove course from student (1 ms)
+    Role-based Access
+      √ should allow only admin roles
+
+PASS tests/forum.test.js
+  Forum Controller
+    askQuestion Validation
+      √ should validate required question fields (2 ms)
+      √ should parse comma-separated tags correctly (1 ms)
+      √ should handle empty tags gracefully (1 ms)
+      √ should create question with correct structure
+    Upvote Logic
+      √ should increment by 1 for new vote
+      √ should toggle off when upvoting already-upvoted question (1 ms)
+      √ should switch from downvote to upvote (+2) (1 ms)
+    Downvote Logic
+      √ should decrement by 1 for new vote
+      √ should toggle off when downvoting already-downvoted question (1 ms)
+      √ should switch from upvote to downvote (-2) (1 ms)
+    Vote Count Calculation
+      √ should correctly calculate total votes
+    Answer Submission
+      √ should validate required answer fields
+      √ should determine answerer model from role (1 ms)
+    Institute Access Check
+      √ should allow access when institute matches (2 ms)
+      √ should deny access when institute differs (1 ms)
+
+PASS tests/middleware.test.js
+  Auth Middleware
+    verifyToken Logic
+      √ should extract token from Bearer scheme correctly (2 ms)
+      √ should return undefined for missing authorization header
+      √ should return undefined for empty authorization header (4 ms)
+      √ should handle authorization without Bearer prefix (1 ms)
+      √ should handle multiple spaces in authorization header (1 ms)
+    checkRole Logic
+      √ should deny access when user has no role
+      √ should deny access when user role not in allowed list
+      √ should allow access when user role is in allowed list (1 ms)
+      √ should handle multiple allowed roles
+      √ should deny when req.user is null (1 ms)
+      √ should deny when req.user is undefined (1 ms)
+      √ should be case-sensitive for role matching
+      √ should handle empty roles array (1 ms)
+    JWT Decoded User Context
+      √ should set req.user from decoded token (1 ms)
+      √ should check token expiration
+
+PASS tests/election.test.js
+  Election Controller
+    Election Voting Logic
+      √ should prevent voting when no active election exists (1 ms)
+      √ should prevent duplicate votes for the same role (1 ms)
+      √ should allow voting for different roles (1 ms)
+      √ should allow different students to vote for the same role
+      √ should increment candidate vote count correctly (1 ms)
+      √ should track multiple votes per election
+    Election Status
+      √ should correctly determine if election is active
+      √ should correctly determine if election has ended (1 ms)
+      √ should detect not-yet-started election (1 ms)
+      √ should handle election roles correctly
+    Candidate Management
+      √ should group candidates by role (1 ms)
+      √ should calculate election results correctly
+
+PASS tests/payment.test.js
+  Payment Controller
+    Plan Pricing Logic
+      √ should have correct pricing for student_core plan (2 ms)
+      √ should have correct pricing for student_collective plan (1 ms)
+      √ should reject invalid plan IDs
+      √ should calculate amount in paise correctly (1 ms)
+      √ should support INR currency
+    Razorpay Order Creation
+      √ should create order with correct structure
+    Payment Verification
+      √ should verify Razorpay signature structure (1 ms)
+      √ should generate correct signature body
+      √ should update payment status to paid on verification (1 ms)
+      √ should mark payment as failed on invalid signature
+    Subscription Management
+      √ should update user subscription on successful payment
+      √ should return free plan for users without subscription (1 ms)
+      √ should identify active subscriptions
+      √ should check subscription features by plan (1 ms)
+
+PASS tests/student.test.js
+  Student Controller Logic
+    Attendance Calculation
+      √ should calculate attendance percentage correctly (1 ms)
+      √ should calculate attended classes from percentage
+      √ should assign correct status for >= 80% attendance (1 ms)
+      √ should assign At Risk for 75-79% attendance
+      √ should assign Critical for < 75% attendance (1 ms)
+      √ should handle 0% attendance
+      √ should handle 100% attendance (1 ms)
+    Dashboard Data Formatting
+      √ should format course data correctly (1 ms)
+      √ should default grade to NA when not available
+      √ should handle missing attendance (1 ms)
+    Date Formatting
+      √ should format date correctly for dashboard (1 ms)
+    Profile Update Validation
+      √ should identify name and phone as User model fields
+      √ should identify branch, section, ug as Student model fields (1 ms)
+    Grade Distribution
+      √ should calculate grade distribution frequencies
+      √ should sort grade distribution correctly (5 ms)
+
+PASS tests/auth.test.js
+  Auth Controller
+    normalizeRole
+      √ should normalize "professor" to "faculty" (1 ms)
+      √ should normalize "admin" to "college_admin" (1 ms)
+      √ should keep valid roles unchanged (1 ms)
+      √ should default invalid roles to "user"
+      √ should handle null/undefined/empty input (1 ms)
+      √ should handle case-insensitive input
+      √ should trim whitespace (1 ms)
+    Registration Validation Logic
+      √ should reject missing name
+      √ should reject missing email (1 ms)
+      √ should reject missing password
+      √ should reject empty body (1 ms)
+      √ should accept valid registration
+    JWT Token Payload Structure
+      √ should include required fields in token payload (1 ms)
+      √ should handle user without institute (1 ms)
+    Login Response Structure
+      √ should format login response correctly (1 ms)
+    Duplicate User Check
+      √ should detect existing users
+
+-----------------------------|---------|----------|---------|---------|-------------------
+File                         | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+-----------------------------|---------|----------|---------|---------|-------------------
+All files                    |       0 |        0 |       0 |       0 |                   
+ config                      |       0 |        0 |       0 |       0 |                   
+  redisClient.js             |       0 |        0 |       0 |       0 | 3-124             
+ controllers                 |       0 |        0 |       0 |       0 |                   
+  adminController.js         |       0 |        0 |       0 |       0 | 9-682             
+  authController.js          |       0 |        0 |       0 |       0 | 5-119             
+  authadminController.js     |       0 |        0 |       0 |       0 | 5-89              
+  authprofessorController.js |       0 |        0 |       0 |       0 | 5-60              
+  authstudentController.js   |       0 |        0 |       0 |       0 | 9-198             
+  electionController.js      |       0 |        0 |       0 |       0 | 7-330             
+  instituteController.js     |       0 |        0 |       0 |       0 | 8-214             
+  paymentController.js       |       0 |        0 |       0 |       0 | 7-158             
+  professorController.js     |       0 |        0 |       0 |       0 | 8-343             
+  qandaforumController.js    |       0 |        0 |       0 |       0 | 6-475             
+  searchController.js        |       0 |        0 |       0 |       0 | 11-160            
+  studentController.js       |       0 |        0 |       0 |       0 | 10-340            
+ controllers/auth            |       0 |        0 |       0 |       0 |                   
+  authController.js          |       0 |        0 |       0 |       0 | 10-380            
+ graphql                     |       0 |        0 |       0 |       0 |                   
+  resolvers.js               |       0 |        0 |       0 |       0 | 19-686            
+  schema.js                  |       0 |      100 |     100 |       0 | 1                 
+ middleware                  |       0 |        0 |       0 |       0 |                   
+  authMiddleware.js          |       0 |        0 |       0 |       0 | 3-25              
+  cacheMiddleware.js         |       0 |        0 |       0 |       0 | 14-59             
+-----------------------------|---------|----------|---------|---------|-------------------
+
+=============================== Coverage summary ===============================
+Statements   : 0% ( 0/1913 )
+Branches     : 0% ( 0/961 )
+Functions    : 0% ( 0/210 )
+Lines        : 0% ( 0/1781 )
+================================================================================
+Jest: "global" coverage threshold for statements (50%) not met: 0%
+Jest: "global" coverage threshold for branches (50%) not met: 0%
+Jest: "global" coverage threshold for lines (50%) not met: 0%
+Jest: "global" coverage threshold for functions (50%) not met: 0%
+Test Suites: 7 passed, 7 total
+Tests:       105 passed, 105 total
+Snapshots:   0 total
+Time:        1.417 s
+Ran all test suites.

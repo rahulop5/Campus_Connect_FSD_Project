@@ -4,9 +4,9 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "test": "node --experimental-vm-modules node_modules/.bin/jest --verbose",
-    "test:coverage": "node --experimental-vm-modules node_modules/.bin/jest --coverage --verbose",
-    "test:report": "node --experimental-vm-modules node_modules/.bin/jest --coverage --verbose 2>&1 | tee test-results.txt",
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --verbose",
+    "test:coverage": "node --experimental-vm-modules node_modules/jest/bin/jest.js --coverage --verbose",
+    "test:report": "node --experimental-vm-modules node_modules/jest/bin/jest.js --coverage --verbose > test-results.txt 2>&1",
     "dev": "nodemon index.js"
   },
   "keywords": [],
