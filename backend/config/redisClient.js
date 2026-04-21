@@ -11,14 +11,16 @@ const initRedis = () => {
   const host = process.env.REDIS_HOST || 'localhost';
   const port = parseInt(process.env.REDIS_PORT) || 6379;
   const hasPassword = !!process.env.REDIS_PASSWORD;
+  const useTLS = process.env.REDIS_TLS === 'true' || host.includes('upstash.io');
 
-  console.log(`[Redis] Attempting connection to ${host}:${port} (password: ${hasPassword ? 'yes' : 'no'})...`);
+  console.log(`[Redis] Attempting connection to ${host}:${port} (password: ${hasPassword ? 'yes' : 'no'}, TLS: ${useTLS ? 'yes' : 'no'})...`);
 
   try {
     redisClient = new Redis({
       host,
       port,
       password: process.env.REDIS_PASSWORD || undefined,
+      tls: useTLS ? {} : undefined,
       maxRetriesPerRequest: 3,
       retryStrategy(times) {
         if (times > 3) {
