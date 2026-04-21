@@ -1,4 +1,4 @@
-import { Client } from '@elastic/elasticsearch';
+import { Client } from '@opensearch-project/opensearch';
 
 let esClient = null;
 let isESConnected = false;
@@ -6,27 +6,38 @@ let isESConnected = false;
 const QUESTIONS_INDEX = 'campus_connect_questions';
 
 /**
- * Initialize Elasticsearch connection with graceful fallback.
+ * Initialize OpenSearch/Elasticsearch connection with graceful fallback.
  * If ES is unavailable, the app falls back to MongoDB text search.
+ * Supports cloud providers like Bonsai.io (URL with embedded auth).
  */
 const initElasticsearch = async () => {
+  const esUrl = process.env.ELASTICSEARCH_URL || 'http://localhost:9200';
+  
+  // Mask password in logs for security
+  const maskedUrl = esUrl.replace(/:([^@:]+)@/, ':****@');
+  console.log(`[Elasticsearch] Attempting connection to ${maskedUrl}...`);
+
   try {
     esClient = new Client({
-      node: process.env.ELASTICSEARCH_URL || 'http://localhost:9200',
+      node: esUrl,
       maxRetries: 3,
-      requestTimeout: 5000,
+      requestTimeout: 10000,
+      ssl: {
+        rejectUnauthorized: false  // Allow cloud-hosted certs (Bonsai, etc.)
+      }
     });
 
     // Test connection
     const health = await esClient.cluster.health();
     isESConnected = true;
-    console.log(`[Elasticsearch] Connected. Cluster status: ${health.status}`);
+    console.log(`[Elasticsearch] ✅ Connected. Cluster: ${health.body.cluster_name} | Status: ${health.body.status} | Nodes: ${health.body.number_of_nodes}`);
+    console.log('[Elasticsearch] Full-text search is ACTIVE');
 
     // Create index if it doesn't exist
     await ensureIndex();
   } catch (error) {
     isESConnected = false;
-    console.warn('[Elasticsearch] Connection failed. Falling back to MongoDB text search.');
+    console.warn('[Elasticsearch] ❌ Connection failed. Falling back to MongoDB text search.');
     console.warn('[Elasticsearch] Error:', error.message);
   }
 };
@@ -36,7 +47,7 @@ const initElasticsearch = async () => {
  */
 const ensureIndex = async () => {
   try {
-    const exists = await esClient.indices.exists({ index: QUESTIONS_INDEX });
+    const { body: exists } = await esClient.indices.exists({ index: QUESTIONS_INDEX });
     if (!exists) {
       await esClient.indices.create({
         index: QUESTIONS_INDEX,
@@ -70,7 +81,9 @@ const ensureIndex = async () => {
           }
         }
       });
-      console.log(`[Elasticsearch] Index '${QUESTIONS_INDEX}' created.`);
+      console.log(`[Elasticsearch] ✅ Index '${QUESTIONS_INDEX}' created.`);
+    } else {
+      console.log(`[Elasticsearch] Index '${QUESTIONS_INDEX}' already exists.`);
     }
   } catch (error) {
     console.warn('[Elasticsearch] Index creation error:', error.message);
@@ -99,19 +112,20 @@ export const indexQuestion = async (question) => {
         answersCount: question.answers?.length || 0
       }
     });
+    console.log(`[Elasticsearch] 📄 Indexed question: ${question._id}`);
   } catch (error) {
     console.warn('[Elasticsearch] Indexing error:', error.message);
   }
 };
 
 /**
- * Search questions using Elasticsearch
+ * Search questions using Elasticsearch/OpenSearch
  * @param {string} query - Search query
  * @param {Object} filters - Optional filters { tags, instituteId, sort }
- * @returns {Array} - Search results with scores
+ * @returns {Object|null} - Search results with scores, or null to signal fallback
  */
 export const searchQuestions = async (query, filters = {}) => {
-  if (!isESConnected || !esClient) return null; // Return null to signal fallback
+  if (!isESConnected || !esClient) return null;
   try {
     const must = [];
     const filter = [];
@@ -150,7 +164,7 @@ export const searchQuestions = async (query, filters = {}) => {
         sortConfig.push({ createdAt: 'desc' }); // newest first
     }
 
-    const result = await esClient.search({
+    const { body: result } = await esClient.search({
       index: QUESTIONS_INDEX,
       body: {
         query: {
@@ -171,8 +185,11 @@ export const searchQuestions = async (query, filters = {}) => {
       }
     });
 
+    const total = typeof result.hits.total === 'object' ? result.hits.total.value : result.hits.total;
+    console.log(`[Elasticsearch] 🔍 Search: "${query || '*'}" → ${total} results`);
+
     return {
-      total: result.hits.total.value,
+      total,
       results: result.hits.hits.map(hit => ({
         _id: hit._id,
         score: hit._score,
@@ -182,7 +199,7 @@ export const searchQuestions = async (query, filters = {}) => {
     };
   } catch (error) {
     console.warn('[Elasticsearch] Search error:', error.message);
-    return null; // Signal fallback to MongoDB
+    return null;
   }
 };
 
@@ -208,8 +225,8 @@ export const bulkIndexQuestions = async (questions) => {
       }
     ]);
 
-    const result = await esClient.bulk({ body, refresh: true });
-    console.log(`[Elasticsearch] Bulk indexed ${questions.length} questions. Errors: ${result.errors}`);
+    const { body: result } = await esClient.bulk({ body, refresh: true });
+    console.log(`[Elasticsearch] 📦 Bulk indexed ${questions.length} questions. Errors: ${result.errors}`);
   } catch (error) {
     console.warn('[Elasticsearch] Bulk index error:', error.message);
   }
@@ -222,6 +239,7 @@ export const deleteQuestion = async (questionId) => {
   if (!isESConnected || !esClient) return;
   try {
     await esClient.delete({ index: QUESTIONS_INDEX, id: questionId.toString() });
+    console.log(`[Elasticsearch] 🗑️ Deleted question: ${questionId}`);
   } catch (error) {
     console.warn('[Elasticsearch] Delete error:', error.message);
   }
